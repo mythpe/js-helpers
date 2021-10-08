@@ -10,7 +10,13 @@
     "type": "git",
     "url": "git+https://github.com/mythpe/js-helpers.git"
   },
-  "keywords": [],
+  "keywords": [
+    "js",
+    "vuejs",
+    "helpers",
+    "react",
+    "react-native"
+  ],
   "author": "MyTh Ahmed",
   "email": "mythpe@gmail.com",
   "license": "MIT",
