@@ -27,6 +27,10 @@ var Auth =
 /** @class */
 function () {
   function Auth(options) {
+    this["default"] = {
+      token: null,
+      user: null
+    };
     this.roleKey = (options === null || options === void 0 ? void 0 : options.key) ? options.key : '@auth_key';
     this.roleKey = (options === null || options === void 0 ? void 0 : options.roleKey) ? options.roleKey : 'role_code';
     this.localStorage = (options === null || options === void 0 ? void 0 : options.storage) ? options.storage : window !== undefined ? window.localStorage : null;
@@ -36,13 +40,13 @@ function () {
     if (!this.localStorage) return null;
     var defaultValue = this["default"];
     var o = JSON.parse(this.localStorage.getItem(this.key) || JSON.stringify(defaultValue)) || defaultValue;
-    if (key === null) return o;
+    if (!key) return o;
     return o[key];
   };
 
   Auth.prototype.save = function (attributes) {
     if (!this.localStorage) return;
-    attributes = attributes || {};
+    attributes = attributes || this["default"];
     var storageData = this.data();
 
     var save = __assign({}, attributes);
@@ -51,6 +55,16 @@ function () {
       return save[k] = attributes[k] !== undefined ? attributes[k] : storageData[k];
     });
     this.localStorage.setItem(this.key, JSON.stringify(save));
+  };
+
+  Auth.prototype.set = function (key, value) {
+    var data = this.data();
+    data[key] = value;
+    this.save(data);
+  };
+
+  Auth.prototype.get = function (key) {
+    return this.data(key);
   };
 
   Auth.prototype.getAccessToken = function () {
@@ -90,16 +104,6 @@ function () {
       return (_b = (_a = item === null || item === void 0 ? void 0 : item.toString()) === null || _a === void 0 ? void 0 : _a.toLocaleLowerCase()) === null || _b === void 0 ? void 0 : _b.trim();
     });
     return role.indexOf(t) > -1;
-  };
-
-  Auth.prototype.set = function (key, value) {
-    var data = this.data();
-    data[key] = value;
-    this.save(data);
-  };
-
-  Auth.prototype.get = function (key) {
-    return this.data(key);
   };
 
   return Auth;

@@ -31,11 +31,19 @@ var Auth = /** @class */ (function () {
     Auth.prototype.save = function (attributes) {
         if (!this.localStorage)
             return;
-        attributes = attributes || {};
+        attributes = attributes || this.default;
         var storageData = this.data();
         var save = __assign({}, attributes);
         Object.keys(this.default).forEach(function (k) { return (save[k] = attributes[k] !== undefined ? attributes[k] : storageData[k]); });
         this.localStorage.setItem(this.key, JSON.stringify(save));
+    };
+    Auth.prototype.set = function (key, value) {
+        var data = this.data();
+        data[key] = value;
+        this.save(data);
+    };
+    Auth.prototype.get = function (key) {
+        return this.data(key);
     };
     Auth.prototype.getAccessToken = function () {
         var _a;
@@ -66,14 +74,6 @@ var Auth = /** @class */ (function () {
         role = typeof role === 'string' ? role.split(',') : Object.keys(role);
         role.map(function (i, item) { var _a, _b; return (_b = (_a = item === null || item === void 0 ? void 0 : item.toString()) === null || _a === void 0 ? void 0 : _a.toLocaleLowerCase()) === null || _b === void 0 ? void 0 : _b.trim(); });
         return role.indexOf(t) > -1;
-    };
-    Auth.prototype.set = function (key, value) {
-        var data = this.data();
-        data[key] = value;
-        this.save(data);
-    };
-    Auth.prototype.get = function (key) {
-        return this.data(key);
     };
     return Auth;
 }());

@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-undef
+declare type LocalStorageType = Storage | any
+
 /**
  * Type of authentication class options
  */
@@ -6,15 +9,23 @@ export declare type AuthStorageOptions = {
   roleKey?: string,
   storage?: any
 }
+
+/**
+ * Auth keys
+ */
+export declare type AuthKeys = 'token' | 'user'
+
 /**
  * Type of storage data
  */
 export declare type AuthStorageData = {
-  token: string | null,
-  user: Object | null
+  token?: string | null,
+  user?: Object | null
 }
-// eslint-disable-next-line no-undef
-declare type LocalStorageType = Storage | any
+
+export declare type AuthAttributes = AuthStorageData | null
+
+export declare type RolesType = string | string[]
 
 /**
  * Authentication Storage interface
@@ -43,21 +54,21 @@ export interface AuthStorage {
    * Get localstorage state
    * @param key
    */
-  data: (key?) => any
+  data: (key?: AuthKeys) => any
   /**
    * Save localstorage state
    */
-  save: (attributes?: Object) => void
+  save: (attributes?: AuthAttributes) => void
   /**
    * Set storage value
    * @param key
    * @param value
    */
-  set: (key: string, value: any) => void
+  set: (key: AuthKeys, value: any) => void
   /**
    * Get data from storage
    */
-  get: (key?: string) => any
+  get: (key?: AuthKeys) => any
   /**
    * Get access token from localstorage
    */
@@ -78,7 +89,7 @@ export interface AuthStorage {
    * Check user role
    * @param roles
    */
-  is: (roles: string | string[]) => boolean
+  is: (roles: RolesType) => boolean
 }
 
 class Auth implements AuthStorage {
@@ -94,7 +105,7 @@ class Auth implements AuthStorage {
     this.localStorage = options?.storage ? options.storage : (window !== undefined ? window.localStorage : null)
   }
 
-  data (key?: any): any {
+  data (key?: AuthKeys): any {
     if (!this.localStorage) return null
     const defaultValue = this.default
     const o = JSON.parse(this.localStorage.getItem(this.key) || JSON.stringify(defaultValue)) || defaultValue
@@ -102,13 +113,23 @@ class Auth implements AuthStorage {
     return o[key]
   }
 
-  save (attributes?: Object): void {
+  save (attributes?: AuthAttributes): void {
     if (!this.localStorage) return
-    attributes = attributes || {}
+    attributes = attributes || this.default
     const storageData = this.data()
     const save = { ...attributes }
     Object.keys(this.default).forEach(k => (save[k] = attributes[k] !== undefined ? attributes[k] : storageData[k]))
     this.localStorage.setItem(this.key, JSON.stringify(save))
+  }
+
+  set (key: AuthKeys, value: any) {
+    const data = this.data()
+    data[key] = value
+    this.save(data)
+  }
+
+  get (key?: AuthKeys) {
+    return this.data(key)
   }
 
   getAccessToken (): string | null {
@@ -129,7 +150,7 @@ class Auth implements AuthStorage {
     this.localStorage.removeItem(this.key)
   }
 
-  is (roles: string | string[]): boolean {
+  is (roles: RolesType): boolean {
     const { user } = this.data() || this.default
     if (!user || typeof user !== 'object') return false
     const t = user[this.roleKey]?.toLocaleLowerCase()?.trim() || null
@@ -138,16 +159,6 @@ class Auth implements AuthStorage {
     role = typeof role === 'string' ? role.split(',') : Object.keys(role)
     role.map((i, item) => item?.toString()?.toLocaleLowerCase()?.trim())
     return role.indexOf(t) > -1
-  }
-
-  set (key: string, value: any) {
-    const data = this.data()
-    data[key] = value
-    this.save(data)
-  }
-
-  get (key?: string) {
-    return this.data(key)
   }
 }
 
