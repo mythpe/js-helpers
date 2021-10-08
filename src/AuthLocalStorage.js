@@ -14,6 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createAuthStorage = exports.default = void 0;
 var Auth = /** @class */ (function () {
     function Auth(options) {
+        this.default = { token: null, user: null };
         this.roleKey = (options === null || options === void 0 ? void 0 : options.key) ? options.key : '@auth_key';
         this.roleKey = (options === null || options === void 0 ? void 0 : options.roleKey) ? options.roleKey : 'role_code';
         this.localStorage = (options === null || options === void 0 ? void 0 : options.storage) ? options.storage : (window !== undefined ? window.localStorage : null);
@@ -23,7 +24,7 @@ var Auth = /** @class */ (function () {
             return null;
         var defaultValue = this.default;
         var o = JSON.parse(this.localStorage.getItem(this.key) || JSON.stringify(defaultValue)) || defaultValue;
-        if (key === null)
+        if (!key)
             return o;
         return o[key];
     };

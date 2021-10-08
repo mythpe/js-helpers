@@ -88,6 +88,7 @@ class Auth implements AuthStorage {
   default: AuthStorageData
 
   constructor (options?: AuthStorageOptions) {
+    this.default = { token: null, user: null }
     this.roleKey = options?.key ? options.key : '@auth_key'
     this.roleKey = options?.roleKey ? options.roleKey : 'role_code'
     this.localStorage = options?.storage ? options.storage : (window !== undefined ? window.localStorage : null)
@@ -97,7 +98,7 @@ class Auth implements AuthStorage {
     if (!this.localStorage) return null
     const defaultValue = this.default
     const o = JSON.parse(this.localStorage.getItem(this.key) || JSON.stringify(defaultValue)) || defaultValue
-    if (key === null) return o
+    if (!key) return o
     return o[key]
   }
 
@@ -154,5 +155,5 @@ const createAuthStorage = (options?: AuthStorageOptions): AuthStorage => new Aut
 
 export {
   createAuthStorage as default,
-  createAuthStorage
+  createAuthStorage,
 }
