@@ -1,19 +1,37 @@
-export declare type DefaultAuth = {
+/**
+ * Type of authentication class options
+ */
+export declare type AuthStorageOptions = {
+  key?: string,
+  roleKey?: string,
+  storage?: any
+}
+/**
+ * Type of storage data
+ */
+export declare type AuthStorageData = {
   token: string | null,
   user: Object | null
 }
+// eslint-disable-next-line no-undef
+declare type LocalStorageType = Storage | any
 
+/**
+ * Authentication Storage interface
+ */
 export interface AuthStorage {
+  /**
+   * Localstorage Object
+   */
+  localStorage: LocalStorageType
   /**
    * Localstorage Key
    */
   key: string,
-
   /**
    * Default localstorage state
    */
-  default: DefaultAuth,
-
+  default: AuthStorageData,
   /**
    * Must set this value from back-end user
    * User role key value
@@ -21,96 +39,96 @@ export interface AuthStorage {
    * Example: user = { [role_code]: 'admin' }
    */
   roleKey: string
-
   /**
    * Get localstorage state
    * @param key
    */
   data: (key?) => any
-
   /**
    * Save localstorage state
    */
-  save: (attributes: Object) => void
-
+  save: (attributes?: Object) => void
   /**
    * Set storage value
    * @param key
    * @param value
    */
   set: (key: string, value: any) => void
-
   /**
    * Get data from storage
    */
   get: (key?: string) => any
-
   /**
    * Get access token from localstorage
    */
   getAccessToken: () => string | null
-
   /**
    * Get user data from localstorage
    */
   getUserData: () => Object | null
-
   /**
    * Check if localstorage have token
    */
   isLogin: () => boolean
-
   /**
    * Remove localstorage
    */
   logout: () => void
-
   /**
    * Check user role
    * @param roles
    */
-  is: (roles: string | Array<string>) => boolean
+  is: (roles: string | string[]) => boolean
 }
 
-const AuthStorageObject = window.localStorage
+class Auth implements AuthStorage {
+  localStorage
+  key
+  roleKey
+  default: AuthStorageData
 
-export default class Auth implements AuthStorage {
-  key = '@auth_key'
-  roleKey = 'role_code'
-  default = { token: null, user: null }
+  constructor (options?: AuthStorageOptions) {
+    this.roleKey = options?.key ? options.key : '@auth_key'
+    this.roleKey = options?.roleKey ? options.roleKey : 'role_code'
+    this.localStorage = options?.storage ? options.storage : (window !== undefined ? window.localStorage : null)
+  }
 
-  data (key = null) {
+  data (key?: any): any {
+    if (!this.localStorage) return null
     const defaultValue = this.default
-    const o = JSON.parse(AuthStorageObject.getItem(this.key) || JSON.stringify(defaultValue)) || defaultValue
+    const o = JSON.parse(this.localStorage.getItem(this.key) || JSON.stringify(defaultValue)) || defaultValue
     if (key === null) return o
     return o[key]
   }
 
-  save (attributes = {}) {
+  save (attributes?: Object): void {
+    if (!this.localStorage) return
+    attributes = attributes || {}
     const storageData = this.data()
     const save = { ...attributes }
     Object.keys(this.default).forEach(k => (save[k] = attributes[k] !== undefined ? attributes[k] : storageData[k]))
-    AuthStorageObject.setItem(this.key, JSON.stringify(save))
+    this.localStorage.setItem(this.key, JSON.stringify(save))
   }
 
-  getAccessToken () {
+  getAccessToken (): string | null {
     return this.data()?.token || null
   }
 
-  getUserData () {
+  getUserData (): Object | null {
     return this.data()?.user || null
   }
 
-  isLogin () {
+  isLogin (): boolean {
     const { token } = this.data()
     return token ? token.length > 0 : false
   }
 
-  logout () {
-    AuthStorageObject.removeItem(this.key)
+  logout (): void {
+    if (!this.localStorage) return
+    this.localStorage.removeItem(this.key)
   }
 
-  is (roles) {
+  is (roles: string | string[]): boolean {
     const { user } = this.data() || this.default
     if (!user || typeof user !== 'object') return false
     const t = user[this.roleKey]?.toLocaleLowerCase()?.trim() || null
@@ -121,13 +139,20 @@ export default class Auth implements AuthStorage {
     return role.indexOf(t) > -1
   }
 
-  set (key, value) {
+  set (key: string, value: any) {
     const data = this.data()
     data[key] = value
     this.save(data)
   }
 
-  get (key) {
+  get (key?: string) {
     return this.data(key)
   }
+}
+
+const createAuthStorage = (options?: AuthStorageOptions): AuthStorage => new Auth(options)
+
+export {
+  createAuthStorage as default,
+  createAuthStorage
 }

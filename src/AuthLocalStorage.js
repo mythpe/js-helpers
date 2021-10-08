@@ -11,27 +11,30 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var AuthStorageObject = window.localStorage;
+exports.createAuthStorage = exports.default = void 0;
 var Auth = /** @class */ (function () {
-    function Auth() {
-        this.key = '@auth_key';
-        this.roleKey = 'role_code';
-        this.default = { token: null, user: null };
+    function Auth(options) {
+        this.roleKey = (options === null || options === void 0 ? void 0 : options.key) ? options.key : '@auth_key';
+        this.roleKey = (options === null || options === void 0 ? void 0 : options.roleKey) ? options.roleKey : 'role_code';
+        this.localStorage = (options === null || options === void 0 ? void 0 : options.storage) ? options.storage : (window !== undefined ? window.localStorage : null);
     }
     Auth.prototype.data = function (key) {
-        if (key === void 0) { key = null; }
+        if (!this.localStorage)
+            return null;
         var defaultValue = this.default;
-        var o = JSON.parse(AuthStorageObject.getItem(this.key) || JSON.stringify(defaultValue)) || defaultValue;
+        var o = JSON.parse(this.localStorage.getItem(this.key) || JSON.stringify(defaultValue)) || defaultValue;
         if (key === null)
             return o;
         return o[key];
     };
     Auth.prototype.save = function (attributes) {
-        if (attributes === void 0) { attributes = {}; }
+        if (!this.localStorage)
+            return;
+        attributes = attributes || {};
         var storageData = this.data();
         var save = __assign({}, attributes);
         Object.keys(this.default).forEach(function (k) { return (save[k] = attributes[k] !== undefined ? attributes[k] : storageData[k]); });
-        AuthStorageObject.setItem(this.key, JSON.stringify(save));
+        this.localStorage.setItem(this.key, JSON.stringify(save));
     };
     Auth.prototype.getAccessToken = function () {
         var _a;
@@ -46,7 +49,9 @@ var Auth = /** @class */ (function () {
         return token ? token.length > 0 : false;
     };
     Auth.prototype.logout = function () {
-        AuthStorageObject.removeItem(this.key);
+        if (!this.localStorage)
+            return;
+        this.localStorage.removeItem(this.key);
     };
     Auth.prototype.is = function (roles) {
         var _a, _b;
@@ -71,4 +76,6 @@ var Auth = /** @class */ (function () {
     };
     return Auth;
 }());
-exports.default = Auth;
+var createAuthStorage = function (options) { return new Auth(options); };
+exports.default = createAuthStorage;
+exports.createAuthStorage = createAuthStorage;

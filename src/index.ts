@@ -1,3 +1,3 @@
-import Auth from './AuthLocalStorage'
+import { createAuthStorage } from './AuthLocalStorage'
 
-export { Auth }
+export { createAuthStorage }

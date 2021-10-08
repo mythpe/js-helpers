@@ -1,5 +1,7 @@
-import { Auth } from './src/index'
+import { createAuthStorage } from './src/index'
 
 module.exports = {
-  Auth
+  createAuthStorage
 }
+
+export { createAuthStorage }
