@@ -1,7 +1,38 @@
-import { createAuthStorage } from './src/index'
+import { ArabicNumbersMap, createAuthStorage, DownloadFileFromResponse, FromNumberFormat, GetYear, HijriDay, HijriMonth, HijriYear, IsKsaMobile, ParseArabicNumber, ParseFormData, SortNumberFormatted, TodayDate, TodayTime, ToNumberFormat } from './src/index'
 
-module.exports = {
-  createAuthStorage
+export {
+  createAuthStorage,
+  ArabicNumbersMap,
+  ParseArabicNumber,
+  FromNumberFormat,
+  ToNumberFormat,
+  IsKsaMobile,
+  ParseFormData,
+  DownloadFileFromResponse,
+  HijriYear,
+  HijriMonth,
+  HijriDay,
+  TodayDate,
+  TodayTime,
+  GetYear,
+  SortNumberFormatted,
 }
 
-export { createAuthStorage }
+module.exports = {
+  createAuthStorage,
+
+  ArabicNumbersMap,
+  ParseArabicNumber,
+  FromNumberFormat,
+  ToNumberFormat,
+  IsKsaMobile,
+  ParseFormData,
+  DownloadFileFromResponse,
+  HijriYear,
+  HijriMonth,
+  HijriDay,
+  TodayDate,
+  TodayTime,
+  GetYear,
+  SortNumberFormatted,
+}
