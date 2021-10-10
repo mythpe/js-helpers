@@ -1,7 +1,7 @@
 "use strict";
+// import moment from 'moment-hijri'
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SortNumberFormatted = exports.GetYear = exports.TodayTime = exports.TodayDate = exports.HijriDay = exports.HijriMonth = exports.HijriYear = exports.DownloadFileFromResponse = exports.ParseFormData = exports.IsKsaMobile = exports.ToNumberFormat = exports.FromNumberFormat = exports.ParseArabicNumber = exports.ArabicNumbersMap = void 0;
-var moment_hijri_1 = require("moment-hijri");
+exports.SortNumberFormatted = exports.GetYear = exports.DownloadFileFromResponse = exports.ParseFormData = exports.IsKsaMobile = exports.ToNumberFormat = exports.FromNumberFormat = exports.ParseArabicNumber = exports.ArabicNumbersMap = void 0;
 var ArabicNumbersMap = {
     0: '٠',
     1: '١',
@@ -120,51 +120,46 @@ var DownloadFileFromResponse = function (response) {
     }
 };
 exports.DownloadFileFromResponse = DownloadFileFromResponse;
-var HijriYear = function (locale) {
-    var l = moment_hijri_1.default().locale();
-    locale = locale || 'en';
-    moment_hijri_1.default.locale(locale);
-    var date = moment_hijri_1.default().format('iYYYY');
-    moment_hijri_1.default.locale(l);
-    return date;
-};
-exports.HijriYear = HijriYear;
-var HijriMonth = function (locale) {
-    var l = moment_hijri_1.default().locale();
-    locale = locale || 'en';
-    moment_hijri_1.default.locale(locale);
-    var date = moment_hijri_1.default().format('iM');
-    moment_hijri_1.default.locale(l);
-    return date;
-};
-exports.HijriMonth = HijriMonth;
-var HijriDay = function (locale) {
-    var l = moment_hijri_1.default().locale();
-    locale = locale || 'en';
-    moment_hijri_1.default.locale(locale);
-    var date = moment_hijri_1.default().format('iD');
-    moment_hijri_1.default.locale(l);
-    return date;
-};
-exports.HijriDay = HijriDay;
-var TodayDate = function (locale) {
-    var l = moment_hijri_1.default().locale();
-    locale = locale || 'en';
-    moment_hijri_1.default.locale(locale);
-    var date = moment_hijri_1.default().format('YYYY-MM-DD');
-    moment_hijri_1.default.locale(l);
-    return date;
-};
-exports.TodayDate = TodayDate;
-var TodayTime = function (locale) {
-    var l = moment_hijri_1.default().locale();
-    locale = locale || 'en';
-    moment_hijri_1.default.locale(locale);
-    var time = moment_hijri_1.default().format('HH:mm');
-    moment_hijri_1.default.locale(l);
-    return time;
-};
-exports.TodayTime = TodayTime;
+// const HijriYear = (locale?: string): string => {
+//   const l = moment().locale()
+//   locale = locale || 'en'
+//   moment.locale(locale)
+//   const date = moment().format('iYYYY')
+//   moment.locale(l)
+//   return date
+// }
+// const HijriMonth = (locale?: string): string => {
+//   const l = moment().locale()
+//   locale = locale || 'en'
+//   moment.locale(locale)
+//   const date = moment().format('iM')
+//   moment.locale(l)
+//   return date
+// }
+// const HijriDay = (locale?: string): string => {
+//   const l = moment().locale()
+//   locale = locale || 'en'
+//   moment.locale(locale)
+//   const date = moment().format('iD')
+//   moment.locale(l)
+//   return date
+// }
+// const TodayDate = (locale?: string): string => {
+//   const l = moment().locale()
+//   locale = locale || 'en'
+//   moment.locale(locale)
+//   const date = moment().format('YYYY-MM-DD')
+//   moment.locale(l)
+//   return date
+// }
+// const TodayTime = (locale?: string): string => {
+//   const l = moment().locale()
+//   locale = locale || 'en'
+//   moment.locale(locale)
+//   const time = moment().format('HH:mm')
+//   moment.locale(l)
+//   return time
+// }
 var GetYear = function () { return new Date().getFullYear(); };
 exports.GetYear = GetYear;
 var SortNumberFormatted = function (a, b) {

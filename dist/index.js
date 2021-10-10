@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.SortNumberFormatted = exports.GetYear = exports.TodayTime = exports.TodayDate = exports.HijriDay = exports.HijriMonth = exports.HijriYear = exports.DownloadFileFromResponse = exports.ParseFormData = exports.IsKsaMobile = exports.ToNumberFormat = exports.FromNumberFormat = exports.ParseArabicNumber = exports.ArabicNumbersMap = exports.createAuthStorage = void 0;
+exports.SortNumberFormatted = exports.GetYear = exports.DownloadFileFromResponse = exports.ParseFormData = exports.IsKsaMobile = exports.ToNumberFormat = exports.FromNumberFormat = exports.ParseArabicNumber = exports.ArabicNumbersMap = exports.createAuthStorage = void 0;
 
 var AuthLocalStorage_1 = require("./AuthLocalStorage");
 
@@ -58,40 +58,16 @@ Object.defineProperty(exports, "DownloadFileFromResponse", {
     return Tools_1.DownloadFileFromResponse;
   }
 });
-Object.defineProperty(exports, "HijriYear", {
-  enumerable: true,
-  get: function get() {
-    return Tools_1.HijriYear;
-  }
-});
-Object.defineProperty(exports, "HijriMonth", {
-  enumerable: true,
-  get: function get() {
-    return Tools_1.HijriMonth;
-  }
-});
-Object.defineProperty(exports, "HijriDay", {
-  enumerable: true,
-  get: function get() {
-    return Tools_1.HijriDay;
-  }
-});
-Object.defineProperty(exports, "TodayDate", {
-  enumerable: true,
-  get: function get() {
-    return Tools_1.TodayDate;
-  }
-});
-Object.defineProperty(exports, "TodayTime", {
-  enumerable: true,
-  get: function get() {
-    return Tools_1.TodayTime;
-  }
-});
 Object.defineProperty(exports, "GetYear", {
   enumerable: true,
   get: function get() {
-    return Tools_1.GetYear;
+    return; // HijriYear,
+    // HijriMonth,
+    // HijriDay,
+    // TodayDate,
+    // TodayTime,
+
+    Tools_1.GetYear;
   }
 });
 Object.defineProperty(exports, "SortNumberFormatted", {

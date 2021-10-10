@@ -1,4 +1,4 @@
-import moment from 'moment-hijri'
+// import moment from 'moment-hijri'
 
 //٠١٢٣٤٥٦٧٨٩
 export declare type ArabicNumberType = '٠' | '١' | '٢' | '٣' | '٤' | '٥' | '٦' | '٧' | '٨' | '٩'
@@ -112,47 +112,47 @@ const DownloadFileFromResponse = (response) => {
   }
 }
 
-const HijriYear = (locale?: string): string => {
-  const l = moment().locale()
-  locale = locale || 'en'
-  moment.locale(locale)
-  const date = moment().format('iYYYY')
-  moment.locale(l)
-  return date
-}
+// const HijriYear = (locale?: string): string => {
+//   const l = moment().locale()
+//   locale = locale || 'en'
+//   moment.locale(locale)
+//   const date = moment().format('iYYYY')
+//   moment.locale(l)
+//   return date
+// }
+// const HijriMonth = (locale?: string): string => {
+//   const l = moment().locale()
+//   locale = locale || 'en'
+//   moment.locale(locale)
+//   const date = moment().format('iM')
+//   moment.locale(l)
+//   return date
+// }
+// const HijriDay = (locale?: string): string => {
+//   const l = moment().locale()
+//   locale = locale || 'en'
+//   moment.locale(locale)
+//   const date = moment().format('iD')
+//   moment.locale(l)
+//   return date
+// }
+// const TodayDate = (locale?: string): string => {
+//   const l = moment().locale()
+//   locale = locale || 'en'
+//   moment.locale(locale)
+//   const date = moment().format('YYYY-MM-DD')
+//   moment.locale(l)
+//   return date
+// }
+// const TodayTime = (locale?: string): string => {
+//   const l = moment().locale()
+//   locale = locale || 'en'
+//   moment.locale(locale)
+//   const time = moment().format('HH:mm')
+//   moment.locale(l)
+//   return time
+// }
 
-const HijriMonth = (locale?: string): string => {
-  const l = moment().locale()
-  locale = locale || 'en'
-  moment.locale(locale)
-  const date = moment().format('iM')
-  moment.locale(l)
-  return date
-}
-const HijriDay = (locale?: string): string => {
-  const l = moment().locale()
-  locale = locale || 'en'
-  moment.locale(locale)
-  const date = moment().format('iD')
-  moment.locale(l)
-  return date
-}
-const TodayDate = (locale?: string): string => {
-  const l = moment().locale()
-  locale = locale || 'en'
-  moment.locale(locale)
-  const date = moment().format('YYYY-MM-DD')
-  moment.locale(l)
-  return date
-}
-const TodayTime = (locale?: string): string => {
-  const l = moment().locale()
-  locale = locale || 'en'
-  moment.locale(locale)
-  const time = moment().format('HH:mm')
-  moment.locale(l)
-  return time
-}
 const GetYear = (): number => new Date().getFullYear()
 
 const SortNumberFormatted = (a, b): any => {
@@ -169,11 +169,11 @@ export {
   IsKsaMobile,
   ParseFormData,
   DownloadFileFromResponse,
-  HijriYear,
-  HijriMonth,
-  HijriDay,
-  TodayDate,
-  TodayTime,
+  // HijriYear,
+  // HijriMonth,
+  // HijriDay,
+  // TodayDate,
+  // TodayTime,
   GetYear,
   SortNumberFormatted,
 }

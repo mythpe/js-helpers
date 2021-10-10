@@ -1,6 +1,6 @@
 {
   "name": "@mythpe/js-helpers",
-  "version": "1.1.4",
+  "version": "1.1.6",
   "description": "Js packages and tools used for faster coding",
   "main": "index.js",
   "scripts": {
@@ -27,12 +27,11 @@
   "devDependencies": {
     "@babel/cli": "^7.15.7",
     "@babel/core": "^7.15.8",
-    "@babel/preset-env": "^7.15.8"
-  },
-  "dependencies": {
+    "@babel/preset-env": "^7.15.8",
     "moment": "^2.29.1",
     "moment-hijri": "^2.1.2"
   },
+  "dependencies": {},
   "eslintConfig": {
     "env": {
       "node": true

@@ -1,4 +1,4 @@
-import { ArabicNumbersMap, createAuthStorage, DownloadFileFromResponse, FromNumberFormat, GetYear, HijriDay, HijriMonth, HijriYear, IsKsaMobile, ParseArabicNumber, ParseFormData, SortNumberFormatted, TodayDate, TodayTime, ToNumberFormat } from './src/index'
+import { ArabicNumbersMap, createAuthStorage, DownloadFileFromResponse, FromNumberFormat, GetYear, IsKsaMobile, ParseArabicNumber, ParseFormData, SortNumberFormatted, ToNumberFormat } from './src'
 
 export {
   createAuthStorage,
@@ -9,11 +9,11 @@ export {
   IsKsaMobile,
   ParseFormData,
   DownloadFileFromResponse,
-  HijriYear,
-  HijriMonth,
-  HijriDay,
-  TodayDate,
-  TodayTime,
+  // HijriYear,
+  // HijriMonth,
+  // HijriDay,
+  // TodayDate,
+  // TodayTime,
   GetYear,
   SortNumberFormatted,
 }
@@ -28,11 +28,11 @@ module.exports = {
   IsKsaMobile,
   ParseFormData,
   DownloadFileFromResponse,
-  HijriYear,
-  HijriMonth,
-  HijriDay,
-  TodayDate,
-  TodayTime,
+  // HijriYear,
+  // HijriMonth,
+  // HijriDay,
+  // TodayDate,
+  // TodayTime,
   GetYear,
   SortNumberFormatted,
 }
