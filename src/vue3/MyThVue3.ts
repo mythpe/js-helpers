@@ -5,7 +5,8 @@
  * https://www.4myth.com
  */
 
-import { MyThPlugin, UseMyThVue3 } from '../types'
+import { VueI18n } from 'vue-i18n'
+import { UseMyThVue3 } from '../types'
 import { Dates as dates } from '../utils/Dates'
 import { Helpers as helpers } from '../utils/Helpers'
 import { Str as str } from '../utils/Str'
@@ -37,17 +38,20 @@ export const useMyTh = (): UseMyThVue3 => {
   }, GlobalsMyThVue3, MAlerts, MHelpers)
 }
 
-export const MyThVue3: MyThPlugin = {
+export class MyThVue3 {
   /**
    * Version of plugin
    */
-  get version () {
-    return '2.0.6'
-  },
-  i18n: {},
-  api: {
+  static get version () {
+    return '2.0.7'
+  }
+
+  static i18n: VueI18n
+
+  static api = {
     axios: {},
     services: {}
-  },
-  options: {}
+  }
+
+  static options: UseMyThVue3['options'] = {}
 }

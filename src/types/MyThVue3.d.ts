@@ -7,7 +7,7 @@
 
 import { AxiosInstance, AxiosResponse } from 'axios'
 import { GlobalComponentConstructor } from 'quasar'
-import { I18n } from 'vue-i18n'
+import { I18n, VueI18n } from 'vue-i18n'
 import { MDatatableProps, MDatatableSlots, MDtAvatarProps, MDtAvatarSlots, MDtBtnProps, MDtBtnSlots } from '../components/datatable/models'
 import {
   MAvatarViewerProps,
@@ -44,14 +44,14 @@ import { MHelpers } from '../vue3/MHelpers'
 import { GlobalsMyThVue3 } from '../vue3/MyThVue3'
 
 export type MyThVue3InstallOptions = {
-  i18n: I18n;
+  i18n: VueI18n;
   api: {
     axios: AxiosInstance;
     services: {
       [key: string]: Record<string, (() => Promise<AxiosResponse>) | any> | any
     };
   },
-  options?: {
+  options: Record<string, any> & {
     google?: {
       apiKey: string,
       mapsOptions?: Record<string, any>

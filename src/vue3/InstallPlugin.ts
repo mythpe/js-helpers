@@ -21,7 +21,9 @@ export default async function install (app: App, {
   api,
   options
 }: MyThVue3InstallOptions) {
-  Object.assign(MyThVue3, { i18n, api, options })
+  MyThVue3.i18n = i18n
+  MyThVue3.api = api
+  MyThVue3.options = options
   app.config.globalProperties.$myth = useMyTh()
 
   // Datatable

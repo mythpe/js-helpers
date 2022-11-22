@@ -20,7 +20,7 @@ export const MAlerts = {
   alertSuccess: (message: string) => MAlerts.alertMessage({ type: 'positive', message }),
   alertError: (message: string) => MAlerts.alertMessage({ type: 'negative', message }),
   confirmMessage (message?: string, title?: string): Vue3MConfirmMessage {
-    const { t } = MyThVue3.i18n.global
+    const { t } = MyThVue3.i18n
     title = title ?? t('messages.are_you_sure')
     title = title ?? ''
     message = message ?? ''

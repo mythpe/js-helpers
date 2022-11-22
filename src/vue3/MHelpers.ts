@@ -41,10 +41,10 @@ export const MHelpers = {
     number = number ?? 2
     number = parseInt(number.toString())
     const defaultValue = undefined
-    if (!MyThVue3.i18n?.global) {
+    if (!MyThVue3.i18n) {
       return defaultValue
     }
-    const { t, te } = MyThVue3.i18n.global
+    const { t, te } = MyThVue3.i18n
 
     // Not is route
     // No page title
@@ -137,10 +137,10 @@ export const MHelpers = {
     }
 
     const result: ParseHeadersType[] = []
-    const { t, te } = MyThVue3.i18n.global
-    if (!MyThVue3.i18n?.global) {
+    if (!MyThVue3.i18n) {
       return result
     }
+    const { t, te } = MyThVue3.i18n
     headers.forEach((elm: string | ParseHeadersType) => {
       if (typeof elm !== 'string' && !elm?.name) return elm
       const isString = typeof elm === 'string'
@@ -195,14 +195,14 @@ export const MHelpers = {
    * @param string
    * @param args
    */
-  parseAttribute (string: string | { text: string } | any, ...args: any[]): string | undefined | any {
+  parseAttribute (string: string | { text: string } | any, ...args: []): string | undefined | any {
     const defaultValue = undefined
     if (!string) return string
 
-    if (!MyThVue3.i18n?.global) {
+    if (!MyThVue3.i18n) {
       return string
     }
-    const { t, te } = MyThVue3.i18n.global
+    const { t, te } = MyThVue3.i18n
     const key = string && typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
 
     if (!key) {
