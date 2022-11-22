@@ -1,6 +1,6 @@
 {
   "name": "@mythpe/js-helpers",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Js packages and tools used for faster coding",
   "main": "index.js",
   "scripts": {
@@ -31,7 +31,7 @@
     "url": "https://github.com/mythpe/js-helpers/issues"
   },
   "homepage": "https://github.com/mythpe/js-helpers#readme",
-  "devDependencies": {
+  "dependencies": {
     "@electron/remote": "^2.0.8",
     "@fawmi/vue-google-maps": "^0.9.79",
     "@googlemaps/js-api-loader": "^1.15.1",
@@ -54,7 +54,9 @@
     "vue": "^3.0.0",
     "vue-i18n": "^9.0.0",
     "vue-router": "^4.0.0",
-    "vue3-google-map": "^0.15.0",
+    "vue3-google-map": "^0.15.0"
+  },
+  "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
     "@quasar/app-vite": "^1.0.0",
     "@types/google.maps": "^3.50.5",
@@ -85,6 +87,5 @@
     "workbox-precaching": "^6.5.0",
     "workbox-routing": "^6.5.0",
     "workbox-strategies": "^6.5.0"
-  },
-  "dependencies": {}
+  }
 }
