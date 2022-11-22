@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
+    "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "esModuleInterop": true,
     "module": "esnext",
