@@ -5,5 +5,11 @@
  * https://www.4myth.com
  */
 
+import install from './vue3/InstallPlugin'
+
 export * from './utils'
 export * from './vue3'
+
+export const Vue3Plugin = {
+  install
+}

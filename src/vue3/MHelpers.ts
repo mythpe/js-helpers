@@ -195,7 +195,7 @@ export const MHelpers = {
    * @param string
    * @param args
    */
-  parseAttribute (string: string | { text: string } | any, ...args: []): string | undefined | any {
+  parseAttribute (string: string | { text: string } | any, ...args: any[]): string | undefined | any {
     const defaultValue = undefined
     if (!string) return string
 
