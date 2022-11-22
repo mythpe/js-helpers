@@ -1,8 +1,8 @@
 {
   "name": "@mythpe/js-helpers",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Js packages and tools used for faster coding",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "build": "babel src -d dist"
   },
