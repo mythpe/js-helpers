@@ -275,7 +275,7 @@ export function useDatatable ({
           rows.value = _data || []
         }
       } catch (e: any) {
-        if (e.response.status === 401) {
+        if (e?.response?.status === 401) {
           logoutDatatable()
           return e
         }
