@@ -1,5 +1,5 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2016-2022 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
  * https://www.4myth.com
@@ -64,7 +64,7 @@ type Vue3MGlobals = typeof GlobalsMyThVue3 & typeof MAlerts & typeof MHelpers
 export type MyThPlugin = {
   readonly version: string;
   i18n: I18n | Record<string, any>;
-  api: MyThVue3InstallOptions['api'];
+  api: MyThVue3InstallOptions['api'] | Record<string, any>;
   options: MyThVue3InstallOptions['options'];
 }
 
