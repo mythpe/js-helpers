@@ -1,11 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "types": [
-      "vite/client"
-    ],
-    "strictNullChecks": true,
-    "noImplicitThis": true,
     "allowJs": true,
     "esModuleInterop": true,
     "module": "esnext",

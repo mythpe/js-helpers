@@ -37,13 +37,10 @@ const classes = computed(() => {
     list.push('col-auto')
   }
 
-  if (props.col !== undefined) {
-    if (props.col === !0) {
-      list.push('col')
-    } else if (props.col && props.col?.toString()?.length > 0) {
-      list.push(`col-${props.col}`)
-    }
+  if (props.col && props.col?.toString()?.length > 0) {
+    list.push(`col-${props.col}`)
   }
+
   let k: keyof Props
   for (k in props) {
     if (k) {
