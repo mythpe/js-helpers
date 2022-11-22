@@ -4,8 +4,6 @@
  * Mobile: +966590470092
  * https://www.4myth.com
  */
+import { UseI18nOptions } from 'vue-i18n'
 
-export * from './utils'
-export * from './vue3'
-
-module.exports = {}
+export type UseTranslateOptions = UseI18nOptions

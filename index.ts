@@ -1,38 +1,16 @@
-import { ArabicNumbersMap, createAuthStorage, DownloadFileFromResponse, FromNumberFormat, GetYear, IsKsaMobile, ParseArabicNumber, ParseFormData, SortNumberFormatted, ToNumberFormat } from './src'
+/*
+ *  MyTh Ahmed Faiz Copyright © 2016-2022 All rights reserved.
+ *  Email: mythpe@gmail.com
+ *  Mobile: +966590470092
+ *  https://www.4myth.com
+ */
+import * as MyTh from './src/index'
+import install from './src/vue3/InstallPlugin'
 
-export {
-  createAuthStorage,
-  ArabicNumbersMap,
-  ParseArabicNumber,
-  FromNumberFormat,
-  ToNumberFormat,
-  IsKsaMobile,
-  ParseFormData,
-  DownloadFileFromResponse,
-  // HijriYear,
-  // HijriMonth,
-  // HijriDay,
-  // TodayDate,
-  // TodayTime,
-  GetYear,
-  SortNumberFormatted,
+export const Vue3Plugin = {
+  install
 }
 
-module.exports = {
-  createAuthStorage,
+export { MyTh }
 
-  ArabicNumbersMap,
-  ParseArabicNumber,
-  FromNumberFormat,
-  ToNumberFormat,
-  IsKsaMobile,
-  ParseFormData,
-  DownloadFileFromResponse,
-  // HijriYear,
-  // HijriMonth,
-  // HijriDay,
-  // TodayDate,
-  // TodayTime,
-  GetYear,
-  SortNumberFormatted,
-}
+module.exports = MyTh
