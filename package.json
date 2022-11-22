@@ -1,6 +1,6 @@
 {
   "name": "@mythpe/js-helpers",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Js packages and tools used for faster coding",
   "main": "index.ts",
   "scripts": {

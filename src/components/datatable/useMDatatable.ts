@@ -72,9 +72,9 @@ export function useDatatable ({
   const $q = useQuasar()
   const { t } = $myth.translate()
 
-  const getHeaders = $computed<ParseHeadersType[] | any[]>(() => $myth.parseHeaders(props.headers) ?? [])
+  const getHeaders = computed<ParseHeadersType[] | any[]>(() => $myth.parseHeaders(props.headers) ?? [])
 
-  const hasAddBtn = $computed<boolean>(() => {
+  const hasAddBtn = computed<boolean>(() => {
     if (props.hideAddBtn) {
       return !1
     }
@@ -94,7 +94,7 @@ export function useDatatable ({
   })
   const hasDestroyBtn = computed<boolean>(() => !props.hideDestroyBtn)
   const hasFilterDialog = $computed<boolean>(() => slots.filter !== undefined)
-  const hasMenu = computed<boolean>(() => (Boolean(props.pdf) || Boolean(props.excel) || hasFilterDialog || hasAddBtn))
+  const hasMenu = computed<boolean>(() => (Boolean(props.pdf) || Boolean(props.excel) || hasFilterDialog || hasAddBtn.value))
 
   const isUpdateMode = ref<boolean>(!1)
   const formMode = computed<'update' | 'create'>(() => isUpdateMode.value ? 'update' : 'create')
@@ -235,7 +235,7 @@ export function useDatatable ({
     return {
       filter: tableOptions.value.filter,
       search: filter || null,
-      headers: getHeaders.map(e => e.name),
+      headers: getHeaders.value.map(e => e.name),
       ids: tableOptions.value.selected.map((e: any) => e.id),
       indexType: 'index',
       requestWith: undefined,
@@ -298,7 +298,7 @@ export function useDatatable ({
         }),
         indexType: type,
         toUrl: props.exportToUrl,
-        headerItems: getHeaders.filter(e => e.field !== 'control')
+        headerItems: getHeaders.value.filter(e => e.field !== 'control')
       }
       try {
         const response = await getApiServices().export(data)
