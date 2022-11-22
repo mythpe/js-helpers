@@ -42,7 +42,7 @@ export const MyThVue3: MyThPlugin = {
    * Version of plugin
    */
   get version () {
-    return '2.0.0'
+    return '2.0.6'
   },
   i18n: {},
   api: {
