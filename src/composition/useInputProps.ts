@@ -69,7 +69,7 @@ export default function useInputProps (props: any) {
     }
     return undefined
   })
-  const getPlaceholder = $computed<string | undefined>(() => {
+  const getPlaceholder = computed<string | undefined>(() => {
     if (props.hidePlaceholder) {
       return props.placeholder !== undefined ? parseAttribute(props.placeholder) : undefined
     }
