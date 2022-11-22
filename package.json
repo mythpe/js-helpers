@@ -5,8 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
-    "lint:fix": "eslint --ext .js,.ts,.vue ./ --fix",
-    "publish": "npm publish --access=public"
+    "lint:fix": "eslint --ext .js,.ts,.vue ./ --fix"
   },
   "repository": {
     "type": "git",
