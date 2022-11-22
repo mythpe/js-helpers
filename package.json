@@ -4,7 +4,9 @@
   "description": "Js packages and tools used for faster coding",
   "main": "index.ts",
   "scripts": {
-    "build": "babel src -d dist"
+    "lint": "eslint --ext .js,.ts,.vue ./",
+    "lint:fix": "eslint --ext .js,.ts,.vue ./ --fix",
+    "publish": "npm publish --access=public"
   },
   "repository": {
     "type": "git",
