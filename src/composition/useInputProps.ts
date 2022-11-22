@@ -38,7 +38,7 @@ export const useDefaultInputProps = {
 export default function useInputProps (props: any) {
   const { parseAttribute } = useMyTh()
 
-  const getRules = $computed<string | undefined>(() => {
+  const getRules = computed<string | undefined>(() => {
     let rules = props.rules || []
     if (!rules) {
       rules = []
@@ -57,12 +57,12 @@ export default function useInputProps (props: any) {
 
     return rules.join('|') || undefined
   })
-  const hasRequired = $computed<boolean>(() => props.required === !0 ? !0 : getRules !== undefined && getRules?.indexOf('required') >= 0)
-  const getLabel = $computed<string | undefined>(() => {
+  const hasRequired = computed<boolean>(() => props.required === !0 ? !0 : getRules.value !== undefined && getRules.value?.indexOf('required') >= 0)
+  const getLabel = computed<string | undefined>(() => {
     const k = props.label === undefined && props.placeholder === undefined ? props.name : props.label
     if (k) {
       let label = parseAttribute(k) ?? k
-      if (label && hasRequired && !props.hideRequired) {
+      if (label && hasRequired.value && !props.hideRequired) {
         label = `${label} *`
       }
       return label

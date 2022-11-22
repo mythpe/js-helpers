@@ -93,8 +93,8 @@ export function useDatatable ({
     return slots.show !== undefined || props.showRoute !== undefined
   })
   const hasDestroyBtn = computed<boolean>(() => !props.hideDestroyBtn)
-  const hasFilterDialog = $computed<boolean>(() => slots.filter !== undefined)
-  const hasMenu = computed<boolean>(() => (Boolean(props.pdf) || Boolean(props.excel) || hasFilterDialog || hasAddBtn.value))
+  const hasFilterDialog = computed<boolean>(() => slots.filter !== undefined)
+  const hasMenu = computed<boolean>(() => (Boolean(props.pdf) || Boolean(props.excel) || hasFilterDialog.value || hasAddBtn.value))
 
   const isUpdateMode = ref<boolean>(!1)
   const formMode = computed<'update' | 'create'>(() => isUpdateMode.value ? 'update' : 'create')
