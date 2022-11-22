@@ -7,7 +7,7 @@
 
 <script lang="ts" setup>
 import { Form as VeeForm } from 'vee-validate'
-import { nextTick, UnwrapNestedRefs, watch } from 'vue'
+import { nextTick, ref, UnwrapNestedRefs, watch } from 'vue'
 import { MFormProps } from './models'
 
 interface Props extends MFormProps {
@@ -40,50 +40,50 @@ const onSubmit = (...args: any[]): void => {
   emit('submit', ...args)
 }
 
-const veeForm = $ref<typeof VeeForm>()
+const veeForm = ref<typeof VeeForm>()
 const resetForm = (...args: any[]) => {
-  if (veeForm) {
-    veeForm?.resetForm(...args)
+  if (veeForm.value) {
+    veeForm.value?.resetForm(...args)
   }
 }
 const validate = (...args: any[]) => {
-  if (veeForm) {
-    veeForm?.validate(...args)
+  if (veeForm.value) {
+    veeForm.value?.validate(...args)
   }
 }
 const setTouched = (...args: any[]) => {
-  if (veeForm) {
-    veeForm?.setTouched(...args)
+  if (veeForm.value) {
+    veeForm.value?.setTouched(...args)
   }
 }
 const setErrors = (...args: any[]) => {
-  if (veeForm) {
-    veeForm?.setErrors(...args)
+  if (veeForm.value) {
+    veeForm.value?.setErrors(...args)
   }
 }
 const setValues = (...args: any[]) => {
-  if (veeForm) {
-    veeForm?.setValues(...args)
+  if (veeForm.value) {
+    veeForm.value?.setValues(...args)
   }
 }
 const validateField = (...args: any[]) => {
-  if (veeForm) {
-    veeForm?.validateField(...args)
+  if (veeForm.value) {
+    veeForm.value?.validateField(...args)
   }
 }
 const setFieldTouched = (...args: any[]) => {
-  if (veeForm) {
-    veeForm?.setFieldTouched(...args)
+  if (veeForm.value) {
+    veeForm.value?.setFieldTouched(...args)
   }
 }
 const setFieldError = (...args: any[]) => {
-  if (veeForm) {
-    veeForm?.setFieldError(...args)
+  if (veeForm.value) {
+    veeForm.value?.setFieldError(...args)
   }
 }
 const setFieldValue = (...args: any[]) => {
-  if (veeForm) {
-    veeForm?.setFieldValue(...args)
+  if (veeForm.value) {
+    veeForm.value?.setFieldValue(...args)
   }
 }
 

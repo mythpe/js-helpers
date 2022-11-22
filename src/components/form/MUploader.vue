@@ -140,7 +140,7 @@ const {
 } = $myth
 const { t } = useTranslate()
 
-const uploader = $ref<QUploader>()
+const uploader = ref<QUploader>()
 const formRef = ref<Record<string, any>>(props.modelValue)
 const accepts: string[] = []
 
@@ -220,7 +220,7 @@ const onFinishUpload = ({
       const response = JSON.parse(xhr.responseText)
       if (response && response.data && response.data.length !== undefined && props.attachments) {
         formRef.value[props.attachments] = response.data
-        files.forEach(f => uploader?.removeFile(f))
+        files.forEach(f => uploader.value?.removeFile(f))
       }
     }
   } catch (e: any) {
@@ -270,7 +270,7 @@ const deleteMedia = (media: MUploaderMediaItem) => {
   })
 }
 const deleteUploaderFile = (file: File) => {
-  uploader?.removeFile(file)
+  uploader.value?.removeFile(file)
   nextTick(() => emit('remove-file', file))
 }
 const onClickDeleteAttachment = (file: File | MUploaderMediaItem) => {

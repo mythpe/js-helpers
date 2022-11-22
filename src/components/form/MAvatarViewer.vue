@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 
 import { QImgProps } from 'quasar'
-import { nextTick, onBeforeUnmount, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 
 import MFile from './MFile.vue'
 import { MAvatarViewerItem, MAvatarViewerProps } from './models'
@@ -87,44 +87,44 @@ type Events = {
   (e: 'update:errors', value: any | undefined): void;
 }
 const emit = defineEmits<Events>()
-const fileInput = $ref<typeof MFile>()
+const fileInput = ref<typeof MFile>()
 
-let blobUrl = $ref<string | null>(null)
-let isLoaded = $ref(!1)
+const blobUrl = ref<string | null>(null)
+const isLoaded = ref(!1)
 const revoke = () => {
-  if (blobUrl) {
-    URL.revokeObjectURL(blobUrl)
-    nextTick(() => (blobUrl = null))
+  if (blobUrl.value) {
+    URL.revokeObjectURL(blobUrl.value)
+    nextTick(() => (blobUrl.value = null))
   }
 }
 const toUrl = (data?: any) => {
   revoke()
-  blobUrl = URL.createObjectURL(data)
+  blobUrl.value = URL.createObjectURL(data)
   return blobUrl
 }
-let itemRef = $ref(props.modelValue)
-const hasSrc = $computed(() => {
+const itemRef = ref(props.modelValue)
+const hasSrc = computed(() => {
   return props.modelValue && (Boolean(props.modelValue[props.name]) || Boolean(props.modelValue[props.url]))
 })
-const getAvatarText = () => props.avatarText ? itemRef[props.avatarText]?.slice(0, 1)?.toUpperCase() : undefined
+const getAvatarText = () => props.avatarText ? itemRef.value[props.avatarText]?.slice(0, 1)?.toUpperCase() : undefined
 const setLoaded = () => {
-  isLoaded = !0
+  isLoaded.value = !0
 }
 const onClick = (e?: Event) => {
-  if (props.clearable && (hasSrc)) {
+  if (props.clearable && (hasSrc.value)) {
     onClearInput()
     return
   }
-  if (fileInput) {
-    fileInput?.pickFiles()
+  if (fileInput.value) {
+    fileInput.value?.pickFiles()
   }
   nextTick(() => emit('click', e))
 }
 const onClearInput = () => {
-  if (fileInput) {
-    fileInput?.removeAtIndex(0)
+  if (fileInput.value) {
+    fileInput.value?.removeAtIndex(0)
   }
-  itemRef = Object.assign(itemRef, {
+  itemRef.value = Object.assign(itemRef, {
     [props.url]: null,
     [`${props.name}Removed`]: !0
   })
@@ -132,7 +132,7 @@ const onClearInput = () => {
 
 onBeforeUnmount(() => {
   revoke()
-  itemRef = Object.assign(itemRef, {
+  itemRef.value = Object.assign(itemRef, {
     [props.name]: null
   })
   delete itemRef[`${props.name}Removed`]

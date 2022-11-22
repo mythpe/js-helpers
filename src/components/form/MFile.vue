@@ -78,15 +78,15 @@ const {
   getPlaceholder,
   inputErrors
 } = useInputProps(props)
-const fileInput = $ref<typeof QFile>()
+const fileInput = ref<typeof QFile>()
 const inputValue = ref(props.modelValue)
 
 const pickFiles = (...args: any[]) => {
-  fileInput?.pickFiles(...args)
+  fileInput.value?.pickFiles(...args)
 }
 
 const removeAtIndex = (...args: any[]) => {
-  fileInput?.removeAtIndex(...args)
+  fileInput.value?.removeAtIndex(...args)
 }
 defineExpose({
   pickFiles,
