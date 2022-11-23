@@ -10,4 +10,4 @@ export const Vue3Plugin = {
   install
 }
 
-export * from './src/index'
+export * from './src'

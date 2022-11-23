@@ -7,24 +7,26 @@
 
 import { AxiosResponse } from 'axios'
 import { QImgProps, QImgSlots, QTableProps, QTableSlots } from 'quasar'
-import { ComputedRef, Ref, VNode } from 'vue'
+import { ComputedRef, Ref, SetupContext, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
 
 export type TableFilterOptionsProps = GenericFormValues
 
-export type DatatableItem = GenericFormValues & {
+export type MDtItem = GenericFormValues & {
   id: string | number
 }
+
+export type MDtItemIndex = number | undefined
 
 export type PaginationOptionsProps = {
   /**
    * Column name (from column definition)
    */
-  sortBy?: string;
+  sortBy?: string | undefined;
   /**
    * Is sorting in descending order?
    */
-  descending?: boolean;
+  descending?: boolean| undefined;
   /**
    * Page number (1-based)
    */
@@ -32,7 +34,7 @@ export type PaginationOptionsProps = {
   /**
    * How many rows per page? 0 means Infinite
    */
-  rowsPerPage?: number;
+  rowsPerPage?: number| undefined;
   /**
    * For server-side fetching only. How many total database rows are there to be added to the table.
    */
@@ -57,10 +59,6 @@ export interface DatatableParams {
   sortDesc: number | undefined;
 }
 
-export type MDatatableDialogItem = DatatableItem
-
-export type MDatatableDialogIndex = number | undefined
-
 export type TableMetaServerProps = {
   current_page: number | null;
   last_page: number | null;
@@ -69,7 +67,7 @@ export type TableMetaServerProps = {
 
 export type TableOptionsProps = {
   loading: boolean
-  selected: DatatableItem[]
+  selected: MDtItem[]
   search: string | null
   filter: TableFilterOptionsProps
   tempFilter: TableFilterOptionsProps
@@ -80,25 +78,46 @@ export type TableDialogsProps = {
   show: boolean,
   form: boolean,
   isUpdate: boolean,
-  item: DatatableItem | null,
-  index?: MDatatableDialogIndex,
+  item: MDtItem | null,
+  index?: MDtItemIndex,
   errors: Record<string | number, string[] | string> | object,
 }
 
+export interface UseDatatableOptions {
+  props: any;
+  slots: SetupContext['slots'];
+  emit: {
+    (e: 'update:rows', value: MDtItem[]): void
+    (e: 'refresh'): void
+  };
+  rows: Ref<MDtItem[]>,
+  dialogs: Ref<TableDialogsProps>,
+  tableOptions: Ref<TableOptionsProps>,
+  metaServer: Ref<TableMetaServerProps>,
+  paginationOptions: Ref<PaginationOptionsProps>,
+}
+
 export type MDatatableScope = {
-  openShowDialog: (item: DatatableItem, index?: MDatatableDialogIndex) => void;
+  openShowDialog: (item: MDtItem, index?: MDtItemIndex) => void;
   closeShowDialog: () => void;
-  openUpdateDialog: (item: DatatableItem, index?: MDatatableDialogIndex) => void;
-  openCreateDialog: (item?: DatatableItem) => void;
+  openUpdateDialog: (item: MDtItem, index?: MDtItemIndex) => void;
+  openCreateDialog: (item?: MDtItem) => void;
   closeFormDialog: () => void;
-  deleteItem: (item: DatatableItem, index: number) => void;
+  onDeleteItem: (item: MDtItem, index: number) => void;
   refresh: (done?: () => void) => void;
   refreshNoUpdate: (done?: () => void) => void;
   tableOptions: Ref<TableOptionsProps>;
   isSingleSelectedItem: ComputedRef<boolean>;
-  firstSelectedItem: ComputedRef<DatatableItem>;
-  updateDatatableItem: (item: DatatableItem, index?: MDatatableDialogIndex) => void;
-  updateSelectedItems: ((selected: DatatableItem[]) => void);
+  firstSelectedItem: ComputedRef<MDtItem>;
+  updateDatatableItem: (item: MDtItem, index?: MDtItemIndex) => void;
+  updateSelectedItems: ((selected: MDtItem[]) => void);
+}
+
+export type GenericMDtBtn = Record<string, any> & {
+  name: string;
+  click: (item: MDtItem, index: number) => void;
+  show: boolean | undefined;
+  order?: number | undefined;
 }
 
 export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-cell-${string}`> {
@@ -120,19 +139,19 @@ export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-c
   }) => VNode[]);
 
   show: ((scope: {
-    item: MDatatableDialogItem,
-    index: MDatatableDialogIndex,
+    item: MDtItem,
+    index: MDtItemIndex,
   }) => VNode[]);
 
   form: ((scope: MDatatableScope & {
-    item: MDatatableDialogItem,
-    index: MDatatableDialogIndex,
+    item: MDtItem,
+    index: MDtItemIndex,
     form: VeeFieldFormScope,
   }) => VNode[]);
 
   'form-actions': ((scope: MDatatableScope & {
-    item: MDatatableDialogItem,
-    index: MDatatableDialogIndex,
+    item: MDtItem,
+    index: MDtItemIndex,
     form: VeeFieldFormScope,
   }) => VNode[]);
 
@@ -164,16 +183,17 @@ export interface MDatatableProps extends QTableProps {
   hideUpdateBtn?: boolean | undefined;
   hideShowBtn?: boolean | undefined;
   hideDestroyBtn?: boolean | undefined;
-  defaultItem?: Partial<DatatableItem> | undefined;
+  defaultItem?: Partial<MDtItem> | undefined;
   noAutoMessage?: boolean | undefined;
   searchDebounce?: string | number | undefined;
   withIndex?: string | string[] | undefined;
   withShow?: string | string[] | undefined;
   withUpdate?: string | string[] | undefined;
-  serviceName: string | (() => Promise<AxiosResponse>);
+  serviceName: string | (() => Promise<AxiosResponse>) | Record<string, (() => Promise<AxiosResponse>)>;
   createRoute?: string | undefined;
   updateRoute?: string | undefined;
   showRoute?: string | undefined;
+  contextItems?: GenericMDtBtn[] | undefined;
 }
 
 export interface MDtAvatarProps extends QImgProps {
@@ -203,6 +223,7 @@ export interface MDtBtnProps extends MBtnProps {
   tooltip?: string;
   color?: string | undefined;
   icon?: string | undefined;
+  listItem?: boolean | undefined;
 }
 
 export interface MDtBtnSlots extends MBtnSlots {

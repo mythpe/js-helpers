@@ -5,15 +5,8 @@
   - https://www.4myth.com
   -->
 
-<script lang="ts" setup>
-
-</script>
-
 <template>
   <MInput
-    fill-mask
-    mask="##########"
     mobile
-    unmasked-value
   />
 </template>

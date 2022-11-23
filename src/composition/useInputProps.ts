@@ -6,7 +6,7 @@
  */
 
 import { computed } from 'vue'
-import { useMyTh } from '../vue3/MyThVue3'
+import { useMyTh } from '../vue3'
 
 export const useDefaultInputProps = {
   auto: undefined,

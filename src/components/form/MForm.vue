@@ -11,13 +11,13 @@ import { nextTick, ref, UnwrapNestedRefs, watch } from 'vue'
 import { MFormProps } from './models'
 
 interface Props extends MFormProps {
-  form: UnwrapNestedRefs<Record<string, any>>;
-  errors: UnwrapNestedRefs<Record<string, string[]>>;
+  form?: UnwrapNestedRefs<Record<string, any>> | undefined;
+  errors?: UnwrapNestedRefs<Record<string, string[]>> | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  form: undefined,
-  errors: undefined
+  form: () => ({}),
+  errors: () => ({})
 })
 
 type Events = {

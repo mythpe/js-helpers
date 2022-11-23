@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
 
-import { defineProps, onMounted, ref, watch } from 'vue'
+import { defineProps, onMounted, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MInputProps } from './models'
@@ -71,10 +71,10 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined
 })
 
-type EmitsTypes = {
-  (e: 'update:modelValue', value: any): void
-}
-const emits = defineEmits<EmitsTypes>()
+// type EmitsTypes = {
+//   (e: 'update:modelValue', value: any): void
+// }
+// const emits = defineEmits<EmitsTypes>()
 
 const inputValue = ref(props.modelValue)
 const {
@@ -83,9 +83,6 @@ const {
   getPlaceholder
 } = useInputProps(props)
 
-watch(inputValue, (v) => {
-  emits('update:modelValue', v)
-})
 const ready = ref(!1)
 onMounted(() => {
   ready.value = !0
@@ -100,7 +97,7 @@ export default {
 
 <template>
   <q-slide-transition>
-    <m-col
+    <MCol
       v-if="ready"
       :auto="auto"
       :col="col"
@@ -110,7 +107,7 @@ export default {
       :xs="xs"
     >
       <VeeField
-        v-slot="fieldProps"
+        v-slot="fieldScope"
         v-model="inputValue"
         :name="name"
         :rules="getRules"
@@ -120,8 +117,8 @@ export default {
           :borderless="borderless"
           :clearable="clearable"
           :dense="dense"
-          :error="fieldProps.errors.length>0"
-          :error-message="fieldProps.errorMessage"
+          :error="fieldScope.errors.length>0"
+          :error-message="fieldScope.errorMessage"
           :filled="filled"
           :hide-bottom-space="hideBottomSpace"
           :label="getLabel"
@@ -131,7 +128,7 @@ export default {
           :placeholder="getPlaceholder"
           :stack-label="stackLabel"
           :standout="standout"
-          v-bind="{...$attrs,...fieldProps.field}"
+          v-bind="{...$attrs,...fieldScope.field}"
         >
           <template
             v-for="(_,slot) in $slots"
@@ -150,9 +147,9 @@ export default {
           </template>
         </q-input>
         <slot
-          v-bind="fieldProps"
+          v-bind="fieldScope"
         />
       </VeeField>
-    </m-col>
+    </MCol>
   </q-slide-transition>
 </template>

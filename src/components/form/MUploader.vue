@@ -7,11 +7,11 @@
 
 <script lang="ts" setup>
 import { AxiosResponse } from 'axios'
-import { QUploader } from 'quasar'
+import { QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
-import { defineProps, nextTick, ref, withDefaults } from 'vue'
+import { defineProps, nextTick, ref, watch, withDefaults } from 'vue'
+import { useMyTh } from '../../vue3'
 import { useTranslate } from '../../vue3/MTranslate'
-import { useMyTh } from '../../vue3/MyThVue3'
 import { ColStyleType } from '../grid/models'
 import { MUploaderMediaItem, MUploaderProps, MUploaderXhrInfo } from './models'
 
@@ -23,67 +23,27 @@ interface Props extends MUploaderProps {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  /**
-   * Put component in disabled mode
-   */
   disable?: boolean | undefined;
-  /**
-   * Put component in readonly mode
-   */
   readonly?: boolean | undefined;
-  /**
-   * Comma separated list of unique file type specifiers. Maps to 'accept' attribute of native input type=file element
-   */
   accept?: string | undefined;
-  /** Support for uploading images */
   images?: boolean | undefined;
-  /** Support for uploading videos  */
   video?: boolean | undefined;
-  /** Support for uploading pdf  */
   pdf?: boolean | undefined;
-  /** Support for uploading excel  */
   excel?: boolean | undefined;
-  /** Uploader style */
   style?: string;
-  /**
-   * Upload files immediately when added
-   */
   autoUpload?: boolean | undefined;
-  /** Maximum size of individual file in megabytes */
   maxFileSize?: number | string | undefined;
-  /** Maximum size of all files combined in megabytes */
   maxTotalSize?: number | string | undefined;
-  /** Maximum number of files to contain */
   maxFiles?: number | string | undefined;
-  /**
-   * Field name for each file upload; This goes into the following header: 'Content-Disposition: form-data; name="__HERE__"; filename="somefile.png"; If using a function then for best performance, reference it from your scope and do not define it inline
-   * Default value: (file) => file.name
-   * @param files The current file being processed
-   * @returns Field name for the current file upload
-   */
   fieldName?: string | ((files: File) => string) | undefined;
-  /**
-   * Object with additional fields definitions (used by Form to be uploaded);
-   */
   formFields?: Record<string, any> | undefined;
-  /**
-   * Label for the uploader
-   */
   label?: string | undefined;
-  /** The url to which the files will be uploaded to */
   url: string | ((files: readonly File[]) => string);
-  /** Object of data */
   modelValue: Record<string, any | any[]>;
-  /** Input errors */
   errors?: string[] | undefined;
-  /** The name of the field containing the attachments */
   attachments: string;
-  /** Hide delete media items from uploader, no delete media For API */
   hideDeleteMedia?: boolean | undefined;
-  /**
-   * Method to delete media
-   */
-  deleteMedia?: (() => Promise<AxiosResponse>) | undefined;
+  deleteMedia?: ((media: MUploaderMediaItem) => Promise<AxiosResponse>) | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -101,7 +61,6 @@ const props = withDefaults(defineProps<Props>(), {
   video: !1,
   pdf: !1,
   excel: !1,
-  // style: () => 'max-width: 300px',
   style: () => 'width: 100%',
   autoUpload: !1,
   maxFileSize: 2,
@@ -131,7 +90,7 @@ interface Events {
 }
 
 const emit = defineEmits<Events>()
-
+const $q = useQuasar()
 const $myth = useMyTh()
 const {
   alertError,
@@ -233,6 +192,9 @@ const onFinishUpload = ({
   }
 }
 const deleting = ref(!1)
+watch(deleting, (v) => {
+  (v ? $q.loading.show() : $q.loading.hide())
+})
 const deleteMedia = (media: MUploaderMediaItem) => {
   if (deleting.value || props.hideDeleteMedia) {
     return
@@ -245,7 +207,7 @@ const deleteMedia = (media: MUploaderMediaItem) => {
           _message,
           _success,
           _data
-        }: any = await props.deleteMedia()
+        }: any = await props.deleteMedia(media)
         _message && alertSuccess(_message)
         r = Boolean(_success)
         if (r) {
@@ -295,7 +257,7 @@ export default {
 }
 </script>
 <template>
-  <m-col
+  <MCol
     :auto="auto"
     :col="col"
     :lg="lg"
@@ -422,5 +384,5 @@ export default {
         </q-list>
       </template>
     </q-uploader>
-  </m-col>
+  </MCol>
 </template>

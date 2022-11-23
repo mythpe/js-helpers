@@ -6,7 +6,7 @@
  */
 
 import { Dialog, Notify, QNotifyCreateOptions } from 'quasar'
-import { Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from '../types/MAlerts'
+import { Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from '../types/m-alerts'
 import { MyThVue3 } from '../vue3/MyThVue3'
 
 export const MAlerts = {

@@ -12,17 +12,19 @@
 
 import { AxiosInstance } from 'axios'
 import { defineEmits, defineProps, onBeforeMount, onMounted, ref, watch } from 'vue'
-import { useMyTh } from '../../vue3/MyThVue3'
+import { useMyTh } from '../../vue3'
 import { MAxiosProps } from './models'
 
 interface Props extends MAxiosProps {
   modelValue?: any | undefined;
+  requestWith?: string | undefined;
   options?: any[];
   service: string | (() => Promise<AxiosInstance>);
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
+  requestWith: undefined,
   options: () => ([]),
   service: undefined
 })
@@ -34,6 +36,7 @@ interface Emits {
 const emit = defineEmits<Emits>()
 const loading = ref<boolean>(!1)
 const items = ref<any[]>([])
+const model = ref<any>(props.modelValue)
 
 onBeforeMount(() => {
   items.value = props.options ?? []
@@ -50,7 +53,7 @@ onMounted(async () => {
 
     loading.value = !0
     try {
-      const { _data } = await method()
+      const { _data } = await method({ requestWith: props.requestWith })
       items.value = _data || []
       emit('items', _data || [])
     } catch (e) {
@@ -66,8 +69,9 @@ onMounted(async () => {
 
 <template>
   <MSelect
+    v-model="model"
     :loading="loading"
-    :model-value="modelValue"
     :options="items"
+    v-bind="$attrs"
   />
 </template>

@@ -124,8 +124,20 @@ export const Helpers = {
 
         return axios().get(url, config)
       },
-      uploadAttachments: (id: UrlType, data = {}, config = {}) => axios().post(makeUrl(`${id}/Attachment/Upload`), data, config),
-      deleteAttachment: (id: UrlType, fileId: string | number) => axios().delete(makeUrl(`${id}/Attachment/${fileId}/Delete`))
+      uploadAttachments (id: UrlType, data: Record<string, any> | boolean, config?: AxiosRequestConfig) {
+        const _url = makeUrl(`${id}/Attachment/Upload`)
+        if (typeof data === 'boolean') {
+          return _url
+        }
+        return axios().post(_url, data, config)
+      },
+      deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig | boolean) {
+        const _url = makeUrl(`${id}/Attachment/${fileId}/Delete`)
+        if (typeof config === 'boolean') {
+          return _url
+        }
+        return axios().delete(_url, config)
+      }
     }
     return methods
   },

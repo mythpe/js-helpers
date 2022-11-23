@@ -5,8 +5,8 @@
  * https://www.4myth.com
  */
 
-export * from './MAlerts'
-export * from './MGeolocation'
-export * from './MHelpers'
-export * from './MTranslate'
-export * from './MyThVue3'
+export * from './m-alerts'
+export * from './m-geolocation'
+export * from './m-helpers'
+export * from './m-translate'
+export * from './myth-vue3'

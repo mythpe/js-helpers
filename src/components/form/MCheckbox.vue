@@ -7,7 +7,7 @@
 
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
-import { defineProps } from 'vue'
+import { defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MCheckboxProps } from './models'
@@ -37,7 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   val: undefined
 })
-
+const inputValue = ref(props.modelValue)
 const {
   getRules,
   getLabel,
@@ -53,7 +53,7 @@ export default {
 </script>
 
 <template>
-  <m-col
+  <MCol
     :auto="auto"
     :col="col"
     :lg="lg"
@@ -63,6 +63,7 @@ export default {
   >
     <VeeField
       v-slot="fieldProps"
+      v-model="inputValue"
       :name="name"
       :rules="getRules"
       v-bind="$attrs"
@@ -96,5 +97,5 @@ export default {
         v-bind="fieldProps"
       />
     </VeeField>
-  </m-col>
+  </MCol>
 </template>

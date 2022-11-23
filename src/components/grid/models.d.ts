@@ -23,6 +23,7 @@ export interface MCardProps {
   titleFromRoute?: boolean | undefined;
   title?: string | (() => string) | undefined;
   subtitle?: string | (() => string) | undefined;
+  backRoute?: boolean | undefined;
 }
 
 export interface MCardSlots {

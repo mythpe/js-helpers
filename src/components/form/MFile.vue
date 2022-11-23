@@ -9,7 +9,7 @@
 
 import { QFile } from 'quasar'
 import { Field as VeeField } from 'vee-validate'
-import { defineProps, ref } from 'vue'
+import { computed, defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MFileProps } from './models'
@@ -72,14 +72,24 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined
 })
 
+// type Events = {
+//   (e: 'update:modelValue', value: any | undefined): void;
+// }
+// const emit = defineEmits<Events>()
+
 const {
   getRules,
   getLabel,
   getPlaceholder,
   inputErrors
 } = useInputProps(props)
+
 const fileInput = ref<typeof QFile>()
 const inputValue = ref(props.modelValue)
+// const inputValue = computed({
+//   get: () => props.modelValue,
+//   set: (v) => emit('update:modelValue', v)
+// })
 
 const pickFiles = (...args: any[]) => {
   fileInput.value?.pickFiles(...args)
@@ -95,7 +105,7 @@ defineExpose({
 </script>
 
 <template>
-  <m-col
+  <MCol
     :auto="auto"
     :col="col"
     :lg="lg"
@@ -104,45 +114,51 @@ defineExpose({
     :xs="xs"
   >
     <VeeField
+      v-slot="fieldScope"
       v-model="inputValue"
       :name="name"
       :rules="getRules"
-      class="hidden"
-      v-bind="$attrs"
-    />
-    <q-file
-      ref="fileInput"
-      :borderless="borderless"
-      :clearable="clearable"
-      :dense="dense"
-      :error="inputErrors.length > 0"
-      :error-message="inputErrors[0]"
-      :filled="filled"
-      :hide-bottom-space="hideBottomSpace"
-      :label="getLabel"
-      :loading="loading"
-      :model-value="modelValue"
-      :outlined="outlined"
-      :placeholder="getPlaceholder"
-      :stack-label="stackLabel"
-      :standout="standout"
       v-bind="$attrs"
     >
-      <template
-        v-for="(_,slot) in $slots"
-        :key="slot"
-        #[slot]="inputSlot"
+      <q-file
+        ref="fileInput"
+        :model-value="inputValue"
+        :borderless="borderless"
+        :clearable="clearable"
+        :dense="dense"
+        :error="inputErrors.length > 0"
+        :error-message="inputErrors[0]"
+        :filled="filled"
+        :hide-bottom-space="hideBottomSpace"
+        :label="getLabel"
+        :loading="loading"
+        :outlined="outlined"
+        :placeholder="getPlaceholder"
+        :stack-label="stackLabel"
+        :standout="standout"
+        v-bind="$attrs"
+        @change="fieldScope.handleChange"
+        @blur="fieldScope.handleBlur"
       >
-        <slot
-          v-if="inputSlot"
-          :name="slot"
-          v-bind="inputSlot"
-        />
-        <slot
-          v-else
-          :name="slot"
-        />
-      </template>
-    </q-file>
-  </m-col>
+        <template
+          v-for="(_,slot) in $slots"
+          :key="slot"
+          #[slot]="inputSlot"
+        >
+          <slot
+            v-if="inputSlot"
+            :name="slot"
+            v-bind="inputSlot"
+          />
+          <slot
+            v-else
+            :name="slot"
+          />
+        </template>
+      </q-file>
+      <slot
+        v-bind="fieldScope"
+      />
+    </VeeField>
+  </MCol>
 </template>

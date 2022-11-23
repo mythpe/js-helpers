@@ -8,7 +8,6 @@
 import { AxiosInstance, AxiosResponse } from 'axios'
 import { GlobalComponentConstructor } from 'quasar'
 import { I18n, VueI18n } from 'vue-i18n'
-import { MDatatableProps, MDatatableSlots, MDtAvatarProps, MDtAvatarSlots, MDtBtnProps, MDtBtnSlots } from '../components/datatable/models'
 import {
   MAvatarViewerProps,
   MAvatarViewerSlots,
@@ -16,18 +15,36 @@ import {
   MAxiosSlots,
   MBtnProps,
   MBtnSlots,
+  MCardProps,
+  MCardSlots,
   MCheckboxProps,
   MCheckboxSlots,
+  MColProps,
+  MColSlots,
+  MColumnProps,
+  MColumnSlots,
+  MContainerProps,
+  MContainerSlots,
+  MDatatableProps,
+  MDatatableSlots,
   MDateProps,
   MDateSlots,
+  MDtAvatarProps,
+  MDtAvatarSlots,
+  MDtBtnProps,
+  MDtBtnSlots,
   MFileProps,
   MFileSlots,
   MFormProps,
   MFormSlots,
+  MGoogleMapsProps,
+  MGoogleMapsSlots,
   MInputProps,
   MInputSlots,
   MPickerProps,
   MPickerSlots,
+  MRowProps,
+  MRowSlots,
   MSelectProps,
   MSelectSlots,
   MTimeProps,
@@ -36,11 +53,8 @@ import {
   MToggleSlots,
   MUploaderProps,
   MUploaderSlots
-} from '../components/form/models'
-import { MGoogleMapsProps, MGoogleMapsSlots } from '../components/google/models'
-import { MCardProps, MCardSlots, MColProps, MColSlots, MColumnProps, MColumnSlots, MContainerProps, MContainerSlots, MRowProps, MRowSlots } from '../components/grid/models'
-import { MAlerts } from '../vue3/MAlerts'
-import { MHelpers } from '../vue3/MHelpers'
+} from '../components'
+import { MAlerts, MHelpers } from '../vue3'
 import { GlobalsMyThVue3 } from '../vue3/MyThVue3'
 
 export type MyThVue3InstallOptions = {
@@ -62,7 +76,6 @@ export type MyThVue3InstallOptions = {
 type Vue3MGlobals = typeof GlobalsMyThVue3 & typeof MAlerts & typeof MHelpers
 
 export type MyThPlugin = {
-  readonly version: string;
   i18n: I18n | Record<string, any>;
   api: MyThVue3InstallOptions['api'] | Record<string, any>;
   options: MyThVue3InstallOptions['options'];
@@ -103,3 +116,5 @@ declare module '@vue/runtime-core' {
     $myth: UseMyThVue3
   }
 }
+
+export {}

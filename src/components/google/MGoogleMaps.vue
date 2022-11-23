@@ -6,70 +6,101 @@
   -->
 
 <script lang="ts" setup>
-import _ from 'lodash'
-import { computed, nextTick, ref, watch } from 'vue'
+import { useQuasar } from 'quasar'
+import { computed, ref, watch } from 'vue'
 import { GoogleMap, Marker } from 'vue3-google-map'
-import { useGeolocation } from '../../vue3/MGeolocation'
-import { CoordsType, GeocoderResult, GoogleGeocoder, GoogleMapsApi, GoogleMapsMVCObject, GooglePlacesService, MapCoordsClick, MGoogleMapsProps, PlaceResult } from './models'
+import { useGeolocation, useTranslate } from '../../vue3'
+import { ColStyleType } from '../grid/models'
+import {
+  CoordsType,
+  GeocoderResult,
+  GoogleGeocoder,
+  GoogleMapsApi,
+  GoogleMapsMVCObject,
+  GooglePlacesService,
+  MapCoordsClick,
+  MGoogleMapsProps,
+  PlaceResult
+} from './models'
 
 interface Props extends MGoogleMapsProps {
+  auto?: boolean | undefined;
+  col?: ColStyleType;
+  xs?: ColStyleType;
+  sm?: ColStyleType;
+  md?: ColStyleType;
+  lg?: ColStyleType;
+  xl?: ColStyleType;
   style?: string | undefined;
   center?: CoordsType | undefined;
   zoom?: number | undefined;
-  markers?: CoordsType | CoordsType[] | undefined;
-  oneMarker?: boolean | undefined;
+  markers?: CoordsType[] | undefined;
+  centerMarker?: boolean | undefined;
   label?: string | undefined;
   errors?: Record<string, any> | undefined;
+  region?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  auto: undefined,
+  col: undefined,
+  xs: undefined,
+  sm: undefined,
+  md: undefined,
+  lg: undefined,
+  xl: undefined,
   style: 'width: 100%; height: 350px',
   center: undefined,
-  markers: undefined,
+  markers: () => ([]),
   zoom: 17,
-  oneMarker: !0,
+  centerMarker: !0,
   label: undefined,
-  errors: undefined
+  errors: undefined,
+  region: 'sa'
 })
 
 interface Events {
   (e: 'selectPlace', place: PlaceResult): void;
 
-  (e: 'onMapClick', event: CoordsType): void;
+  (e: 'mapClick', event: CoordsType): void;
 
-  (e: 'set-map-center', event: CoordsType): void;
+  (e: 'mapCenter', event: CoordsType): void;
 
-  (e: 'set-map-address', event?: GeocoderResult | PlaceResult): void;
+  (e: 'mapAddress', event?: GeocoderResult | PlaceResult): void;
 }
 
-const emits = defineEmits<Events>()
+const emit = defineEmits<Events>()
 const { coords } = useGeolocation()
+const $q = useQuasar()
+const { t } = useTranslate()
 
 const getCenter = computed<CoordsType>(() => {
-  return props.center ?? {
+  if (props.center?.lat && props.center?.lng) {
+    return props.center
+  }
+  return {
     lat: coords.value.latitude,
     lng: coords.value.longitude
   }
 })
-const selectedMarker = ref<CoordsType | null>(null)
-
-const getMarkers = computed<CoordsType[]>(() => {
-  // if (props.markers === undefined && props.center) {
-  //   return [props.center]
-  // }
-  if (props.markers) {
-    if (_.isArray(props.markers)) {
-      return props.markers
-    }
-    return [props.markers]
-  }
-  if (props.oneMarker && props.center) {
-    return [props.center]
-  }
-  // console.log('position', selectedMarker.value)
-  // return []
-  return selectedMarker.value ? [selectedMarker.value] : []
-})
+const markersRef = ref(props.markers)
+// const getMarkers = computed<CoordsType[]>(() => {
+//   // if (props.markers === undefined && props.center) {
+//   //   return [props.center]
+//   // }
+//   if (props.markers) {
+//     if (_.isArray(props.markers)) {
+//       return props.markers
+//     }
+//     return [props.markers]
+//   }
+//   if (props.centerMarker && props.center) {
+//     return [props.center]
+//   }
+//   // console.log('position', selectedMarker.value)
+//   // return []
+//   return selectedMarker.value ? [selectedMarker.value] : []
+// })
 const search = ref<string | undefined>()
 const loading = ref(!1)
 const mapRef = ref<any | { api: GoogleMapsApi, map: GoogleMapsMVCObject }>(null)
@@ -83,65 +114,148 @@ const onSearch = (query: string | null) => {
   }
   loading.value = !0
   // eslint-disable-next-line no-undef
-  placeService.value?.textSearch({ query }, (res: PlaceResult[] | null) => {
+  // console.log(placeService.value)
+  // placeService.value?.textSearch({ query }, (res: PlaceResult[] | null) => {
+  // placeService.value?.findPlaceFromQuery({ query, language: $q.lang.isoName, fields: ['formatted_address', 'geometry'] }, (res: PlaceResult[] | null) => {
+  placeService.value?.textSearch({
+    query,
+    region: props.region,
+    language: $q.lang.isoName
+  }, (res: PlaceResult[] | null) => {
     loading.value = !1
+    console.log(res)
     searchResults.value = res?.slice(0, 20) ?? []
+    // console.log(b)
   })
 }
 const onSelectSearch = (place: PlaceResult) => {
-  emits('selectPlace', place)
+  emit('selectPlace', place)
+  place.formatted_address && emitMapAddress(place)
   search.value = place.formatted_address
-  nextTick(() => {
-    if (props.oneMarker) {
-      if (place.geometry?.location?.lat() && place.geometry?.location?.lng()) {
-        setMapCenter({
-          lat: place.geometry?.location?.lat(),
-          lng: place.geometry?.location?.lng()
-        })
-      }
-      setMapAddress(place)
+  searchResults.value = null
+  if (place.geometry?.location?.lat() && place.geometry?.location?.lng()) {
+    const pos = {
+      lat: place.geometry?.location?.lat(),
+      lng: place.geometry?.location?.lng()
     }
-    searchResults.value = null
-  })
-}
-const setMapCenter = (e: CoordsType) => {
-  emits('set-map-center', e)
-  if (props.oneMarker) {
-    selectedMarker.value = e
-    mapRef.value?.map?.setCenter(e)
-    getAddressFromCords(e)
+    emitSetMapCenter(pos)
   }
+}
+const emitSetMapCenter = (e: CoordsType) => {
+  emit('mapCenter', e)
+  setAddressFromCoords(e)
+  // if (props.centerMarker) {
+  // markersRef.value = [e]
+  // setAddressFromCoords(e)
+  // setTimeout(() => mapRef.value?.map?.setCenter(e), 600)
+  // }
 }
 const onClickMap = ({ latLng }: { latLng: MapCoordsClick }) => {
   const position = latLng.toJSON()
-  emits('onMapClick', position)
-  setMapCenter(position)
+  emit('mapClick', position)
+  emitSetMapCenter(position)
 }
 const onDragend = ({ latLng }: { latLng: MapCoordsClick }) => {
-  setMapCenter(latLng.toJSON())
+  if (props.centerMarker) {
+    emitSetMapCenter(latLng.toJSON())
+  }
 }
-const setMapAddress = (e?: GeocoderResult | PlaceResult) => {
-  emits('set-map-address', e)
+const emitMapAddress = (e?: GeocoderResult | PlaceResult) => {
+  emit('mapAddress', e)
 }
-const getAddressFromCords = async (e: CoordsType): Promise<void> => {
+const setAddressFromCoords = async (location: CoordsType): Promise<void> => {
   const r = await Geocoder.value?.geocode({
-    location: e,
-    region: 'SA'
+    location,
+    region: props.region
   })
   if (r?.results?.length) {
-    setMapAddress(r.results[0])
+    emitMapAddress(r.results[0])
   }
 }
 
-watch([mapRef, () => mapRef.value?.ready], () => {
-  if (mapRef.value && mapRef.value.ready) {
-    if (placeService.value === null) {
+const infoWindow = ref()
+
+function handleLocationError (
+  map: any,
+  browserHasGeolocation: boolean,
+  infoWindow: any,
+  pos: any
+) {
+  infoWindow.setPosition(pos)
+  infoWindow.setContent(
+    browserHasGeolocation
+      ? t('messages.errors.location_permissions')
+      : 'Error: Your browser doesn\'t support geolocation.'
+  )
+  infoWindow.open(map)
+}
+
+const isInitCurrentLocation = ref(!1)
+const currentLocationRef = ref()
+const iniCurrentLocation = () => {
+  // eslint-disable-next-line no-undef
+  mapRef.value.map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(currentLocationRef.value.$el)
+  isInitCurrentLocation.value = !0
+}
+const findCurrentLocation = () => {
+  if (!mapRef.value?.ready) return
+
+  const map = mapRef.value?.map
+  const api = mapRef.value?.api
+
+  if (!map) return
+  infoWindow.value = new api.InfoWindow()
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position: any) => {
+        const pos = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        }
+        emitSetMapCenter(pos)
+      },
+      () => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        handleLocationError(map, true, infoWindow.value, map.getCenter()!)
+      }
+    )
+  } else {
+    // Browser doesn't support Geolocation
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    handleLocationError(map, false, infoWindow.value, map.getCenter()!)
+  }
+}
+
+const searchCard = ref()
+const isInitSearchCard = ref(!1)
+const iniSearchCard = () => {
+  // eslint-disable-next-line no-undef
+  mapRef.value.map.controls[google.maps.ControlPosition.TOP_CENTER].push(searchCard.value.$el)
+  isInitSearchCard.value = !0
+}
+
+watch([mapRef, () => mapRef.value?.map], () => {
+  if (mapRef.value && mapRef.value?.ready) {
+    if (!placeService.value) {
       placeService.value = new mapRef.value.api.places.PlacesService(mapRef.value.map)
     }
-    if (Geocoder.value === null) {
+    if (!Geocoder.value) {
       Geocoder.value = new mapRef.value.api.Geocoder()
     }
+    if (!isInitCurrentLocation.value) {
+      iniCurrentLocation()
+    }
+    if (!isInitSearchCard.value) {
+      iniSearchCard()
+    }
   }
+})
+const computedCenterMarker = computed(() => {
+  if (props.center?.lng && props.center?.lng) {
+    return { position: props.center }
+  }
+
+  return null
 })
 </script>
 
@@ -153,102 +267,126 @@ export default {
 </script>
 
 <template>
-  <m-row class="m--google-maps">
-    <m-col col="12">
-      <p class="text-body1 q-ma-none">
-        {{ label }}
-      </p>
-      <q-slide-transition>
-        <p
-          v-if="errors?.latitude?.length>0 || errors?.longitude?.length>0"
-          class="text-body2 q-ma-none text-negative"
-        >
-          {{ errors.latitude[0] }}
+  <MCol
+    :auto="auto"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :sm="sm"
+    :xs="xs"
+  >
+    <MRow
+      class="m--google-maps"
+    >
+      <MCol col="12">
+        <p class="text-body1 q-ma-none">
+          {{ label }}
         </p>
-      </q-slide-transition>
-    </m-col>
-    <m-col col="12">
-      <q-card class="m--gm-searchbar-card">
-        <q-input
-          v-model="search"
-          :label="$t('search')"
-          :loading="loading"
-          clearable
-          debounce="600"
-          dense
-          outlined
-          @update:model-value="onSearch"
-        >
-          <template #append>
-            <q-icon name="o_search" />
-          </template>
-        </q-input>
-        <div
-          class="m--gm-search-result"
-        >
-          <q-card
-            class="scroll"
-            square
+        <q-slide-transition>
+          <p
+            v-if="errors?.latitude?.length>0 || errors?.longitude?.length>0"
+            class="text-body2 q-ma-none text-negative"
           >
-            <q-list
-              bordered
-              dense
-              separator
-              style="max-height: 250px;"
-            >
-              <q-item
-                v-for="(r,i) in searchResults"
-                :key="`search-item-${i}`"
-                clickable
-                @click="onSelectSearch(r)"
-              >
-                <q-item-section no-wrap>
-                  <q-item-label lines="1">
-                    <!--<q-img-->
-                    <!--  v-if="r.icon"-->
-                    <!--  :src="r.icon"-->
-                    <!--  sizes="10px"-->
-                    <!--  height="20px"-->
-                    <!--  width="20px"-->
-                    <!--  ratio="1"-->
-                    <!--/>-->
-                    {{ r.name }}
-                  </q-item-label>
-                  <q-item-label lines="1">
-                    {{ r.formatted_address }}
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-              <q-item v-if="searchResults && searchResults.length === 0 && !loading && search">
-                <q-item-section>
-                  {{ $t('messages.no_items') }}
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card>
-        </div>
-      </q-card>
-    </m-col>
-    <m-col col="12">
-      <GoogleMap
-        ref="mapRef"
-        :api-key="GOOGLE_API_KEY"
-        :center="getCenter"
-        :language="AppLocale"
-        :style="style"
-        :zoom="zoom"
-        v-bind="$attrs"
-        @click="onClickMap"
+            {{ errors.latitude[0] }}
+          </p>
+        </q-slide-transition>
+      </MCol>
+      <MCol col="12">
+        <GoogleMap
+          ref="mapRef"
+          :center="getCenter"
+          :language="appLocale"
+          :style="style"
+          :zoom="zoom"
+          v-bind="$attrs"
+          @click="onClickMap"
+        >
+          <Marker
+            v-if="computedCenterMarker"
+            :options="computedCenterMarker"
+          />
+          <Marker
+            v-for="(marker,i) in markersRef"
+            :key="`marker-${i}`"
+            :options="marker"
+            @dragendf="onDragend"
+          />
+        </GoogleMap>
+      </MCol>
+    </MRow>
+    <q-card
+      ref="searchCard"
+      class="m--gm-searchbar-card"
+    >
+      <q-input
+        v-model="search"
+        :label="$t('search')"
+        :loading="loading"
+        clearable
+        debounce="600"
+        dense
+        outlined
+        @update:model-value="onSearch"
       >
-        <Marker
-          v-for="(position,i) in getMarkers"
-          :key="`marker-${i}`"
-          :options="{ position,draggable:oneMarker}"
-          @dragend="oneMarker ? onDragend : undefined"
-        />
-      </GoogleMap>
-    </m-col>
-  </m-row>
+        <template #append>
+          <q-icon name="o_search" />
+        </template>
+      </q-input>
+      <div
+        class="m--gm-search-result"
+      >
+        <q-card
+          class="scroll"
+          square
+        >
+          <q-list
+            bordered
+            dense
+            separator
+            style="max-height: 250px;"
+          >
+            <q-item
+              v-for="(r,i) in searchResults"
+              :key="`search-item-${i}`"
+              clickable
+              @click="onSelectSearch(r)"
+            >
+              <q-item-section no-wrap>
+                <q-item-label lines="1">
+                  <!--<q-img-->
+                  <!--  v-if="r.icon"-->
+                  <!--  :src="r.icon"-->
+                  <!--  sizes="10px"-->
+                  <!--  height="20px"-->
+                  <!--  width="20px"-->
+                  <!--  ratio="1"-->
+                  <!--/>-->
+                  {{ r.name }}
+                </q-item-label>
+                <q-item-label lines="1">
+                  {{ r.formatted_address }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-if="searchResults && searchResults.length === 0 && !loading && search">
+              <q-item-section>
+                {{ $t('messages.no_items') }}
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-card>
+      </div>
+    </q-card>
+    <MBtn
+      ref="currentLocationRef"
+      class="q-mb-md"
+      color="white"
+      icon="o_my_location"
+      round
+      text-color="black"
+      @click="findCurrentLocation"
+    />
+  </MCol>
 </template>
 
 <style lang="scss">
@@ -282,7 +420,8 @@ export default {
 }
 
 .m--gm-searchbar-card {
-  //margin-top: 20px;
+  margin-top: 10px;
+  width: 300px;
 }
 
 .m--gm-search-result {

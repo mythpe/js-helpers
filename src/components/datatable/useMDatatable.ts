@@ -8,27 +8,26 @@
 import { AxiosResponse } from 'axios'
 import _ from 'lodash'
 import { useQuasar } from 'quasar'
-import { computed, nextTick, ref, Ref, SetupContext } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ParseHeadersType } from '../../types'
-import { useMyTh } from '../../vue3/MyThVue3'
+import { useMyTh, useTranslate } from '../../vue3'
 import {
-  DatatableItem,
   DatatableParams,
   FetchDatatableOptions,
-  MDatatableDialogIndex,
   MDatatableScope,
+  MDtItem,
+  MDtItemIndex,
   PaginationOptionsProps,
-  TableDialogsProps,
   TableMetaServerProps,
-  TableOptionsProps
+  TableOptionsProps, UseDatatableOptions
 } from './models'
 
 export const initPaginationOptions: PaginationOptionsProps = {
-  sortBy: undefined,
-  descending: undefined,
+  // sortBy: undefined,
+  // descending: !0,
   page: 1,
-  rowsPerPage: 25,
+  // rowsPerPage: 25,
   rowsNumber: 0
 }
 export const initTableOptions: TableOptionsProps = {
@@ -44,20 +43,6 @@ export const initMetaServer: TableMetaServerProps = {
   total: null
 }
 
-interface UseDatatableOptions {
-  props: any;
-  slots: SetupContext['slots'];
-  emit: {
-    (e: 'update:rows', value: DatatableItem[]): void
-    (e: 'refresh'): void
-  };
-  rows: Ref<DatatableItem[]>,
-  dialogs: Ref<TableDialogsProps>,
-  tableOptions: Ref<TableOptionsProps>,
-  metaServer: Ref<TableMetaServerProps>,
-  paginationOptions: Ref<PaginationOptionsProps>,
-}
-
 export function useDatatable ({
   props,
   emit,
@@ -70,7 +55,8 @@ export function useDatatable ({
 }: UseDatatableOptions) {
   const $myth = useMyTh()
   const $q = useQuasar()
-  const { t } = $myth.translate()
+  const { t } = useTranslate()
+  const router = useRouter()
 
   const getHeaders = computed<ParseHeadersType[] | any[]>(() => $myth.parseHeaders(props.headers) ?? [])
 
@@ -78,19 +64,19 @@ export function useDatatable ({
     if (props.hideAddBtn) {
       return !1
     }
-    return slots.form !== undefined || props.createRoute !== undefined
+    return Boolean(slots.form) || Boolean(props.createRoute)
   })
   const hasUpdateBtn = computed<boolean>(() => {
     if (props.hideUpdateBtn) {
       return !1
     }
-    return slots.form !== undefined || props.updateRoute !== undefined
+    return Boolean(slots.form) || Boolean(props.updateRoute)
   })
   const hasShowBtn = computed<boolean>(() => {
     if (props.hideShowBtn) {
       return !1
     }
-    return slots.show !== undefined || props.showRoute !== undefined
+    return Boolean(slots.show) || Boolean(props.showRoute)
   })
   const hasDestroyBtn = computed<boolean>(() => !props.hideDestroyBtn)
   const hasFilterDialog = computed<boolean>(() => slots.filter !== undefined)
@@ -99,7 +85,7 @@ export function useDatatable ({
   const isUpdateMode = ref<boolean>(!1)
   const formMode = computed<'update' | 'create'>(() => isUpdateMode.value ? 'update' : 'create')
   const isSingleSelectedItem = computed<boolean>(() => tableOptions.value.selected.length === 1)
-  const firstSelectedItem = computed<DatatableItem>(() => tableOptions.value.selected[0])
+  const firstSelectedItem = computed<MDtItem>(() => tableOptions.value.selected[0])
   const hasSelectedItem = computed<boolean>(() => tableOptions.value.selected.length > 0)
 
   const datatableItemsScope = computed<MDatatableScope>(() => ({
@@ -108,7 +94,7 @@ export function useDatatable ({
     openUpdateDialog,
     openCreateDialog,
     closeFormDialog,
-    deleteItem,
+    onDeleteItem,
     refresh,
     refreshNoUpdate,
     tableOptions,
@@ -127,7 +113,6 @@ export function useDatatable ({
     return t('show_details')
   })
   const getFormTitle = computed(() => {
-    console.log(formMode.value)
     const name = props.serviceName && typeof props.serviceName !== 'function' ? t(`choice.${$myth.str.pascalCase($myth.str.pluralize(props.serviceName))}`, 1) : ''
     return t(`replace.${formMode.value}`, { name })
   })
@@ -140,8 +125,8 @@ export function useDatatable ({
     }
     return $myth.api.services[props.serviceName]
   }
-  const updateSelectedItems = (selected: DatatableItem[]) => {
-    Object.assign(tableOptions, { selected })
+  const updateSelectedItems = (selected: MDtItem[]) => {
+    tableOptions.value.selected = selected
   }
   const onScroll = ({
     index,
@@ -164,35 +149,12 @@ export function useDatatable ({
   }
   const refresh = (done?: () => void) => {
     return refreshNoUpdate(done)
-    // (async () => {
-    //   this.metaServer = reactive({ ...initMetaServer })
-    //   tableOptions = reactive({ ...initTableOptions })
-    //   this.paginationOptions = reactive({ ...initPaginationOptions })
-    //   this.rows = reactive([])
-    //   if (this.dialogs.value.filter) {
-    //     this.dialogs.value.filter = !1
-    //   }
-    //   nextTick(() => {
-    //     this.fetchDatatableItems({
-    //       pagination: this.paginationOptions,
-    //       filter: tableOptions.value.search
-    //     })
-    //     if (done) {
-    //       done()
-    //     }
-    //     this.$emit('refresh')
-    //   })
-    // })()
   }
   const refreshNoUpdate = (done?: () => void) => {
     (async () => {
-      Object.assign(metaServer, { ...initMetaServer })
-      // tableOptions = reactive({ ...initTableOptions })
-      Object.assign(paginationOptions, {
-        page: 1,
-        rowsNumber: 0
-      })
-      // paginationOptions = reactive({ ...this.paginationOptions, page: 1, rowsNumber: 0 })
+      metaServer.value = { ...initMetaServer }
+      paginationOptions.value.page = 1
+      paginationOptions.value.rowsNumber = 0
       rows.value = []
       if (dialogs.value.filter) {
         dialogs.value.filter = !1
@@ -232,6 +194,7 @@ export function useDatatable ({
     pagination,
     filter
   }: FetchDatatableOptions = {}): DatatableParams => {
+    // console.log(pagination?.descending)
     return {
       filter: tableOptions.value.filter,
       search: filter || null,
@@ -242,13 +205,12 @@ export function useDatatable ({
       itemsPerPage: pagination?.rowsPerPage === 0 ? -1 : (pagination?.rowsPerPage ?? 0),
       page: pagination?.page ?? 0,
       sortBy: pagination?.sortBy ?? undefined,
-      sortDesc: pagination?.descending === !0 ? 1 : (pagination?.descending === !1 ? 0 : undefined)
+      sortDesc: !pagination?.sortBy ? undefined : (pagination?.descending === !0 ? 1 : (pagination?.descending === !1 ? 0 : undefined))
       // sortBy: pagination?.sortBy ? [pagination?.sortBy] : undefined,
       // sortDesc: pagination?.sortBy ? [pagination?.descending] : undefined,
     }
   }
   const fetchDatatableItems = async (opts: FetchDatatableOptions = {}) => {
-    // console.log(opts)
     if (props.endReach && metaServer.value.last_page && paginationOptions.value.page >= metaServer.value.last_page) {
       return
     }
@@ -265,9 +227,16 @@ export function useDatatable ({
           _data,
           _meta
         } = await getApiServices().index(params)
-        paginationOptions.value.page = parseInt(_meta?.current_page) || 1
-        paginationOptions.value.rowsPerPage = parseInt(_meta?.per_page) || 0
-        paginationOptions.value.rowsNumber = parseInt(_meta?.total) || 0
+        // paginationOptions.value.page = parseInt(_meta?.current_page) || 1
+        // paginationOptions.value.rowsPerPage = parseInt(_meta?.per_page) || 0
+        // paginationOptions.value.rowsNumber = parseInt(_meta?.total) || 0
+        paginationOptions.value = {
+          page: parseInt(_meta?.current_page) || 1,
+          rowsPerPage: parseInt(_meta?.per_page) || 0,
+          rowsNumber: parseInt(_meta?.total) || 0,
+          sortBy: opts?.pagination?.sortBy,
+          descending: opts?.pagination?.descending
+        }
         metaServer.value = _meta || {}
         if (props.endReach) {
           rows.value = [...rows.value, ...(_data || [])]
@@ -332,14 +301,13 @@ export function useDatatable ({
     dialogs.value.filter = !1
     tableOptions.value.tempFilter = { ...tableOptions.value.filter }
   }
-  const removeFilter = (key: string /*, value:any */) => {
+  const onRemoveFilter = (key: string, value: any) => {
     const filter = tableOptions.value.filter
     delete filter[key]
     tableOptions.value.filter = { ...filter }
   }
-  const router = useRouter()
   /** Show Dialog */
-  const openShowDialog = async (item: DatatableItem, index?: MDatatableDialogIndex) => {
+  const openShowDialog = async (item: MDtItem, index?: MDtItemIndex) => {
     if (props.showRoute) {
       router.push({
         name: props.showRoute,
@@ -376,7 +344,7 @@ export function useDatatable ({
   /** Show Dialog */
 
   /** Form Dialog */
-  const openUpdateDialog = async (item: DatatableItem, index?: MDatatableDialogIndex) => {
+  const openUpdateDialog = async (item: MDtItem, index?: MDtItemIndex) => {
     if (props.updateRoute) {
       router.push({
         name: props.updateRoute,
@@ -407,7 +375,7 @@ export function useDatatable ({
       $q.loading.hide()
     }
   }
-  const openCreateDialog = (dtItem?: DatatableItem) => {
+  const openCreateDialog = (dtItem?: MDtItem) => {
     if (props.createRoute) {
       router.push({
         name: props.createRoute
@@ -430,7 +398,7 @@ export function useDatatable ({
   }
   /** Form Dialog */
 
-  const updateDatatableItem = (item: DatatableItem, index?: MDatatableDialogIndex) => {
+  const updateDatatableItem = (item: MDtItem, index?: MDtItemIndex) => {
     if (item && index) {
       rows.value[index] = item
     }
@@ -445,7 +413,7 @@ export function useDatatable ({
       // })
     }
   }
-  const deleteDatatableItem = (e: DatatableItem | number) => {
+  const removeDtItem = (e: MDtItem | number) => {
     const byIndex = typeof e !== 'object'
     const id = byIndex ? e : e.id
     if (byIndex) {
@@ -499,7 +467,7 @@ export function useDatatable ({
     }
     // console.log('defaultSubmitItem: ', form)
   }
-  const deleteItem = (item: DatatableItem, index: number) => {
+  const onDeleteItem = (item: MDtItem, index: number) => {
     if ($q.loading.isActive || !item?.id) return
     $myth.confirmMessage(t('messages.are_you_sure')).onOk(async () => {
       $q.loading.show()
@@ -517,7 +485,7 @@ export function useDatatable ({
           //   item,
           //   index
           // })
-          deleteDatatableItem(index)
+          removeDtItem(index)
         }
       } catch (e: any) {
         e?._message && $myth.alertError(e._message)
@@ -533,9 +501,9 @@ export function useDatatable ({
   const deleteSelectionItem = () => {
     if (!tableOptions.value.selected.length) return
     if (tableOptions.value.selected.length === 1) {
-      const dtItem: DatatableItem = tableOptions.value.selected[0]
+      const dtItem: MDtItem = tableOptions.value.selected[0]
       const index = tableOptions.value.selected.findIndex((e: any) => parseInt(e.id) === parseInt(dtItem.id.toString()))
-      return deleteItem(tableOptions.value.selected[0], index)
+      return onDeleteItem(tableOptions.value.selected[0], index)
     }
     if ($q.loading.isActive || !tableOptions.value.selected.length) return
     $myth.confirmMessage(t('messages.are_you_sure')).onOk(async () => {
@@ -544,7 +512,7 @@ export function useDatatable ({
         const {
           _message,
           _success
-        } = await getApiServices().destroyAll(tableOptions.value.selected.map((e: DatatableItem) => e.id))
+        } = await getApiServices().destroyAll(tableOptions.value.selected.map((e: MDtItem) => e.id))
         if (!props.noAutoMessage && _success && _message) {
           _message && $myth.alertSuccess(_message)
         }
@@ -562,7 +530,7 @@ export function useDatatable ({
       // console.log(item)
     })
   }
-  // const rowDblclick = (e: Event, item: DatatableItem, index: number) => {
+  // const rowDblclick = (e: Event, item: MDtItem, index: number) => {
   //   e.preventDefault()
   //   openShowDialog(item, index)
   // }
@@ -612,14 +580,14 @@ export function useDatatable ({
     openCreateDialog,
     closeFormDialog,
     updateDatatableItem,
-    deleteDatatableItem,
+    removeDtItem,
     defaultSubmitItem,
-    deleteItem,
+    onDeleteItem,
     deleteSelectionItem,
     getShowTitle,
     getFormTitle,
     // rowDblclick,
-    removeFilter,
+    onRemoveFilter,
     logoutDatatable
   }
 }

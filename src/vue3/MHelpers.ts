@@ -9,7 +9,7 @@ import _ from 'lodash'
 import { copyToClipboard, Dark, LocalStorage } from 'quasar'
 import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
-import { ParseHeaderOptions, ParseHeadersType } from '../types/MHelpers'
+import { ParseHeaderOptions, ParseHeadersType } from '../types/m-helpers'
 import { Str } from '../utils/Str'
 import { MyThVue3 } from '../vue3/MyThVue3'
 

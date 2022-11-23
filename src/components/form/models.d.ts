@@ -236,6 +236,7 @@ export interface MSelectSlots extends QSelectSlots {
 
 export interface MAxiosProps extends Omit<MSelectProps, 'options' | 'modelValue'> {
   modelValue?: any | undefined;
+  requestWith?: string | undefined;
   options?: any[];
   service: string | (() => Promise<AxiosInstance>);
 }
@@ -306,13 +307,20 @@ export interface MFormSlots {
 }
 
 export interface MFormProps {
-  form: UnwrapNestedRefs<Record<string, any>>;
-  errors: UnwrapNestedRefs<Record<string, string[]>>;
+  form?: UnwrapNestedRefs<Record<string, any>> | undefined;
+  errors?: UnwrapNestedRefs<Record<string, string[]>> | undefined;
 }
 
 export type MAvatarViewerItem = Record<string, string | File | any> | any
 
 export interface MAvatarViewerProps extends QAvatarProps {
+  auto?: boolean | undefined;
+  col?: ColStyleType;
+  xs?: ColStyleType;
+  sm?: ColStyleType;
+  md?: ColStyleType;
+  lg?: ColStyleType;
+  xl?: ColStyleType;
   /**
    * Model of the component; Must be FileList or Array if using 'multiple' prop; Either use this property (along with a listener for 'update:modelValue' event) OR use v-model directive
    */
@@ -321,6 +329,10 @@ export interface MAvatarViewerProps extends QAvatarProps {
    * Comma separated list of unique file type specifiers. Maps to 'accept' attribute of native input type=file element
    */
   accept?: string | undefined;
+  images?: boolean | undefined;
+  video?: boolean | undefined;
+  pdf?: boolean | undefined;
+  excel?: boolean | undefined;
   /**
    * The value that will be used to modify the image
    */
@@ -369,6 +381,20 @@ export interface MAvatarViewerSlots extends QAvatarSlots {
    * Field main content
    */
   default: () => VNode[];
+}
+
+export type MUploaderMediaItem = {
+  id: number;
+  name: string;
+  file_name: string;
+  type: string;
+  size: number;
+  size_to_string: string;
+  url: string;
+  download_url: string;
+  icon: string;
+  description: string;
+  user_id: number | null;
 }
 
 export interface MUploaderProps extends Omit<QUploaderProps, 'formFields'> {
@@ -439,7 +465,7 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields'> {
   /**
    * Method to delete media
    */
-  deleteMedia?: (() => Promise<AxiosResponse>) | undefined;
+  deleteMedia?: ((media:MUploaderMediaItem) => Promise<AxiosResponse>) | undefined;
 }
 
 export interface MUploaderSlots extends QUploaderSlots {
@@ -449,19 +475,6 @@ export interface MUploaderSlots extends QUploaderSlots {
   default: () => VNode[];
 }
 
-export type MUploaderMediaItem = {
-  id: number;
-  name: string;
-  file_name: string;
-  type: string;
-  size: number;
-  size_to_string: string;
-  url: string;
-  download_url: string;
-  icon: string;
-  description: string;
-  user_id: number | null;
-}
 export type MUploaderXhrInfo = { files: readonly any[]; xhr: any; }
 
 export {}

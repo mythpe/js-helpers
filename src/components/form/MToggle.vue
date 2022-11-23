@@ -7,9 +7,9 @@
 
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
-import { useMyTh } from '../../vue3/MyThVue3'
+import { useMyTh } from '../../vue3'
 import { ColStyleType } from '../grid/models'
 import { MToggleProps } from './models'
 
@@ -68,7 +68,7 @@ const {
   getRules
 } = useInputProps(props)
 const { parseAttribute } = useMyTh()
-
+const inputValue = ref(props.modelValue)
 const topLabel = computed<string | null>(() => parseAttribute(props.label === undefined ? props.name : props.label) ?? null)
 
 const getLabel = computed<string>(() => {
@@ -81,6 +81,7 @@ const getLabel = computed<string>(() => {
   }
   return parseAttribute('none')
 })
+
 </script>
 
 <script lang="ts">
@@ -90,7 +91,7 @@ export default {
 </script>
 
 <template>
-  <m-col
+  <MCol
     :auto="auto"
     :col="col"
     :lg="lg"
@@ -100,11 +101,12 @@ export default {
   >
     <VeeField
       v-slot="fieldProps"
+      v-model="inputValue"
       :name="name"
       :rules="getRules"
       v-bind="$attrs"
     >
-      <m-column>
+      <MColumn>
         <slot
           name="top"
           v-bind="fieldProps"
@@ -112,7 +114,7 @@ export default {
         <div v-if="topLabel">
           {{ topLabel }}
         </div>
-        <m-col auto>
+        <MCol auto>
           <slot
             name="before"
             v-bind="fieldProps"
@@ -155,12 +157,12 @@ export default {
             name="after"
             v-bind="fieldProps"
           />
-        </m-col>
+        </MCol>
         <slot
           name="bottom"
           v-bind="fieldProps"
         />
-      </m-column>
+      </MColumn>
     </VeeField>
-  </m-col>
+  </MCol>
 </template>

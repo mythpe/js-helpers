@@ -31,7 +31,6 @@ export const GlobalsMyThVue3 = {
  */
 export const useMyTh = (): UseMyThVue3 => {
   return Object.assign({
-    version: MyThVue3.version,
     i18n: MyThVue3.i18n,
     api: MyThVue3.api,
     options: MyThVue3.options
@@ -39,15 +38,7 @@ export const useMyTh = (): UseMyThVue3 => {
 }
 
 export class MyThVue3 {
-  /**
-   * Version of plugin
-   */
-  static get version () {
-    return '2.0.7'
-  }
-
   static i18n: VueI18n
-
   static api = {
     axios: {},
     services: {}

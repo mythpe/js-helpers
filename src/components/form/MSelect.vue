@@ -7,7 +7,7 @@
 
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
-import { defineProps } from 'vue'
+import { defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MSelectProps } from './models'
@@ -59,7 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
   dense: undefined,
   emitValue: !0,
   filled: undefined,
-  hideBottomSpace: undefined,
+  hideBottomSpace: !0,
   inputDebounce: 3,
   mapOptions: !0,
   optionLabel: 'text',
@@ -79,6 +79,7 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   options: () => ([])
 })
+const inputValue = ref(props.modelValue)
 
 const {
   getRules,
@@ -94,7 +95,7 @@ export default {
 
 <template>
   <q-slide-transition>
-    <m-col
+    <MCol
       :auto="auto"
       :col="col"
       :lg="lg"
@@ -104,6 +105,7 @@ export default {
     >
       <VeeField
         v-slot="fieldProps"
+        v-model="inputValue"
         :name="name"
         :rules="getRules"
         v-bind="$attrs"
@@ -161,6 +163,6 @@ export default {
           v-bind="fieldProps"
         />
       </VeeField>
-    </m-col>
+    </MCol>
   </q-slide-transition>
 </template>

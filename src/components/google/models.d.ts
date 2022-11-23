@@ -10,6 +10,7 @@
 /// <reference types="vue3-google-map/dist/types" />
 
 import { VNode } from 'vue'
+import { ColStyleType } from '../grid/models'
 
 export type CoordsType = {
   lat: number;
@@ -53,13 +54,21 @@ export type PlaceResult = google.maps.places.PlaceResult
 export type GeocoderResult = google.maps.GeocoderResult
 
 export type MGoogleMapsProps = {
+  auto?: boolean | undefined;
+  col?: ColStyleType;
+  xs?: ColStyleType;
+  sm?: ColStyleType;
+  md?: ColStyleType;
+  lg?: ColStyleType;
+  xl?: ColStyleType;
   style?: string | undefined;
   center?: CoordsType | undefined;
   zoom?: number | undefined;
-  markers?: CoordsType | CoordsType[] | undefined;
-  oneMarker?: boolean | undefined;
+  markers?: CoordsType[] | undefined;
+  centerMarker?: boolean | undefined;
   label?: string | undefined;
   errors?: Record<string, any> | undefined;
+  region?: string;
 }
 
 export type MGoogleMapsSlots = {

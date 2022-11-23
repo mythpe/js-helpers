@@ -7,8 +7,8 @@
 
 import axios from 'axios'
 import { onMounted, onUnmounted, ref } from 'vue'
-import { CoordsProps } from '../types/MGeolocation'
-import { MyThVue3 } from '../vue3/MyThVue3'
+import { CoordsProps } from '../types'
+import { MyThVue3 } from './MyThVue3'
 
 const getStreetAddress = async (lat: number, long: number) => {
   try {
@@ -27,9 +27,10 @@ const getStreetAddress = async (lat: number, long: number) => {
 
 export function useGeolocation () {
   const coords = ref<CoordsProps>({
-    latitude: 0,
-    longitude: 0
+    latitude: 24.5524457,
+    longitude: 46.62481
   })
+
   const isSupported = 'navigator' in window && 'useGeolocation' in navigator
 
   let watcher: number | undefined

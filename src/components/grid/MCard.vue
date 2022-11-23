@@ -9,19 +9,21 @@
 
 import { computed, onMounted, reactive, useSlots } from 'vue'
 import { useRoute } from 'vue-router'
-import { useMyTh } from '../../vue3/MyThVue3'
+import { useMyTh } from '../../vue3'
 import { MCardProps } from './models'
 
 interface Props extends MCardProps {
   titleFromRoute?: boolean;
   title?: string | (() => string);
   subtitle?: string | (() => string);
+  backRoute?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   titleFromRoute: undefined,
   title: undefined,
-  subtitle: undefined
+  subtitle: undefined,
+  backRoute: undefined
 })
 
 const slots = useSlots()
@@ -84,6 +86,14 @@ onMounted(() => {
 
 <template>
   <q-card class="m--card">
+    <q-card-section v-if="backRoute">
+      <MBtn
+        :icon="`arrow_${appRtl ? 'forward' : 'back'}`"
+        @click="$router.back()"
+      >
+        <span class="q-ml-sm">{{ $t('back') }}</span>
+      </MBtn>
+    </q-card-section>
     <q-card-section v-if="hasTopSection">
       <div
         v-if="Boolean(cardOptions.title)"
@@ -101,9 +111,7 @@ onMounted(() => {
       </template>
     </q-card-section>
     <q-card-section>
-      <div>
-        <slot />
-      </div>
+      <slot />
     </q-card-section>
     <q-card-actions
       v-if="Boolean($slots.actions)"

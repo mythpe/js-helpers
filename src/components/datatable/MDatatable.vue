@@ -8,8 +8,8 @@
 <script lang="ts" setup>
 import { AxiosResponse } from 'axios'
 import { useQuasar } from 'quasar'
-import { computed, defineEmits, onBeforeMount, onMounted, ref, useSlots, watch } from 'vue'
-import { DatatableItem, MDatatableProps, PaginationOptionsProps, TableDialogsProps, TableMetaServerProps, TableOptionsProps } from './models'
+import { computed, defineEmits, onBeforeMount, onMounted, reactive, ref, useSlots, watch } from 'vue'
+import { GenericMDtBtn, MDatatableProps, MDtItem, MDtItemIndex, PaginationOptionsProps, TableDialogsProps, TableMetaServerProps, TableOptionsProps } from './models'
 import { initMetaServer, initPaginationOptions, initTableOptions, useDatatable } from './useMDatatable'
 
 interface Props extends MDatatableProps {
@@ -31,16 +31,17 @@ interface Props extends MDatatableProps {
   hideUpdateBtn?: boolean | undefined;
   hideShowBtn?: boolean | undefined;
   hideDestroyBtn?: boolean | undefined;
-  defaultItem?: Partial<DatatableItem> | undefined;
+  defaultItem?: Partial<MDtItem> | undefined;
   noAutoMessage?: boolean | undefined;
   searchDebounce?: string | number | undefined;
   withIndex?: string | string[] | undefined;
   withShow?: string | string[] | undefined;
   withUpdate?: string | string[] | undefined;
-  serviceName: string | (() => Promise<AxiosResponse>);
+  serviceName: string | (() => Promise<AxiosResponse>) | Record<string, (() => Promise<AxiosResponse>)>;
   createRoute?: string | undefined;
   updateRoute?: string | undefined;
   showRoute?: string | undefined;
+  contextItems?: GenericMDtBtn[] | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -71,21 +72,21 @@ const props = withDefaults(defineProps<Props>(), {
   serviceName: undefined,
   createRoute: undefined,
   updateRoute: undefined,
-  showRoute: undefined
+  showRoute: undefined,
+  contextItems: undefined
 })
 
 type Emits = {
-  (e: 'update:rows', value: DatatableItem[]): void
+  (e: 'update:rows', value: MDtItem[]): void
   (e: 'refresh'): void
 }
 
 const emit = defineEmits<Emits>()
-// const loaded = ref<boolean>(!1)
 
 const metaServer = ref<TableMetaServerProps>({ ...initMetaServer })
 const tableOptions = ref<TableOptionsProps>({ ...initTableOptions })
 const paginationOptions = ref<PaginationOptionsProps>({ ...initPaginationOptions })
-const rows = ref<DatatableItem[]>([])
+const rows = ref<MDtItem[]>([])
 const dialogs = ref<TableDialogsProps>({
   filter: !1,
   show: !1,
@@ -151,31 +152,32 @@ const {
   openCreateDialog,
   closeFormDialog,
   defaultSubmitItem,
-  deleteItem,
+  onDeleteItem,
   deleteSelectionItem,
   getShowTitle,
   getFormTitle,
   // rowDblclick,
-  removeFilter
+  onRemoveFilter
 } = datatable
+
 /**/
 
 watch(() => tableOptions.value.loading, (v) => {
   (v ? $q.loading.show() : $q.loading.hide())
 })
-watch(() => tableOptions.value.filter, () => {
-  fetchDatatableItems({
-    pagination: paginationOptions.value,
-    filter: tableOptions.value.search
-  })
-})
+// watch(() => tableOptions.value.filter, () => {
+//   fetchDatatableItems({
+//     pagination: paginationOptions.value,
+//     filter: tableOptions.value.search
+//   })
+// })
 watch(rows, (v) => {
   emit('update:rows', v)
 })
 
 onBeforeMount(() => {
   if (props.items) {
-    Object.assign(rows, props.items)
+    rows.value = props.items
   }
 })
 onMounted(() => {
@@ -183,21 +185,44 @@ onMounted(() => {
 })
 defineExpose(datatable)
 
-const onRowContextmenu = (e: Event, row: DatatableItem, index: number) => {
+const onRowContextmenu = (e: Event, row: MDtItem, index: number) => {
   e.preventDefault()
   dialogs.value.item = row
   dialogs.value.index = index
   contextmenu.value = !0
 }
 
-</script>
+const dtButtons = computed(() => ([
+  {
+    name: 'update',
+    click: (item: MDtItem, index: number) => openUpdateDialog(item, index),
+    show: hasUpdateBtn.value
+  },
+  {
+    name: 'show',
+    click: (item: MDtItem, index: number) => openShowDialog(item, index),
+    show: hasShowBtn.value
+  },
+  {
+    name: 'destroy',
+    click: (item: MDtItem, index: number) => onDeleteItem(item, index),
+    show: hasDestroyBtn.value
+  },
+  ...(props.contextItems ?? [])
+].sort((a: GenericMDtBtn, b: GenericMDtBtn) => (a.order ?? 0) - (b.order ?? 0))))
 
+</script>
+<script lang="ts">
+export default {
+  inheritAttrs: !1
+}
+</script>
 <template>
-  <div>
+  <div class="m--datatable-component">
     <q-menu
       v-model="contextmenu"
       context-menu
-      max-width="250px"
+      max-width="300px"
       touch-position
       transition-hide="fade"
       transition-show="fade"
@@ -207,55 +232,20 @@ const onRowContextmenu = (e: Event, row: DatatableItem, index: number) => {
         dense
         separator
       >
-        <template v-if="hasDestroyBtn">
-          <q-item
-            clickable
-            dense
-            @click="deleteItem(dialogs.item,dialogs.index)"
+        <template
+          v-for="(dtBtn,i) in dtButtons"
+          :key="i"
+        >
+          <MDtBtn
+            v-if="dtBtn.show === !0"
+            :[dtBtn.name]="!0"
+            list-item
+            v-bind="dtBtn.attr || {}"
+            @click="dtBtn.click ? dtBtn.click(dialogs.item,dialogs.index) : undefined"
           >
-            <q-item-section>
-              <q-item-label>
-                <q-icon
-                  color="negative"
-                  left
-                  name="delete"
-                />
-                {{ $myth.parseAttribute('destroy') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
+            {{ $t(dtBtn.name) }}
+          </MDtBtn>
         </template>
-        <template v-if="hasShowBtn">
-          <q-item
-            clickable
-            dense
-            @click="openUpdateDialog(dialogs.item,dialogs.index)"
-          >
-            <q-item-section>
-              <q-item-label>
-                <q-icon
-                  color="primary"
-                  left
-                  name="edit"
-                />
-                {{ $myth.parseAttribute('update') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-        </template>
-
-        <!--<template v-if="userHasPermission('show',modelPermission)">-->
-        <!--  <m-dt-btn-->
-        <!--    show-->
-        <!--    @click="props.dt.openShowDialog(props.row,props.rowIndex)"-->
-        <!--  />-->
-        <!--</template>-->
-        <!--<template v-if="userHasPermission('update',modelPermission)">-->
-        <!--  <m-dt-btn-->
-        <!--    update-->
-        <!--    @click="props.dt.openUpdateDialog(props.row,props.rowIndex)"-->
-        <!--  />-->
-        <!--</template>-->
       </q-list>
     </q-menu>
     <q-pull-to-refresh
@@ -264,8 +254,8 @@ const onRowContextmenu = (e: Event, row: DatatableItem, index: number) => {
     >
       <q-table
         ref="table"
-        v-model:pagination="paginationOptions"
         v-model:selected="tableOptions.selected"
+        v-model:pagination="paginationOptions"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
         :dense="dense"
@@ -289,7 +279,7 @@ const onRowContextmenu = (e: Event, row: DatatableItem, index: number) => {
         @row-contextmenu="onRowContextmenu"
       >
         <template #top-right>
-          <m-row class="justify-between">
+          <MRow class="justify-between">
             <MInput
               v-if="search"
               v-model="tableOptions.search"
@@ -309,7 +299,7 @@ const onRowContextmenu = (e: Event, row: DatatableItem, index: number) => {
                 <q-icon name="search" />
               </template>
             </MInput>
-            <m-col
+            <MCol
               col="12"
               sm="auto"
             >
@@ -426,21 +416,21 @@ const onRowContextmenu = (e: Event, row: DatatableItem, index: number) => {
                   </q-list>
                 </q-menu>
               </m-btn>
-              <m-dt-btn
+              <MDtBtn
                 :disable="tableOptions.loading"
                 icon="o_refresh"
                 @click="refreshNoUpdate()"
               />
-            </m-col>
-            <m-col
+            </MCol>
+            <MCol
               v-show="Object.keys(tableOptions.filter).length > 0"
               col="12"
             >
-              <m-row class="items-center">
-                <m-col col="auto">
+              <MRow class="items-center">
+                <MCol col="auto">
                   <span class="text-subtitle1 q-mr-sm">{{ $t('datatable.filtered_by') }}</span>
-                </m-col>
-                <m-col
+                </MCol>
+                <MCol
                   v-for="(v,e) in tableOptions.filter"
                   :key="e"
                   col="auto"
@@ -450,41 +440,44 @@ const onRowContextmenu = (e: Event, row: DatatableItem, index: number) => {
                     color="primary"
                     outline
                     removable
-                    @remove="removeFilter(e,v)"
+                    @remove="onRemoveFilter(e,v)"
                   />
-                </m-col>
-              </m-row>
-            </m-col>
+                </MCol>
+              </MRow>
+            </MCol>
             <slot
               name="top-right"
               v-bind="{tableOptions,paginationOptions}"
             />
-          </m-row>
+          </MRow>
         </template>
         <template #top-selection>
           <m-container>
-            <m-row class="items-center">
+            <MRow class="items-center">
               <slot
                 name="tools"
                 v-bind="{dt:datatableItemsScope}"
               >
-                <m-dt-btn
+                <MDtBtn
                   v-if="hasUpdateBtn"
-                  :disable="!isSingleSelectedItem"
+                  :disable="!isSingleSelectedItem || tableOptions.loading"
+                  :loading="tableOptions.loading"
                   :tooltip="$t('update')"
                   icon="o_edit"
                   @click="openUpdateDialog(tableOptions.selected[0])"
                 />
-                <m-dt-btn
+                <MDtBtn
                   v-if="hasShowBtn"
-                  :disable="!isSingleSelectedItem"
+                  :disable="!isSingleSelectedItem || tableOptions.loading"
+                  :loading="tableOptions.loading"
                   :tooltip="$t('show')"
                   icon="o_visibility"
                   @click="openShowDialog(tableOptions.selected[0])"
                 />
-                <m-dt-btn
+                <MDtBtn
                   v-if="hasDestroyBtn"
-                  :disable="!hasSelectedItem"
+                  :disable="!hasSelectedItem || tableOptions.loading"
+                  :loading="tableOptions.loading"
                   :tooltip="$t('destroy')"
                   icon="delete_outline"
                   @click="deleteSelectionItem()"
@@ -494,7 +487,7 @@ const onRowContextmenu = (e: Event, row: DatatableItem, index: number) => {
                 name="selection"
                 v-bind="{dt:datatableItemsScope}"
               />
-            </m-row>
+            </MRow>
           </m-container>
         </template>
         <template
@@ -655,16 +648,16 @@ const onRowContextmenu = (e: Event, row: DatatableItem, index: number) => {
                   v-bind="{item:dialogs.item,index:dialogs.index,form,...datatableItemsScope}"
                 >
                   <m-btn
-                    :disable="$q.loading.isActive "
+                    :disable="tableOptions.loading "
                     :label="$t(isUpdateMode ? 'save' : 'create')"
-                    :loading="$q.loading.isActive"
+                    :loading="tableOptions.loading"
                     color="positive"
                     type="submit"
                   />
                 </slot>
                 <q-space />
                 <m-btn
-                  :disable="$q.loading.isActive"
+                  :disable="tableOptions.loading"
                   :label="$t('close')"
                   color="negative"
                   @click="closeFormDialog"
