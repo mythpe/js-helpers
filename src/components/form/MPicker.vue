@@ -66,7 +66,6 @@ export default {
     :sm="sm"
     :xs="xs"
   >
-    {{ inputValue }}
     <MInput
       v-model="inputValue"
       :mask="mask"

@@ -446,6 +446,14 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields'> {
    */
   fieldName?: string | ((files: File) => string) | undefined;
   /**
+   * Collection send to API
+   */
+  collection?: string | undefined;
+  /**
+   * Field Attachment Type
+   */
+  attachmentType?: string | undefined;
+  /**
    * Object with additional fields definitions (used by Form to be uploaded);
    */
   formFields?: Record<string, any> | undefined;
@@ -454,7 +462,7 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields'> {
    */
   label?: string | undefined;
   /** The url to which the files will be uploaded to */
-  url: string | ((files: readonly File[]) => string);
+  url?: string | ((files: readonly File[]) => string) | undefined;
   /** Object of data */
   modelValue: Record<string, any | any[]>;
   /** Input errors */
@@ -467,6 +475,10 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields'> {
    * Method to delete media
    */
   deleteMedia?: ((media: MUploaderMediaItem) => Promise<AxiosResponse>) | undefined;
+  /**
+   * User APi service for upload and delete
+   */
+  service?: string | undefined;
 }
 
 export interface MUploaderSlots extends QUploaderSlots {

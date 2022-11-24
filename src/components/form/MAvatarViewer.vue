@@ -236,7 +236,7 @@ export default {
         </div>
       </MCol>
       <MCol col="auto">
-        <m-btn
+        <MBtn
           :color="!hasSrc ? 'positive' : 'secondary'"
           :disable="!isLoaded && Boolean(itemRef[url])"
           @click="onClick"
@@ -244,7 +244,7 @@ export default {
           <span v-if="clearable && hasSrc">{{ $t('remove') }}</span>
           <span v-else-if="!clearable && hasSrc">{{ $t('change') }}</span>
           <span v-else>{{ $t('choose') }}</span>
-        </m-btn>
+        </MBtn>
       </MCol>
       <MCol
         v-if="errors[name]"

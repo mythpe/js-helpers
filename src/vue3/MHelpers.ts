@@ -73,9 +73,9 @@ export const MHelpers = {
     // console.log(t(`replace.${lastRouteName}_details`, { name: 123 }))
     // console.log(t('choice.Orders', { name: 123, number: 5 }))
     const keys = _.filter(_.uniq([
-      `${lastRouteName}Page.title`,
       `routes.${routeName}`,
       `routes.${routePath}`,
+      `${lastRouteName}Page.title`,
       `choice.${pluralize}`,
       `choice.${singular}`,
       `replace.${lastRouteName}_details`,

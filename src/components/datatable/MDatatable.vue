@@ -278,7 +278,10 @@ export default {
         @row-contextmenu="onRowContextmenu"
       >
         <template #top-right>
-          <MRow class="justify-between">
+          <MRow
+            :style="`min-width: ${$q.screen.lt.md ? '100%' : parseInt($q.screen.width/2) + 'px'}`"
+            class="justify-between"
+          >
             <MInput
               v-if="search"
               v-model="tableOptions.search"
@@ -302,7 +305,7 @@ export default {
               col="12"
               sm="auto"
             >
-              <m-btn
+              <MBtn
                 v-if="hasMenu"
                 color="blue-grey"
                 flat
@@ -414,55 +417,62 @@ export default {
                     </template>
                   </q-list>
                 </q-menu>
-              </m-btn>
+              </MBtn>
               <MDtBtn
                 :disable="tableOptions.loading"
                 icon="o_refresh"
                 @click="refreshNoUpdate()"
               />
             </MCol>
+            <q-slide-transition>
+              <MCol
+                v-if="Object.values(tableOptions.filter).filter(e => Boolean(e)).length > 0"
+                col="12"
+              >
+                <MRow class="items-center">
+                  <MCol col="auto">
+                    <span class="text-subtitle1 q-mr-sm">{{ $t('datatable.filtered_by') }}</span>
+                  </MCol>
+                  <template
+                    v-for="(filterValue,filterKey) in tableOptions.filter"
+                    :key="`filter-${filterKey}`"
+                  >
+                    <MCol
+                      v-if="Boolean(filterValue)"
+                      col="auto"
+                    >
+                      <q-chip
+                        :label="$t(`attributes.${filterKey}`) ?? filterKey"
+                        clickable
+                        color="primary"
+                        outline
+                        removable
+                        @click="openFilterDialog"
+                        @remove="onRemoveFilter(filterKey,filterValue)"
+                      >
+                        <span
+                          v-if="typeof filterValue === 'string'"
+                          class="q-ml-sm"
+                        >{{ filterValue }}</span>
+                      </q-chip>
+                    </MCol>
+                  </template>
+                </MRow>
+              </MCol>
+            </q-slide-transition>
             <MCol
-              v-show="Object.values(tableOptions.filter).filter(e => Boolean(e)).length > 0"
+              v-if="$slots['top-right']"
               col="12"
             >
-              <MRow class="items-center">
-                <MCol col="auto">
-                  <span class="text-subtitle1 q-mr-sm">{{ $t('datatable.filtered_by') }}</span>
-                </MCol>
-                <template
-                  v-for="(filterValue,filterKey) in tableOptions.filter"
-                  :key="`filter-${filterKey}`"
-                >
-                  <MCol
-                    v-if="Boolean(filterValue)"
-                    col="auto"
-                  >
-                    <q-chip
-                      :label="$t(`attributes.${filterKey}`) ?? filterKey"
-                      clickable
-                      color="primary"
-                      outline
-                      removable
-                      @click="openFilterDialog"
-                      @remove="onRemoveFilter(filterKey,filterValue)"
-                    >
-                      <span
-                        v-if="typeof filterValue === 'string'"
-                        class="q-ml-sm"
-                      >{{ filterValue }}</span>
-                    </q-chip>
-                  </MCol>
-                </template>
-              </MRow>
+              <slot
+                name="top-right"
+                v-bind="{tableOptions,paginationOptions}"
+              />
             </MCol>
-            <slot
-              name="top-right"
-              v-bind="{tableOptions,paginationOptions}"
-            />
           </MRow>
         </template>
         <template #top-selection>
-          <m-container>
+          <MContainer>
             <MRow class="items-center">
               <slot
                 name="tools"
@@ -498,7 +508,7 @@ export default {
                 v-bind="{dt:datatableItemsScope}"
               />
             </MRow>
-          </m-container>
+          </MContainer>
         </template>
         <template
           v-for="(i,slot) in bodySlots"
@@ -561,21 +571,21 @@ export default {
           />
         </q-card-section>
         <q-separator />
-        <m-container>
+        <MContainer>
           <div class="row">
-            <m-btn
+            <MBtn
               :label="$t('save')"
               color="positive"
               @click="saveFilterDialog"
             />
             <q-space />
-            <m-btn
+            <MBtn
               :label="$t('cancel')"
               color="negative"
               @click="closeFilterDialog"
             />
           </div>
-        </m-container>
+        </MContainer>
       </q-card>
     </q-dialog>
 
@@ -602,16 +612,16 @@ export default {
           />
         </q-card-section>
 
-        <m-container>
+        <MContainer>
           <div class="row">
             <q-space />
-            <m-btn
+            <MBtn
               :label="$t('close')"
               color="negative"
               @click="closeShowDialog"
             />
           </div>
-        </m-container>
+        </MContainer>
       </q-card>
     </q-dialog>
 
@@ -650,13 +660,13 @@ export default {
               />
             </q-card-section>
             <q-separator />
-            <m-container>
+            <MContainer>
               <div class="row">
                 <slot
                   name="form-actions"
                   v-bind="{item:dialogs.item,index:dialogs.index,form,...datatableItemsScope}"
                 >
-                  <m-btn
+                  <MBtn
                     :disable="tableOptions.loading "
                     :label="$t(isUpdateMode ? 'save' : 'create')"
                     :loading="tableOptions.loading"
@@ -665,14 +675,14 @@ export default {
                   />
                 </slot>
                 <q-space />
-                <m-btn
+                <MBtn
                   :disable="tableOptions.loading"
                   :label="$t('close')"
                   color="negative"
                   @click="closeFormDialog"
                 />
               </div>
-            </m-container>
+            </MContainer>
           </m-form>
         </q-slide-transition>
       </q-card>
@@ -684,7 +694,7 @@ export default {
         :offset="[10, 10]"
         position="bottom-right"
       >
-        <m-btn
+        <MBtn
           color="primary"
           fab
           icon="add"
@@ -696,7 +706,7 @@ export default {
           >
             <span class="text-caption">{{ getFormTitle }}</span>
           </q-tooltip>
-        </m-btn>
+        </MBtn>
       </q-page-sticky>
     </q-slide-transition>
   </div>

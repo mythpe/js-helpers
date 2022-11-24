@@ -36,14 +36,17 @@ interface Props extends MUploaderProps {
   maxTotalSize?: number | string | undefined;
   maxFiles?: number | string | undefined;
   fieldName?: string | ((files: File) => string) | undefined;
+  collection?: string | undefined;
+  attachmentType?: string | undefined;
   formFields?: Record<string, any> | undefined;
   label?: string | undefined;
-  url: string | ((files: readonly File[]) => string);
+  url?: string | ((files: readonly File[]) => string) | undefined;
   modelValue: Record<string, any | any[]>;
   errors?: string[] | undefined;
   attachments: string;
   hideDeleteMedia?: boolean | undefined;
   deleteMedia?: ((media: MUploaderMediaItem) => Promise<AxiosResponse>) | undefined;
+  service?: string | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -67,6 +70,8 @@ const props = withDefaults(defineProps<Props>(), {
   maxTotalSize: 2,
   maxFiles: undefined,
   fieldName: 'attachment',
+  collection: 'attachment',
+  attachmentType: undefined,
   formFields: undefined,
   label: undefined,
   url: undefined,
@@ -74,7 +79,8 @@ const props = withDefaults(defineProps<Props>(), {
   attachments: undefined,
   hideDeleteMedia: !1,
   deleteMedia: undefined,
-  errors: undefined
+  errors: undefined,
+  service: undefined
 })
 
 interface Events {
@@ -125,10 +131,10 @@ prepareAcceptProp()
 /* Events Callback */
 const factoryFn = (files: readonly File[]) => {
   return new Promise((resolve, reject) => {
-    if (props.readonly) {
-      reject({ message: t('messages.error') })
-      return
-    }
+    // if (props.readonly) {
+    // reject({ message: t('messages.error') })
+    // return
+    // }
     const common = $myth.api.axios.defaults.headers.common
     const headers = []
     for (const i in common) {
@@ -146,8 +152,21 @@ const factoryFn = (files: readonly File[]) => {
         })
       }
     }
+    if (props.collection) {
+      formFields.push({ name: 'collection', value: props.collection })
+    }
+    if (props.attachmentType) {
+      formFields.push({ name: 'attachment_type', value: props.attachmentType })
+    }
+    let url: string
+    if (props.service) {
+      url = $myth.api.services[props.service].uploadAttachments(props.modelValue.id, !0)
+    } else {
+      url = typeof props.url === 'function' ? props.url(files) : (props.url ?? '')
+    }
+    url = `${process.env.VUE_BASE_API}/${url}`
     resolve({
-      url: typeof props.url === 'function' ? props.url(files) : props.url,
+      url,
       method: 'POST',
       headers,
       formFields
@@ -170,10 +189,7 @@ const onError = (info: MUploaderXhrInfo) => {
   }
   nextTick(() => emit('failed', info))
 }
-const onFinishUpload = ({
-  files,
-  xhr
-}: MUploaderXhrInfo) => {
+const onFinishUpload = ({ files, xhr }: MUploaderXhrInfo) => {
   try {
     if (xhr.responseText) {
       const response = JSON.parse(xhr.responseText)
@@ -202,12 +218,9 @@ const deleteMedia = (media: MUploaderMediaItem) => {
   const destroy = async () => {
     let r = !1
     try {
-      if (props.deleteMedia) {
-        const {
-          _message,
-          _success,
-          _data
-        }: any = await props.deleteMedia(media)
+      const method = props.service !== undefined ? async (a: MUploaderMediaItem) => $myth.api.services[props.service].deleteAttachment(props.modelValue.id, a.id) : props.deleteMedia
+      if (method) {
+        const { _message, _success, _data }: any = await method(media)
         _message && alertSuccess(_message)
         r = Boolean(_success)
         if (r) {
@@ -321,9 +334,16 @@ export default {
               class="gt-xs"
             >
               <q-img
+                v-if="Boolean(file.__img) || (file.url && file.type === 'image')"
                 :src="file.__img ? file.__img.src : file.url"
                 fit="contain"
                 ratio="1"
+              />
+              <q-icon
+                v-else
+                color="primary"
+                name="o_description"
+                size="lg"
               />
             </q-item-section>
             <q-item-section>
@@ -344,14 +364,14 @@ export default {
                   v-if="file.__status"
                   class="text-body2 q-pl-xs"
                 >{{ $myth.parseAttribute(file.__status) }}</span>
-                <m-btn
+                <MBtn
                   v-if="Boolean(file.id)"
                   :href="file.url"
                   target="_blank"
                   unelevated
                 >
                   {{ $t('download') }}
-                </m-btn>
+                </MBtn>
                 <slot
                   name="item"
                   v-bind="{item:file}"
@@ -359,7 +379,7 @@ export default {
               </q-item-label>
 
               <q-item-label caption>
-                <span v-if="file.size_to_string">{{ file.size_to_string }}</span>
+                <span v-if="file.size_to_string">{{ file.size_to_string }} | {{ file.type }}</span>
                 <span v-else>{{ file.__sizeLabel }} / {{ file.__progressLabel }}</span>
               </q-item-label>
             </q-item-section>
