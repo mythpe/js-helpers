@@ -50,7 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
   xl: undefined,
   modelValue: undefined,
   accept: undefined,
-  images: !1,
+  images: !0,
   video: !1,
   pdf: !1,
   excel: !1,
@@ -155,7 +155,11 @@ watch(props.modelValue, (v) => {
   }
 })
 </script>
-
+<script lang="ts">
+export default {
+  inheritAttrs: !1
+}
+</script>
 <template>
   <MCol
     :auto="auto"

@@ -26,7 +26,7 @@ export type PaginationOptionsProps = {
   /**
    * Is sorting in descending order?
    */
-  descending?: boolean| undefined;
+  descending?: boolean | undefined;
   /**
    * Page number (1-based)
    */
@@ -34,7 +34,7 @@ export type PaginationOptionsProps = {
   /**
    * How many rows per page? 0 means Infinite
    */
-  rowsPerPage?: number| undefined;
+  rowsPerPage?: number | undefined;
   /**
    * For server-side fetching only. How many total database rows are there to be added to the table.
    */

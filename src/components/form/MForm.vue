@@ -22,8 +22,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 type Events = {
   (e: 'submit', evt?: Event): void;
-// (e: 'update:form', values?: any): void;
-// (e: 'update:errors', values?: any): void;
+  // (e: 'update:form', values?: any): void;
+  // (e: 'update:errors', values?: any): void;
 }
 const emit = defineEmits<Events>()
 

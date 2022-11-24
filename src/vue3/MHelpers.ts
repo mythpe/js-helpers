@@ -153,7 +153,7 @@ export const MHelpers = {
       item = {
         ...item,
         name: Str.strBefore(Str.strBefore(item.name), 'ToString'),
-        label: Str.strBefore(Str.strBefore(item.name), 'ToString')
+        label: Str.strBefore(Str.strBefore(item.label ?? item.name), 'ToString')
       }
       const name = item.name
       let k

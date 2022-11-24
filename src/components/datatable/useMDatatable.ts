@@ -20,14 +20,15 @@ import {
   MDtItemIndex,
   PaginationOptionsProps,
   TableMetaServerProps,
-  TableOptionsProps, UseDatatableOptions
+  TableOptionsProps,
+  UseDatatableOptions
 } from './models'
 
 export const initPaginationOptions: PaginationOptionsProps = {
-  // sortBy: undefined,
-  // descending: !0,
+  sortBy: undefined,
+  descending: undefined,
   page: 1,
-  // rowsPerPage: 25,
+  rowsPerPage: 50,
   rowsNumber: 0
 }
 export const initTableOptions: TableOptionsProps = {
@@ -322,6 +323,9 @@ export function useDatatable ({
       if (!params.requestWith) {
         delete params.requestWith
       }
+      if (!index) {
+        index = rows.value.findIndex(e => e.id === item.id)
+      }
       const { _data } = await getApiServices().show(item.id, { params })
       dialogs.value.item = _data
       dialogs.value.index = index
@@ -359,6 +363,9 @@ export function useDatatable ({
       const params = { requestWith: getRequestWith('withUpdate') }
       if (!params.requestWith) {
         delete params.requestWith
+      }
+      if (!index) {
+        index = rows.value.findIndex(e => e.id === item.id)
       }
       const { _data } = await getApiServices().show(item.id, { params })
       dialogs.value.item = _data
@@ -415,10 +422,9 @@ export function useDatatable ({
   }
   const removeDtItem = (e: MDtItem | number) => {
     const byIndex = typeof e !== 'object'
-    const id = byIndex ? e : e.id
+    const id: string | number = byIndex ? e : e.id
     if (byIndex) {
-      // rows.value = rows.value.filter((v, i) => i !== parseInt(id.toString()))
-      delete rows.value[e]
+      rows.value = rows.value.filter((e, i) => i !== id)
     } else {
       rows.value = rows.value.filter((e) => parseInt(e.id?.toString()) !== parseInt(id.toString()))
     }
@@ -481,10 +487,6 @@ export function useDatatable ({
         }
         if (_success) {
           --paginationOptions.value.rowsNumber
-          // emit('deletedItem', {
-          //   item,
-          //   index
-          // })
           removeDtItem(index)
         }
       } catch (e: any) {
@@ -502,8 +504,8 @@ export function useDatatable ({
     if (!tableOptions.value.selected.length) return
     if (tableOptions.value.selected.length === 1) {
       const dtItem: MDtItem = tableOptions.value.selected[0]
-      const index = tableOptions.value.selected.findIndex((e: any) => parseInt(e.id) === parseInt(dtItem.id.toString()))
-      return onDeleteItem(tableOptions.value.selected[0], index)
+      const index = rows.value.findIndex((e: any) => parseInt(e.id) === parseInt(dtItem.id.toString()))
+      return onDeleteItem(dtItem, index)
     }
     if ($q.loading.isActive || !tableOptions.value.selected.length) return
     $myth.confirmMessage(t('messages.are_you_sure')).onOk(async () => {

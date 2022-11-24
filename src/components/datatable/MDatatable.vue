@@ -8,8 +8,8 @@
 <script lang="ts" setup>
 import { AxiosResponse } from 'axios'
 import { useQuasar } from 'quasar'
-import { computed, defineEmits, onBeforeMount, onMounted, reactive, ref, useSlots, watch } from 'vue'
-import { GenericMDtBtn, MDatatableProps, MDtItem, MDtItemIndex, PaginationOptionsProps, TableDialogsProps, TableMetaServerProps, TableOptionsProps } from './models'
+import { computed, defineEmits, onBeforeMount, onMounted, ref, useSlots, watch } from 'vue'
+import { GenericMDtBtn, MDatatableProps, MDtItem, PaginationOptionsProps, TableDialogsProps, TableMetaServerProps, TableOptionsProps } from './models'
 import { initMetaServer, initPaginationOptions, initTableOptions, useDatatable } from './useMDatatable'
 
 interface Props extends MDatatableProps {
@@ -47,14 +47,14 @@ interface Props extends MDatatableProps {
 const props = withDefaults(defineProps<Props>(), {
   separator: 'horizontal',
   noMouse: !0,
-  rowsPerPageOptions: () => [10, 25, 50, 100, 250, 500, 0],
+  rowsPerPageOptions: () => [50, 250, 500, 0],
   title: undefined,
   search: !0,
   pdf: !1,
   excel: !1,
   exportToUrl: !0,
   hideSelection: !1,
-  singleSelection: !1,
+  singleSelection: !0,
   headers: undefined,
   items: undefined,
   dense: !0,
@@ -162,29 +162,6 @@ const {
 
 /**/
 
-watch(() => tableOptions.value.loading, (v) => {
-  (v ? $q.loading.show() : $q.loading.hide())
-})
-// watch(() => tableOptions.value.filter, () => {
-//   fetchDatatableItems({
-//     pagination: paginationOptions.value,
-//     filter: tableOptions.value.search
-//   })
-// })
-watch(rows, (v) => {
-  emit('update:rows', v)
-})
-
-onBeforeMount(() => {
-  if (props.items) {
-    rows.value = props.items
-  }
-})
-onMounted(() => {
-  refresh()
-})
-defineExpose(datatable)
-
 const onRowContextmenu = (e: Event, row: MDtItem, index: number) => {
   e.preventDefault()
   dialogs.value.item = row
@@ -210,6 +187,28 @@ const dtButtons = computed(() => ([
   },
   ...(props.contextItems ?? [])
 ].sort((a: GenericMDtBtn, b: GenericMDtBtn) => (a.order ?? 0) - (b.order ?? 0))))
+
+watch(() => tableOptions.value.loading, v => (v ? $q.loading.show() : $q.loading.hide()))
+
+/* Filter & Search Watcher */
+watch([() => tableOptions.value.filter, () => tableOptions.value.search], () => {
+  fetchDatatableItems({
+    pagination: paginationOptions.value,
+    filter: tableOptions.value.search
+  })
+})
+/* Filter & Search Watcher */
+
+watch(rows, v => emit('update:rows', v))
+
+onBeforeMount(() => {
+  if (props.items) {
+    rows.value = props.items
+  }
+})
+onMounted(() => refresh())
+
+defineExpose(datatable)
 
 </script>
 <script lang="ts">
@@ -254,8 +253,8 @@ export default {
     >
       <q-table
         ref="table"
-        v-model:selected="tableOptions.selected"
         v-model:pagination="paginationOptions"
+        v-model:selected="tableOptions.selected"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
         :dense="dense"
@@ -423,26 +422,37 @@ export default {
               />
             </MCol>
             <MCol
-              v-show="Object.keys(tableOptions.filter).length > 0"
+              v-show="Object.values(tableOptions.filter).filter(e => Boolean(e)).length > 0"
               col="12"
             >
               <MRow class="items-center">
                 <MCol col="auto">
                   <span class="text-subtitle1 q-mr-sm">{{ $t('datatable.filtered_by') }}</span>
                 </MCol>
-                <MCol
-                  v-for="(v,e) in tableOptions.filter"
-                  :key="e"
-                  col="auto"
+                <template
+                  v-for="(filterValue,filterKey) in tableOptions.filter"
+                  :key="`filter-${filterKey}`"
                 >
-                  <q-chip
-                    :label="$myth.parseAttribute(e)??e"
-                    color="primary"
-                    outline
-                    removable
-                    @remove="onRemoveFilter(e,v)"
-                  />
-                </MCol>
+                  <MCol
+                    v-if="Boolean(filterValue)"
+                    col="auto"
+                  >
+                    <q-chip
+                      :label="$t(`attributes.${filterKey}`) ?? filterKey"
+                      clickable
+                      color="primary"
+                      outline
+                      removable
+                      @click="openFilterDialog"
+                      @remove="onRemoveFilter(filterKey,filterValue)"
+                    >
+                      <span
+                        v-if="typeof filterValue === 'string'"
+                        class="q-ml-sm"
+                      >{{ filterValue }}</span>
+                    </q-chip>
+                  </MCol>
+                </template>
               </MRow>
             </MCol>
             <slot

@@ -161,6 +161,7 @@ export interface MFileSlots extends QFileSlots {
 }
 
 export interface MPickerProps extends MInputProps {
+  modelValue: any;
   type: 'date' | 'time'
 }
 
@@ -465,7 +466,7 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields'> {
   /**
    * Method to delete media
    */
-  deleteMedia?: ((media:MUploaderMediaItem) => Promise<AxiosResponse>) | undefined;
+  deleteMedia?: ((media: MUploaderMediaItem) => Promise<AxiosResponse>) | undefined;
 }
 
 export interface MUploaderSlots extends QUploaderSlots {

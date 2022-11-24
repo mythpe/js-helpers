@@ -9,7 +9,7 @@
 
 import { QFile } from 'quasar'
 import { Field as VeeField } from 'vee-validate'
-import { computed, defineProps, ref } from 'vue'
+import { defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MFileProps } from './models'
@@ -122,7 +122,6 @@ defineExpose({
     >
       <q-file
         ref="fileInput"
-        :model-value="inputValue"
         :borderless="borderless"
         :clearable="clearable"
         :dense="dense"
@@ -132,13 +131,14 @@ defineExpose({
         :hide-bottom-space="hideBottomSpace"
         :label="getLabel"
         :loading="loading"
+        :model-value="inputValue"
         :outlined="outlined"
         :placeholder="getPlaceholder"
         :stack-label="stackLabel"
         :standout="standout"
         v-bind="$attrs"
-        @change="fieldScope.handleChange"
         @blur="fieldScope.handleBlur"
+        @change="fieldScope.handleChange"
       >
         <template
           v-for="(_,slot) in $slots"

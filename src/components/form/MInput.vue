@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
 
-import { defineProps, onMounted, ref } from 'vue'
+import { computed, defineProps, onMounted, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MInputProps } from './models'
@@ -71,12 +71,17 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined
 })
 
-// type EmitsTypes = {
-//   (e: 'update:modelValue', value: any): void
-// }
-// const emits = defineEmits<EmitsTypes>()
+type EmitsTypes = {
+  (e: 'update:modelValue', value: any): void
+}
+const emit = defineEmits<EmitsTypes>()
+/* Emit instead of use ref */
+const inputValue = computed({
+  get: () => props.modelValue,
+  set: value => emit('update:modelValue', value)
+})
+// const inputValue = ref(props.modelValue)
 
-const inputValue = ref(props.modelValue)
 const {
   getRules,
   getLabel,

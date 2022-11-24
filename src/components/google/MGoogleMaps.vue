@@ -11,17 +11,7 @@ import { computed, ref, watch } from 'vue'
 import { GoogleMap, Marker } from 'vue3-google-map'
 import { useGeolocation, useTranslate } from '../../vue3'
 import { ColStyleType } from '../grid/models'
-import {
-  CoordsType,
-  GeocoderResult,
-  GoogleGeocoder,
-  GoogleMapsApi,
-  GoogleMapsMVCObject,
-  GooglePlacesService,
-  MapCoordsClick,
-  MGoogleMapsProps,
-  PlaceResult
-} from './models'
+import { CoordsType, GeocoderResult, GoogleGeocoder, GoogleMapsApi, GoogleMapsMVCObject, GooglePlacesService, MapCoordsClick, MGoogleMapsProps, PlaceResult } from './models'
 
 interface Props extends MGoogleMapsProps {
   auto?: boolean | undefined;
@@ -294,6 +284,7 @@ export default {
       <MCol col="12">
         <GoogleMap
           ref="mapRef"
+          :api-key="$myth.options.google.apiKey"
           :center="getCenter"
           :language="appLocale"
           :style="style"

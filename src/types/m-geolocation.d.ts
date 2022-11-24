@@ -4,6 +4,7 @@
  * Mobile: +966590470092
  * https://www.4myth.com
  */
+
 /// <reference types="google.maps" />
 
 export interface CoordsProps {
