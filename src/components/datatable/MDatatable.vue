@@ -643,7 +643,6 @@ export default {
             <q-separator />
             <q-card-section
               class="scroll"
-              style="max-height: 500px"
             >
               <slot
                 name="form"
