@@ -288,7 +288,7 @@ export function useDatatable ({
     dialogs.value.filter = !1
     tableOptions.value.tempFilter = { ...tableOptions.value.filter }
   }
-  const onRemoveFilter = (key: string, value: any) => {
+  const onRemoveFilter = (key: string) => {
     const filter = tableOptions.value.filter
     delete filter[key]
     tableOptions.value.filter = { ...filter }

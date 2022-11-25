@@ -103,9 +103,6 @@ const onSearch = (query: string | null) => {
     return
   }
   loading.value = !0
-  // eslint-disable-next-line no-undef
-  // console.log(placeService.value)
-  // placeService.value?.textSearch({ query }, (res: PlaceResult[] | null) => {
   // placeService.value?.findPlaceFromQuery({ query, language: $q.lang.isoName, fields: ['formatted_address', 'geometry'] }, (res: PlaceResult[] | null) => {
   placeService.value?.textSearch({
     query,

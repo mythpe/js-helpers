@@ -448,7 +448,7 @@ export default {
                         outline
                         removable
                         @click="openFilterDialog"
-                        @remove="onRemoveFilter(filterKey,filterValue)"
+                        @remove="onRemoveFilter(filterKey)"
                       >
                         <span
                           v-if="typeof filterValue === 'string'"

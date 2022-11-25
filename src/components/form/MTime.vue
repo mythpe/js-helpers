@@ -6,7 +6,7 @@
   -->
 <script lang="ts" setup>
 import { MDateProps } from 'src/components/form/models'
-import { computed, defineEmits, ref } from 'vue'
+import { computed, defineEmits } from 'vue'
 
 interface Props extends MDateProps {
   modelValue: any
@@ -15,6 +15,7 @@ interface Props extends MDateProps {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined
 })
+
 interface Emits {
   (e: 'update:modelValue', value: any): void
 }

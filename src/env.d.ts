@@ -6,8 +6,6 @@
  */
 /* eslint-disable */
 
-import { MyThVue3PluginType } from './types'
-
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: string;

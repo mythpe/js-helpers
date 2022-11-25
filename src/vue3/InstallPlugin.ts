@@ -8,7 +8,6 @@
 import { App, defineAsyncComponent } from 'vue'
 import { MyThVue3InstallOptions } from '../types'
 import { useMyTh } from './MyThVue3'
-/* eslint-disable no-undef */
 
 /**
  * Install Plugin

@@ -13,7 +13,6 @@ import { MAlerts } from './MAlerts'
 import { useGeolocation } from './MGeolocation'
 import { MHelpers } from './MHelpers'
 import { useTranslate } from './MTranslate'
-/* eslint-disable no-undef */
 
 /**
  * Global of plugin inside Vue app
@@ -31,8 +30,8 @@ export const GlobalsMyThVue3 = {
  */
 export const useMyTh = (): MyThVue3PluginType => {
   return Object.assign({
-    i18n: MyThVue3Plugin.i18n,
-    api: MyThVue3Plugin.api,
-    options: MyThVue3Plugin.options
+    i18n: window.MyThVue3Plugin.i18n,
+    api: window.MyThVue3Plugin.api,
+    options: window.MyThVue3Plugin.options
   }, GlobalsMyThVue3, MAlerts, MHelpers)
 }
