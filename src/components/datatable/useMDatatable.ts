@@ -12,17 +12,7 @@ import { computed, nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ParseHeadersType } from '../../types'
 import { useMyTh, useTranslate } from '../../vue3'
-import {
-  DatatableParams,
-  FetchDatatableOptions,
-  MDatatableScope,
-  MDtItem,
-  MDtItemIndex,
-  PaginationOptionsProps,
-  TableMetaServerProps,
-  TableOptionsProps,
-  UseDatatableOptions
-} from './models'
+import { DatatableParams, FetchDatatableOptions, MDatatableScope, MDtItem, MDtItemIndex, PaginationOptionsProps, TableMetaServerProps, TableOptionsProps, UseDatatableOptions } from './models'
 
 export const initPaginationOptions: PaginationOptionsProps = {
   sortBy: undefined,
@@ -224,13 +214,8 @@ export function useDatatable ({
         params.requestWith = requestWith
       }
       try {
-        const {
-          _data,
-          _meta
-        } = await getApiServices().index(params)
-        // paginationOptions.value.page = parseInt(_meta?.current_page) || 1
-        // paginationOptions.value.rowsPerPage = parseInt(_meta?.per_page) || 0
-        // paginationOptions.value.rowsNumber = parseInt(_meta?.total) || 0
+        const { _data, _meta } = await getApiServices().index(params)
+
         paginationOptions.value = {
           page: parseInt(_meta?.current_page) || 1,
           rowsPerPage: parseInt(_meta?.per_page) || 0,
@@ -245,6 +230,7 @@ export function useDatatable ({
           rows.value = _data || []
         }
       } catch (e: any) {
+        console.log(e)
         if (e?.response?.status === 401) {
           logoutDatatable()
           return e
@@ -478,10 +464,7 @@ export function useDatatable ({
     $myth.confirmMessage(t('messages.are_you_sure')).onOk(async () => {
       $q.loading.show()
       try {
-        const {
-          _message,
-          _success
-        } = await getApiServices().destroy(item.id)
+        const { _message, _success } = await getApiServices().destroy(item.id)
         if (!props.noAutoMessage && _success && _message) {
           _message && $myth.alertSuccess(_message)
         }

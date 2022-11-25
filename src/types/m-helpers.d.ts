@@ -84,7 +84,7 @@ export type ParseHeadersType = QTableProps['columns'] & {
   headerClasses?: string;
 } | undefined
 
-export type UrlType = string | number | boolean
+export type UrlType = string | number | boolean | undefined | null
 
 export type ParamsType = boolean | Record<string, any> | FormData | object
 
