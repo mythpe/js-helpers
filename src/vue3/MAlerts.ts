@@ -6,8 +6,7 @@
  */
 
 import { Dialog, Notify, QNotifyCreateOptions } from 'quasar'
-import { Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from '../types/m-alerts'
-import { MyThVue3 } from '../vue3/MyThVue3'
+import { Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from '../types'
 
 export const MAlerts = {
   quasarNotifyOptions: (opts: QNotifyCreateOptions | string): QNotifyCreateOptions => ({
@@ -20,7 +19,7 @@ export const MAlerts = {
   alertSuccess: (message: string) => MAlerts.alertMessage({ type: 'positive', message }),
   alertError: (message: string) => MAlerts.alertMessage({ type: 'negative', message }),
   confirmMessage (message?: string, title?: string): Vue3MConfirmMessage {
-    const { t } = MyThVue3.i18n
+    const { t } = window.MyThVue3Plugin.i18n
     title = title ?? t('messages.are_you_sure')
     title = title ?? ''
     message = message ?? ''

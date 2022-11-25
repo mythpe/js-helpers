@@ -8,11 +8,12 @@
 import axios from 'axios'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { CoordsProps } from '../types'
-import { MyThVue3 } from './MyThVue3'
+import { useMyTh } from './MyThVue3'
 
 const getStreetAddress = async (lat: number, long: number) => {
+  const myth = useMyTh()
   try {
-    const { data } = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${MyThVue3.options?.google?.apiKey}`)
+    const { data } = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${myth.options.google?.apiKey}`)
     if (data.error_message) {
       // console.log(data.error_message)
     } else if (data?.results?.length > 0) {

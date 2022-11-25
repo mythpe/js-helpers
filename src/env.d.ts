@@ -6,15 +6,11 @@
  */
 /* eslint-disable */
 
+import { MyThVue3PluginType } from './types'
+
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: string;
-  }
-}
-
-declare global {
-  interface Window {
-    push_token?: string | null | undefined;
   }
 }
 

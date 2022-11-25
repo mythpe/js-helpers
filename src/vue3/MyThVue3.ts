@@ -5,8 +5,7 @@
  * https://www.4myth.com
  */
 
-import { VueI18n } from 'vue-i18n'
-import { UseMyThVue3 } from '../types'
+import { MyThVue3PluginType } from '../types'
 import { Dates as dates } from '../utils/Dates'
 import { Helpers as helpers } from '../utils/Helpers'
 import { Str as str } from '../utils/Str'
@@ -14,6 +13,7 @@ import { MAlerts } from './MAlerts'
 import { useGeolocation } from './MGeolocation'
 import { MHelpers } from './MHelpers'
 import { useTranslate } from './MTranslate'
+/* eslint-disable no-undef */
 
 /**
  * Global of plugin inside Vue app
@@ -29,20 +29,10 @@ export const GlobalsMyThVue3 = {
 /**
  * Helper to use plugin
  */
-export const useMyTh = (): UseMyThVue3 => {
+export const useMyTh = (): MyThVue3PluginType => {
   return Object.assign({
-    i18n: MyThVue3.i18n,
-    api: MyThVue3.api,
-    options: MyThVue3.options
+    i18n: MyThVue3Plugin.i18n,
+    api: MyThVue3Plugin.api,
+    options: MyThVue3Plugin.options
   }, GlobalsMyThVue3, MAlerts, MHelpers)
-}
-
-export class MyThVue3 {
-  static i18n: VueI18n
-  static api = {
-    axios: {},
-    services: {}
-  }
-
-  static options: UseMyThVue3['options'] = {}
 }

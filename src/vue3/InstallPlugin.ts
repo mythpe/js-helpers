@@ -7,7 +7,8 @@
 
 import { App, defineAsyncComponent } from 'vue'
 import { MyThVue3InstallOptions } from '../types'
-import { MyThVue3, useMyTh } from './MyThVue3'
+import { useMyTh } from './MyThVue3'
+/* eslint-disable no-undef */
 
 /**
  * Install Plugin
@@ -21,9 +22,9 @@ export default async function install (app: App, {
   api,
   options
 }: MyThVue3InstallOptions) {
-  MyThVue3.i18n = i18n
-  MyThVue3.api = api
-  MyThVue3.options = options
+  window.MyThVue3Plugin.i18n = i18n
+  window.MyThVue3Plugin.api = api
+  window.MyThVue3Plugin.options = options ?? {}
   app.config.globalProperties.$myth = useMyTh()
 
   // Datatable

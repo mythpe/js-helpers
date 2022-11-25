@@ -7,7 +7,7 @@
 
 import { AxiosInstance, AxiosResponse } from 'axios'
 import { GlobalComponentConstructor } from 'quasar'
-import { I18n, VueI18n } from 'vue-i18n'
+import { VueI18n } from 'vue-i18n'
 import {
   MAvatarViewerProps,
   MAvatarViewerSlots,
@@ -57,6 +57,8 @@ import {
 import { MAlerts, MHelpers } from '../vue3'
 import { GlobalsMyThVue3 } from '../vue3/MyThVue3'
 
+export {}
+
 export type MyThVue3InstallOptions = {
   i18n: VueI18n;
   api: {
@@ -75,13 +77,7 @@ export type MyThVue3InstallOptions = {
 
 type Vue3MGlobals = typeof GlobalsMyThVue3 & typeof MAlerts & typeof MHelpers
 
-export type MyThPlugin = {
-  i18n: I18n | Record<string, any>;
-  api: MyThVue3InstallOptions['api'] | Record<string, any>;
-  options: MyThVue3InstallOptions['options'];
-}
-
-export type UseMyThVue3 = Vue3MGlobals & MyThPlugin
+export type MyThVue3PluginType = Vue3MGlobals & MyThVue3InstallOptions
 
 declare module '@vue/runtime-core' {
   interface GlobalComponents {
@@ -113,8 +109,13 @@ declare module '@vue/runtime-core' {
   }
 
   interface ComponentCustomProperties {
-    $myth: UseMyThVue3
+    $myth: MyThVue3PluginType
   }
 }
 
-export {}
+declare global {
+  interface Window {
+    push_token?: string | null | undefined;
+    MyThVue3Plugin: MyThVue3PluginType
+  }
+}

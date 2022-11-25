@@ -9,9 +9,8 @@ import _ from 'lodash'
 import { copyToClipboard, Dark, LocalStorage } from 'quasar'
 import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
-import { ParseHeaderOptions, ParseHeadersType } from '../types/m-helpers'
-import { Str } from '../utils/Str'
-import { MyThVue3 } from '../vue3/MyThVue3'
+import { ParseHeaderOptions, ParseHeadersType } from '../types'
+import { Str } from '../utils'
 
 export const MHelpers = {
   storage: {
@@ -41,10 +40,7 @@ export const MHelpers = {
     number = number ?? 2
     number = parseInt(number.toString())
     const defaultValue = undefined
-    if (!MyThVue3.i18n) {
-      return defaultValue
-    }
-    const { t, te } = MyThVue3.i18n
+    const { t, te } = window.MyThVue3Plugin.i18n
 
     // Not is route
     // No page title
@@ -137,10 +133,7 @@ export const MHelpers = {
     }
 
     const result: ParseHeadersType[] = []
-    if (!MyThVue3.i18n) {
-      return result
-    }
-    const { t, te } = MyThVue3.i18n
+    const { t, te } = window.MyThVue3Plugin.i18n
     headers.forEach((elm: string | ParseHeadersType) => {
       if (typeof elm !== 'string' && !elm?.name) return elm
       const isString = typeof elm === 'string'
@@ -199,10 +192,7 @@ export const MHelpers = {
     const defaultValue = undefined
     if (!string) return string
 
-    if (!MyThVue3.i18n) {
-      return string
-    }
-    const { t, te } = MyThVue3.i18n
+    const { t, te } = window.MyThVue3Plugin.i18n
     const key = string && typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
 
     if (!key) {
