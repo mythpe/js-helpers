@@ -19,11 +19,13 @@ import { useMyTh } from './MyThVue3'
 export default async function install (app: App, {
   i18n,
   api,
-  options
+  options = {}
 }: MyThVue3InstallOptions) {
-  window.MyThVue3Plugin.i18n = i18n
-  window.MyThVue3Plugin.api = api
-  window.MyThVue3Plugin.options = options ?? {}
+  window.MyThVue3Plugin = {
+    i18n,
+    api,
+    options
+  }
   app.config.globalProperties.$myth = useMyTh()
 
   // Datatable

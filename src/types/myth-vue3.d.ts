@@ -116,6 +116,6 @@ declare module '@vue/runtime-core' {
 declare global {
   interface Window {
     push_token?: string | null | undefined;
-    MyThVue3Plugin: MyThVue3PluginType
+    MyThVue3Plugin: MyThVue3InstallOptions
   }
 }
