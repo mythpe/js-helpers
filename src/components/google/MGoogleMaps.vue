@@ -302,78 +302,80 @@ export default {
         </GoogleMap>
       </MCol>
     </MRow>
-    <q-card
-      ref="searchCard"
-      class="m--gm-searchbar-card"
-    >
-      <q-input
-        v-model="search"
-        :label="$t('search')"
-        :loading="loading"
-        clearable
-        debounce="600"
-        dense
-        outlined
-        @update:model-value="onSearch"
+    <MRow class="hidden">
+      <q-card
+        ref="searchCard"
+        class="m--gm-searchbar-card"
       >
-        <template #append>
-          <q-icon name="o_search" />
-        </template>
-      </q-input>
-      <div
-        class="m--gm-search-result"
-      >
-        <q-card
-          class="scroll"
-          square
+        <q-input
+          v-model="search"
+          :label="$t('search')"
+          :loading="loading"
+          clearable
+          debounce="600"
+          dense
+          outlined
+          @update:model-value="onSearch"
         >
-          <q-list
-            bordered
-            dense
-            separator
-            style="max-height: 250px;"
+          <template #append>
+            <q-icon name="o_search" />
+          </template>
+        </q-input>
+        <div
+          class="m--gm-search-result"
+        >
+          <q-card
+            class="scroll"
+            square
           >
-            <q-item
-              v-for="(r,i) in searchResults"
-              :key="`search-item-${i}`"
-              clickable
-              @click="onSelectSearch(r)"
+            <q-list
+              bordered
+              dense
+              separator
+              style="max-height: 250px;"
             >
-              <q-item-section no-wrap>
-                <q-item-label lines="1">
-                  <!--<q-img-->
-                  <!--  v-if="r.icon"-->
-                  <!--  :src="r.icon"-->
-                  <!--  sizes="10px"-->
-                  <!--  height="20px"-->
-                  <!--  width="20px"-->
-                  <!--  ratio="1"-->
-                  <!--/>-->
-                  {{ r.name }}
-                </q-item-label>
-                <q-item-label lines="1">
-                  {{ r.formatted_address }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item v-if="searchResults && searchResults.length === 0 && !loading && search">
-              <q-item-section>
-                {{ $t('messages.no_items') }}
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card>
-      </div>
-    </q-card>
-    <MBtn
-      ref="currentLocationRef"
-      class="q-mb-md"
-      color="white"
-      icon="o_my_location"
-      round
-      text-color="black"
-      @click="findCurrentLocation"
-    />
+              <q-item
+                v-for="(r,i) in searchResults"
+                :key="`search-item-${i}`"
+                clickable
+                @click="onSelectSearch(r)"
+              >
+                <q-item-section no-wrap>
+                  <q-item-label lines="1">
+                    <!--<q-img-->
+                    <!--  v-if="r.icon"-->
+                    <!--  :src="r.icon"-->
+                    <!--  sizes="10px"-->
+                    <!--  height="20px"-->
+                    <!--  width="20px"-->
+                    <!--  ratio="1"-->
+                    <!--/>-->
+                    {{ r.name }}
+                  </q-item-label>
+                  <q-item-label lines="1">
+                    {{ r.formatted_address }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item v-if="searchResults && searchResults.length === 0 && !loading && search">
+                <q-item-section>
+                  {{ $t('messages.no_items') }}
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card>
+        </div>
+      </q-card>
+      <MBtn
+        ref="currentLocationRef"
+        class="q-mb-md"
+        color="white"
+        icon="o_my_location"
+        round
+        text-color="black"
+        @click="findCurrentLocation"
+      />
+    </MRow>
   </MCol>
 </template>
 
