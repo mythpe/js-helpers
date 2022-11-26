@@ -8,6 +8,7 @@
 <script lang="ts" setup>
 
 import { QFile } from 'quasar'
+import useAcceptProp from 'src/composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
@@ -22,6 +23,11 @@ interface Props extends MFileProps {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
+  accept?: string | undefined;
+  images?: boolean | undefined;
+  video?: boolean | undefined;
+  pdf?: boolean | undefined;
+  excel?: boolean | undefined;
   outlined?: boolean | undefined;
   standout?: boolean | string | undefined;
   borderless?: boolean | undefined;
@@ -51,6 +57,11 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
+  accept: undefined,
+  images: !0,
+  video: !1,
+  pdf: !1,
+  excel: !1,
   outlined: undefined,
   standout: undefined,
   borderless: undefined,
@@ -83,7 +94,7 @@ const {
   getLabel,
   getPlaceholder
 } = useInputProps(props)
-
+const accepts = useAcceptProp(props)
 const fileInput = ref<typeof QFile>()
 // const inputValue = ref(props.modelValue)
 const inputValue = computed({
@@ -134,6 +145,7 @@ defineExpose({
       <q-file
         ref="fileInput"
         v-model="inputValue"
+        :accept="accepts.join(',')"
         :borderless="borderless"
         :clearable="clearable"
         :dense="dense"

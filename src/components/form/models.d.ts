@@ -132,6 +132,11 @@ export interface MFileProps extends MColProps, Omit<QFileProps, 'rules'> {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
+  accept?: string | undefined;
+  images?: boolean | undefined;
+  video?: boolean | undefined;
+  pdf?: boolean | undefined;
+  excel?: boolean | undefined;
   outlined?: boolean | undefined;
   standout?: boolean | string | undefined;
   borderless?: boolean | undefined;

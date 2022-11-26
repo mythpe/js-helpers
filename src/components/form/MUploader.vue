@@ -9,6 +9,7 @@
 import { AxiosResponse } from 'axios'
 import { QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
+import useAcceptProp from 'src/composition/useAcceptProp'
 import { defineProps, nextTick, ref, watch, withDefaults } from 'vue'
 import { useMyTh } from '../../vue3'
 import { useTranslate } from '../../vue3/MTranslate'
@@ -107,26 +108,7 @@ const { t } = useTranslate()
 
 const uploader = ref<QUploader>()
 const formRef = ref<Record<string, any>>(props.modelValue)
-const accepts: string[] = []
-
-const prepareAcceptProp = () => {
-  if (props.accept) {
-    accepts.push(props.accept)
-  }
-  if (props.images) {
-    accepts.push('image/png,image/jpg,image/jpeg')
-  }
-  if (props.video) {
-    accepts.push('video/mp4,video/x-m4v,video/*')
-  }
-  if (props.pdf) {
-    accepts.push('application/pdf')
-  }
-  if (props.excel) {
-    accepts.push('.csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-  }
-}
-prepareAcceptProp()
+const accepts = useAcceptProp(props)
 
 /* Events Callback */
 const factoryFn = (files: readonly File[]) => {
