@@ -162,7 +162,7 @@ export function useDatatable ({
       })
     })()
   }
-  const getRequestWith = (type: 'withIndex' | 'withShow' | 'withUpdate') => {
+  const getRequestWith = (type: 'withIndex' | 'withShow' | 'withUpdate' | 'withStore') => {
     let v = []
     const params: Record<string | number, any> | ((dt: any) => string[] | string) | string | undefined = props[type]
     if (params) {
@@ -421,7 +421,7 @@ export function useDatatable ({
     // const isUpdate = isUpdateMode
     $q.loading.show()
     // console.log(form)
-    form.requestWith = getRequestWith('withIndex')
+    form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withIndex')
     if (!form.requestWith) {
       delete form.requestWith
     }

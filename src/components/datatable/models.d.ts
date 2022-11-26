@@ -187,6 +187,7 @@ export interface MDatatableProps extends QTableProps {
   noAutoMessage?: boolean | undefined;
   searchDebounce?: string | number | undefined;
   withIndex?: string | string[] | undefined;
+  withStore?: string | string[] | undefined;
   withShow?: string | string[] | undefined;
   withUpdate?: string | string[] | undefined;
   serviceName: string | Record<string, (() => Promise<AxiosResponse>)>;
