@@ -9,7 +9,7 @@
 
 import { QFile } from 'quasar'
 import { Field as VeeField } from 'vee-validate'
-import { defineProps, ref } from 'vue'
+import { computed, defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MFileProps } from './models'
@@ -72,10 +72,10 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined
 })
 
-// type Events = {
-//   (e: 'update:modelValue', value: any | undefined): void;
-// }
-// const emit = defineEmits<Events>()
+type Events = {
+  (e: 'update:modelValue', value: any | undefined): void;
+}
+const emit = defineEmits<Events>()
 
 const {
   getRules,
@@ -85,11 +85,11 @@ const {
 } = useInputProps(props)
 
 const fileInput = ref<typeof QFile>()
-const inputValue = ref(props.modelValue)
-// const inputValue = computed({
-//   get: () => props.modelValue,
-//   set: (v) => emit('update:modelValue', v)
-// })
+// const inputValue = ref(props.modelValue)
+const inputValue = computed({
+  get: () => props.modelValue,
+  set: (v) => emit('update:modelValue', v)
+})
 
 const pickFiles = (...args: any[]) => {
   fileInput.value?.pickFiles(...args)
