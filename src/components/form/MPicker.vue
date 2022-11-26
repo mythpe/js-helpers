@@ -7,7 +7,7 @@
 
 <script lang="ts" setup>
 import { computed, defineEmits } from 'vue'
-import { MPickerProps } from '../form/models'
+import { MPickerProps } from './models'
 import { ColStyleType } from '../grid/models'
 
 interface Props extends MPickerProps {

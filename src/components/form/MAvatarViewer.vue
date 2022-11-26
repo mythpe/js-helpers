@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 
 import { QImgProps } from 'quasar'
-import useAcceptProp from 'src/composition/useAcceptProp'
+import useAcceptProp from '../../composition/useAcceptProp'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { ColStyleType } from '../grid/models'
 

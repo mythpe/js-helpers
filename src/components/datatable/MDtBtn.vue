@@ -11,7 +11,7 @@
 >
 
 import { computed } from 'vue'
-import { useTranslate } from '../../vue3/MTranslate'
+import { useTranslate } from '../../vue3'
 import { MDtBtnProps } from './models'
 
 interface Props extends MDtBtnProps {

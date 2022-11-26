@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 
 import { QFile } from 'quasar'
-import useAcceptProp from 'src/composition/useAcceptProp'
+import useAcceptProp from '../../composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'

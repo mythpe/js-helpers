@@ -5,7 +5,7 @@
   - https://www.4myth.com
   -->
 <script lang="ts" setup>
-import { MDateProps } from 'src/components/form/models'
+import { MDateProps } from './models'
 import { computed, defineEmits } from 'vue'
 
 interface Props extends MDateProps {

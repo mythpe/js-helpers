@@ -9,10 +9,9 @@
 import { AxiosResponse } from 'axios'
 import { QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
-import useAcceptProp from 'src/composition/useAcceptProp'
 import { defineProps, nextTick, ref, watch, withDefaults } from 'vue'
-import { useMyTh } from '../../vue3'
-import { useTranslate } from '../../vue3/MTranslate'
+import useAcceptProp from '../../composition/useAcceptProp'
+import { useMyTh, useTranslate } from '../../vue3'
 import { ColStyleType } from '../grid/models'
 import { MUploaderMediaItem, MUploaderProps, MUploaderXhrInfo } from './models'
 
