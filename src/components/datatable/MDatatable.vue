@@ -38,7 +38,7 @@ interface Props extends MDatatableProps {
   withStore?: string | string[] | undefined;
   withShow?: string | string[] | undefined;
   withUpdate?: string | string[] | undefined;
-  serviceName: string | Record<string, (() => Promise<AxiosResponse>)>;
+  serviceName: string | (() => Record<string, (() => Promise<AxiosResponse>)>);
   createRoute?: string | undefined;
   updateRoute?: string | undefined;
   showRoute?: string | undefined;
