@@ -76,12 +76,12 @@ type Events = {
   (e: 'update:modelValue', value: any | undefined): void;
 }
 const emit = defineEmits<Events>()
+// defineEmits<Events>()
 
 const {
   getRules,
   getLabel,
-  getPlaceholder,
-  inputErrors
+  getPlaceholder
 } = useInputProps(props)
 
 const fileInput = ref<typeof QFile>()
@@ -102,6 +102,17 @@ defineExpose({
   pickFiles,
   removeAtIndex
 })
+
+// watch(inputValue, (v) => {
+//   console.log('watch: ', v)
+// })
+// const handleChange = (value: any, callback?: (() => void) | undefined) => {
+//   console.log(value,callback)
+//   // inputValue.value = value
+//   if (callback) {
+//     callback()
+//   }
+// }
 </script>
 
 <template>
@@ -122,23 +133,22 @@ defineExpose({
     >
       <q-file
         ref="fileInput"
+        v-model="inputValue"
         :borderless="borderless"
         :clearable="clearable"
         :dense="dense"
-        :error="inputErrors.length > 0"
-        :error-message="inputErrors[0]"
+        :error="fieldScope.errors.length > 0"
+        :error-message="fieldScope.errorMessage"
         :filled="filled"
         :hide-bottom-space="hideBottomSpace"
         :label="getLabel"
         :loading="loading"
-        :model-value="inputValue"
         :outlined="outlined"
         :placeholder="getPlaceholder"
         :stack-label="stackLabel"
         :standout="standout"
         v-bind="$attrs"
-        @blur="fieldScope.handleBlur"
-        @change="fieldScope.handleChange"
+        @clear="fieldScope.handleBlur()"
       >
         <template
           v-for="(_,slot) in $slots"
@@ -156,9 +166,6 @@ defineExpose({
           />
         </template>
       </q-file>
-      <slot
-        v-bind="fieldScope"
-      />
     </VeeField>
   </MCol>
 </template>
