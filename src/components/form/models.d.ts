@@ -5,7 +5,7 @@
  * https://www.4myth.com
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios'
+import { AxiosInstance } from 'axios'
 import {
   QAvatarProps,
   QAvatarSlots,
@@ -403,7 +403,17 @@ export type MUploaderMediaItem = {
   user_id: number | null;
 }
 
-export interface MUploaderProps extends Omit<QUploaderProps, 'formFields'> {
+export type MUploaderServiceType = string | {
+  /** The url to which the files will be uploaded to */
+  uploadAttachments: (modelId: string | number, files: readonly File[]) => string;
+  /**
+   * Method axios to delete files
+   * @param files
+   */
+  deleteAttachment: (media: MUploaderMediaItem) => Promise<any>;
+}
+
+export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'headers' | 'url'> {
   auto?: boolean | undefined;
   col?: ColStyleType;
   xs?: ColStyleType;
@@ -463,27 +473,29 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields'> {
    */
   formFields?: Record<string, any> | undefined;
   /**
+   * Extra headers
+   */
+  headers?: Record<string, any> | undefined;
+  /**
    * Label for the uploader
    */
   label?: string | undefined;
-  /** The url to which the files will be uploaded to */
-  url?: string | ((files: readonly File[]) => string) | undefined;
-  /** Object of data */
-  modelValue: Record<string, any | any[]>;
+  /** The Attachments list */
+  modelValue: MUploaderMediaItem[];
   /** Input errors */
   errors?: string[] | undefined;
-  /** The name of the field containing the attachments */
-  attachments: string;
-  /** Hide delete media items from uploader, no delete media For API */
+  /**
+   *  Hide delete media items from uploader, no delete media For API
+   */
   hideDeleteMedia?: boolean | undefined;
   /**
-   * Method to delete media
+   * User APi service for upload & delete
    */
-  deleteMedia?: ((media: MUploaderMediaItem) => Promise<AxiosResponse>) | undefined;
+  service: MUploaderServiceType;
   /**
-   * User APi service for upload and delete
+   * The ID of model will use in attachments
    */
-  service?: string | undefined;
+  modelId: string | number;
 }
 
 export interface MUploaderSlots extends QUploaderSlots {

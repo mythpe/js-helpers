@@ -62,6 +62,7 @@ export {}
 export type MyThVue3InstallOptions = {
   i18n: VueI18n;
   api: {
+    baseUrl: string;
     axios: AxiosInstance;
     services: {
       [key: string]: Record<string, (() => Promise<AxiosResponse>) | any> | any

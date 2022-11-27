@@ -7,6 +7,8 @@
 
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import _ from 'lodash'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import qs from 'qs'
 import { ConfigType, ParamsType, StubSchema, UrlType } from '../types'
 

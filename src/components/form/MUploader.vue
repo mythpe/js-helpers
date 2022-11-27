@@ -6,14 +6,13 @@
   -->
 
 <script lang="ts" setup>
-import { AxiosResponse } from 'axios'
 import { QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
-import { defineProps, nextTick, ref, watch, withDefaults } from 'vue'
+import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
 import useAcceptProp from '../../composition/useAcceptProp'
 import { useMyTh, useTranslate } from '../../vue3'
 import { ColStyleType } from '../grid/models'
-import { MUploaderMediaItem, MUploaderProps, MUploaderXhrInfo } from './models'
+import { MUploaderMediaItem, MUploaderProps, MUploaderServiceType, MUploaderXhrInfo } from './models'
 
 interface Props extends MUploaderProps {
   auto?: boolean | undefined;
@@ -39,14 +38,13 @@ interface Props extends MUploaderProps {
   collection?: string | undefined;
   attachmentType?: string | undefined;
   formFields?: Record<string, any> | undefined;
+  headers?: Record<string, any> | undefined;
   label?: string | undefined;
-  url?: string | ((files: readonly File[]) => string) | undefined;
-  modelValue: Record<string, any | any[]>;
+  modelValue: MUploaderMediaItem[];
   errors?: string[] | undefined;
-  attachments: string;
   hideDeleteMedia?: boolean | undefined;
-  deleteMedia?: ((media: MUploaderMediaItem) => Promise<AxiosResponse>) | undefined;
-  service?: string | undefined;
+  service: MUploaderServiceType;
+  modelId: string | number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -70,17 +68,16 @@ const props = withDefaults(defineProps<Props>(), {
   maxTotalSize: 2,
   maxFiles: undefined,
   fieldName: 'attachment',
-  collection: 'attachment',
+  collection: undefined,
   attachmentType: undefined,
   formFields: undefined,
+  headers: undefined,
   label: undefined,
-  url: undefined,
-  modelValue: undefined,
-  attachments: undefined,
+  modelValue: () => ([]),
   hideDeleteMedia: !1,
-  deleteMedia: undefined,
   errors: undefined,
-  service: undefined
+  service: undefined,
+  modelId: undefined
 })
 
 interface Events {
@@ -93,20 +90,22 @@ interface Events {
   (e: 'delete-media', media: MUploaderMediaItem, result: boolean): void;
 
   (e: 'remove-file', File: File): void;
+
+  (e: 'update:modelValue', value: MUploaderMediaItem[]): void;
 }
 
 const emit = defineEmits<Events>()
 const $q = useQuasar()
 const $myth = useMyTh()
-const {
-  alertError,
-  alertSuccess,
-  confirmMessage
-} = $myth
+const { alertError, alertSuccess, confirmMessage } = $myth
 const { t } = useTranslate()
 
 const uploader = ref<QUploader>()
-const formRef = ref<Record<string, any>>(props.modelValue)
+// const formRef = ref<Record<string, any>>(props.modelValue)
+const attachmentsRef = computed({
+  get: () => props.modelValue,
+  set: v => emit('update:modelValue', v)
+})
 const accepts = useAcceptProp(props)
 
 /* Events Callback */
@@ -124,6 +123,14 @@ const factoryFn = (files: readonly File[]) => {
         value: common[i]
       })
     }
+    if (props.headers) {
+      for (const f in props.headers) {
+        headers.push({
+          name: f,
+          value: props.headers[f]
+        })
+      }
+    }
     const formFields: any = []
     if (props.formFields) {
       for (const f in props.formFields) {
@@ -140,12 +147,8 @@ const factoryFn = (files: readonly File[]) => {
       formFields.push({ name: 'attachment_type', value: props.attachmentType })
     }
     let url: string
-    if (props.service) {
-      url = $myth.api.services[props.service].uploadAttachments(props.modelValue.id, !0)
-    } else {
-      url = typeof props.url === 'function' ? props.url(files) : (props.url ?? '')
-    }
-    url = `${process.env.VUE_BASE_API}/${url}`
+    url = typeof props.service === 'string' ? $myth.api.services[props.service].uploadAttachments(props.modelId, !0) : props.service.uploadAttachments(props.modelId, files)
+    url = `${$myth.api.baseUrl}/${url}`
     resolve({
       url,
       method: 'POST',
@@ -174,8 +177,9 @@ const onFinishUpload = ({ files, xhr }: MUploaderXhrInfo) => {
   try {
     if (xhr.responseText) {
       const response = JSON.parse(xhr.responseText)
-      if (response && response.data && response.data.length !== undefined && props.attachments) {
-        formRef.value[props.attachments] = response.data
+      if (response && response.data && response.data.length !== undefined) {
+        attachmentsRef.value = response.data
+        // formRef.value[props.attachments] = response.data
         files.forEach(f => uploader.value?.removeFile(f))
       }
     }
@@ -199,18 +203,12 @@ const deleteMedia = (media: MUploaderMediaItem) => {
   const destroy = async () => {
     let r = !1
     try {
-      const method = props.service !== undefined ? async (a: MUploaderMediaItem) => $myth.api.services[props.service].deleteAttachment(props.modelValue.id, a.id) : props.deleteMedia
+      const method = async (file: MUploaderMediaItem) => typeof props.service === 'string' ? await $myth.api.services[props.service].deleteAttachment(props.modelId, file.id) : props.service.deleteAttachment(media)
       if (method) {
         const { _message, _success, _data }: any = await method(media)
         _message && alertSuccess(_message)
         r = Boolean(_success)
-        if (r) {
-          if (_data && _data?.length !== undefined) {
-            formRef.value[props.attachments] = _data || []
-          } else {
-            formRef.value[props.attachments] = formRef.value[props.attachments].filter((e: MUploaderMediaItem) => e.id !== media.id)
-          }
-        }
+        attachmentsRef.value = _data ?? []
       }
     } catch (e: any) {
       alertError(e?._message || e?.message)
@@ -307,7 +305,7 @@ export default {
       >
         <q-list separator>
           <q-item
-            v-for="(file,i) in [...scope.files,...(props.modelValue[props.attachments] ??[])]"
+            v-for="(file,i) in [...scope.files,...attachmentsRef]"
             :key="i"
           >
             <q-item-section
