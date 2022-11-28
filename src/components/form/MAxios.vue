@@ -54,7 +54,7 @@ onMounted(async () => {
 
     loading.value = !0
     try {
-      const { _data } = await method({ requestWith: props.requestWith })
+      const { _data } = await method({ params: { requestWith: props.requestWith } })
       items.value = _data || []
       emit('items', _data || [])
     } catch (e) {
