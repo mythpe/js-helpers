@@ -214,7 +214,7 @@ export function useDatatable ({
         params.requestWith = requestWith
       }
       try {
-        const { _data, _meta } = await getApiServices().index(params)
+        const { _data, _meta } = await getApiServices().index({ params })
 
         paginationOptions.value = {
           page: parseInt(_meta?.current_page) || 1,
@@ -494,10 +494,7 @@ export function useDatatable ({
     $myth.confirmMessage(t('messages.are_you_sure')).onOk(async () => {
       $q.loading.show()
       try {
-        const {
-          _message,
-          _success
-        } = await getApiServices().destroyAll(tableOptions.value.selected.map((e: MDtItem) => e.id))
+        const { _message, _success } = await getApiServices().destroyAll(tableOptions.value.selected.map((e: MDtItem) => e.id))
         if (!props.noAutoMessage && _success && _message) {
           _message && $myth.alertSuccess(_message)
         }
