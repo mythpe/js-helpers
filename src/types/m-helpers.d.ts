@@ -90,20 +90,20 @@ export type ParamsType = boolean | Record<string, any> | FormData | object
 
 export type ConfigType = AxiosRequestConfig
 
-export type StubType =
-  ((params?: ParamsType, config?: ConfigType) => string | AxiosInstance['get'] | Promise<AxiosInstance['get']>)
-  | ((data?: ParamsType, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>)
+export type GetType = (config?: ConfigType | boolean) => string | AxiosInstance['get'] | Promise<AxiosInstance['get']>
+
+export type PostType = (data?: ParamsType, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>
 
 export interface StubSchema {
-  index: StubType
-  export: StubType
-  store: StubType;
+  index: GetType
+  export: PostType
+  store: PostType;
   show: ((id: UrlType, config?: ConfigType) => string | AxiosInstance['get'] | Promise<AxiosInstance['get']>);
   update: ((id: UrlType, data: ParamsType, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>);
   destroy: ((id: UrlType, config?: ConfigType) => string | AxiosInstance['delete'] | Promise<AxiosInstance['delete']>);
   destroyAll: ((ids: UrlType[] | boolean, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>);
-  utilities: (params?: Record<string, any>, config?: ConfigType) => string | AxiosInstance['get'] | Promise<AxiosInstance['get']>
-  staticUtilities: StubType;
+  utilities: GetType
+  staticUtilities: GetType;
   uploadAttachments: (id: UrlType, data: ParamsType, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>;
   deleteAttachment: (id: UrlType, fileId: string | number, config?: ConfigType | boolean) => string | AxiosInstance['delete'] | Promise<AxiosInstance['delete']>;
 }
