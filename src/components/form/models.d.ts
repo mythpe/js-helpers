@@ -5,7 +5,7 @@
  * https://www.4myth.com
  */
 
-import { AxiosInstance } from 'axios'
+import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import {
   QAvatarProps,
   QAvatarSlots,
@@ -244,7 +244,7 @@ export interface MAxiosProps extends Omit<MSelectProps, 'options' | 'modelValue'
   modelValue?: any | undefined;
   requestWith?: string | undefined;
   options?: any[];
-  service: string | (() => Promise<AxiosInstance>);
+  service: string | ((config?: AxiosRequestConfig) => Promise<AxiosInstance>);
 }
 
 export interface MAxiosSlots extends MSelectSlots {

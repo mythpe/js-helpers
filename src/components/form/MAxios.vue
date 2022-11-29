@@ -10,7 +10,7 @@
   setup
 >
 
-import { AxiosInstance } from 'axios'
+import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import { defineEmits, defineProps, onBeforeMount, onMounted, ref, watch } from 'vue'
 import { useMyTh } from '../../vue3'
 import { MAxiosProps } from './models'
@@ -19,7 +19,7 @@ interface Props extends MAxiosProps {
   modelValue?: any | undefined;
   requestWith?: string | undefined;
   options?: any[];
-  service: string | (() => Promise<AxiosInstance>);
+  service: string | ((config?: AxiosRequestConfig) => Promise<AxiosInstance>);
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -54,7 +54,7 @@ onMounted(async () => {
 
     loading.value = !0
     try {
-      const { _data } = await method({ params: { requestWith: props.requestWith } })
+      const { _data } = await method({ params: { requestWith: props.requestWith, exclude: 1 } })
       items.value = _data || []
       emit('items', _data || [])
     } catch (e) {
