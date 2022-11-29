@@ -104,7 +104,8 @@ export const Helpers = {
         return methods.index(config)
       },
       staticUtilities (config?: ConfigType | boolean) {
-        const u = makeUrl()
+        const m = baseUrl ? baseUrl.toString().split('/').pop() : ''
+        const u = 'Static' + (m ? `/${m}` : '')
         if (typeof config === 'boolean') {
           return u
         }
