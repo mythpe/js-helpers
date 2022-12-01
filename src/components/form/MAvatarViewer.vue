@@ -150,6 +150,7 @@ export default {
     :md="md"
     :sm="sm"
     :xs="xs"
+    :class="$attrs.class"
   >
     <MColumn class="items-center">
       <MCol
@@ -232,7 +233,7 @@ export default {
         v-if="errors[name]"
         col="12"
       >
-        <span class="text-body2 text-negative">{{ errors[name][0] }}</span>
+        <span class="text-body2 text-negative">{{ typeof errors[name] === 'string' ? errors[name] : errors[name][0] }}</span>
       </MCol>
       <MFile
         ref="fileInput"
