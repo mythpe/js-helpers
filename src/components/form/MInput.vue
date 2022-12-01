@@ -146,7 +146,7 @@ export default {
               v-bind="inputSlot"
             />
             <slot
-              v-else
+              v-else-if="slot !== 'default'"
               :name="slot"
             />
           </template>
