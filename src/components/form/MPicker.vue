@@ -7,8 +7,8 @@
 
 <script lang="ts" setup>
 import { computed, defineEmits } from 'vue'
-import { MPickerProps } from './models'
 import { ColStyleType } from '../grid/models'
+import { MPickerProps } from './models'
 
 interface Props extends MPickerProps {
   auto?: boolean | undefined;
@@ -85,6 +85,8 @@ export default {
               v-if="isDate"
               v-model="inputValue"
               :mask="format"
+              today-btn
+              v-bind="$attrs"
             >
               <div class="row items-center justify-end">
                 <MBtn
@@ -98,6 +100,8 @@ export default {
               v-else
               v-model="inputValue"
               :mask="format"
+              now-btn
+              v-bind="$attrs"
             >
               <div class="row items-center justify-end">
                 <MBtn
