@@ -270,7 +270,7 @@ export default {
       :disable="disable"
       :factory="factoryFn"
       :field-name="fieldName"
-      :label="label?$myth.parseAttribute(label):undefined"
+      :label="label"
       :max-file-size="getMaxFileSize"
       :max-files="maxFiles"
       :max-total-size="getMaxTotalSize"
