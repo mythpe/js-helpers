@@ -32,7 +32,7 @@ import {
   MDtAvatarProps,
   MDtAvatarSlots,
   MDtBtnProps,
-  MDtBtnSlots,
+  MDtBtnSlots, MEditorProps, MEditorSlots,
   MFileProps,
   MFileSlots,
   MFormProps,
@@ -91,6 +91,7 @@ declare module '@vue/runtime-core' {
     MBtn: GlobalComponentConstructor<MBtnProps, MBtnSlots>;
     MCheckbox: GlobalComponentConstructor<MCheckboxProps, MCheckboxSlots>;
     MDate: GlobalComponentConstructor<MDateProps, MDateSlots>;
+    MEditor: GlobalComponentConstructor<MEditorProps, MEditorSlots>;
     MEmail: GlobalComponentConstructor<MInputProps, MInputSlots>;
     MFile: GlobalComponentConstructor<MFileProps, MFileSlots>;
     MForm: GlobalComponentConstructor<MFormProps, MFormSlots>;

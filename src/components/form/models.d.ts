@@ -13,6 +13,8 @@ import {
   QBtnSlots,
   QCheckboxProps,
   QCheckboxSlots,
+  QEditorProps,
+  QEditorSlots,
   QFileProps,
   QFileSlots,
   QImgProps,
@@ -506,5 +508,27 @@ export interface MUploaderSlots extends QUploaderSlots {
 }
 
 export type MUploaderXhrInfo = { files: readonly any[]; xhr: any; }
+
+export interface MEditorProps extends QEditorProps {
+  auto?: boolean | undefined;
+  col?: ColStyleType;
+  xs?: ColStyleType;
+  sm?: ColStyleType;
+  md?: ColStyleType;
+  lg?: ColStyleType;
+  xl?: ColStyleType;
+  modelValue: string;
+  minHeight?: string | undefined;
+  label?: string | undefined;
+  errors?: Record<string, string[]> | undefined;
+  dense?: boolean | undefined;
+}
+
+export interface MEditorSlots extends QEditorSlots {
+  /**
+   * Editor default slot
+   */
+  default: () => VNode[];
+}
 
 export {}
