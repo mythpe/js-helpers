@@ -5,7 +5,7 @@
  * https://www.4myth.com
  */
 
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useMyTh } from '../vue3'
 
 export const useDefaultInputProps = {
@@ -35,11 +35,12 @@ export const useDefaultInputProps = {
   hideBottomSpace: undefined,
   errors: () => ({})
 }
-export default function useInputProps (props: any) {
+export default function useInputProps (Props: any) {
+  const props = ref(Props)
   const { parseAttribute } = useMyTh()
 
   const getRules = computed<string | undefined>(() => {
-    let rules = props.rules || []
+    let rules = props.value.rules || []
     if (!rules) {
       rules = []
     }
@@ -48,21 +49,21 @@ export default function useInputProps (props: any) {
       rules = rules.split('|')
     }
 
-    if (props.required) {
+    if (props.value.required) {
       rules.push('required')
     }
-    if (props.email) {
+    if (props.value.email) {
       rules.push('email')
     }
 
     return rules.join('|') || undefined
   })
-  const hasRequired = computed<boolean>(() => props.required === !0 ? !0 : getRules.value !== undefined && getRules.value?.indexOf('required') >= 0)
+  const hasRequired = computed<boolean>(() => props.value.required === !0 ? !0 : getRules.value !== undefined && getRules.value?.indexOf('required') >= 0)
   const getLabel = computed<string | undefined>(() => {
-    const k = props.label === undefined && props.placeholder === undefined ? props.name : props.label
+    const k = props.value.label === undefined && props.value.placeholder === undefined ? props.value.name : props.value.label
     if (k) {
       let label = parseAttribute(k) ?? k
-      if (label && hasRequired.value && !props.hideRequired) {
+      if (label && hasRequired.value && !props.value.hideRequired) {
         label = `${label} *`
       }
       return label
@@ -70,18 +71,18 @@ export default function useInputProps (props: any) {
     return undefined
   })
   const getPlaceholder = computed<string | undefined>(() => {
-    if (props.hidePlaceholder) {
-      return props.placeholder !== undefined ? parseAttribute(props.placeholder) : undefined
+    if (props.value.hidePlaceholder) {
+      return props.value.placeholder !== undefined ? parseAttribute(props.value.placeholder) : undefined
     }
-    const k = props.placeholder === undefined ? props.name : props.placeholder
+    const k = props.value.placeholder === undefined ? props.value.name : props.value.placeholder
     if (k) {
       return parseAttribute(k)
     }
     return undefined
   })
   const inputErrors = computed<string[]>(() => {
-    if (!props.name) return []
-    return props.errors[props.name] ?? []
+    if (!props.value.errors || !props.value.name) return []
+    return props.value.errors[props.value.name] ?? []
   })
 
   return { getRules, hasRequired, getLabel, getPlaceholder, inputErrors }

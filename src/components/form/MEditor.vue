@@ -28,7 +28,7 @@
     <slot />
     <q-slide-transition>
       <p
-        v-if="inputErrors[0]"
+        v-if="inputErrors.length > 0"
         class="text-body2 text-negative"
       >
         {{ inputErrors[0] }}
