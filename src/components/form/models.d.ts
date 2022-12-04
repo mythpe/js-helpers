@@ -522,6 +522,8 @@ export interface MEditorProps extends QEditorProps {
   label?: string | undefined;
   errors?: Record<string, string[]> | undefined;
   dense?: boolean | undefined;
+  toolbar?: readonly any[] | undefined;
+  fonts?: any | undefined;
 }
 
 export interface MEditorSlots extends QEditorSlots {

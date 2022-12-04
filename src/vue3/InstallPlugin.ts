@@ -39,6 +39,7 @@ export default async function install (app: App, {
   app.component('MBtn', defineAsyncComponent(() => import('../components/form/MBtn.vue')))
   app.component('MCheckbox', defineAsyncComponent(() => import('../components/form/MCheckbox.vue')))
   app.component('MDate', defineAsyncComponent(() => import('../components/form/MDate.vue')))
+  app.component('MEditor', defineAsyncComponent(() => import('../components/form/MEditor.vue')))
   app.component('MEmail', defineAsyncComponent(() => import('../components/form/MEmail.vue')))
   app.component('MFile', defineAsyncComponent(() => import('../components/form/MFile.vue')))
   app.component('MForm', defineAsyncComponent(() => import('../components/form/MForm.vue')))
