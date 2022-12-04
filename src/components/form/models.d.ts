@@ -519,6 +519,7 @@ export interface MEditorProps extends QEditorProps {
   xl?: ColStyleType;
   modelValue: string;
   minHeight?: string | undefined;
+  name?: string | undefined;
   label?: string | undefined;
   errors?: Record<string, string[]> | undefined;
   dense?: boolean | undefined;

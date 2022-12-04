@@ -14,15 +14,15 @@
     :sm="sm"
     :xs="xs"
   >
-    <p v-if="label">
+    <p v-if="getLabel">
       {{ getLabel }}
     </p>
     <q-editor
       v-model="inputValue"
       :dense="dense !== undefined ? dense : $q.screen.lt.md"
-      :fonts="fonts"
+      :fonts="fonts === undefined ? _fonts : fonts"
       :min-height="minHeight"
-      :toolbar="toolbar"
+      :toolbar="toolbar === undefined ? _toolbar : toolbar"
       v-bind="$attrs"
     />
     <slot />
@@ -54,6 +54,7 @@ interface Props extends MEditorProps {
   xl?: ColStyleType;
   modelValue: string;
   minHeight?: string | undefined;
+  name?: string | undefined;
   label?: string | undefined;
   errors?: Record<string, string[]> | undefined;
   dense?: boolean | undefined;
@@ -156,11 +157,12 @@ const props = withDefaults(defineProps<Props>(), {
   xl: undefined,
   modelValue: undefined,
   minHeight: '5rem',
+  name: undefined,
   label: undefined,
   errors: undefined,
   dense: undefined,
-  toolbar: () => _toolbar,
-  fonts: () => _fonts
+  toolbar: undefined,
+  fonts: undefined
 })
 
 type EmitsTypes = {
