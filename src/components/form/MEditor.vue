@@ -19,7 +19,7 @@
     </p>
     <q-editor
       v-model="inputValue"
-      :dense="dense"
+      :dense="dense !== undefined ? dense : $q.screen.lt.md"
       :fonts="fonts"
       :min-height="minHeight"
       :toolbar="toolbar"
@@ -158,7 +158,7 @@ const props = withDefaults(defineProps<Props>(), {
   minHeight: '5rem',
   label: undefined,
   errors: undefined,
-  dense: $q.screen.lt.md,
+  dense: undefined,
   toolbar: () => _toolbar,
   fonts: () => _fonts
 })
