@@ -98,7 +98,7 @@ export const Helpers = {
           config = config || {}
           config.params = {
             ...(config.params ?? {}),
-            itemsPerPage: -1
+            itemsPerPage: config.params?.itemsPerPage ?? -1
           }
         }
         return methods.index(config)
@@ -112,7 +112,7 @@ export const Helpers = {
         config = config || {}
         config.params = {
           ...(config.params ?? {}),
-          itemsPerPage: -1
+          itemsPerPage: config.params?.itemsPerPage ?? -1
         }
         return axios().get(u, config)
       },
