@@ -110,7 +110,6 @@ const onSearch = (query: string | null) => {
     language: $q.lang.isoName
   }, (res: PlaceResult[] | null) => {
     loading.value = !1
-    console.log(res)
     searchResults.value = res?.slice(0, 20) ?? []
     // console.log(b)
   })
@@ -201,9 +200,10 @@ const findCurrentLocation = () => {
         }
         emitSetMapCenter(pos)
       },
-      () => {
+      (positionError) => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         handleLocationError(map, true, infoWindow.value, map.getCenter()!)
+        console.log(positionError)
       }
     )
   } else {
