@@ -552,7 +552,6 @@ export default {
     <q-dialog
       v-model="dialogs.filter"
       allow-focus-outside
-      full-height
       full-width
       no-backdrop-dismiss
       persistent
@@ -560,34 +559,36 @@ export default {
       transition-hide="fade"
       transition-show="fade"
     >
-      <q-card>
+      <q-card class="m--dialog-card">
         <q-card-section>
           <p class="text-h6">
             {{ $t('filter') }}
           </p>
         </q-card-section>
-        <q-card-section class="scroll">
+        <q-separator />
+        <q-card-section
+          :style="`max-height: ${$q.screen.height-300}px`"
+          class="scroll"
+        >
           <slot
             name="filter"
             v-bind="{filter:tableOptions.tempFilter}"
           />
         </q-card-section>
         <q-separator />
-        <MContainer>
-          <div class="row">
-            <MBtn
-              :label="$t('save')"
-              color="positive"
-              @click="saveFilterDialog"
-            />
-            <q-space />
-            <MBtn
-              :label="$t('cancel')"
-              color="negative"
-              @click="closeFilterDialog"
-            />
-          </div>
-        </MContainer>
+        <q-card-actions>
+          <MBtn
+            :label="$t('save')"
+            color="positive"
+            @click="saveFilterDialog"
+          />
+          <q-space />
+          <MBtn
+            :label="$t('cancel')"
+            color="negative"
+            @click="closeFilterDialog"
+          />
+        </q-card-actions>
       </q-card>
     </q-dialog>
 
@@ -601,29 +602,31 @@ export default {
       transition-hide="fade"
       transition-show="fade"
     >
-      <q-card>
+      <q-card class="m--dialog-card">
         <q-card-section>
           <q-toolbar>
             <q-toolbar-title>{{ getShowTitle }}</q-toolbar-title>
           </q-toolbar>
         </q-card-section>
-        <q-card-section class="scroll">
+        <q-separator />
+        <q-card-section
+          :style="`max-height: ${$q.screen.height-300}px`"
+          class="scroll"
+        >
           <slot
             name="show"
             v-bind="{item:dialogs.item,index:dialogs.index}"
           />
         </q-card-section>
-
-        <MContainer>
-          <div class="row">
-            <q-space />
-            <MBtn
-              :label="$t('close')"
-              color="negative"
-              @click="closeShowDialog"
-            />
-          </div>
-        </MContainer>
+        <q-separator />
+        <q-card-actions>
+          <q-space />
+          <MBtn
+            :label="$t('close')"
+            color="negative"
+            @click="closeShowDialog"
+          />
+        </q-card-actions>
       </q-card>
     </q-dialog>
 
@@ -638,7 +641,7 @@ export default {
       transition-hide="fade"
       transition-show="fade"
     >
-      <q-card>
+      <q-card class="m--dialog-card">
         <q-slide-transition>
           <m-form
             ref="dialogForm"
@@ -654,6 +657,7 @@ export default {
             </q-card-section>
             <q-separator />
             <q-card-section
+              :style="`max-height: ${$q.screen.height-300}px`"
               class="scroll"
             >
               <slot
@@ -662,29 +666,27 @@ export default {
               />
             </q-card-section>
             <q-separator />
-            <MContainer>
-              <div class="row">
-                <slot
-                  name="form-actions"
-                  v-bind="{item:dialogs.item,index:dialogs.index,form,...datatableItemsScope}"
-                >
-                  <MBtn
-                    :disable="tableOptions.loading "
-                    :label="$t(isUpdateMode ? 'save' : 'create')"
-                    :loading="tableOptions.loading"
-                    color="positive"
-                    type="submit"
-                  />
-                </slot>
-                <q-space />
+            <q-card-actions class="m--datatable-form-actions">
+              <slot
+                name="form-actions"
+                v-bind="{item:dialogs.item,index:dialogs.index,form,...datatableItemsScope}"
+              >
                 <MBtn
-                  :disable="tableOptions.loading"
-                  :label="$t('close')"
-                  color="negative"
-                  @click="closeFormDialog"
+                  :disable="tableOptions.loading "
+                  :label="$t(isUpdateMode ? 'save' : 'create')"
+                  :loading="tableOptions.loading"
+                  color="positive"
+                  type="submit"
                 />
-              </div>
-            </MContainer>
+                <q-space />
+              </slot>
+              <MBtn
+                :disable="tableOptions.loading"
+                :label="$t('close')"
+                color="negative"
+                @click="closeFormDialog"
+              />
+            </q-card-actions>
           </m-form>
         </q-slide-transition>
       </q-card>
@@ -750,4 +752,10 @@ export default {
 .m--datatable:not(.m--datatable-grid):not(.q-table--dense)
   &.q-table--loading thead tr:last-child th
     top: 49px
+
+.m--dialog-card
+  .q-card__actions
+    .q-btn
+      padding: 4px 16px !important
+
 </style>
