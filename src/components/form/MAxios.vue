@@ -20,13 +20,17 @@ interface Props extends MAxiosProps {
   requestWith?: string | undefined;
   options?: any[];
   service: string | ((config?: AxiosRequestConfig) => Promise<AxiosInstance>);
+  params?: Record<string, any> | undefined;
+  exclude?: string | number | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   requestWith: undefined,
   options: () => ([]),
-  service: undefined
+  service: undefined,
+  params: () => ({}),
+  exclude: 1
 })
 
 interface Emits {
@@ -54,7 +58,7 @@ onMounted(async () => {
 
     loading.value = !0
     try {
-      const { _data } = await method({ params: { requestWith: props.requestWith, exclude: 1 } })
+      const { _data } = await method({ params: { ...(props.params ?? {}), requestWith: props.requestWith, exclude: props.exclude } })
       items.value = _data || []
       emit('items', _data || [])
     } catch (e) {
