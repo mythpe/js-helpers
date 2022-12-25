@@ -54,7 +54,7 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  behavior: 'dialog',
+  behavior: 'default',
   borderless: undefined,
   dense: undefined,
   emitValue: !0,

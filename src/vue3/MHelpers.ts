@@ -174,6 +174,11 @@ export const MHelpers = {
         if (!item.align) {
           opts.align = 'right'
         }
+        opts.classes = opts.classes || ''
+        if (typeof opts.classes === 'function') {
+          opts.classes = opts.classes()
+        }
+        opts.classes += (opts.classes ? ' ' : '') + 'm--control-cell'
       }
 
       item = { ...opts, ...item }

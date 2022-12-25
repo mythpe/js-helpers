@@ -12,7 +12,8 @@ export type ParseHeaderOptions = {
   controlKey?: 'control' | string
   controlStyle?: 'max-width: 150px' | string
   align?: 'left' | 'right' | 'center' | undefined
-  sortable?: boolean | undefined
+  sortable?: boolean | undefined;
+  classes?: string | (() => string)
 }
 
 export type ParseHeadersType = QTableProps['columns'] & {
