@@ -22,6 +22,10 @@ interface Props extends MDtBtnProps {
   color?: string | undefined;
   icon?: string | undefined;
   listItem?: boolean | undefined;
+  fabMini?: boolean | undefined;
+  flat?: boolean | undefined;
+  round?: boolean | undefined;
+  dense?: boolean | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -31,7 +35,11 @@ const props = withDefaults(defineProps<Props>(), {
   color: 'blue-grey',
   icon: undefined,
   tooltip: undefined,
-  listItem: !1
+  listItem: !1,
+  fabMini: !0,
+  flat: !0,
+  round: !0,
+  dense: undefined
 })
 const hasTooltip = computed(() => props.tooltip || props.show || props.update || props.destroy)
 
@@ -77,10 +85,11 @@ const getColor = computed<string | undefined>(() => {
     v-if="!listItem"
     :color="getColor"
     :icon="getIcon"
-    fab-mini
-    flat
-    round
+    :fab-mini="fabMini"
+    :flat="flat"
+    :round="round"
     v-bind="$attrs"
+    :dense="dense"
   >
     <slot />
     <q-tooltip v-if="hasTooltip">
@@ -91,7 +100,6 @@ const getColor = computed<string | undefined>(() => {
     v-else
     v-close-popup
     clickable
-    dense
     v-bind="$attrs"
   >
     <q-item-section>
