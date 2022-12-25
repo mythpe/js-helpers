@@ -36,9 +36,9 @@ const props = withDefaults(defineProps<Props>(), {
   icon: undefined,
   tooltip: undefined,
   listItem: !1,
-  fabMini: !0,
-  flat: !0,
-  round: !0,
+  fabMini: undefined,
+  flat: undefined,
+  round: undefined,
   dense: undefined
 })
 const hasTooltip = computed(() => props.tooltip || props.show || props.update || props.destroy)
