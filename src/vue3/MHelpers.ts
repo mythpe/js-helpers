@@ -172,7 +172,7 @@ export const MHelpers = {
       if (name === control) {
         opts.sortable = !1
         if (!item.align) {
-          opts.align = 'left'
+          opts.align = 'right'
         }
         opts.classes = opts.classes || ''
         if (typeof opts.classes === 'function') {
