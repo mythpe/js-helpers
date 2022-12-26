@@ -32,5 +32,6 @@ const inputValue = computed({
   <MPicker
     v-model="inputValue"
     type="time"
+    v-bind="$attrs"
   />
 </template>
