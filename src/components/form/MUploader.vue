@@ -256,6 +256,7 @@ export default {
     :md="md"
     :sm="sm"
     :xs="xs"
+    :class="$attrs.class"
   >
     <div
       v-if="errors && errors.length"

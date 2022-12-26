@@ -13,6 +13,7 @@
     :md="md"
     :sm="sm"
     :xs="xs"
+    :class="$attrs.class"
   >
     <p v-if="getLabel">
       {{ getLabel }}

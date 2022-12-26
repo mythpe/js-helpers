@@ -118,7 +118,7 @@ export default {
     :initial-errors="errors"
     :initial-values="form"
     as="div"
-    class="m--form"
+    :class="$attrs.class"
   >
     <form @submit="v.handleSubmit($event, onSubmit)">
       <slot v-bind="v" />
@@ -127,7 +127,5 @@ export default {
 </template>
 
 <style scoped>
-.m--form {
-  /*width: 100%;*/
-}
+
 </style>

@@ -98,6 +98,7 @@ export default {
     :md="md"
     :sm="sm"
     :xs="xs"
+    :class="$attrs.class"
   >
     <VeeField
       v-slot="fieldProps"

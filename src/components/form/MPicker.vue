@@ -65,6 +65,7 @@ export default {
     :md="md"
     :sm="sm"
     :xs="xs"
+    :class="$attrs.class"
   >
     <MInput
       v-model="inputValue"

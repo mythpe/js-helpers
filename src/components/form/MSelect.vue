@@ -81,10 +81,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const inputValue = ref(props.modelValue)
 
-const {
-  getRules,
-  getLabel
-} = useInputProps(props)
+const { getRules, getLabel } = useInputProps(props)
 </script>
 
 <script lang="ts">
@@ -102,6 +99,7 @@ export default {
       :md="md"
       :sm="sm"
       :xs="xs"
+      :class="$attrs.class"
     >
       <VeeField
         v-slot="fieldProps"
