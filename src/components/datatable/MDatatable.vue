@@ -476,49 +476,50 @@ export default {
           </MRow>
         </template>
         <template #top-selection>
-          <MContainer>
-            <div class="row items-center q-gutter-xs">
-              <slot
-                name="tools"
-                v-bind="{dt:datatableItemsScope}"
-              >
-                <MDtBtn
-                  v-if="hasUpdateBtn"
-                  :disable="!isSingleSelectedItem || tableOptions.loading"
-                  :loading="tableOptions.loading"
-                  :tooltip="$t('update')"
-                  icon="o_edit"
-                  flat
-                  round
-                  @click="openUpdateDialog(tableOptions.selected[0])"
-                />
-                <MDtBtn
-                  v-if="hasShowBtn"
-                  :disable="!isSingleSelectedItem || tableOptions.loading"
-                  :loading="tableOptions.loading"
-                  :tooltip="$t('show')"
-                  icon="o_visibility"
-                  flat
-                  round
-                  @click="openShowDialog(tableOptions.selected[0])"
-                />
-                <MDtBtn
-                  v-if="hasDestroyBtn"
-                  :disable="!hasSelectedItem || tableOptions.loading"
-                  :loading="tableOptions.loading"
-                  :tooltip="$t('destroy')"
-                  icon="delete_outline"
-                  flat
-                  round
-                  @click="deleteSelectionItem()"
-                />
-              </slot>
-              <slot
-                name="selection"
-                v-bind="{dt:datatableItemsScope}"
+          <div class="row items-center q-gutter-xs">
+            <slot
+              name="tools"
+              v-bind="{dt:datatableItemsScope}"
+            >
+              <MDtBtn
+                v-if="hasUpdateBtn"
+                :disable="!isSingleSelectedItem || tableOptions.loading"
+                :loading="tableOptions.loading"
+                :tooltip="$t('update')"
+                icon="o_edit"
+                flat
+                round
+                fab-mini
+                @click="openUpdateDialog(tableOptions.selected[0])"
               />
-            </div>
-          </MContainer>
+              <MDtBtn
+                v-if="hasShowBtn"
+                :disable="!isSingleSelectedItem || tableOptions.loading"
+                :loading="tableOptions.loading"
+                :tooltip="$t('show')"
+                icon="o_visibility"
+                flat
+                round
+                fab-mini
+                @click="openShowDialog(tableOptions.selected[0])"
+              />
+              <MDtBtn
+                v-if="hasDestroyBtn"
+                :disable="!hasSelectedItem || tableOptions.loading"
+                :loading="tableOptions.loading"
+                :tooltip="$t('destroy')"
+                icon="delete_outline"
+                flat
+                round
+                fab-mini
+                @click="deleteSelectionItem()"
+              />
+            </slot>
+            <slot
+              name="selection"
+              v-bind="{dt:datatableItemsScope}"
+            />
+          </div>
         </template>
         <template
           v-for="(i,slot) in bodySlots"
