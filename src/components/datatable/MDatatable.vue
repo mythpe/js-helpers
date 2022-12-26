@@ -477,7 +477,7 @@ export default {
         </template>
         <template #top-selection>
           <MContainer>
-            <div class="row items-center">
+            <div class="row items-center q-gutter-xs">
               <slot
                 name="tools"
                 v-bind="{dt:datatableItemsScope}"
@@ -488,6 +488,8 @@ export default {
                   :loading="tableOptions.loading"
                   :tooltip="$t('update')"
                   icon="o_edit"
+                  flat
+                  round
                   @click="openUpdateDialog(tableOptions.selected[0])"
                 />
                 <MDtBtn
@@ -496,6 +498,8 @@ export default {
                   :loading="tableOptions.loading"
                   :tooltip="$t('show')"
                   icon="o_visibility"
+                  flat
+                  round
                   @click="openShowDialog(tableOptions.selected[0])"
                 />
                 <MDtBtn
@@ -504,6 +508,8 @@ export default {
                   :loading="tableOptions.loading"
                   :tooltip="$t('destroy')"
                   icon="delete_outline"
+                  flat
+                  round
                   @click="deleteSelectionItem()"
                 />
               </slot>
