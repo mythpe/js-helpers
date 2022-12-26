@@ -12,7 +12,7 @@ import {
   QBtnProps,
   QBtnSlots,
   QCheckboxProps,
-  QCheckboxSlots,
+  QCheckboxSlots, QDateProps, QDateSlots,
   QEditorProps,
   QEditorSlots,
   QFileProps,
@@ -21,7 +21,7 @@ import {
   QInputProps,
   QInputSlots,
   QSelectProps,
-  QSelectSlots,
+  QSelectSlots, QTimeProps, QTimeSlots,
   QToggleProps,
   QToggleSlots,
   QUploaderProps,
@@ -167,7 +167,7 @@ export interface MFileSlots extends QFileSlots {
   default: () => VNode[];
 }
 
-export interface MPickerProps extends MInputProps {
+export interface MPickerProps extends Omit<MInputProps, 'onUpdate:modelValue'> {
   modelValue: any;
   type: 'date' | 'time'
 }
@@ -179,22 +179,22 @@ export interface MPickerSlots extends MInputSlots {
   default: () => VNode[];
 }
 
-export interface MDateProps extends MInputProps {
+export interface MDateProps extends MPickerProps, QDateProps {
   modelValue: any
 }
 
-export interface MDateSlots extends MPickerSlots {
+export interface MDateSlots extends QDateSlots {
   /**
    * Field main content
    */
   default: () => VNode[];
 }
 
-export interface MTimeProps extends MInputProps {
+export interface MTimeProps extends MPickerProps, QTimeProps {
   modelValue: any
 }
 
-export interface MTimeSlots extends MPickerSlots {
+export interface MTimeSlots extends QTimeSlots {
   /**
    * Field main content
    */
