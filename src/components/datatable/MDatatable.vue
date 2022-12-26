@@ -476,7 +476,7 @@ export default {
           </MRow>
         </template>
         <template #top-selection>
-          <div class="row items-center q-gutter-xs">
+          <div class="row items-center q-gutter-xs order-last order-sm-first">
             <slot
               name="tools"
               v-bind="{dt:datatableItemsScope}"
