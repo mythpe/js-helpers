@@ -422,6 +422,8 @@ export default {
               </MBtn>
               <MDtBtn
                 :disable="tableOptions.loading"
+                flat
+                round
                 icon="o_refresh"
                 @click="refreshNoUpdate()"
               />
@@ -475,7 +477,7 @@ export default {
         </template>
         <template #top-selection>
           <MContainer>
-            <MRow class="items-center">
+            <div class="row items-center">
               <slot
                 name="tools"
                 v-bind="{dt:datatableItemsScope}"
@@ -509,7 +511,7 @@ export default {
                 name="selection"
                 v-bind="{dt:datatableItemsScope}"
               />
-            </MRow>
+            </div>
           </MContainer>
         </template>
         <template
