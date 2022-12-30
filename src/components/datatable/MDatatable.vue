@@ -43,6 +43,10 @@ interface Props extends MDatatableProps {
   updateRoute?: string | undefined;
   showRoute?: string | undefined;
   contextItems?: GenericMDtBtn[] | undefined;
+  grid?: boolean | undefined;
+  bordered?: boolean | undefined;
+  flat?: boolean | undefined;
+  square?: boolean | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -58,7 +62,7 @@ const props = withDefaults(defineProps<Props>(), {
   singleSelection: !0,
   headers: undefined,
   items: undefined,
-  dense: !0,
+  dense: undefined,
   endReach: !1,
   hideAddBtn: undefined,
   hideUpdateBtn: undefined,
@@ -75,7 +79,11 @@ const props = withDefaults(defineProps<Props>(), {
   createRoute: undefined,
   updateRoute: undefined,
   showRoute: undefined,
-  contextItems: undefined
+  contextItems: undefined,
+  grid: undefined,
+  bordered: undefined,
+  flat: undefined,
+  square: undefined
 })
 
 type Emits = {
@@ -213,6 +221,7 @@ onMounted(() => refresh())
 defineExpose(datatable)
 
 </script>
+
 <script lang="ts">
 export default {
   inheritAttrs: !1
@@ -261,7 +270,7 @@ export default {
         :columns="getHeaders"
         :dense="dense"
         :filter="tableOptions.search"
-        :grid="$q.screen.lt.md"
+        :grid="grid === undefined ? $q.screen.lt.md : grid"
         :hide-pagination="endReach"
         :loading="tableOptions.loading"
         :rows="rows"
@@ -269,7 +278,7 @@ export default {
         :selection="hideSelection !== !0 ? (singleSelection ? 'single' : 'multiple') : 'none'"
         :separator="separator"
         :title="title"
-        bordered
+        :bordered="bordered"
         card-container-class="m--datatable-container"
         flat
         square
