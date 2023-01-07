@@ -91,76 +91,74 @@ export default {
 </script>
 
 <template>
-  <q-slide-transition>
-    <MCol
-      :auto="auto"
-      :col="col"
-      :lg="lg"
-      :md="md"
-      :sm="sm"
-      :xs="xs"
-      :class="$attrs.class"
+  <MCol
+    :auto="auto"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :sm="sm"
+    :xs="xs"
+    :class="$attrs.class"
+  >
+    <VeeField
+      v-slot="fieldProps"
+      v-model="inputValue"
+      :name="name"
+      :rules="getRules"
+      v-bind="$attrs"
     >
-      <VeeField
-        v-slot="fieldProps"
-        v-model="inputValue"
-        :name="name"
-        :rules="getRules"
-        v-bind="$attrs"
+      <q-select
+        :behavior="$q.platform.is.ios === !0 ? 'dialog' : behavior"
+        :borderless="borderless"
+        :clearable="clearable"
+        :dense="dense"
+        :emit-value="emitValue"
+        :error="fieldProps.errors.length>0"
+        :error-message="fieldProps.errorMessage"
+        :filled="filled"
+        :hide-bottom-space="hideBottomSpace"
+        :input-debounce="inputDebounce"
+        :label="getLabel"
+        :loading="loading"
+        :map-options="mapOptions"
+        :model-value="modelValue"
+        :option-label="optionLabel"
+        :options="options"
+        :options-dense="optionsDense"
+        :outlined="outlined"
+        :stack-label="stackLabel"
+        :standout="standout"
+        :use-input="useInput"
+        v-bind="{...$attrs,...fieldProps.field}"
       >
-        <q-select
-          :behavior="$q.platform.is.ios === !0 ? 'dialog' : behavior"
-          :borderless="borderless"
-          :clearable="clearable"
-          :dense="dense"
-          :emit-value="emitValue"
-          :error="fieldProps.errors.length>0"
-          :error-message="fieldProps.errorMessage"
-          :filled="filled"
-          :hide-bottom-space="hideBottomSpace"
-          :input-debounce="inputDebounce"
-          :label="getLabel"
-          :loading="loading"
-          :map-options="mapOptions"
-          :model-value="modelValue"
-          :option-label="optionLabel"
-          :options="options"
-          :options-dense="optionsDense"
-          :outlined="outlined"
-          :stack-label="stackLabel"
-          :standout="standout"
-          :use-input="useInput"
-          v-bind="{...$attrs,...fieldProps.field}"
+        <template #no-option>
+          <slot name="no-option">
+            <q-item>
+              <q-item-section class="text-italic text-grey">
+                {{ $t('messages.no_items') }}
+              </q-item-section>
+            </q-item>
+          </slot>
+        </template>
+        <template
+          v-for="(_,slot) in $slots"
+          :key="slot"
+          #[slot]="inputSlot"
         >
-          <template #no-option>
-            <slot name="no-option">
-              <q-item>
-                <q-item-section class="text-italic text-grey">
-                  {{ $t('messages.no_items') }}
-                </q-item-section>
-              </q-item>
-            </slot>
-          </template>
-          <template
-            v-for="(_,slot) in $slots"
-            :key="slot"
-            #[slot]="inputSlot"
-          >
-            <slot
-              v-if="inputSlot"
-              :name="slot"
-              v-bind="inputSlot"
-            />
-            <slot
-              v-else
-              :name="slot"
-            />
-          </template>
-        </q-select>
-        <slot
-          v-bind="fieldProps"
-        />
-      </VeeField>
-    </MCol>
-  </q-slide-transition>
+          <slot
+            v-if="inputSlot"
+            :name="slot"
+            v-bind="inputSlot"
+          />
+          <slot
+            v-else
+            :name="slot"
+          />
+        </template>
+      </q-select>
+      <slot
+        v-bind="fieldProps"
+      />
+    </VeeField>
+  </MCol>
 </template>

@@ -101,61 +101,59 @@ export default {
 </script>
 
 <template>
-  <q-slide-transition>
-    <MCol
-      v-if="ready"
-      :auto="auto"
-      :col="col"
-      :lg="lg"
-      :md="md"
-      :sm="sm"
-      :xs="xs"
-      :class="$attrs.class"
+  <MCol
+    v-if="ready"
+    :auto="auto"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :sm="sm"
+    :xs="xs"
+    :class="$attrs.class"
+  >
+    <VeeField
+      v-slot="fieldScope"
+      v-model="inputValue"
+      :name="name"
+      :rules="getRules"
+      v-bind="$attrs"
     >
-      <VeeField
-        v-slot="fieldScope"
-        v-model="inputValue"
-        :name="name"
-        :rules="getRules"
-        v-bind="$attrs"
+      <q-input
+        :borderless="borderless"
+        :clearable="clearable"
+        :dense="dense"
+        :error="fieldScope.errors.length>0"
+        :error-message="fieldScope.errorMessage"
+        :filled="filled"
+        :hide-bottom-space="hideBottomSpace"
+        :label="getLabel"
+        :loading="loading"
+        :model-value="inputValue"
+        :outlined="outlined"
+        :placeholder="getPlaceholder"
+        :stack-label="stackLabel"
+        :standout="standout"
+        v-bind="{...$attrs,...fieldScope.field}"
       >
-        <q-input
-          :borderless="borderless"
-          :clearable="clearable"
-          :dense="dense"
-          :error="fieldScope.errors.length>0"
-          :error-message="fieldScope.errorMessage"
-          :filled="filled"
-          :hide-bottom-space="hideBottomSpace"
-          :label="getLabel"
-          :loading="loading"
-          :model-value="inputValue"
-          :outlined="outlined"
-          :placeholder="getPlaceholder"
-          :stack-label="stackLabel"
-          :standout="standout"
-          v-bind="{...$attrs,...fieldScope.field}"
+        <template
+          v-for="(_,slot) in $slots"
+          :key="slot"
+          #[slot]="inputSlot"
         >
-          <template
-            v-for="(_,slot) in $slots"
-            :key="slot"
-            #[slot]="inputSlot"
-          >
-            <slot
-              v-if="inputSlot"
-              :name="slot"
-              v-bind="inputSlot"
-            />
-            <slot
-              v-else-if="slot !== 'default'"
-              :name="slot"
-            />
-          </template>
-        </q-input>
-        <slot
-          v-bind="fieldScope"
-        />
-      </VeeField>
-    </MCol>
-  </q-slide-transition>
+          <slot
+            v-if="inputSlot"
+            :name="slot"
+            v-bind="inputSlot"
+          />
+          <slot
+            v-else-if="slot !== 'default'"
+            :name="slot"
+          />
+        </template>
+      </q-input>
+      <slot
+        v-bind="fieldScope"
+      />
+    </VeeField>
+  </MCol>
 </template>
