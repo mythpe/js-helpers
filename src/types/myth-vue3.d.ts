@@ -32,7 +32,9 @@ import {
   MDtAvatarProps,
   MDtAvatarSlots,
   MDtBtnProps,
-  MDtBtnSlots, MEditorProps, MEditorSlots,
+  MDtBtnSlots,
+  MEditorProps,
+  MEditorSlots,
   MFileProps,
   MFileSlots,
   MFormProps,
@@ -43,6 +45,8 @@ import {
   MInputSlots,
   MPickerProps,
   MPickerSlots,
+  MRadioProps,
+  MRadioSlots,
   MRowProps,
   MRowSlots,
   MSelectProps,
@@ -90,6 +94,7 @@ declare module '@vue/runtime-core' {
     MAxios: GlobalComponentConstructor<MAxiosProps, MAxiosSlots>;
     MBtn: GlobalComponentConstructor<MBtnProps, MBtnSlots>;
     MCheckbox: GlobalComponentConstructor<MCheckboxProps, MCheckboxSlots>;
+    MRadio: GlobalComponentConstructor<MRadioProps, MRadioSlots>;
     MDate: GlobalComponentConstructor<MDateProps, MDateSlots>;
     MEditor: GlobalComponentConstructor<MEditorProps, MEditorSlots>;
     MEmail: GlobalComponentConstructor<MInputProps, MInputSlots>;

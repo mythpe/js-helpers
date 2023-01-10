@@ -19,7 +19,7 @@ import {
   QFileSlots,
   QImgProps,
   QInputProps,
-  QInputSlots,
+  QInputSlots, QRadioProps, QRadioSlots,
   QSelectProps,
   QSelectSlots, QTimeProps, QTimeSlots,
   QToggleProps,
@@ -270,7 +270,7 @@ export interface MCheckboxProps extends QCheckboxProps {
   xl?: ColStyleType;
   name: string;
   modelValue: any;
-  val?: any | undefined;
+  val: any | undefined;
 }
 
 export interface MCheckboxSlots extends QCheckboxSlots {
@@ -534,6 +534,26 @@ export interface MEditorProps extends QEditorProps {
 export interface MEditorSlots extends QEditorSlots {
   /**
    * Editor default slot
+   */
+  default: () => VNode[];
+}
+
+export interface MRadioProps extends QRadioProps {
+  auto?: boolean | undefined;
+  col?: ColStyleType;
+  xs?: ColStyleType;
+  sm?: ColStyleType;
+  md?: ColStyleType;
+  lg?: ColStyleType;
+  xl?: ColStyleType;
+  name: string;
+  modelValue: any;
+  val: any | undefined;
+}
+
+export interface MRadioSlots extends QRadioSlots {
+  /**
+   * Field main content
    */
   default: () => VNode[];
 }

@@ -38,6 +38,7 @@ export default async function install (app: App, {
   app.component('MAxios', defineAsyncComponent(() => import('../components/form/MAxios.vue')))
   app.component('MBtn', defineAsyncComponent(() => import('../components/form/MBtn.vue')))
   app.component('MCheckbox', defineAsyncComponent(() => import('../components/form/MCheckbox.vue')))
+  app.component('MRadio', defineAsyncComponent(() => import('../components/form/MRadio.vue')))
   app.component('MDate', defineAsyncComponent(() => import('../components/form/MDate.vue')))
   app.component('MEditor', defineAsyncComponent(() => import('../components/form/MEditor.vue')))
   app.component('MEmail', defineAsyncComponent(() => import('../components/form/MEmail.vue')))

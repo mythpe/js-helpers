@@ -22,7 +22,7 @@ interface Props extends MCheckboxProps {
   xl?: ColStyleType;
   name: string;
   modelValue: any;
-  val?: any | undefined;
+  val: any | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
