@@ -194,12 +194,12 @@ export default {
                 </div>
               </template>
             </q-img>
-            <h3
+            <div
               v-if="avatarText && !hasSrc"
-              class="text-white"
+              class="text-white text-h3"
             >
               {{ getAvatarText() }}
-            </h3>
+            </div>
           </q-avatar>
           <!--<q-slide-transition>-->
           <!--<template v-if="!hideRemoveAvatar || (hideRemoveAvatar && props.modelValue)">-->
