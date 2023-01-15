@@ -118,6 +118,7 @@ export type GenericMDtBtn = Record<string, any> & {
   click: (item: MDtItem, index: number) => void;
   show: boolean | undefined;
   order?: number | undefined;
+  attr?: Record<string, any> & { icon?: string; textColor?: string; color?: string; } | undefined;
 }
 
 export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-cell-${string}`> {
