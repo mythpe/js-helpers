@@ -239,7 +239,6 @@ export default {
     >
       <q-list
         v-show="Boolean(dialogs.item)"
-        dense
         separator
       >
         <template
@@ -327,10 +326,7 @@ export default {
                   {{ $t('more') }}
                 </q-tooltip>
                 <q-menu square>
-                  <q-list
-                    dense
-                    style="min-width: 250px"
-                  >
+                  <q-list style="min-width: 250px">
                     <template v-if="hasAddBtn">
                       <q-item
                         v-close-popup
