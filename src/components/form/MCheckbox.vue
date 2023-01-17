@@ -94,9 +94,6 @@ export default {
           />
         </template>
       </q-checkbox>
-      <slot
-        v-bind="fieldProps"
-      />
     </VeeField>
   </MCol>
 </template>
