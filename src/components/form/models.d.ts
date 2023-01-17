@@ -12,16 +12,22 @@ import {
   QBtnProps,
   QBtnSlots,
   QCheckboxProps,
-  QCheckboxSlots, QDateProps, QDateSlots,
+  QCheckboxSlots,
+  QDateProps,
+  QDateSlots,
   QEditorProps,
   QEditorSlots,
   QFileProps,
   QFileSlots,
   QImgProps,
   QInputProps,
-  QInputSlots, QRadioProps, QRadioSlots,
+  QInputSlots,
+  QRadioProps,
+  QRadioSlots,
   QSelectProps,
-  QSelectSlots, QTimeProps, QTimeSlots,
+  QSelectSlots,
+  QTimeProps,
+  QTimeSlots,
   QToggleProps,
   QToggleSlots,
   QUploaderProps,
@@ -270,7 +276,7 @@ export interface MCheckboxProps extends QCheckboxProps {
   xl?: ColStyleType;
   name: string;
   modelValue: any;
-  val: any | undefined;
+  val?: any | undefined;
 }
 
 export interface MCheckboxSlots extends QCheckboxSlots {
