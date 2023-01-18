@@ -7,10 +7,10 @@
 
 <script lang="ts" setup>
 
+import { useMyTh } from '@mythpe/js-helpers'
+import { MCardProps } from '@mythpe/js-helpers/src/components'
 import { computed, onMounted, reactive, useSlots } from 'vue'
 import { useRoute } from 'vue-router'
-import { useMyTh } from '../../vue3'
-import { MCardProps } from './models'
 
 interface Props extends MCardProps {
   titleFromRoute?: boolean;
@@ -84,22 +84,33 @@ onMounted(() => {
 })
 </script>
 
+<script lang="ts">
+export default {
+  inheritAttrs: !1
+}
+</script>
+
 <template>
-  <q-card class="m--card">
-    <q-card-section v-if="backRoute">
-      <MBtn
-        :icon="`arrow_${appRtl ? 'forward' : 'back'}`"
-        @click="$router.back()"
-      >
-        <span class="q-ml-sm">{{ $t('back') }}</span>
-      </MBtn>
-    </q-card-section>
-    <q-card-section v-if="hasTopSection">
-      <div
-        v-if="Boolean(cardOptions.title)"
-        class="text-h5"
-      >
-        {{ cardOptions.title }}
+  <q-card
+    class="m--card"
+    v-bind="$attrs"
+  >
+    <q-card-section v-if="hasTopSection || backRoute">
+      <div class="row">
+        <MBtn
+          v-if="backRoute"
+          :icon="`arrow_${appRtl ? 'forward' : 'back'}`"
+          class="q-mr-sm"
+          @click="$router.back()"
+        >
+          <span class="q-ml-sm">{{ $t('back') }}</span>
+        </MBtn>
+        <div
+          v-if="Boolean(cardOptions.title)"
+          class="text-h5"
+        >
+          {{ cardOptions.title }}
+        </div>
       </div>
       <div
         v-if="Boolean(cardOptions.subtitle)"
@@ -113,12 +124,12 @@ onMounted(() => {
     <q-card-section>
       <slot />
     </q-card-section>
-    <q-card-actions
+    <MContainer
       v-if="Boolean($slots.actions)"
     >
       <q-separator />
       <slot name="actions" />
-    </q-card-actions>
+    </MContainer>
   </q-card>
 </template>
 
