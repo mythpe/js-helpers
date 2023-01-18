@@ -128,7 +128,9 @@ export default {
       v-if="Boolean($slots.actions)"
     >
       <q-separator />
-      <slot name="actions" />
+      <div class="row">
+        <slot name="actions" />
+      </div>
     </MContainer>
   </q-card>
 </template>
