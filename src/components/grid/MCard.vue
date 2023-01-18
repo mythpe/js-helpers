@@ -128,7 +128,7 @@ export default {
       v-if="Boolean($slots.actions)"
       class="print-hide"
     >
-      <q-separator />
+      <q-separator spaced />
       <div class="row">
         <slot name="actions" />
       </div>
