@@ -100,7 +100,7 @@ export default {
         <MBtn
           v-if="backRoute"
           :icon="`arrow_${appRtl ? 'forward' : 'back'}`"
-          class="q-mr-sm"
+          class="q-mr-sm print-hide"
           @click="$router.back()"
         >
           <span class="q-ml-sm">{{ $t('back') }}</span>
@@ -126,6 +126,7 @@ export default {
     </q-card-section>
     <MContainer
       v-if="Boolean($slots.actions)"
+      class="print-hide"
     >
       <q-separator />
       <div class="row">
