@@ -117,7 +117,8 @@ export const Helpers = {
         return axios().get(u, config)
       },
       staticShow (id: UrlType, config?: AxiosRequestConfig) {
-        const u = 'Static' + makeUrl(id)
+        const m = baseUrl ? baseUrl.toString().split('/').pop() : ''
+        const u = 'Static' + (m ? `/${m}` : '') + `/${id}`
         if (typeof id === 'boolean') {
           return u
         }
