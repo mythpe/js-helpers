@@ -11,7 +11,7 @@
 >
 
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
-import { defineEmits, defineProps, onBeforeMount, onMounted, ref, watch } from 'vue'
+import { computed, defineEmits, defineProps, onBeforeMount, onMounted, ref, watch } from 'vue'
 import { useMyTh } from '../../vue3'
 import { MAxiosProps } from './models'
 
@@ -34,6 +34,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 interface Emits {
+  (e: 'update:modelValue', value: any): void;
   (e: 'items', value: any[]): void
 }
 
@@ -41,7 +42,11 @@ const emit = defineEmits<Emits>()
 
 const loading = ref<boolean>(!1)
 const items = ref<any[]>([])
-const model = ref<any>(props.modelValue)
+const model = computed({
+  get: () => props.modelValue,
+  set: (v) => emit('update:modelValue', v)
+})
+// const model = ref<any>(props.modelValue)
 
 onBeforeMount(() => {
   items.value = props.options ?? []
