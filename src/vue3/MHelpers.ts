@@ -72,6 +72,7 @@ export const MHelpers = {
       `routes.${routeName}`,
       `routes.${routePath}`,
       `${lastRouteName}Page.title`,
+      `${_.camelCase(lastRouteName)}Page.title`,
       `choice.${pluralize}`,
       `choice.${singular}`,
       `replace.${lastRouteName}_details`,

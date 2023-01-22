@@ -116,6 +116,13 @@ export const Helpers = {
         }
         return axios().get(u, config)
       },
+      staticShow (id: UrlType, config?: AxiosRequestConfig) {
+        const u = 'Static' + makeUrl(id)
+        if (typeof id === 'boolean') {
+          return u
+        }
+        return axios().get(u, config)
+      },
       uploadAttachments (id: UrlType, data: Record<string, any> | boolean, config?: AxiosRequestConfig) {
         const _url = makeUrl(`${id}/Attachment/Upload`)
         if (typeof data === 'boolean') {

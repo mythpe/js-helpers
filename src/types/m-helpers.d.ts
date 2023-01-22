@@ -105,6 +105,7 @@ export interface StubSchema {
   destroyAll: ((ids: UrlType[] | boolean, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>);
   utilities: GetType
   staticUtilities: GetType;
+  staticShow: ((id: UrlType, config?: ConfigType) => string | AxiosInstance['get'] | Promise<AxiosInstance['get']>);
   uploadAttachments: (id: UrlType, data: ParamsType, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>;
   deleteAttachment: (id: UrlType, fileId: string | number, config?: ConfigType | boolean) => string | AxiosInstance['delete'] | Promise<AxiosInstance['delete']>;
 }
