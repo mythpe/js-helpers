@@ -6,7 +6,7 @@
  */
 
 import { AxiosResponse } from 'axios'
-import { QImgProps, QImgSlots, QTableProps, QTableSlots } from 'quasar'
+import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
 import { ComputedRef, Ref, SetupContext, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
 
@@ -198,24 +198,17 @@ export interface MDatatableProps extends QTableProps {
   contextItems?: GenericMDtBtn[] | undefined;
 }
 
-export interface MDtAvatarProps extends QImgProps {
+export interface MDtAvatarProps extends QAvatarProps {
   width?: string | undefined;
   src?: string | undefined;
+  href?: string | undefined;
 }
 
-export interface MDtAvatarSlots extends QImgSlots {
+export interface MDtAvatarSlots extends QAvatarSlots {
   /**
    * Default slot can be used for captions. See examples
    */
   default: () => VNode[];
-  /**
-   * While image is loading, this slot is being displayed on top of the component; Suggestions: a spinner or text
-   */
-  loading: () => VNode[];
-  /**
-   * Optional slot to be used when image could not be loaded; make sure you assign a min-height and min-width to the component through CSS
-   */
-  error: () => VNode[];
 }
 
 export interface MDtBtnProps extends MBtnProps {

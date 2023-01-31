@@ -15,27 +15,35 @@ import { MDtAvatarProps } from './models'
 interface Props extends MDtAvatarProps {
   width?: string | undefined
   src?: string | undefined
+  href?: string | undefined;
 }
 
 withDefaults(defineProps<Props>(), {
   width: '50px',
-  src: undefined
+  src: undefined,
+  href: undefined
 })
+</script>
 
+<script>
+export default {
+  inheritAttrs: !1
+}
 </script>
 
 <template>
   <q-avatar
-    v-if="src"
     rounded
+    v-bind="$attrs"
   >
     <q-img
+      v-if="src"
       :height="width"
       :src="src"
       :width="width"
       class="cursor-pointer"
       fit="contain"
-      @click="$myth.openWindow(src)"
+      @click="$myth.openWindow(Boolean(href) ? href: src)"
     />
   </q-avatar>
 </template>
