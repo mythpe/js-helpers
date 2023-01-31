@@ -25,7 +25,7 @@ withDefaults(defineProps<Props>(), {
 })
 </script>
 
-<script>
+<script lang="ts">
 export default {
   inheritAttrs: !1
 }
