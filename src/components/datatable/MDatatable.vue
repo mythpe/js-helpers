@@ -7,13 +7,13 @@
 
 <script lang="ts" setup>
 import { AxiosResponse } from 'axios'
-import { useQuasar } from 'quasar'
+import { QDialogProps, QPageStickyProps, QTableProps, useQuasar } from 'quasar'
 import { computed, defineEmits, onBeforeMount, onMounted, ref, useSlots, watch } from 'vue'
 import { GenericMDtBtn, MDatatableProps, MDtItem, PaginationOptionsProps, TableDialogsProps, TableMetaServerProps, TableOptionsProps } from './models'
 import { initMetaServer, initPaginationOptions, initTableOptions, useDatatable } from './useMDatatable'
 
 interface Props extends MDatatableProps {
-  separator?: 'horizontal' | 'vertical' | 'cell' | 'none' | undefined;
+  separator?: QTableProps['separator'];
   noMouse?: boolean | undefined;
   rowsPerPageOptions?: any[] | undefined;
   title?: string | undefined;
@@ -47,6 +47,11 @@ interface Props extends MDatatableProps {
   bordered?: boolean | undefined;
   flat?: boolean | undefined;
   square?: boolean | undefined;
+  offsetAddBtn?: QPageStickyProps['offset'];
+  positionAddBtn?: QPageStickyProps['position'];
+  filterDialogProps?: QDialogProps;
+  showDialogProps?: QDialogProps;
+  formDialogProps?: QDialogProps;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -83,7 +88,30 @@ const props = withDefaults(defineProps<Props>(), {
   grid: undefined,
   bordered: undefined,
   flat: undefined,
-  square: undefined
+  square: undefined,
+  offsetAddBtn: () => [10, 10],
+  positionAddBtn: 'bottom-left',
+  filterDialogProps: () => ({
+    'allow-focus-outside': !0,
+    'full-width': !0,
+    'no-backdrop-dismiss': !0,
+    persistent: !0,
+    position: 'top'
+  }),
+  showDialogProps: () => ({
+    'allow-focus-outside': !0,
+    'full-width': !0,
+    'no-backdrop-dismiss': !0,
+    persistent: !0,
+    position: 'top'
+  }),
+  formDialogProps: () => ({
+    'allow-focus-outside': !0,
+    'full-width': !0,
+    'no-backdrop-dismiss': !0,
+    persistent: !0,
+    position: 'top'
+  })
 })
 
 type Emits = {
@@ -227,6 +255,7 @@ export default {
   inheritAttrs: !1
 }
 </script>
+
 <template>
   <div class="m--datatable-component">
     <q-menu
@@ -581,13 +610,9 @@ export default {
 
     <q-dialog
       v-model="dialogs.filter"
-      allow-focus-outside
-      full-width
-      no-backdrop-dismiss
-      persistent
-      position="top"
       transition-hide="fade"
       transition-show="fade"
+      v-bind="filterDialogProps"
     >
       <q-card class="m--dialog-card">
         <q-card-section>
@@ -624,13 +649,9 @@ export default {
 
     <q-dialog
       v-model="dialogs.show"
-      allow-focus-outside
-      full-width
-      no-backdrop-dismiss
-      persistent
-      position="top"
       transition-hide="fade"
       transition-show="fade"
+      v-bind="showDialogProps"
     >
       <q-card class="m--dialog-card">
         <q-card-section>
@@ -662,14 +683,9 @@ export default {
 
     <q-dialog
       v-model="dialogs.form"
-      allow-focus-outside
-      full-width
-      no-backdrop-dismiss
-      persistent
-      position="top"
-      square
       transition-hide="fade"
       transition-show="fade"
+      v-bind="formDialogProps"
     >
       <q-card class="m--dialog-card">
         <q-slide-transition>
@@ -725,8 +741,8 @@ export default {
     <q-slide-transition>
       <q-page-sticky
         v-if="hasAddBtn"
-        :offset="[10, 10]"
-        position="bottom-right"
+        :offset="offsetAddBtn"
+        :position="positionAddBtn"
       >
         <MBtn
           color="primary"

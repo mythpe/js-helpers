@@ -6,7 +6,7 @@
  */
 
 import { AxiosResponse } from 'axios'
-import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
+import { QAvatarProps, QAvatarSlots, QPageStickyProps, QTableProps, QTableSlots } from 'quasar'
 import { ComputedRef, Ref, SetupContext, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
 
@@ -166,7 +166,7 @@ export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-c
 }
 
 export interface MDatatableProps extends QTableProps {
-  separator?: 'horizontal' | 'vertical' | 'cell' | 'none' | undefined;
+  separator?: QTableProps['separator'];
   noMouse?: boolean | undefined;
   rowsPerPageOptions?: any[] | undefined;
   title?: string | undefined;
@@ -196,6 +196,11 @@ export interface MDatatableProps extends QTableProps {
   updateRoute?: string | undefined;
   showRoute?: string | undefined;
   contextItems?: GenericMDtBtn[] | undefined;
+  offsetAddBtn?: QPageStickyProps['offset'];
+  positionAddBtn?: QPageStickyProps['position'];
+  filterDialogProps?: Record<any, any>;
+  showDialogProps?: Record<any, any>;
+  formDialogProps?: Record<any, any>;
 }
 
 export interface MDtAvatarProps extends QAvatarProps {
