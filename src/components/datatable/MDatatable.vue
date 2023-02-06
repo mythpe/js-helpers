@@ -7,7 +7,7 @@
 
 <script lang="ts" setup>
 import { AxiosResponse } from 'axios'
-import { QDialogProps, QPageStickyProps, QTableProps, useQuasar } from 'quasar'
+import { QDialogProps, QInputProps, QPageStickyProps, QTableProps, useQuasar } from 'quasar'
 import { computed, defineEmits, onBeforeMount, onMounted, ref, useSlots, watch } from 'vue'
 import { GenericMDtBtn, MDatatableProps, MDtItem, PaginationOptionsProps, TableDialogsProps, TableMetaServerProps, TableOptionsProps } from './models'
 import { initMetaServer, initPaginationOptions, initTableOptions, useDatatable } from './useMDatatable'
@@ -52,6 +52,7 @@ interface Props extends MDatatableProps {
   filterDialogProps?: QDialogProps;
   showDialogProps?: QDialogProps;
   formDialogProps?: QDialogProps;
+  searchInputProps?: QInputProps;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -111,7 +112,8 @@ const props = withDefaults(defineProps<Props>(), {
     'no-backdrop-dismiss': !0,
     persistent: !0,
     position: 'top'
-  })
+  }),
+  searchInputProps: undefined
 })
 
 type Emits = {
@@ -328,6 +330,7 @@ export default {
               autocomplete="none"
               class="self-start"
               clearable
+              clear-icon="clear"
               col="12"
               dense
               input-style="min-width: 220px"
@@ -335,6 +338,7 @@ export default {
               placeholder="datatable.search_input"
               sm="9"
               standout="bg-primary"
+              v-bind="searchInputProps"
             >
               <template #prepend>
                 <q-icon name="search" />

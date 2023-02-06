@@ -6,7 +6,7 @@
  */
 
 import { AxiosResponse } from 'axios'
-import { QAvatarProps, QAvatarSlots, QPageStickyProps, QTableProps, QTableSlots } from 'quasar'
+import { QAvatarProps, QAvatarSlots, QInputProps, QPageStickyProps, QTableProps, QTableSlots } from 'quasar'
 import { ComputedRef, Ref, SetupContext, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
 
@@ -201,6 +201,7 @@ export interface MDatatableProps extends QTableProps {
   filterDialogProps?: Record<any, any>;
   showDialogProps?: Record<any, any>;
   formDialogProps?: Record<any, any>;
+  searchInputProps?: QInputProps;
 }
 
 export interface MDtAvatarProps extends QAvatarProps {
