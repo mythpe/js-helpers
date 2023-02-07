@@ -620,9 +620,10 @@ export default {
     >
       <q-card class="m--dialog-card">
         <q-card-section>
-          <p class="text-h6">
-            {{ $t('filter') }}
-          </p>
+          <p
+            class="text-h6"
+            v-text="$t('filter')"
+          />
         </q-card-section>
         <q-separator />
         <q-card-section
@@ -635,17 +636,16 @@ export default {
           />
         </q-card-section>
         <q-separator />
-        <q-card-actions>
-          <MBtn
-            :label="$t('save')"
-            color="positive"
-            @click="saveFilterDialog"
-          />
-          <q-space />
+        <q-card-actions align="between">
           <MBtn
             :label="$t('cancel')"
             color="negative"
             @click="closeFilterDialog"
+          />
+          <MBtn
+            :label="$t('save')"
+            color="positive"
+            @click="saveFilterDialog"
           />
         </q-card-actions>
       </q-card>
@@ -674,8 +674,7 @@ export default {
           />
         </q-card-section>
         <q-separator />
-        <q-card-actions>
-          <q-space />
+        <q-card-actions align="right">
           <MBtn
             :label="$t('close')"
             color="negative"
@@ -716,7 +715,10 @@ export default {
               />
             </q-card-section>
             <q-separator />
-            <q-card-actions class="m--datatable-form-actions">
+            <q-card-actions
+              class="m--datatable-form-actions"
+              align="between"
+            >
               <MBtn
                 :disable="tableOptions.loading"
                 :label="$t('close')"
@@ -727,7 +729,6 @@ export default {
                 name="form-actions"
                 v-bind="{item:dialogs.item,index:dialogs.index,form,...datatableItemsScope}"
               >
-                <q-space />
                 <MBtn
                   :disable="tableOptions.loading "
                   :label="$t(isUpdateMode ? 'save' : 'create')"
