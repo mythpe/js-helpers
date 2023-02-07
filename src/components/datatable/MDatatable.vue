@@ -91,7 +91,7 @@ const props = withDefaults(defineProps<Props>(), {
   flat: undefined,
   square: undefined,
   offsetAddBtn: () => [10, 10],
-  positionAddBtn: 'bottom-left',
+  positionAddBtn: 'bottom-right',
   filterDialogProps: () => ({
     'allow-focus-outside': !0,
     'full-width': !0,
@@ -717,10 +717,17 @@ export default {
             </q-card-section>
             <q-separator />
             <q-card-actions class="m--datatable-form-actions">
+              <MBtn
+                :disable="tableOptions.loading"
+                :label="$t('close')"
+                color="negative"
+                @click="closeFormDialog"
+              />
               <slot
                 name="form-actions"
                 v-bind="{item:dialogs.item,index:dialogs.index,form,...datatableItemsScope}"
               >
+                <q-space />
                 <MBtn
                   :disable="tableOptions.loading "
                   :label="$t(isUpdateMode ? 'save' : 'create')"
@@ -728,14 +735,7 @@ export default {
                   color="positive"
                   type="submit"
                 />
-                <q-space />
               </slot>
-              <MBtn
-                :disable="tableOptions.loading"
-                :label="$t('close')"
-                color="negative"
-                @click="closeFormDialog"
-              />
             </q-card-actions>
           </m-form>
         </q-slide-transition>
