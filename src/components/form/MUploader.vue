@@ -6,7 +6,7 @@
   -->
 
 <script lang="ts" setup>
-import { QUploader, useQuasar } from 'quasar'
+import { QBtnProps, QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
 import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
 import useAcceptProp from '../../composition/useAcceptProp'
@@ -45,6 +45,7 @@ interface Props extends MUploaderProps {
   hideDeleteMedia?: boolean | undefined;
   service: MUploaderServiceType;
   modelId: string | number;
+  downloadBtnProps?: QBtnProps;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -77,7 +78,8 @@ const props = withDefaults(defineProps<Props>(), {
   hideDeleteMedia: !1,
   errors: undefined,
   service: undefined,
-  modelId: undefined
+  modelId: undefined,
+  downloadBtnProps: undefined
 })
 
 interface Events {
@@ -349,6 +351,7 @@ export default {
                   :href="file.url"
                   target="_blank"
                   unelevated
+                  v-bind="downloadBtnProps"
                 >
                   {{ $t('download') }}
                 </MBtn>

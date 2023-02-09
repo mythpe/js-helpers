@@ -508,6 +508,7 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
    * The ID of model will use in attachments
    */
   modelId: string | number;
+  downloadBtnProps?: QBtnProps;
 }
 
 export interface MUploaderSlots extends QUploaderSlots {
