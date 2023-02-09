@@ -203,7 +203,7 @@ const deleteMedia = (media: MUploaderMediaItem) => {
   const destroy = async () => {
     let r = !1
     try {
-      const method = async (file: MUploaderMediaItem) => typeof props.service === 'string' ? await $myth.api.services[props.service].deleteAttachment(props.modelId, file.id) : props.service.deleteAttachment(media)
+      const method = async (file: MUploaderMediaItem) => typeof props.service === 'string' ? await $myth.api.services[props.service].deleteAttachment(props.modelId, file.id, { params: { collection: props.collection } }) : props.service.deleteAttachment(media)
       if (method) {
         const { _message, _success, _data }: any = await method(media)
         _message && alertSuccess(_message)
