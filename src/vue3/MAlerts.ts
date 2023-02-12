@@ -23,20 +23,29 @@ export const MAlerts = {
     title = title || t('messages.are_you_sure') || ''
     message = message || ''
     opts = opts || {}
+    const btnsProps = window.MyThVue3Plugin.options?.dialog?.btnsProps || {}
+    const okProps = window.MyThVue3Plugin.options?.dialog?.okProps || {}
+    const cancelProps = window.MyThVue3Plugin.options?.dialog?.cancelProps || {}
+    const dialogProps = window.MyThVue3Plugin.options?.dialog?.props || {}
     return Dialog.create({
       title,
       message,
       focus: 'none',
       cancel: {
-        color: 'positive'
+        color: 'positive',
+        ...btnsProps,
+        ...cancelProps
       },
       ok: {
         color: 'negative',
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        label: t('yes')
+        label: t('yes'),
+        ...btnsProps,
+        ...okProps
       },
       persistent: !0,
+      ...dialogProps,
       ...opts
     })
   }

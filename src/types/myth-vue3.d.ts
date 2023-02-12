@@ -6,7 +6,7 @@
  */
 
 import { AxiosInstance, AxiosResponse } from 'axios'
-import { GlobalComponentConstructor } from 'quasar'
+import { GlobalComponentConstructor, QBtnProps, QDialogOptions } from 'quasar'
 import { VueI18n } from 'vue-i18n'
 import {
   MAvatarViewerProps,
@@ -76,6 +76,12 @@ export type MyThVue3InstallOptions = {
     google?: {
       apiKey: string,
       mapsOptions?: Record<string, any>
+    },
+    dialog?: {
+      props?: QDialogOptions,
+      btnsProps?: QBtnProps,
+      okProps?: QBtnProps,
+      cancelProps?: QBtnProps,
     }
   }
 }
