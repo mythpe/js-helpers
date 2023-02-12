@@ -6,7 +6,7 @@
  */
 
 import { AxiosInstance, AxiosResponse } from 'axios'
-import { GlobalComponentConstructor, QBtnProps, QDialogOptions } from 'quasar'
+import { GlobalComponentConstructor, QBtnProps, QDialogOptions, QInputProps } from 'quasar'
 import { VueI18n } from 'vue-i18n'
 import {
   MAvatarViewerProps,
@@ -82,6 +82,10 @@ export type MyThVue3InstallOptions = {
       btnsProps?: QBtnProps,
       okProps?: QBtnProps,
       cancelProps?: QBtnProps,
+    },
+    dt?: {
+      searchInputProps?: QInputProps,
+      dialogsBtnsProps?: QBtnProps
     }
   }
 }

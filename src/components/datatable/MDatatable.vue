@@ -116,6 +116,9 @@ const props = withDefaults(defineProps<Props>(), {
   searchInputProps: undefined
 })
 
+const defSearchInputProps = window.MyThVue3Plugin.options?.dt?.searchInputProps || {}
+const dialogsBtnsProps = window.MyThVue3Plugin.options?.dt?.dialogsBtnsProps || {}
+
 type Emits = {
   (e: 'update:rows', value: MDtItem[]): void
   (e: 'refresh'): void
@@ -338,7 +341,7 @@ export default {
               placeholder="datatable.search_input"
               sm="9"
               standout="bg-primary"
-              v-bind="searchInputProps"
+              v-bind="{...(defSearchInputProps||{}),...(searchInputProps||{})}"
             >
               <template #prepend>
                 <q-icon name="search" />
@@ -640,11 +643,13 @@ export default {
           <MBtn
             :label="$t('cancel')"
             color="negative"
+            v-bind="dialogsBtnsProps"
             @click="closeFilterDialog"
           />
           <MBtn
             :label="$t('save')"
             color="positive"
+            v-bind="dialogsBtnsProps"
             @click="saveFilterDialog"
           />
         </q-card-actions>
@@ -678,6 +683,7 @@ export default {
           <MBtn
             :label="$t('close')"
             color="negative"
+            v-bind="dialogsBtnsProps"
             @click="closeShowDialog"
           />
         </q-card-actions>
@@ -723,6 +729,7 @@ export default {
                 :disable="tableOptions.loading"
                 :label="$t('close')"
                 color="negative"
+                v-bind="dialogsBtnsProps"
                 @click="closeFormDialog"
               />
               <slot
@@ -735,6 +742,7 @@ export default {
                   :loading="tableOptions.loading"
                   color="positive"
                   type="submit"
+                  v-bind="dialogsBtnsProps"
                 />
               </slot>
             </q-card-actions>
