@@ -78,26 +78,26 @@ export type MyThVue3InstallOptions = {
       mapsOptions?: Record<string, any>;
     };
     dialog?: {
-      props?: QDialogOptions;
-      btnsProps?: QBtnProps;
-      okProps?: QBtnProps;
-      cancelProps?: QBtnProps;
+      props?: Partial<QDialogOptions>;
+      btnsProps?: Partial<QBtnProps>;
+      okProps?: Partial<QBtnProps>;
+      cancelProps?: Partial<QBtnProps>;
     };
     dt?: {
-      searchInputProps?: QInputProps;
-      dialogsBtnsProps?: QBtnProps;
+      searchInputProps?: Partial<QInputProps>;
+      dialogsBtnsProps?: Partial<QBtnProps>;
     };
-    button?: QBtnProps;
-    input?: QInputProps
-    file?: QFileProps;
-    date?: QDateProps;
-    time?: QTimeProps;
-    select?: QSelectProps;
-    checkbox?: QCheckboxProps;
-    editor?: QEditorProps;
-    radio?: QRadioProps;
-    toggle?: QToggleProps;
-    uploader?: QUploaderProps;
+    button?: Partial<QBtnProps>;
+    input?: Partial<QInputProps>;
+    file?: Partial<QFileProps>;
+    date?: Partial<QDateProps>;
+    time?: Partial<QTimeProps>;
+    select?: Partial<QSelectProps>;
+    checkbox?: Partial<QCheckboxProps>;
+    editor?: Partial<QEditorProps>;
+    radio?: Partial<QRadioProps>;
+    toggle?: Partial<QToggleProps>;
+    uploader?: Partial<QUploaderProps>;
   }
 }
 
