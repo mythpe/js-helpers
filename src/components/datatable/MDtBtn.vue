@@ -81,7 +81,7 @@ const getColor = computed<string | undefined>(() => {
 </script>
 
 <template>
-  <MBtn
+  <q-btn
     v-if="!listItem"
     :color="getColor"
     :icon="getIcon"
@@ -95,7 +95,7 @@ const getColor = computed<string | undefined>(() => {
     <q-tooltip v-if="hasTooltip">
       {{ getTooltip }}
     </q-tooltip>
-  </MBtn>
+  </q-btn>
   <q-item
     v-else
     v-close-popup

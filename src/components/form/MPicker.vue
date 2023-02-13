@@ -49,6 +49,8 @@ const isDate = computed(() => props.type === 'date')
 const mask = isDate.value ? '####-##-##' : '##:##'
 const format = isDate.value ? 'YYYY-MM-DD' : 'HH:mm'
 const icon = isDate.value ? 'event' : 'access_time'
+const defTime = window.MyThVue3Plugin.options?.time || {}
+const defDate = window.MyThVue3Plugin.options?.date || {}
 </script>
 
 <script lang="ts">
@@ -87,7 +89,7 @@ export default {
               v-model="inputValue"
               :mask="format"
               today-btn
-              v-bind="$attrs"
+              v-bind="{...defDate,...$attrs}"
             >
               <div class="row items-center justify-end">
                 <MBtn
@@ -102,7 +104,7 @@ export default {
               v-model="inputValue"
               :mask="format"
               now-btn
-              v-bind="$attrs"
+              v-bind="{...defTime,...$attrs}"
             >
               <div class="row items-center justify-end">
                 <MBtn

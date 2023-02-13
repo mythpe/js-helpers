@@ -6,7 +6,7 @@
  */
 
 import { AxiosInstance, AxiosResponse } from 'axios'
-import { GlobalComponentConstructor, QBtnProps, QDialogOptions, QInputProps } from 'quasar'
+import { GlobalComponentConstructor, QBtnProps, QCheckboxProps, QDateProps, QDialogOptions, QEditorProps, QFileProps, QInputProps, QRadioProps, QSelectProps, QTimeProps, QToggleProps, QUploaderProps } from 'quasar'
 import { VueI18n } from 'vue-i18n'
 import {
   MAvatarViewerProps,
@@ -69,24 +69,35 @@ export type MyThVue3InstallOptions = {
     baseUrl: string;
     axios: AxiosInstance;
     services: {
-      [key: string]: Record<string, (() => Promise<AxiosResponse>) | any> | any
+      [key: string]: Record<string, (() => Promise<AxiosResponse>) | any> | any;
     };
   },
   options: Record<string, any> & {
     google?: {
-      apiKey: string,
-      mapsOptions?: Record<string, any>
-    },
+      apiKey: string;
+      mapsOptions?: Record<string, any>;
+    };
     dialog?: {
-      props?: QDialogOptions,
-      btnsProps?: QBtnProps,
-      okProps?: QBtnProps,
-      cancelProps?: QBtnProps,
-    },
+      props?: QDialogOptions;
+      btnsProps?: QBtnProps;
+      okProps?: QBtnProps;
+      cancelProps?: QBtnProps;
+    };
     dt?: {
-      searchInputProps?: QInputProps,
-      dialogsBtnsProps?: QBtnProps
-    }
+      searchInputProps?: QInputProps;
+      dialogsBtnsProps?: QBtnProps;
+    };
+    button?: QBtnProps;
+    input?: QInputProps
+    file?: QFileProps;
+    date?: QDateProps;
+    time?: QTimeProps;
+    select?: QSelectProps;
+    checkbox?: QCheckboxProps;
+    editor?: QEditorProps;
+    radio?: QRadioProps;
+    toggle?: QToggleProps;
+    uploader?: QUploaderProps;
   }
 }
 

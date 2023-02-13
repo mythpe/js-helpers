@@ -82,6 +82,8 @@ const props = withDefaults(defineProps<Props>(), {
 const inputValue = ref(props.modelValue)
 
 const { getRules, getLabel } = useInputProps(props)
+const def = window.MyThVue3Plugin.options?.select || {}
+
 </script>
 
 <script lang="ts">
@@ -129,7 +131,7 @@ export default {
         :stack-label="stackLabel"
         :standout="standout"
         :use-input="useInput"
-        v-bind="{...$attrs,...fieldProps.field}"
+        v-bind="{...def,...$attrs,...fieldProps.field}"
       >
         <template #no-option>
           <slot name="no-option">

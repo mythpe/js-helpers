@@ -81,6 +81,7 @@ const getLabel = computed<string>(() => {
   }
   return parseAttribute('none')
 })
+const def = window.MyThVue3Plugin.options?.toggle || {}
 
 </script>
 
@@ -135,7 +136,7 @@ export default {
             :true-value="trueValue"
             :unchecked-icon="uncheckedIcon"
             keep-color
-            v-bind="{...$attrs,...fieldProps.field}"
+            v-bind="{...def,...$attrs,...fieldProps.field}"
           >
             <template
               v-for="(_,slot) in $slots"

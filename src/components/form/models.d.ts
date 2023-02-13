@@ -509,6 +509,7 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
    */
   modelId: string | number;
   downloadBtnProps?: QBtnProps;
+  removeBtnProps?: QBtnProps;
 }
 
 export interface MUploaderSlots extends QUploaderSlots {

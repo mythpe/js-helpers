@@ -46,6 +46,7 @@ interface Props extends MUploaderProps {
   service: MUploaderServiceType;
   modelId: string | number;
   downloadBtnProps?: QBtnProps;
+  removeBtnProps?: QBtnProps;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -79,7 +80,8 @@ const props = withDefaults(defineProps<Props>(), {
   errors: undefined,
   service: undefined,
   modelId: undefined,
-  downloadBtnProps: undefined
+  downloadBtnProps: undefined,
+  removeBtnProps: undefined
 })
 
 interface Events {
@@ -242,6 +244,7 @@ const onClickDeleteAttachment = (file: File | MUploaderMediaItem) => {
  */
 const getMaxFileSize: number = (parseInt(props.maxFileSize?.toString()) ?? 1) * Math.pow(1024, 2)
 const getMaxTotalSize: number = (parseInt(props.maxTotalSize?.toString()) ?? 1) * Math.pow(1024, 2)
+const def = window.MyThVue3Plugin.options?.uploader || {}
 
 </script>
 
@@ -279,7 +282,7 @@ export default {
       :max-total-size="getMaxTotalSize"
       :readonly="readonly"
       :style="style"
-      v-bind="$attrs"
+      v-bind="{...def,...$attrs}"
       @failed="onError"
       @rejected="onReject"
       @uploaded="onFinishUpload"
@@ -380,6 +383,7 @@ export default {
                 icon="delete"
                 round
                 size="12px"
+                v-bind="removeBtnProps"
                 @click="onClickDeleteAttachment(file)"
               />
             </q-item-section>

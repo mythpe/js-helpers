@@ -101,14 +101,13 @@ const inputValue = computed({
   get: () => props.modelValue,
   set: (v) => emit('update:modelValue', v)
 })
-
 const pickFiles = (...args: any[]) => {
   fileInput.value?.pickFiles(...args)
 }
-
 const removeAtIndex = (...args: any[]) => {
   fileInput.value?.removeAtIndex(...args)
 }
+const def = window.MyThVue3Plugin.options?.input || {}
 defineExpose({
   pickFiles,
   removeAtIndex
@@ -160,7 +159,7 @@ defineExpose({
         :placeholder="getPlaceholder"
         :stack-label="stackLabel"
         :standout="standout"
-        v-bind="$attrs"
+        v-bind="{...def,...$attrs}"
         @clear="fieldScope.handleBlur()"
       >
         <template

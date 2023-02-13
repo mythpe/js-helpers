@@ -24,7 +24,7 @@
       :fonts="fonts === undefined ? _fonts : fonts"
       :min-height="minHeight"
       :toolbar="toolbar === undefined ? _toolbar : toolbar"
-      v-bind="$attrs"
+      v-bind="{...def,...$attrs}"
     />
     <slot />
     <q-slide-transition>
@@ -177,6 +177,8 @@ const inputValue = computed({
 })
 
 const { getLabel, inputErrors } = useInputProps(props)
+const def = window.MyThVue3Plugin.options?.editor || {}
+
 </script>
 
 <script lang="ts">

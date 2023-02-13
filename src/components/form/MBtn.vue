@@ -12,20 +12,25 @@ import { MBtnProps } from './models'
 
 interface Props extends MBtnProps {
   color?: string | undefined
-  noCaps?: boolean | undefined
 }
 
 withDefaults(defineProps<Props>(), {
-  color: 'primary',
-  noCaps: !0
+  color: 'primary'
 })
 
+const def = window.MyThVue3Plugin.options?.button || {}
+</script>
+
+<script>
+export default {
+  inheritAttrs: !1
+}
 </script>
 
 <template>
   <base-btn
     :color="color"
-    :no-caps="noCaps"
+    v-bind="{...def,...$attrs}"
   >
     <slot />
     <template #loading>

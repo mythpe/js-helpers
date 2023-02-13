@@ -89,6 +89,7 @@ const {
 } = useInputProps(props)
 
 const ready = ref(!1)
+const def = window.MyThVue3Plugin.options?.input || {}
 onMounted(() => {
   ready.value = !0
 })
@@ -102,7 +103,6 @@ export default {
 
 <template>
   <MCol
-    v-if="ready"
     :auto="auto"
     :col="col"
     :lg="lg"
@@ -133,7 +133,7 @@ export default {
         :placeholder="getPlaceholder"
         :stack-label="stackLabel"
         :standout="standout"
-        v-bind="{...$attrs,...fieldScope.field}"
+        v-bind="{...def,...$attrs,...fieldScope.field}"
       >
         <template
           v-for="(_,slot) in $slots"

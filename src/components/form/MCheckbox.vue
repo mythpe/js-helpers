@@ -43,6 +43,7 @@ const {
   getLabel,
   getPlaceholder
 } = useInputProps(props)
+const def = window.MyThVue3Plugin.options?.button || {}
 
 </script>
 
@@ -76,7 +77,7 @@ export default {
         :model-value="modelValue"
         :placeholder="getPlaceholder"
         :val="val"
-        v-bind="{...$attrs,...fieldProps.field}"
+        v-bind="{...def,...$attrs,...fieldProps.field}"
       >
         <template
           v-for="(_,slot) in $slots"
