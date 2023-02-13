@@ -21,7 +21,7 @@ withDefaults(defineProps<Props>(), {
 const def = window.MyThVue3Plugin.options?.button || {}
 </script>
 
-<script>
+<script lang="ts">
 export default {
   inheritAttrs: !1
 }
