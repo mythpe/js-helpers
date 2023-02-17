@@ -119,10 +119,7 @@ export function useDatatable ({
   const updateSelectedItems = (selected: MDtItem[]) => {
     tableOptions.value.selected = selected
   }
-  const onScroll = ({
-    index,
-    to
-  }: any) => {
+  const onScroll = ({ index, to }: any) => {
     if (index && to && index === to) {
       loadMore()
     }
@@ -181,10 +178,7 @@ export function useDatatable ({
     }
     return v.join(',') ?? null
   }
-  const getDatatableParams = ({
-    pagination,
-    filter
-  }: FetchDatatableOptions = {}): DatatableParams => {
+  const getDatatableParams = ({ pagination, filter }: FetchDatatableOptions = {}): DatatableParams => {
     // console.log(pagination?.descending)
     return {
       filter: tableOptions.value.filter,
@@ -415,7 +409,8 @@ export function useDatatable ({
       rows.value = rows.value.filter((e) => parseInt(e.id?.toString()) !== parseInt(id.toString()))
     }
   }
-  const defaultSubmitItem = async (form: Record<string, any>) => {
+  const defaultSubmitItem = async (_form: Record<string, any>) => {
+    let form = { ..._form }
     if ($q.loading.isActive) return
     const api = getApiServices()
     // const isUpdate = isUpdateMode
@@ -424,6 +419,15 @@ export function useDatatable ({
     form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withIndex')
     if (!form.requestWith) {
       delete form.requestWith
+    }
+    if (props.excludedKeys) {
+      if (typeof props.excludedKeys === 'function') {
+        form = props.excludedKeys(form)
+      } else {
+        for (const k in props.excludedKeys) {
+          delete form[props.excludedKeys[k]]
+        }
+      }
     }
     const method = async () => isUpdateMode.value ? await api.update(dialogs.value.item?.id, form) : await api.store(form)
     try {

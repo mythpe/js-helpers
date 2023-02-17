@@ -53,6 +53,7 @@ interface Props extends MDatatableProps {
   showDialogProps?: QDialogProps;
   formDialogProps?: QDialogProps;
   searchInputProps?: QInputProps;
+  excludedKeys?: string[] | ((from: any) => any);
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -113,7 +114,8 @@ const props = withDefaults(defineProps<Props>(), {
     persistent: !0,
     position: 'top'
   }),
-  searchInputProps: undefined
+  searchInputProps: undefined,
+  excludedKeys: undefined
 })
 
 const defSearchInputProps = window.MyThVue3Plugin.options?.dt?.searchInputProps || {}

@@ -202,6 +202,7 @@ export interface MDatatableProps extends QTableProps {
   showDialogProps?: Record<any, any>;
   formDialogProps?: Record<any, any>;
   searchInputProps?: QInputProps;
+  excludedKeys?: string[] | ((from: any) => any);
 }
 
 export interface MDtAvatarProps extends QAvatarProps {
