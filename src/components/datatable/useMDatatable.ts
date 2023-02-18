@@ -179,8 +179,7 @@ export function useDatatable ({
     return v.join(',') ?? null
   }
   const getDatatableParams = ({ pagination, filter }: FetchDatatableOptions = {}): DatatableParams => {
-    // console.log(pagination?.descending)
-    return {
+    let params: DatatableParams = {
       filter: tableOptions.value.filter,
       search: filter || null,
       headers: getHeaders.value.map(e => e.name),
@@ -191,9 +190,18 @@ export function useDatatable ({
       page: pagination?.page ?? 0,
       sortBy: pagination?.sortBy ?? undefined,
       sortDesc: !pagination?.sortBy ? undefined : (pagination?.descending === !0 ? 1 : (pagination?.descending === !1 ? 0 : undefined))
-      // sortBy: pagination?.sortBy ? [pagination?.sortBy] : undefined,
-      // sortDesc: pagination?.sortBy ? [pagination?.descending] : undefined,
     }
+    if (props.requestParams) {
+      if (typeof props.requestParams === 'function') {
+        params = props.requestParams(params)
+      } else {
+        params = {
+          ...props.requestParams,
+          ...params
+        }
+      }
+    }
+    return params
   }
   const fetchDatatableItems = async (opts: FetchDatatableOptions = {}) => {
     if (props.endReach && metaServer.value.last_page && paginationOptions.value.page >= metaServer.value.last_page) {

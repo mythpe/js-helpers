@@ -6,7 +6,7 @@
   -->
 
 <script lang="ts" setup>
-import { AxiosResponse } from 'axios'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { QDialogProps, QInputProps, QPageStickyProps, QTableProps, useQuasar } from 'quasar'
 import { computed, defineEmits, onBeforeMount, onMounted, ref, useSlots, watch } from 'vue'
 import { GenericMDtBtn, MDatatableProps, MDtItem, PaginationOptionsProps, TableDialogsProps, TableMetaServerProps, TableOptionsProps } from './models'
@@ -54,6 +54,7 @@ interface Props extends MDatatableProps {
   formDialogProps?: QDialogProps;
   searchInputProps?: QInputProps;
   excludedKeys?: string[] | ((from: any) => any);
+  requestParams?: AxiosRequestConfig['params'] | ((params: any) => any);
 }
 
 const props = withDefaults(defineProps<Props>(), {
