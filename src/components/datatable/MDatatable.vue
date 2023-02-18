@@ -146,16 +146,16 @@ const slots = useSlots()
 const $q = useQuasar()
 
 const getRowsPerPageOptions = props.endReach ? [0] : (props.rowsPerPageOptions ?? [0])
-const bodySlots = computed<any>(() => {
-  const slot = 'body-cell-'
-  const _slots: any = {}
-  for (const s in slots) {
-    if (s.slice(0, slot.length) === slot) {
-      _slots[s] = slots[s]
-    }
-  }
-  return _slots
-})
+// const bodySlots = computed<any>(() => {
+//   const slot = 'body-cell-'
+//   const _slots: any = {}
+//   for (const s in slots) {
+//     if (s.slice(0, slot.length) === slot) {
+//       _slots[s] = slots[s]
+//     }
+//   }
+//   return _slots
+// })
 
 /**/
 const datatable = useDatatable({
@@ -564,53 +564,35 @@ export default {
             />
           </div>
         </template>
-        <template
-          v-for="(i,slot) in bodySlots"
-          #[slot]="SlotBinds"
-        >
-          <slot
-            :name="slot"
-            v-bind="{...SlotBinds,dt:datatableItemsScope}"
-          />
-        </template>
+        <!--<template-->
+        <!--  v-for="(i,slot) in bodySlots"-->
+        <!--  #[slot]="SlotBinds"-->
+        <!--&gt;-->
+        <!--  <slot-->
+        <!--    :name="slot"-->
+        <!--    v-bind="{...SlotBinds,dt:datatableItemsScope}"-->
+        <!--  />-->
+        <!--</template>-->
         <template
           v-if="endReach"
           #bottom
         >
           <q-space />
-          <div>
-            {{
-              $t('replace.from_name', {
-                from: paginationOptions.rowsNumber,
-                name: rows.length
-              })
-            }}
-          </div>
+          <div v-text="$t('replace.from_name', { from: paginationOptions.rowsNumber, name: rows.length })" />
         </template>
-        <!--<template #no-data>-->
-        <!--  <div class="col-12 self-center">-->
-        <!--    <div class="row justify-center">-->
-        <!--      <div class="col-auto">-->
-        <!--        <q-icon name="warning" />-->
-        <!--        no DAta-->
-        <!--      </div>-->
-        <!--    </div>-->
-        <!--  </div>-->
-        <!--</template>-->
-
         <template
-          v-for="(_,slot) in $slots"
-          :key="slot"
-          #[slot]="inputSlot"
+          v-for="(slotVal,slotName) in $slots"
+          :key="slotName"
+          #[slotName]="inputSlot"
         >
           <slot
             v-if="inputSlot"
-            :name="slot"
-            v-bind="inputSlot"
+            :name="slotName"
+            v-bind="{...inputSlot,dt:datatableItemsScope}"
           />
           <slot
-            v-else-if="slot !== 'default'"
-            :name="slot"
+            v-else-if="slotName !== 'default'"
+            :name="slotName"
           />
         </template>
       </q-table>
