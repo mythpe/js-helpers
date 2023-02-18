@@ -295,6 +295,12 @@ export function useDatatable ({
     delete filter[key]
     tableOptions.value.filter = { ...filter }
   }
+  const updateFilterOptions = (data: Record<string, any>) => {
+    tableOptions.value.filter = {
+      ...tableOptions.value.filter,
+      ...data
+    }
+  }
   /** Show Dialog */
   const openShowDialog = async (item: MDtItem, index?: MDtItemIndex) => {
     if (props.showRoute) {
@@ -582,6 +588,7 @@ export function useDatatable ({
     getFormTitle,
     // rowDblclick,
     onRemoveFilter,
+    updateFilterOptions,
     logoutDatatable
   }
 }
