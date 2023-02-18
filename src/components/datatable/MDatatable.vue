@@ -54,7 +54,7 @@ interface Props extends MDatatableProps {
   formDialogProps?: QDialogProps;
   searchInputProps?: QInputProps;
   excludedKeys?: string[] | ((from: any) => any);
-  requestParams?: any | ((params: any) => any);
+  requestParams?: Record<string, any> | ((params: any) => any);
 }
 
 const props = withDefaults(defineProps<Props>(), {
