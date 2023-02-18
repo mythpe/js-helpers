@@ -5,7 +5,7 @@
  * https://www.4myth.com
  */
 
-import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosResponse } from 'axios'
 import { QAvatarProps, QAvatarSlots, QInputProps, QPageStickyProps, QTableProps, QTableSlots } from 'quasar'
 import { ComputedRef, Ref, SetupContext, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
@@ -205,7 +205,7 @@ export interface MDatatableProps extends QTableProps {
   formDialogProps?: Record<any, any>;
   searchInputProps?: QInputProps;
   excludedKeys?: string[] | ((from: any) => any);
-  requestParams?: AxiosRequestConfig['params'] | ((params: any) => any);
+  requestParams?: any | ((params: any) => any);
 }
 
 export interface MDtAvatarProps extends QAvatarProps {
