@@ -31,9 +31,9 @@ interface Props extends MUploaderProps {
   excel?: boolean | undefined;
   style?: string;
   autoUpload?: boolean | undefined;
-  maxFileSize?: number | string | undefined;
-  maxTotalSize?: number | string | undefined;
-  maxFiles?: number | string | undefined;
+  // maxFileSize?: number | string | undefined;
+  // maxTotalSize?: number | string | undefined;
+  // maxFiles?: number | string | undefined;
   fieldName?: string | ((files: File) => string) | undefined;
   collection?: string | undefined;
   attachmentType?: string | undefined;
@@ -66,9 +66,9 @@ const props = withDefaults(defineProps<Props>(), {
   excel: !1,
   style: () => 'width: 100%',
   autoUpload: !1,
-  maxFileSize: 2,
-  maxTotalSize: 2,
-  maxFiles: undefined,
+  // maxFileSize: 2,
+  // maxTotalSize: 2,
+  // maxFiles: undefined,
   fieldName: 'attachment',
   collection: undefined,
   attachmentType: undefined,
@@ -242,8 +242,8 @@ const onClickDeleteAttachment = (file: File | MUploaderMediaItem) => {
 /**
  * Props
  */
-const getMaxFileSize: number = (parseInt(props.maxFileSize?.toString()) ?? 1) * Math.pow(1024, 2)
-const getMaxTotalSize: number = (parseInt(props.maxTotalSize?.toString()) ?? 1) * Math.pow(1024, 2)
+// const getMaxFileSize: number = (parseInt(props.maxFileSize?.toString()) ?? 1) * Math.pow(1024, 2)
+// const getMaxTotalSize: number = (parseInt(props.maxTotalSize?.toString()) ?? 1) * Math.pow(1024, 2)
 const def = window.MyThVue3Plugin.options?.uploader || {}
 
 </script>
@@ -277,9 +277,6 @@ export default {
       :factory="factoryFn"
       :field-name="fieldName"
       :label="label"
-      :max-file-size="getMaxFileSize"
-      :max-files="maxFiles"
-      :max-total-size="getMaxTotalSize"
       :readonly="readonly"
       :style="style"
       v-bind="{...def,...$attrs}"

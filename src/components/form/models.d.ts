@@ -460,11 +460,11 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
    */
   autoUpload?: boolean | undefined;
   /** Maximum size of individual file in megabytes */
-  maxFileSize?: number | string | undefined;
+  // maxFileSize?: number | string | undefined;
   /** Maximum size of all files combined in megabytes */
-  maxTotalSize?: number | string | undefined;
+  // maxTotalSize?: number | string | undefined;
   /** Maximum number of files to contain */
-  maxFiles?: number | string | undefined;
+  // maxFiles?: number | string | undefined;
   /**
    * Field name for each file upload; This goes into the following header: 'Content-Disposition: form-data; name="__HERE__"; filename="somefile.png"; If using a function then for best performance, reference it from your scope and do not define it inline
    * Default value: (file) => file.name
