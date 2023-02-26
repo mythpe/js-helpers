@@ -32,7 +32,7 @@ export function useGeolocation () {
     longitude: 46.62481
   })
 
-  const isSupported = 'navigator' in window && 'useGeolocation' in navigator
+  const isSupported = typeof window !== 'undefined' && 'navigator' in window && 'useGeolocation' in navigator
 
   let watcher: number | undefined
   onMounted(() => {
