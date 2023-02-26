@@ -5,7 +5,7 @@
  * https://www.4myth.com
  */
 
-import { MythInjectKey } from 'src/utils/Const'
+import { MythInjectKey } from '../utils/Const'
 import { App, defineAsyncComponent, provide } from 'vue'
 import { MyThVue3InstallOptions } from '../types'
 import { useMyTh } from './MyThVue3'
