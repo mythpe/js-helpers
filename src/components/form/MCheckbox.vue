@@ -6,6 +6,7 @@
   -->
 
 <script lang="ts" setup>
+import { getMyThPluginOptions } from '../../utils/Const'
 import { Field as VeeField } from 'vee-validate'
 import { defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
@@ -43,7 +44,7 @@ const {
   getLabel,
   getPlaceholder
 } = useInputProps(props)
-const def = window.MyThVue3Plugin.options?.button || {}
+const def = getMyThPluginOptions().options?.button || {}
 
 </script>
 

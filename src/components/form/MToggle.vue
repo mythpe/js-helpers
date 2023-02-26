@@ -6,6 +6,7 @@
   -->
 
 <script lang="ts" setup>
+import { getMyThPluginOptions } from '../../utils/Const'
 import { Field as VeeField } from 'vee-validate'
 import { computed, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
@@ -81,7 +82,7 @@ const getLabel = computed<string>(() => {
   }
   return parseAttribute('none')
 })
-const def = window.MyThVue3Plugin.options?.toggle || {}
+const def = getMyThPluginOptions().options?.toggle || {}
 
 </script>
 

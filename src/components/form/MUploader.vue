@@ -8,6 +8,7 @@
 <script lang="ts" setup>
 import { QBtnProps, QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
+import { getMyThPluginOptions } from '../../utils/Const'
 import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
 import useAcceptProp from '../../composition/useAcceptProp'
 import { useMyTh, useTranslate } from '../../vue3'
@@ -244,7 +245,7 @@ const onClickDeleteAttachment = (file: File | MUploaderMediaItem) => {
  */
 // const getMaxFileSize: number = (parseInt(props.maxFileSize?.toString()) ?? 1) * Math.pow(1024, 2)
 // const getMaxTotalSize: number = (parseInt(props.maxTotalSize?.toString()) ?? 1) * Math.pow(1024, 2)
-const def = window.MyThVue3Plugin.options?.uploader || {}
+const def = getMyThPluginOptions().options?.uploader || {}
 
 </script>
 

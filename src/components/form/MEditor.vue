@@ -40,6 +40,7 @@
 
 <script lang="ts" setup>
 import { useQuasar } from 'quasar'
+import { getMyThPluginOptions } from '../../utils/Const'
 import { computed } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
@@ -177,7 +178,7 @@ const inputValue = computed({
 })
 
 const { getLabel, inputErrors } = useInputProps(props)
-const def = window.MyThVue3Plugin.options?.editor || {}
+const def = getMyThPluginOptions().options?.editor || {}
 
 </script>
 

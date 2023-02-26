@@ -6,6 +6,7 @@
   -->
 
 <script lang="ts" setup>
+import { getMyThPluginOptions } from '../../utils/Const'
 import { Field as VeeField } from 'vee-validate'
 
 import { computed, defineProps, onMounted, ref } from 'vue'
@@ -89,7 +90,7 @@ const {
 } = useInputProps(props)
 
 const ready = ref(!1)
-const def = window.MyThVue3Plugin.options?.input || {}
+const def = getMyThPluginOptions().options?.input || {}
 onMounted(() => {
   ready.value = !0
 })

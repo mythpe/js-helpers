@@ -5,8 +5,6 @@
  * https://www.4myth.com
  */
 
-import { MythInjectKey } from '../utils/Const'
-import { inject } from 'vue'
 import { MyThVue3PluginType } from '../types'
 import { Dates as dates } from '../utils/Dates'
 import { Helpers as helpers } from '../utils/Helpers'
@@ -31,11 +29,10 @@ export const GlobalsMyThVue3 = {
  * Helper to use plugin
  */
 export const useMyTh = (): MyThVue3PluginType => {
-  const opts = inject<any>(MythInjectKey) || {}
-  console.log(opts)
+  const opts: any = typeof window !== 'undefined' ? window.MyThVue3Plugin : {}
   return Object.assign({
-    i18n: window.MyThVue3Plugin.i18n,
-    api: window.MyThVue3Plugin.api,
-    options: window.MyThVue3Plugin.options
+    i18n: opts.i18n,
+    api: opts.api,
+    options: opts.options
   }, GlobalsMyThVue3, MAlerts, MHelpers)
 }

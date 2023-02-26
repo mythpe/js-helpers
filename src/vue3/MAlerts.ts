@@ -6,6 +6,7 @@
  */
 
 import { Dialog, Notify, QDialogOptions, QNotifyCreateOptions } from 'quasar'
+import { getMyThPluginOptions } from '../utils/Const'
 import { Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from '../types'
 
 export const MAlerts = {
@@ -19,14 +20,15 @@ export const MAlerts = {
   alertSuccess: (message: string) => MAlerts.alertMessage({ type: 'positive', message }),
   alertError: (message: string) => MAlerts.alertMessage({ type: 'negative', message }),
   confirmMessage (message?: string, title?: string, opts?: QDialogOptions): Vue3MConfirmMessage {
-    const { t } = window.MyThVue3Plugin.i18n
+    const { t } = getMyThPluginOptions().i18n
+    const { options } = getMyThPluginOptions()
     title = title || t('messages.are_you_sure') || ''
     message = message || ''
     opts = opts || {}
-    const btnsProps = window.MyThVue3Plugin.options?.dialog?.btnsProps || {}
-    const okProps = window.MyThVue3Plugin.options?.dialog?.okProps || {}
-    const cancelProps = window.MyThVue3Plugin.options?.dialog?.cancelProps || {}
-    const dialogProps = window.MyThVue3Plugin.options?.dialog?.props || {}
+    const btnsProps = options?.dialog?.btnsProps || {}
+    const okProps = options?.dialog?.okProps || {}
+    const cancelProps = options?.dialog?.cancelProps || {}
+    const dialogProps = options?.dialog?.props || {}
     return Dialog.create({
       title,
       message,

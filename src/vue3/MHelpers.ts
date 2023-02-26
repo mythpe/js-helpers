@@ -11,6 +11,7 @@ import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { ParseHeaderOptions, ParseHeadersType } from '../types'
 import { Str } from '../utils'
+import { getMyThPluginOptions } from '../utils/Const'
 
 export const MHelpers = {
   storage: {
@@ -40,7 +41,7 @@ export const MHelpers = {
     number = number ?? 2
     number = parseInt(number.toString())
     const defaultValue = undefined
-    const { t, te } = window.MyThVue3Plugin.i18n
+    const { t, te } = getMyThPluginOptions().i18n
 
     // Not is route
     // No page title
@@ -88,7 +89,7 @@ export const MHelpers = {
       if (!(k = keys[f])) {
         continue
       }
-      if (te(k) && _.isString(t(k))) {
+      if (te && te(k) && _.isString(t(k))) {
         if (_.startsWith(k, 'choice.')) {
           const pop: string = k.split('.').pop() ?? ''
           str = t(k, number, { [pop]: number })
@@ -134,7 +135,7 @@ export const MHelpers = {
     }
 
     const result: ParseHeadersType[] = []
-    const { t, te } = window.MyThVue3Plugin.i18n
+    const { t, te } = getMyThPluginOptions().i18n
     headers.forEach((elm: string | ParseHeadersType) => {
       if (typeof elm !== 'string' && !elm?.name) return elm
       const isString = typeof elm === 'string'
@@ -151,16 +152,18 @@ export const MHelpers = {
       }
       const name = item.name
       let k
-      if (te((k = `attributes.${item.label}`))) {
-        item.label = t(k)
-      } else if (te((k = `attributes.${_.snakeCase(item.label)}`))) {
-        item.label = t(k)
-      } else if (te((k = `attributes.${_.camelCase(item.label)}`))) {
-        item.label = t(k)
-      } else if (te((k = `attributes.${Str.pascalCase(item.label)}`))) {
-        item.label = t(k)
-      } else if (te((k = item.label))) {
-        item.label = t(k)
+      if (te) {
+        if (te((k = `attributes.${item.label}`))) {
+          item.label = t(k)
+        } else if (te((k = `attributes.${_.snakeCase(item.label)}`))) {
+          item.label = t(k)
+        } else if (te((k = `attributes.${_.camelCase(item.label)}`))) {
+          item.label = t(k)
+        } else if (te((k = `attributes.${Str.pascalCase(item.label)}`))) {
+          item.label = t(k)
+        } else if (te((k = item.label))) {
+          item.label = t(k)
+        }
       }
 
       if (opts.align && item.align) {
@@ -198,7 +201,7 @@ export const MHelpers = {
     const defaultValue = undefined
     if (!string) return string
 
-    const { t, te } = window.MyThVue3Plugin.i18n
+    const { t, te } = getMyThPluginOptions().i18n
     const key = string && typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
 
     if (!key) {
@@ -206,17 +209,19 @@ export const MHelpers = {
     }
 
     let transKey: string
-    if (te((transKey = `attributes.${key}`)) && _.isString(t(transKey))) {
-      return t(transKey, ...args)
-    }
+    if (te) {
+      if (te((transKey = `attributes.${key}`)) && _.isString(t(transKey))) {
+        return t(transKey, ...args)
+      }
 
-    if (te((transKey = `choice.${key}`)) && _.isString(t(transKey))) {
-      args = args || [2]
-      return t(transKey, ...args)
-    }
+      if (te((transKey = `choice.${key}`)) && _.isString(t(transKey))) {
+        args = args || [2]
+        return t(transKey, ...args)
+      }
 
-    if (te(key) && _.isString(t(key))) {
-      return t(key, ...args)
+      if (te(key) && _.isString(t(key))) {
+        return t(key, ...args)
+      }
     }
 
     return string

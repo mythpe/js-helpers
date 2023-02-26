@@ -34,16 +34,7 @@ export const initMetaServer: TableMetaServerProps = {
   total: null
 }
 
-export function useDatatable ({
-  props,
-  emit,
-  slots,
-  rows,
-  dialogs,
-  tableOptions,
-  metaServer,
-  paginationOptions
-}: UseDatatableOptions) {
+export function useDatatable ({ props, emit, slots, rows, dialogs, tableOptions, metaServer, paginationOptions }: UseDatatableOptions) {
   const $myth = useMyTh()
   const $q = useQuasar()
   const { t } = useTranslate()

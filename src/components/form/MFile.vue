@@ -8,6 +8,7 @@
 <script lang="ts" setup>
 
 import { QFile } from 'quasar'
+import { getMyThPluginOptions } from '../../utils/Const'
 import useAcceptProp from '../../composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref } from 'vue'
@@ -107,7 +108,7 @@ const pickFiles = (...args: any[]) => {
 const removeAtIndex = (...args: any[]) => {
   fileInput.value?.removeAtIndex(...args)
 }
-const def = window.MyThVue3Plugin.options?.input || {}
+const def = getMyThPluginOptions().options?.input || {}
 defineExpose({
   pickFiles,
   removeAtIndex

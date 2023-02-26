@@ -8,6 +8,7 @@
 <script lang="ts" setup>
 import { AxiosResponse } from 'axios'
 import { QDialogProps, QInputProps, QPageStickyProps, QTableProps, useQuasar } from 'quasar'
+import { getMyThPluginOptions } from '../../utils/Const'
 import { computed, defineEmits, onBeforeMount, onMounted, ref, useSlots, watch } from 'vue'
 import { GenericMDtBtn, MDatatableProps, MDtItem, PaginationOptionsProps, TableDialogsProps, TableMetaServerProps, TableOptionsProps } from './models'
 import { initMetaServer, initPaginationOptions, initTableOptions, useDatatable } from './useMDatatable'
@@ -120,8 +121,8 @@ const props = withDefaults(defineProps<Props>(), {
   requestParams: undefined
 })
 
-const defSearchInputProps = window.MyThVue3Plugin.options?.dt?.searchInputProps || {}
-const dialogsBtnsProps = window.MyThVue3Plugin.options?.dt?.dialogsBtnsProps || {}
+const defSearchInputProps = getMyThPluginOptions().options?.dt?.searchInputProps || {}
+const dialogsBtnsProps = getMyThPluginOptions().options?.dt?.dialogsBtnsProps || {}
 
 type Emits = {
   (e: 'update:rows', value: MDtItem[]): void

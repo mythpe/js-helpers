@@ -7,6 +7,7 @@
 
 <script lang="ts" setup>
 import { QBtn as BaseBtn } from 'quasar'
+import { getMyThPluginOptions } from '../../utils/Const'
 import { defineProps } from 'vue'
 import { MBtnProps } from './models'
 
@@ -18,7 +19,7 @@ withDefaults(defineProps<Props>(), {
   color: 'primary'
 })
 
-const def = window.MyThVue3Plugin.options?.button || {}
+const def = getMyThPluginOptions().options?.button || {}
 </script>
 
 <script lang="ts">
