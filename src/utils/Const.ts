@@ -5,4 +5,8 @@
  * https://www.4myth.com
  */
 
-export const getMyThPluginOptions = (): any => typeof window !== 'undefined' ? window.MyThVue3Plugin : {}
+export const getMyThPluginOptions = (): any => typeof window !== 'undefined' ? window.MyThVue3Plugin : {
+  i18n: {},
+  api: {},
+  options: {}
+}
