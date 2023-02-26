@@ -1,2 +1,2 @@
 
-export const MythProvideKey = 'MyThVue3Plugin'
+export const MythInjectKey = 'MyThVue3Plugin'
