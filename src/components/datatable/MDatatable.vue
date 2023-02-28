@@ -702,7 +702,7 @@ export default {
             </q-card-section>
             <q-separator />
             <q-card-section
-              :style="`max-height: ${$q.screen.height-300}px`"
+              :style="`max-height: ${$q.screen.height- (formDialogProps?.maximized ? 140 : 300)}px`"
               class="scroll"
             >
               <slot
