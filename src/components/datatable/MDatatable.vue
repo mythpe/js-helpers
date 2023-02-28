@@ -8,8 +8,8 @@
 <script lang="ts" setup>
 import { AxiosResponse } from 'axios'
 import { QDialogProps, QInputProps, QPageStickyProps, QTableProps, useQuasar } from 'quasar'
-import { getMyThPluginOptions } from '../../utils/Const'
 import { computed, defineEmits, onBeforeMount, onMounted, ref, useSlots, watch } from 'vue'
+import { getMyThPluginOptions } from '../../utils/Const'
 import { GenericMDtBtn, MDatatableProps, MDtItem, PaginationOptionsProps, TableDialogsProps, TableMetaServerProps, TableOptionsProps } from './models'
 import { initMetaServer, initPaginationOptions, initTableOptions, useDatatable } from './useMDatatable'
 
@@ -626,7 +626,10 @@ export default {
           />
         </q-card-section>
         <q-separator />
-        <q-card-actions align="between">
+        <q-card-actions
+          align="between"
+          class="print-hide"
+        >
           <MBtn
             :label="$t('cancel')"
             color="negative"
@@ -656,17 +659,17 @@ export default {
           </q-toolbar>
         </q-card-section>
         <q-separator />
-        <q-card-section
-          :style="`max-height: ${$q.screen.height-300}px`"
-          class="scroll"
-        >
+        <q-card-section class="scroll">
           <slot
             name="show"
             v-bind="{item:dialogs.item,index:dialogs.index}"
           />
         </q-card-section>
         <q-separator />
-        <q-card-actions align="right">
+        <q-card-actions
+          align="right"
+          class="print-hide"
+        >
           <MBtn
             :label="$t('close')"
             color="negative"
@@ -709,7 +712,7 @@ export default {
             </q-card-section>
             <q-separator />
             <q-card-actions
-              class="m--datatable-form-actions"
+              class="m--datatable-form-actions print-hide"
               align="between"
             >
               <MBtn
