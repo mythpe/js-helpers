@@ -1,6 +1,6 @@
 {
   "name": "@mythpe/js-helpers",
-  "version": "2.1.91",
+  "version": "3.0.0",
   "description": "Library of plugins & shortcuts that use JavaScript, also includes the Vue3 plugin with quasar apps",
   "author": "MyTh Ahmed Faiz",
   "email": "mythpe@gmail.com",
@@ -36,21 +36,21 @@
   },
   "homepage": "https://github.com/mythpe/js-helpers#readme",
   "dependencies": {
-    "@googlemaps/js-api-loader": "^1.15.1"
-  },
-  "devDependencies": {
     "axios": "^0.21.1",
     "lodash": "^4.0.0",
     "lodash-inflection": "^1.5.0",
     "moment": "^2.29.4",
     "moment-hijri": "^2.1.2",
     "qs": "^6.11.0",
+    "@googlemaps/js-api-loader": "^1.15.1",
+    "vue3-google-map": "^0.15.0"
+  },
+  "devDependencies": {
     "quasar": "^2.6.0",
     "vee-validate": "^4.6.5",
     "vue": "^3.0.0",
     "vue-i18n": "^9.0.0",
     "vue-router": "^4.0.0",
-    "vue3-google-map": "^0.15.0",
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
     "@types/google.maps": "^3.50.5",
     "@types/lodash": "^4.14.182",
