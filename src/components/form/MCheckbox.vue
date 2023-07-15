@@ -5,6 +5,52 @@
   - https://www.4myth.com
   -->
 
+<template>
+  <MCol
+    :auto="auto"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :sm="sm"
+    :xs="xs"
+    :class="$attrs.class"
+  >
+    <VeeField
+      v-slot="fieldProps"
+      v-model="inputValue"
+      :name="name"
+      :rules="getRules"
+      v-bind="$attrs"
+    >
+      <q-checkbox
+        :error="fieldProps.errors.length>0"
+        :error-message="fieldProps.errorMessage"
+        :label="getLabel"
+        :model-value="modelValue"
+        :placeholder="getPlaceholder"
+        :val="val"
+        v-bind="{...def,...$attrs,...fieldProps.field}"
+      >
+        <template
+          v-for="(_,slot) in $slots"
+          :key="slot"
+          #[slot]="inputSlot"
+        >
+          <slot
+            v-if="inputSlot"
+            :name="slot"
+            v-bind="inputSlot"
+          />
+          <slot
+            v-else
+            :name="slot"
+          />
+        </template>
+      </q-checkbox>
+    </VeeField>
+  </MCol>
+</template>
+
 <script lang="ts" setup>
 import { getMyThPluginOptions } from '../../utils/Const'
 import { Field as VeeField } from 'vee-validate'
@@ -53,49 +99,3 @@ export default {
   inheritAttrs: !1
 }
 </script>
-
-<template>
-  <MCol
-    :auto="auto"
-    :col="col"
-    :lg="lg"
-    :md="md"
-    :sm="sm"
-    :xs="xs"
-    :class="$attrs.class"
-  >
-    <VeeField
-      v-slot="fieldProps"
-      v-model="inputValue"
-      :name="name"
-      :rules="getRules"
-      v-bind="$attrs"
-    >
-      <q-checkbox
-        :error="fieldProps.errors.length>0"
-        :error-message="fieldProps.errorMessage"
-        :label="getLabel"
-        :model-value="modelValue"
-        :placeholder="getPlaceholder"
-        :val="val"
-        v-bind="{...def,...$attrs,...fieldProps.field}"
-      >
-        <template
-          v-for="(_,slot) in $slots"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            v-if="inputSlot"
-            :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else
-            :name="slot"
-          />
-        </template>
-      </q-checkbox>
-    </VeeField>
-  </MCol>
-</template>

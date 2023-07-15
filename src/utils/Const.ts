@@ -5,8 +5,6 @@
  * https://www.4myth.com
  */
 
-export const getMyThPluginOptions = (): any => typeof window !== 'undefined' ? window.MyThVue3Plugin : {
-  i18n: {},
-  api: {},
-  options: {}
-}
+import { MyThVue3InstallOptions } from '../types'
+
+export const getMyThPluginOptions = (): Partial<MyThVue3InstallOptions> => window.MyThVue3Plugin

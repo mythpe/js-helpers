@@ -5,21 +5,37 @@
   - https://www.4myth.com
   -->
 
+<template>
+  <q-btn v-bind="{...def,...$attrs}">
+    <template
+      v-for="(k,v) in _slots"
+      #[v]="scope"
+    >
+      <template v-if="Boolean(scope)">
+        <slot
+          :name="v"
+          v-bind="scope"
+        />
+      </template>
+      <template v-else>
+        <slot :name="v" />
+      </template>
+    </template>
+    <template #loading>
+      <slot name="loading">
+        <q-spinner-hourglass />
+      </slot>
+    </template>
+  </q-btn>
+</template>
+
 <script lang="ts" setup>
-import { QBtn as BaseBtn } from 'quasar'
 import { getMyThPluginOptions } from '../../utils/Const'
-import { defineProps } from 'vue'
-import { MBtnProps } from './models'
-
-interface Props extends MBtnProps {
-  color?: string | undefined
-}
-
-withDefaults(defineProps<Props>(), {
-  color: 'primary'
-})
+import { useSlots } from 'vue'
 
 const def = getMyThPluginOptions().options?.button || {}
+
+const _slots = useSlots()
 </script>
 
 <script lang="ts">
@@ -27,17 +43,3 @@ export default {
   inheritAttrs: !1
 }
 </script>
-
-<template>
-  <base-btn
-    :color="color"
-    v-bind="{...def,...$attrs}"
-  >
-    <slot />
-    <template #loading>
-      <slot name="loading">
-        <q-spinner-hourglass />
-      </slot>
-    </template>
-  </base-btn>
-</template>

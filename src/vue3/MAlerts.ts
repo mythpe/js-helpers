@@ -25,7 +25,10 @@ export const MAlerts = {
     title = title || t('messages.are_you_sure') || ''
     message = message || ''
     opts = opts || {}
-    const btnsProps = options?.dialog?.btnsProps || {}
+    const btnsProps = {
+      ...(options?.button || {}),
+      ...(options?.dialog?.btnsProps || {})
+    }
     const okProps = options?.dialog?.okProps || {}
     const cancelProps = options?.dialog?.cancelProps || {}
     const dialogProps = options?.dialog?.props || {}
@@ -34,17 +37,15 @@ export const MAlerts = {
       message,
       focus: 'none',
       cancel: {
-        color: 'positive',
         ...btnsProps,
-        ...cancelProps
+        ...cancelProps,
+        color: cancelProps.color || 'positive'
       },
       ok: {
-        color: 'negative',
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         label: t('yes'),
         ...btnsProps,
-        ...okProps
+        ...okProps,
+        color: okProps.color || 'negative'
       },
       persistent: !0,
       ...dialogProps,
