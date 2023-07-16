@@ -5,763 +5,532 @@
   - https://www.4myth.com
   -->
 
-<script lang="ts" setup>
-import { AxiosResponse } from 'axios'
-import { QDialogProps, QInputProps, QPageStickyProps, QTableProps, useQuasar } from 'quasar'
-import { computed, defineEmits, onBeforeMount, onMounted, ref, useSlots, watch } from 'vue'
-import { getMyThPluginOptions } from '../../utils/Const'
-import { GenericMDtBtn, MDatatableProps, MDtItem, PaginationOptionsProps, TableDialogsProps, TableMetaServerProps, TableOptionsProps } from './models'
-import { initMetaServer, initPaginationOptions, initTableOptions, useDatatable } from './useMDatatable'
-
-interface Props extends MDatatableProps {
-  separator?: QTableProps['separator'];
-  noMouse?: boolean | undefined;
-  rowsPerPageOptions?: any[] | undefined;
-  title?: string | undefined;
-  search?: boolean | undefined;
-  pdf?: boolean | undefined;
-  excel?: boolean | undefined;
-  exportToUrl?: boolean | undefined;
-  hideSelection?: boolean | undefined;
-  singleSelection?: boolean | undefined;
-  headers: any[];
-  items?: any[] | undefined;
-  dense?: boolean | undefined;
-  endReach?: boolean | undefined;
-  hideAddBtn?: boolean | undefined;
-  hideUpdateBtn?: boolean | undefined;
-  hideShowBtn?: boolean | undefined;
-  hideDestroyBtn?: boolean | undefined;
-  defaultItem?: Partial<MDtItem> | undefined;
-  noAutoMessage?: boolean | undefined;
-  searchDebounce?: string | number | undefined;
-  withIndex?: string | string[] | undefined;
-  withStore?: string | string[] | undefined;
-  withShow?: string | string[] | undefined;
-  withUpdate?: string | string[] | undefined;
-  serviceName: string | (() => Record<string, (() => Promise<AxiosResponse>)>);
-  createRoute?: string | undefined;
-  updateRoute?: string | undefined;
-  showRoute?: string | undefined;
-  contextItems?: GenericMDtBtn[] | undefined;
-  grid?: boolean | undefined;
-  bordered?: boolean | undefined;
-  flat?: boolean | undefined;
-  square?: boolean | undefined;
-  offsetAddBtn?: QPageStickyProps['offset'];
-  positionAddBtn?: QPageStickyProps['position'];
-  filterDialogProps?: QDialogProps;
-  showDialogProps?: QDialogProps;
-  formDialogProps?: QDialogProps;
-  searchInputProps?: QInputProps;
-  excludedKeys?: string[] | ((from: any) => any);
-  requestParams?: Record<string, any> | ((params: any) => any);
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  separator: 'horizontal',
-  noMouse: !0,
-  rowsPerPageOptions: () => [50, 250, 500, 0],
-  title: undefined,
-  search: !0,
-  pdf: !1,
-  excel: !1,
-  exportToUrl: !0,
-  hideSelection: !1,
-  singleSelection: !0,
-  headers: undefined,
-  items: undefined,
-  dense: undefined,
-  endReach: !1,
-  hideAddBtn: undefined,
-  hideUpdateBtn: undefined,
-  hideShowBtn: undefined,
-  hideDestroyBtn: undefined,
-  defaultItem: undefined,
-  noAutoMessage: !1,
-  searchDebounce: 600,
-  withIndex: undefined,
-  withStore: undefined,
-  withShow: undefined,
-  withUpdate: undefined,
-  serviceName: undefined,
-  createRoute: undefined,
-  updateRoute: undefined,
-  showRoute: undefined,
-  contextItems: undefined,
-  grid: undefined,
-  bordered: undefined,
-  flat: undefined,
-  square: undefined,
-  offsetAddBtn: () => [10, 10],
-  positionAddBtn: 'bottom-right',
-  filterDialogProps: () => ({
-    'allow-focus-outside': !0,
-    'full-width': !0,
-    'no-backdrop-dismiss': !0,
-    persistent: !0,
-    position: 'top'
-  }),
-  showDialogProps: () => ({
-    'allow-focus-outside': !0,
-    'full-width': !0,
-    'no-backdrop-dismiss': !0,
-    persistent: !0,
-    position: 'top'
-  }),
-  formDialogProps: () => ({
-    'allow-focus-outside': !0,
-    'full-width': !0,
-    'no-backdrop-dismiss': !0,
-    persistent: !0,
-    position: 'top'
-  }),
-  searchInputProps: undefined,
-  excludedKeys: undefined,
-  requestParams: undefined
-})
-
-const defSearchInputProps = getMyThPluginOptions().options?.dt?.searchInputProps || {}
-const dialogsBtnsProps = getMyThPluginOptions().options?.dt?.dialogsBtnsProps || {}
-
-type Emits = {
-  (e: 'update:rows', value: MDtItem[]): void
-  (e: 'refresh'): void
-}
-
-const emit = defineEmits<Emits>()
-
-const metaServer = ref<TableMetaServerProps>({ ...initMetaServer })
-const tableOptions = ref<TableOptionsProps>({ ...initTableOptions })
-const paginationOptions = ref<PaginationOptionsProps>({ ...initPaginationOptions })
-const rows = ref<MDtItem[]>([])
-const dialogs = ref<TableDialogsProps>({
-  filter: !1,
-  show: !1,
-  form: !1,
-  isUpdate: !1,
-  item: null,
-  index: undefined,
-  errors: {}
-})
-const contextmenu = ref(!1)
-const slots = useSlots()
-const $q = useQuasar()
-
-const getRowsPerPageOptions = props.endReach ? [0] : (props.rowsPerPageOptions ?? [0])
-// const bodySlots = computed<any>(() => {
-//   const slot = 'body-cell-'
-//   const _slots: any = {}
-//   for (const s in slots) {
-//     if (s.slice(0, slot.length) === slot) {
-//       _slots[s] = slots[s]
-//     }
-//   }
-//   return _slots
-// })
-
-/**/
-const datatable = useDatatable({
-  props,
-  emit,
-  slots,
-  rows,
-  tableOptions,
-  dialogs,
-  metaServer,
-  paginationOptions
-})
-const {
-  getHeaders,
-  hasAddBtn,
-  hasUpdateBtn,
-  hasShowBtn,
-  hasDestroyBtn,
-  hasFilterDialog,
-  hasMenu,
-
-  isUpdateMode,
-  isSingleSelectedItem,
-  hasSelectedItem,
-
-  datatableItemsScope,
-
-  onScroll,
-  refresh,
-  refreshNoUpdate,
-  fetchDatatableItems,
-  exportData,
-  openFilterDialog,
-  saveFilterDialog,
-  closeFilterDialog,
-  openShowDialog,
-  closeShowDialog,
-  openUpdateDialog,
-  openCreateDialog,
-  closeFormDialog,
-  defaultSubmitItem,
-  onDeleteItem,
-  deleteSelectionItem,
-  getShowTitle,
-  getFormTitle,
-  // rowDblclick,
-  onRemoveFilter
-} = datatable
-
-/**/
-
-const onRowContextmenu = (e: Event, row: MDtItem, index: number) => {
-  e.preventDefault()
-  dialogs.value.item = row
-  dialogs.value.index = index
-  contextmenu.value = !0
-}
-
-const dtButtons = computed(() => ([
-  {
-    name: 'update',
-    click: (item: MDtItem, index: number) => openUpdateDialog(item, index),
-    show: hasUpdateBtn.value
-  },
-  {
-    name: 'show',
-    click: (item: MDtItem, index: number) => openShowDialog(item, index),
-    show: hasShowBtn.value
-  },
-  {
-    name: 'destroy',
-    click: (item: MDtItem, index: number) => onDeleteItem(item, index),
-    show: hasDestroyBtn.value
-  },
-  ...(props.contextItems ?? [])
-].sort((a: GenericMDtBtn, b: GenericMDtBtn) => (a.order ?? 0) - (b.order ?? 0))))
-
-watch(() => tableOptions.value.loading, v => (v ? $q.loading.show() : $q.loading.hide()))
-
-/* Filter & Search Watcher */
-watch([() => tableOptions.value.filter, () => tableOptions.value.search], () => {
-  fetchDatatableItems({
-    pagination: paginationOptions.value,
-    filter: tableOptions.value.search
-  })
-})
-/* Filter & Search Watcher */
-
-watch(rows, v => emit('update:rows', v))
-
-onBeforeMount(() => {
-  if (props.items) {
-    rows.value = props.items
-  }
-})
-onMounted(() => refresh())
-
-defineExpose(datatable)
-
-</script>
-
 <script lang="ts">
+
+import { QTable, QTableProps } from 'quasar'
+import { computed, nextTick, onMounted, PropType, reactive, ref } from 'vue'
+import { ApiServiceParams, FetchRowsArgs, MDatatableFilterForm, MDatatableMetaServer, MDatatableOptions, MDatatablePagination, MDtApiService, MDtItem } from './m-datatable'
+import { useMyTh } from '../../vue3'
+import _ from 'lodash'
+
+export const initPaginationOptions: MDatatablePagination = {
+  sortBy: undefined,
+  descending: undefined,
+  page: 1,
+  rowsPerPage: 50,
+  rowsNumber: 0
+}
+export const initTableOptions = {
+  loading: !1,
+  selected: [],
+  search: null,
+  filter: {},
+  tempFilter: {}
+}
+export const initMetaServer: MDatatableMetaServer = {
+  current_page: null,
+  last_page: null,
+  total: null
+}
+
+const p = QTable.props
+// const _p : MDataTableProps = {
+//
+// }
 export default {
-  inheritAttrs: !1
+  name: 'MDatatable',
+  inheritAttrs: !1,
+  props: {
+    ...p,
+    headers: {
+      type: Array as PropType<string[] | Partial<QTableProps['columns']>[] | (string & QTableProps['columns'])[]>,
+      default: undefined
+    },
+    rows: {
+      type: Array,
+      default: undefined
+    },
+    serviceName: {
+      type: [String, Function as PropType<() => Record<string, any>>],
+      default: () => ''
+    },
+    requestParams: {
+      type: [Function, Object],
+      default: () => undefined
+    },
+    withIndex: {
+      type: [String, Array],
+      default: undefined
+    },
+    withStore: {
+      type: [String, Array],
+      default: undefined
+    },
+    withShow: {
+      type: [String, Array],
+      default: undefined
+    },
+    withUpdate: {
+      type: [String, Array],
+      default: undefined
+    }
+  },
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  setup (props) {
+    const myth = useMyTh()
+    const headersProp = computed(() => props.headers)
+    const getColumns = computed<QTableProps['columns'][]>(() => myth.parseHeaders(headersProp.value) ?? [])
+    // const getColumns = ref([])
+    const getRows = ref<MDtItem[]>([])
+
+    /**
+     * Table
+     */
+    const selected = ref<MDtItem[]>([])
+    const meta = ref<MDatatableMetaServer>({ ...initMetaServer })
+    const pagination = ref<MDatatablePagination>({ ...initPaginationOptions })
+    const search = ref<string | null>(null)
+    const loading = ref<boolean>(!1)
+    const filterForm = ref<MDatatableFilterForm>({})
+    const tempFilterForm = ref<MDatatableFilterForm>({})
+
+    const tableOptions = reactive<MDatatableOptions>({
+      search,
+      loading,
+      pagination,
+      meta,
+      filter: filterForm,
+      tempFilter: tempFilterForm,
+      selected
+    })
+    /**
+     * Helpers
+     */
+    const getApiServices = (): MDtApiService => {
+      if (typeof props.serviceName === 'function') {
+        return props.serviceName()
+      }
+      return myth.api.services[props.serviceName]
+    }
+    const getDatatableParams = ({ pagination, filter }: FetchRowsArgs = {}): ApiServiceParams => {
+      let params: ApiServiceParams = {
+        filter: tableOptions.filter,
+        search: filter || null,
+        headers: getColumns.value.map((e: any) => e.name),
+        ids: tableOptions.selected.map((e: any) => e.id),
+        indexType: 'index',
+        requestWith: undefined,
+        itemsPerPage: pagination?.rowsPerPage === 0 ? -1 : (pagination?.rowsPerPage !== undefined ? pagination?.rowsPerPage : 0),
+        page: pagination?.page !== undefined ? pagination.page : 0,
+        sortBy: pagination?.sortBy !== undefined ? pagination.sortBy : undefined,
+        sortDesc: !pagination?.sortBy ? undefined : (pagination?.descending === !0 ? 1 : (pagination?.descending === !1 ? 0 : undefined))
+      }
+      if (props.requestParams) {
+        if (typeof props.requestParams === 'function') {
+          params = props.requestParams(params)
+        } else {
+          params = {
+            ...params,
+            ...props.requestParams
+          }
+        }
+      }
+      return params
+    }
+    const getRequestWith = (type: 'withIndex' | 'withShow' | 'withUpdate' | 'withStore') => {
+      let v: any = []
+      const params: { [k: number | string]: number } | (() => (string[] | string)) | string | undefined = props[type]
+      if (params) {
+        if (typeof params === 'string') {
+          v = params.split(',')
+        }
+
+        if (_.isArray(params)) {
+          v = [...params]
+        } else if (_.isObject(params) && typeof params !== 'function') {
+          for (const k in params) {
+            v.push(`${k}=${params[k]}`)
+          }
+        } else if (_.isFunction(params)) {
+          const f = params()
+          v = typeof f === 'string' ? f.split(',') : f
+        }
+      }
+      return v.join(',') ?? null
+    }
+
+    /**
+     * Methods
+     */
+    const tableErrorNotAuth = () => {
+      //
+    }
+    const refreshNoUpdate = (done?: () => void) => {
+      (async () => {
+        meta.value = { ...initMetaServer }
+        pagination.value.page = 1
+        pagination.value.rowsNumber = 0
+        getRows.value = []
+        // if (dialogs.value.filter) {
+        //   dialogs.value.filter = !1
+        // }
+        nextTick(() => {
+          fetchDatatableItems({
+            pagination: pagination.value,
+            filter: tableOptions.search
+          })
+          if (done) {
+            done()
+          }
+          // emit('refresh')
+        })
+      })()
+    }
+    const refresh = (done?: () => void) => {
+      return refreshNoUpdate(done)
+    }
+    const fetchDatatableItems = async (opts: FetchRowsArgs = {}) => {
+      if (props.endReach && tableOptions.meta.last_page && tableOptions.pagination.page >= tableOptions.meta.last_page) {
+        return
+      }
+      if (tableOptions.loading || !props.serviceName) return
+      tableOptions.loading = !0
+      nextTick(async () => {
+        const params = getDatatableParams(opts)
+        const requestWith = getRequestWith('withIndex')
+        if (requestWith) {
+          params.requestWith = requestWith
+        }
+        try {
+          const { _data, _meta } = await getApiServices().index({ params })
+          pagination.value = {
+            page: parseInt(_meta?.current_page) || 1,
+            rowsPerPage: parseInt(_meta?.per_page) || 0,
+            rowsNumber: parseInt(_meta?.total) || 0,
+            sortBy: opts?.pagination?.sortBy,
+            descending: opts?.pagination?.descending
+          }
+          _meta && (meta.value = _meta)
+          if (props.endReach) {
+            getRows.value = [...getRows.value, ...(_data || [])]
+          } else {
+            getRows.value = _data || []
+          }
+        } catch (e: any) {
+          // console.log(e)
+          if (e?.response?.status === 401) {
+            tableErrorNotAuth()
+            return e
+          }
+          if (e?._message) {
+            myth.alertError(e._message)
+          } else if (e?.message) {
+            myth.alertError(e.message)
+          }
+        } finally {
+          tableOptions.loading = !1
+        }
+      })
+    }
+    onMounted(() => {
+      refresh()
+    })
+    return {
+      selected,
+      fetchDatatableItems,
+      tableOptions,
+      getColumns,
+      getRows
+    }
+  }
 }
 </script>
 
 <template>
   <div class="m--datatable-component">
-    <q-menu
-      v-model="contextmenu"
-      context-menu
-      max-width="300px"
-      touch-position
-      transition-hide="fade"
-      transition-show="fade"
-    >
-      <q-list
-        v-show="Boolean(dialogs.item)"
-        separator
-      >
-        <template
-          v-for="(dtBtn,i) in dtButtons"
-          :key="i"
-        >
-          <MDtBtn
-            v-if="dtBtn.show === !0"
-            :[dtBtn.name]="!0"
-            list-item
-            v-bind="dtBtn.attr || {}"
-            @click="dtBtn.click ? dtBtn.click(dialogs.item,dialogs.index) : undefined"
-          >
-            {{ $t(dtBtn.name) }}
-          </MDtBtn>
-        </template>
-      </q-list>
-    </q-menu>
-    <q-pull-to-refresh
-      :no-mouse="noMouse"
-      @refresh="refresh"
-    >
+    <q-pull-to-refresh>
       <q-table
         ref="table"
-        v-model:pagination="paginationOptions"
+        selection="multiple"
+        v-model:pagination="tableOptions.pagination"
         v-model:selected="tableOptions.selected"
-        :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
-        :columns="getHeaders"
-        :dense="dense"
-        :filter="tableOptions.search"
-        :grid="grid === undefined ? $q.screen.lt.md : grid"
-        :hide-pagination="endReach"
-        :loading="tableOptions.loading"
-        :rows="rows"
-        :rows-per-page-options="getRowsPerPageOptions"
-        :selection="hideSelection !== !0 ? (singleSelection ? 'single' : 'multiple') : 'none'"
-        :separator="separator"
-        :title="title"
-        :bordered="bordered"
+        :class="{'m--datatable': !0,'m--datatable-grid' : $q.screen.lt.md}"
         card-container-class="m--datatable-container"
-        flat
-        square
         table-class="m--datatable-container"
         v-bind="$attrs"
+        :loading="tableOptions.loading"
+        :columns="getColumns"
+        :rows="getRows"
+        :filter="tableOptions.search"
         @request="fetchDatatableItems"
-        @virtual-scroll="endReach ? onScroll : undefined"
-        @row-contextmenu="onRowContextmenu"
       >
-        <template #top-right>
-          <MRow
-            :style="`min-width: ${$q.screen.lt.md ? '100%' : parseInt($q.screen.width/2) + 'px'}`"
-            class="justify-between"
-          >
-            <MInput
-              v-if="search"
-              v-model="tableOptions.search"
-              :debounce="searchDebounce"
-              autocomplete="none"
-              class="self-start"
-              clearable
-              clear-icon="clear"
-              col="12"
-              dense
-              input-style="min-width: 220px"
-              name="search"
-              placeholder="datatable.search_input"
-              sm="9"
-              standout="bg-primary"
-              v-bind="{...(defSearchInputProps||{}),...(searchInputProps||{})}"
-            >
-              <template #prepend>
-                <q-icon name="search" />
-              </template>
-            </MInput>
-            <MCol
-              col="12"
-              sm="auto"
-            >
-              <MBtn
-                v-if="hasMenu"
-                color="blue-grey"
-                flat
-                icon="o_more_vert"
-                round
-              >
-                <q-tooltip v-if="$q.screen.gt.sm">
-                  {{ $t('more') }}
-                </q-tooltip>
-                <q-menu square>
-                  <q-list style="min-width: 250px">
-                    <template v-if="hasAddBtn">
-                      <q-item
-                        v-close-popup
-                        clickable
-                        @click="openCreateDialog()"
-                      >
-                        <q-item-section thumbnail>
-                          <q-icon
-                            color="primary"
-                            name="add"
-                            right
-                            size="xs"
-                          />
-                        </q-item-section>
-                        <q-item-section>
-                          <span> {{ getFormTitle }}</span>
-                        </q-item-section>
-                      </q-item>
-                      <q-separator />
-                    </template>
-                    <template v-if="hasFilterDialog">
-                      <q-item
-                        v-close-popup
-                        clickable
-                        @click="openFilterDialog()"
-                      >
-                        <q-item-section thumbnail>
-                          <q-icon
-                            color="blue"
-                            name="filter_alt"
-                            right
-                            size="xs"
-                          />
-                        </q-item-section>
-                        <q-item-section>
-                          <span>
-                            {{ $t('filter') }}
-                          </span>
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                    <template v-if="pdf">
-                      <q-item
-                        v-close-popup
-                        clickable
-                        @click="exportData('pdf')"
-                      >
-                        <q-item-section thumbnail>
-                          <q-icon
-                            color="red"
-                            name="fa-solid fa-file-pdf"
-                            right
-                            size="xs"
-                          />
-                        </q-item-section>
-                        <q-item-section>
-                          <span>
-                            {{ $t('export_pdf') }}
-                            <q-badge
-                              v-if="tableOptions.selected.length>0"
-                              :label="tableOptions.selected.length"
-                              align="top"
-                              rounded
-                            />
-                          </span>
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                    <template v-if="excel">
-                      <q-item
-                        v-close-popup
-                        clickable
-                        @click="exportData('excel')"
-                      >
-                        <q-item-section thumbnail>
-                          <q-icon
-                            color="green"
-                            name="fa-solid fa-file-excel"
-                            right
-                            size="xs"
-                          />
-                        </q-item-section>
-                        <q-item-section>
-                          <span>
-                            {{ $t('export_excel') }}
-                            <q-badge
-                              v-if="tableOptions.selected.length>0"
-                              :label="tableOptions.selected.length"
-                              align="top"
-                              rounded
-                            />
-                          </span>
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                  </q-list>
-                </q-menu>
-              </MBtn>
-              <MDtBtn
-                :disable="tableOptions.loading"
-                flat
-                round
-                icon="o_refresh"
-                @click="refreshNoUpdate()"
-              />
-            </MCol>
-            <q-slide-transition>
-              <MCol
-                v-if="Object.values(tableOptions.filter).filter(e => Boolean(e)).length > 0"
-                col="12"
-              >
-                <MRow class="items-center">
-                  <MCol col="auto">
-                    <span class="text-subtitle1 q-mr-sm">{{ $t('datatable.filtered_by') }}</span>
-                  </MCol>
-                  <template
-                    v-for="(filterValue,filterKey) in tableOptions.filter"
-                    :key="`filter-${filterKey}`"
-                  >
-                    <MCol
-                      v-if="Boolean(filterValue)"
-                      col="auto"
-                    >
-                      <q-chip
-                        :label="$t(`attributes.${filterKey}`) ?? filterKey"
-                        clickable
-                        color="primary"
-                        outline
-                        removable
-                        @click="openFilterDialog"
-                        @remove="onRemoveFilter(filterKey)"
-                      >
-                        <span
-                          v-if="typeof filterValue === 'string'"
-                          class="q-ml-sm"
-                        >{{ filterValue }}</span>
-                      </q-chip>
-                    </MCol>
-                  </template>
-                </MRow>
-              </MCol>
-            </q-slide-transition>
-            <MCol
-              v-if="$slots['top-right']"
-              col="12"
-            >
-              <slot
-                name="top-right"
-                v-bind="{tableOptions,paginationOptions}"
-              />
-            </MCol>
-          </MRow>
-        </template>
-        <template #top-selection>
-          <div class="row items-center q-gutter-xs order-last order-sm-first">
-            <slot
-              name="tools"
-              v-bind="{dt:datatableItemsScope}"
-            >
-              <MDtBtn
-                v-if="hasUpdateBtn"
-                :disable="!isSingleSelectedItem || tableOptions.loading"
-                :loading="tableOptions.loading"
-                :tooltip="$t('update')"
-                icon="o_edit"
-                flat
-                round
-                fab-mini
-                @click="openUpdateDialog(tableOptions.selected[0])"
-              />
-              <MDtBtn
-                v-if="hasShowBtn"
-                :disable="!isSingleSelectedItem || tableOptions.loading"
-                :loading="tableOptions.loading"
-                :tooltip="$t('show')"
-                icon="o_visibility"
-                flat
-                round
-                fab-mini
-                @click="openShowDialog(tableOptions.selected[0])"
-              />
-              <MDtBtn
-                v-if="hasDestroyBtn"
-                :disable="!hasSelectedItem || tableOptions.loading"
-                :loading="tableOptions.loading"
-                :tooltip="$t('destroy')"
-                icon="delete_outline"
-                flat
-                round
-                fab-mini
-                @click="deleteSelectionItem()"
-              />
-            </slot>
-            <slot
-              name="selection"
-              v-bind="{dt:datatableItemsScope}"
-            />
-          </div>
-        </template>
+        <!--<template #top-right>-->
+        <!--  <MRow-->
+        <!--    :style="`min-width: ${$q.screen.lt.md ? '100%' : parseInt($q.screen.width/2) + 'px'}`"-->
+        <!--    class="justify-between"-->
+        <!--  >-->
+        <!--    <MInput-->
+        <!--      v-if="search"-->
+        <!--      v-model="tableOptions.search"-->
+        <!--      :debounce="searchDebounce"-->
+        <!--      autocomplete="none"-->
+        <!--      class="self-start"-->
+        <!--      clearable-->
+        <!--      clear-icon="clear"-->
+        <!--      col="12"-->
+        <!--      dense-->
+        <!--      input-style="min-width: 220px"-->
+        <!--      name="search"-->
+        <!--      placeholder="datatable.search_input"-->
+        <!--      sm="9"-->
+        <!--      standout="bg-primary"-->
+        <!--      v-bind="{...(defSearchInputProps||{}),...(searchInputProps||{})}"-->
+        <!--    >-->
+        <!--      <template #prepend>-->
+        <!--        <q-icon name="search" />-->
+        <!--      </template>-->
+        <!--    </MInput>-->
+        <!--    <MCol-->
+        <!--      col="12"-->
+        <!--      sm="auto"-->
+        <!--    >-->
+        <!--      <MBtn-->
+        <!--        v-if="hasMenu"-->
+        <!--        color="blue-grey"-->
+        <!--        flat-->
+        <!--        icon="o_more_vert"-->
+        <!--        round-->
+        <!--      >-->
+        <!--        <q-tooltip v-if="$q.screen.gt.sm">-->
+        <!--          {{ $t('more') }}-->
+        <!--        </q-tooltip>-->
+        <!--        <q-menu square>-->
+        <!--          <q-list style="min-width: 250px">-->
+        <!--            <template v-if="hasAddBtn">-->
+        <!--              <q-item-->
+        <!--                v-close-popup-->
+        <!--                clickable-->
+        <!--                @click="openCreateDialog()"-->
+        <!--              >-->
+        <!--                <q-item-section thumbnail>-->
+        <!--                  <q-icon-->
+        <!--                    color="primary"-->
+        <!--                    name="add"-->
+        <!--                    right-->
+        <!--                    size="xs"-->
+        <!--                  />-->
+        <!--                </q-item-section>-->
+        <!--                <q-item-section>-->
+        <!--                  <span> {{ getFormTitle }}</span>-->
+        <!--                </q-item-section>-->
+        <!--              </q-item>-->
+        <!--              <q-separator />-->
+        <!--            </template>-->
+        <!--            <template v-if="hasFilterDialog">-->
+        <!--              <q-item-->
+        <!--                v-close-popup-->
+        <!--                clickable-->
+        <!--                @click="openFilterDialog()"-->
+        <!--              >-->
+        <!--                <q-item-section thumbnail>-->
+        <!--                  <q-icon-->
+        <!--                    color="blue"-->
+        <!--                    name="filter_alt"-->
+        <!--                    right-->
+        <!--                    size="xs"-->
+        <!--                  />-->
+        <!--                </q-item-section>-->
+        <!--                <q-item-section>-->
+        <!--                  <span>-->
+        <!--                    {{ $t('filter') }}-->
+        <!--                  </span>-->
+        <!--                </q-item-section>-->
+        <!--              </q-item>-->
+        <!--            </template>-->
+        <!--            <template v-if="pdf">-->
+        <!--              <q-item-->
+        <!--                v-close-popup-->
+        <!--                clickable-->
+        <!--                @click="exportData('pdf')"-->
+        <!--              >-->
+        <!--                <q-item-section thumbnail>-->
+        <!--                  <q-icon-->
+        <!--                    color="red"-->
+        <!--                    name="fa-solid fa-file-pdf"-->
+        <!--                    right-->
+        <!--                    size="xs"-->
+        <!--                  />-->
+        <!--                </q-item-section>-->
+        <!--                <q-item-section>-->
+        <!--                  <span>-->
+        <!--                    {{ $t('export_pdf') }}-->
+        <!--                    <q-badge-->
+        <!--                      v-if="tableOptions.selected.length>0"-->
+        <!--                      :label="tableOptions.selected.length"-->
+        <!--                      align="top"-->
+        <!--                      rounded-->
+        <!--                    />-->
+        <!--                  </span>-->
+        <!--                </q-item-section>-->
+        <!--              </q-item>-->
+        <!--            </template>-->
+        <!--            <template v-if="excel">-->
+        <!--              <q-item-->
+        <!--                v-close-popup-->
+        <!--                clickable-->
+        <!--                @click="exportData('excel')"-->
+        <!--              >-->
+        <!--                <q-item-section thumbnail>-->
+        <!--                  <q-icon-->
+        <!--                    color="green"-->
+        <!--                    name="fa-solid fa-file-excel"-->
+        <!--                    right-->
+        <!--                    size="xs"-->
+        <!--                  />-->
+        <!--                </q-item-section>-->
+        <!--                <q-item-section>-->
+        <!--                  <span>-->
+        <!--                    {{ $t('export_excel') }}-->
+        <!--                    <q-badge-->
+        <!--                      v-if="tableOptions.selected.length>0"-->
+        <!--                      :label="tableOptions.selected.length"-->
+        <!--                      align="top"-->
+        <!--                      rounded-->
+        <!--                    />-->
+        <!--                  </span>-->
+        <!--                </q-item-section>-->
+        <!--              </q-item>-->
+        <!--            </template>-->
+        <!--          </q-list>-->
+        <!--        </q-menu>-->
+        <!--      </MBtn>-->
+        <!--      <MDtBtn-->
+        <!--        :disable="tableOptions.loading"-->
+        <!--        flat-->
+        <!--        round-->
+        <!--        icon="o_refresh"-->
+        <!--        @click="refreshNoUpdate()"-->
+        <!--      />-->
+        <!--    </MCol>-->
+        <!--    <q-slide-transition>-->
+        <!--      <MCol-->
+        <!--        v-if="Object.values(tableOptions.filter).filter(e => Boolean(e)).length > 0"-->
+        <!--        col="12"-->
+        <!--      >-->
+        <!--        <MRow class="items-center">-->
+        <!--          <MCol col="auto">-->
+        <!--            <span class="text-subtitle1 q-mr-sm">{{ $t('datatable.filtered_by') }}</span>-->
+        <!--          </MCol>-->
+        <!--          <template-->
+        <!--            v-for="(filterValue,filterKey) in tableOptions.filter"-->
+        <!--            :key="`filter-${filterKey}`"-->
+        <!--          >-->
+        <!--            <MCol-->
+        <!--              v-if="Boolean(filterValue)"-->
+        <!--              col="auto"-->
+        <!--            >-->
+        <!--              <q-chip-->
+        <!--                :label="$t(`attributes.${filterKey}`) ?? filterKey"-->
+        <!--                clickable-->
+        <!--                color="primary"-->
+        <!--                outline-->
+        <!--                removable-->
+        <!--                @click="openFilterDialog"-->
+        <!--                @remove="onRemoveFilter(filterKey)"-->
+        <!--              >-->
+        <!--                <span-->
+        <!--                  v-if="typeof filterValue === 'string'"-->
+        <!--                  class="q-ml-sm"-->
+        <!--                >{{ filterValue }}</span>-->
+        <!--              </q-chip>-->
+        <!--            </MCol>-->
+        <!--          </template>-->
+        <!--        </MRow>-->
+        <!--      </MCol>-->
+        <!--    </q-slide-transition>-->
+        <!--    <MCol-->
+        <!--      v-if="$slots['top-right']"-->
+        <!--      col="12"-->
+        <!--    >-->
+        <!--      <slot-->
+        <!--        name="top-right"-->
+        <!--        v-bind="{tableOptions,paginationOptions}"-->
+        <!--      />-->
+        <!--    </MCol>-->
+        <!--  </MRow>-->
+        <!--</template>-->
+        <!--<template #top-selection>-->
+        <!--  <div class="row items-center q-gutter-xs order-last order-sm-first">-->
+        <!--    <slot-->
+        <!--      name="tools"-->
+        <!--      v-bind="{dt:datatableItemsScope}"-->
+        <!--    >-->
+        <!--      <MDtBtn-->
+        <!--        v-if="hasUpdateBtn"-->
+        <!--        :disable="!isSingleSelectedItem || tableOptions.loading"-->
+        <!--        :loading="tableOptions.loading"-->
+        <!--        :tooltip="$t('update')"-->
+        <!--        icon="o_edit"-->
+        <!--        flat-->
+        <!--        round-->
+        <!--        fab-mini-->
+        <!--        @click="openUpdateDialog(tableOptions.selected[0])"-->
+        <!--      />-->
+        <!--      <MDtBtn-->
+        <!--        v-if="hasShowBtn"-->
+        <!--        :disable="!isSingleSelectedItem || tableOptions.loading"-->
+        <!--        :loading="tableOptions.loading"-->
+        <!--        :tooltip="$t('show')"-->
+        <!--        icon="o_visibility"-->
+        <!--        flat-->
+        <!--        round-->
+        <!--        fab-mini-->
+        <!--        @click="openShowDialog(tableOptions.selected[0])"-->
+        <!--      />-->
+        <!--      <MDtBtn-->
+        <!--        v-if="hasDestroyBtn"-->
+        <!--        :disable="!hasSelectedItem || tableOptions.loading"-->
+        <!--        :loading="tableOptions.loading"-->
+        <!--        :tooltip="$t('destroy')"-->
+        <!--        icon="delete_outline"-->
+        <!--        flat-->
+        <!--        round-->
+        <!--        fab-mini-->
+        <!--        @click="deleteSelectionItem()"-->
+        <!--      />-->
+        <!--    </slot>-->
+        <!--    <slot-->
+        <!--      name="selection"-->
+        <!--      v-bind="{dt:datatableItemsScope}"-->
+        <!--    />-->
+        <!--  </div>-->
+        <!--</template>-->
         <!--<template-->
-        <!--  v-for="(i,slot) in bodySlots"-->
-        <!--  #[slot]="SlotBinds"-->
+        <!--  v-if="endReach"-->
+        <!--  #bottom-->
+        <!--&gt;-->
+        <!--  <q-space />-->
+        <!--  <div v-text="$t('replace.from_name', { from: paginationOptions.rowsNumber, name: rows.length })" />-->
+        <!--</template>-->
+        <!--<template-->
+        <!--  v-for="(slotVal,slotName) in $slots"-->
+        <!--  :key="slotName"-->
+        <!--  #[slotName]="inputSlot"-->
         <!--&gt;-->
         <!--  <slot-->
-        <!--    :name="slot"-->
-        <!--    v-bind="{...SlotBinds,dt:datatableItemsScope}"-->
+        <!--    v-if="inputSlot"-->
+        <!--    :name="slotName"-->
+        <!--    v-bind="{...inputSlot,dt:datatableItemsScope}"-->
+        <!--  />-->
+        <!--  <slot-->
+        <!--    v-else-if="slotName !== 'default'"-->
+        <!--    :name="slotName"-->
         <!--  />-->
         <!--</template>-->
-        <template
-          v-if="endReach"
-          #bottom
-        >
-          <q-space />
-          <div v-text="$t('replace.from_name', { from: paginationOptions.rowsNumber, name: rows.length })" />
-        </template>
-        <template
-          v-for="(slotVal,slotName) in $slots"
-          :key="slotName"
-          #[slotName]="inputSlot"
-        >
-          <slot
-            v-if="inputSlot"
-            :name="slotName"
-            v-bind="{...inputSlot,dt:datatableItemsScope}"
-          />
-          <slot
-            v-else-if="slotName !== 'default'"
-            :name="slotName"
-          />
-        </template>
       </q-table>
       <slot />
     </q-pull-to-refresh>
-
-    <q-dialog
-      v-model="dialogs.filter"
-      transition-hide="fade"
-      transition-show="fade"
-      v-bind="filterDialogProps"
-    >
-      <q-card class="m--dialog-card">
-        <q-card-section>
-          <p
-            class="text-h6"
-            v-text="$t('filter')"
-          />
-        </q-card-section>
-        <q-separator />
-        <q-card-section
-          :style="`max-height: ${$q.screen.height-300}px`"
-          class="scroll"
-        >
-          <slot
-            name="filter"
-            v-bind="{filter:tableOptions.tempFilter}"
-          />
-        </q-card-section>
-        <q-separator />
-        <q-card-actions
-          align="between"
-          class="print-hide"
-        >
-          <MBtn
-            :label="$t('cancel')"
-            color="negative"
-            v-bind="dialogsBtnsProps"
-            @click="closeFilterDialog"
-          />
-          <MBtn
-            :label="$t('save')"
-            color="positive"
-            v-bind="dialogsBtnsProps"
-            @click="saveFilterDialog"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog
-      v-model="dialogs.show"
-      transition-hide="fade"
-      transition-show="fade"
-      v-bind="showDialogProps"
-    >
-      <q-card class="m--dialog-card">
-        <q-card-section>
-          <q-toolbar>
-            <q-toolbar-title>{{ getShowTitle }}</q-toolbar-title>
-          </q-toolbar>
-        </q-card-section>
-        <q-separator />
-        <q-card-section class="scroll">
-          <slot
-            name="show"
-            v-bind="{item:dialogs.item,index:dialogs.index}"
-          />
-        </q-card-section>
-        <q-separator />
-        <q-card-actions
-          align="right"
-          class="print-hide"
-        >
-          <MBtn
-            :label="$t('close')"
-            color="negative"
-            v-bind="dialogsBtnsProps"
-            @click="closeShowDialog"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog
-      v-model="dialogs.form"
-      transition-hide="fade"
-      transition-show="fade"
-      v-bind="formDialogProps"
-    >
-      <q-card class="m--dialog-card">
-        <q-slide-transition>
-          <m-form
-            ref="dialogForm"
-            v-slot="form"
-            :errors="dialogs.errors"
-            :form="dialogs.item"
-            @submit="defaultSubmitItem"
-          >
-            <q-card-section>
-              <q-toolbar>
-                <q-toolbar-title>{{ getFormTitle }}</q-toolbar-title>
-              </q-toolbar>
-            </q-card-section>
-            <q-separator />
-            <q-card-section
-              :style="`max-height: ${$q.screen.height- (formDialogProps?.maximized ? 140 : 300)}px`"
-              class="scroll"
-            >
-              <slot
-                name="form"
-                v-bind="{item:dialogs.item,index:dialogs.index,form,...datatableItemsScope}"
-              />
-            </q-card-section>
-            <q-separator />
-            <q-card-actions
-              class="m--datatable-form-actions print-hide"
-              align="between"
-            >
-              <MBtn
-                :disable="tableOptions.loading"
-                :label="$t('close')"
-                color="negative"
-                v-bind="dialogsBtnsProps"
-                @click="closeFormDialog"
-              />
-              <slot
-                name="form-actions"
-                v-bind="{item:dialogs.item,index:dialogs.index,form,...datatableItemsScope}"
-              >
-                <MBtn
-                  :disable="tableOptions.loading "
-                  :label="$t(isUpdateMode ? 'save' : 'create')"
-                  :loading="tableOptions.loading"
-                  color="positive"
-                  type="submit"
-                  v-bind="dialogsBtnsProps"
-                />
-              </slot>
-            </q-card-actions>
-          </m-form>
-        </q-slide-transition>
-      </q-card>
-    </q-dialog>
-
-    <q-slide-transition>
-      <q-page-sticky
-        v-if="hasAddBtn"
-        :offset="offsetAddBtn"
-        :position="positionAddBtn"
-      >
-        <MBtn
-          color="primary"
-          fab
-          icon="add"
-          @click="openCreateDialog()"
-        >
-          <q-tooltip
-            anchor="top start"
-            class="m--datatable-fab-tooltip"
-          >
-            <span class="text-caption">{{ getFormTitle }}</span>
-          </q-tooltip>
-        </MBtn>
-      </q-page-sticky>
-    </q-slide-transition>
   </div>
 </template>
 
