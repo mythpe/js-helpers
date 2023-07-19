@@ -10,23 +10,21 @@ import { QAvatarProps, QAvatarSlots, QInputProps, QPageStickyProps, QTableProps,
 import { ComputedRef, Ref, SetupContext, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
 
-export type TableFilterOptionsProps = GenericFormValues
-
-export type MDtItem = GenericFormValues & {
-  id: string | number
+export interface MDtItem extends GenericFormValues {
+  id: string | number;
 }
 
 export type MDtItemIndex = number | undefined
 
-export type PaginationOptionsProps = {
+export interface MDatatablePagination {
   /**
    * Column name (from column definition)
    */
-  sortBy?: string | undefined;
+  sortBy?: string;
   /**
    * Is sorting in descending order?
    */
-  descending?: boolean | undefined;
+  descending?: boolean;
   /**
    * Page number (1-based)
    */
@@ -34,25 +32,27 @@ export type PaginationOptionsProps = {
   /**
    * How many rows per page? 0 means Infinite
    */
-  rowsPerPage?: number | undefined;
+  rowsPerPage?: number;
   /**
    * For server-side fetching only. How many total database rows are there to be added to the table.
    */
   rowsNumber: number;
 }
 
-export interface FetchDatatableOptions {
+export type MDatatableFilterForm = Partial<GenericFormValues>
+
+export interface FetchRowsArgs {
   filter?: string | null;
-  pagination?: PaginationOptionsProps
+  pagination?: MDatatablePagination
 }
 
-export interface DatatableParams {
+export interface ApiServiceParams {
   filter: Record<string, any>;
   search: string | null;
   headers: string[];
   ids: number[];
   indexType: 'index' | 'pdf' | 'excel';
-  requestWith: string | undefined;
+  requestWith?: string | any;
   itemsPerPage: number;
   page: number;
   sortBy: string | undefined;
@@ -61,27 +61,49 @@ export interface DatatableParams {
   [key: string]: any;
 }
 
-export type TableMetaServerProps = {
+export interface MDtApiServices {
+  index: ((opt: { params: Partial<ApiServiceParams>, [index: string | number | symbol]: any }) => Promise<any>);
+  show: (id: number | string, opt: { params: Partial<ApiServiceParams>, [index: string | number | symbol]: any }) => Promise<any>;
+  store: (opt: Record<string, any>) => Promise<any>;
+  update: (id: (number | string | undefined), opt: Record<string, any>) => Promise<any>;
+  destroy: (id: (number | string)) => Promise<any>;
+  destroyAll: (id: (number|string)[]) => Promise<any>;
+  export: ((opt: Record<string, any>) => Promise<any>);
+}
+
+export interface MDatatableMetaServer {
+  // server current page
   current_page: number | null;
+  // server last page
   last_page: number | null;
+  // server total items
   total: number | null;
 }
 
-export type TableOptionsProps = {
-  loading: boolean
-  selected: MDtItem[]
-  search: string | null
-  filter: TableFilterOptionsProps
-  tempFilter: TableFilterOptionsProps
+export type MDatatableOptions = {
+  // Table is loading
+  loading: Ref<boolean>;
+  // Search input
+  search: Ref<string | null>;
+  // Table pagination
+  pagination: Ref<MDatatablePagination>;
+  // Server meta data
+  meta: Ref<MDatatableMetaServer>;
+  // Table filter form
+  filter: Ref<MDatatableFilterForm>;
+  // Temp of filter form
+  tempFilter: Ref<MDatatableFilterForm>;
+  // Selected rows
+  selected: Ref<MDtItem[]>
 }
 
-export type TableDialogsProps = {
-  filter: boolean,
-  show: boolean,
-  form: boolean,
-  isUpdate: boolean,
-  item: MDtItem | null,
-  index?: MDtItemIndex,
+export type MDatatableDialogsOptions = {
+  filter: Ref<boolean>,
+  show: Ref<boolean>,
+  form: Ref<boolean>,
+  isUpdate: Ref<boolean>,
+  item: Ref<MDtItem | null>,
+  index?: Ref<MDtItemIndex>,
   errors: Record<string | number, string[] | string> | object,
 }
 
@@ -93,10 +115,10 @@ export interface UseDatatableOptions {
     (e: 'refresh'): void
   };
   rows: Ref<MDtItem[]>,
-  dialogs: Ref<TableDialogsProps>,
-  tableOptions: Ref<TableOptionsProps>,
-  metaServer: Ref<TableMetaServerProps>,
-  paginationOptions: Ref<PaginationOptionsProps>,
+  dialogs: Ref<MDatatableDialogsOptions>,
+  tableOptions: Ref<MDatatableOptions>,
+  metaServer: Ref<MDatatableMetaServer>,
+  paginationOptions: Ref<MDatatablePagination>,
 }
 
 export type MDatatableScope = {
@@ -108,7 +130,7 @@ export type MDatatableScope = {
   onDeleteItem: (item: MDtItem, index: number) => void;
   refresh: (done?: () => void) => void;
   refreshNoUpdate: (done?: () => void) => void;
-  tableOptions: Ref<TableOptionsProps>;
+  tableOptions: Ref<MDatatableOptions>;
   isSingleSelectedItem: ComputedRef<boolean>;
   firstSelectedItem: ComputedRef<MDtItem>;
   updateDatatableItem: (item: MDtItem, index?: MDtItemIndex) => void;
@@ -119,14 +141,14 @@ export type GenericMDtBtn = Record<string, any> & {
   name: string;
   click: (item: MDtItem, index: number) => void;
   show: boolean | undefined;
-  order?: number | undefined;
-  attr?: Record<string, any> & { icon?: string; textColor?: string; color?: string; } | undefined;
+  order?: number;
+  attr?: { icon?: string; textColor?: string; color?: string; [key : (string | symbol | number)] : unknown };
 }
 
 export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-cell-${string}`> {
   'top-right': ((scope: {
-    tableOptions: TableOptionsProps,
-    paginationOptions: PaginationOptionsProps
+    tableOptions: MDatatableOptions,
+    paginationOptions: MDatatablePagination
   }) => VNode[]);
 
   tools: ((scope: {
@@ -138,7 +160,7 @@ export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-c
   }) => VNode[]);
 
   filter: ((scope: {
-    filter: TableFilterOptionsProps,
+    filter: MDatatableFilterForm,
   }) => VNode[]);
 
   show: ((scope: {
@@ -169,35 +191,35 @@ export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-c
 
 export interface MDatatableProps extends QTableProps {
   separator?: QTableProps['separator'];
-  noMouse?: boolean | undefined;
-  rowsPerPageOptions?: any[] | undefined;
-  title?: string | undefined;
-  search?: boolean | undefined;
-  pdf?: boolean | undefined;
-  excel?: boolean | undefined;
-  exportToUrl?: boolean | undefined;
-  hideSelection?: boolean | undefined;
-  singleSelection?: boolean | undefined;
+  noMouse?: boolean;
+  rowsPerPageOptions?: any[];
+  title?: string;
+  search?: boolean;
+  pdf?: boolean;
+  excel?: boolean;
+  exportToUrl?: boolean;
+  hideSelection?: boolean;
+  singleSelection?: boolean;
   headers: any[];
-  items?: any[] | undefined;
-  dense?: boolean | undefined;
-  endReach?: boolean | undefined;
-  hideAddBtn?: boolean | undefined;
-  hideUpdateBtn?: boolean | undefined;
-  hideShowBtn?: boolean | undefined;
-  hideDestroyBtn?: boolean | undefined;
-  defaultItem?: Partial<MDtItem> | undefined;
-  noAutoMessage?: boolean | undefined;
-  searchDebounce?: string | number | undefined;
-  withIndex?: string | string[] | undefined;
-  withStore?: string | string[] | undefined;
-  withShow?: string | string[] | undefined;
-  withUpdate?: string | string[] | undefined;
+  items?: any[];
+  dense?: boolean;
+  endReach?: boolean;
+  hideAddBtn?: boolean;
+  hideUpdateBtn?: boolean;
+  hideShowBtn?: boolean;
+  hideDestroyBtn?: boolean;
+  defaultItem?: Partial<MDtItem>;
+  noAutoMessage?: boolean;
+  searchDebounce?: string | number;
+  withIndex?: string | string[];
+  withStore?: string | string[];
+  withShow?: string | string[];
+  withUpdate?: string | string[];
   serviceName: string | (() => Record<string, (() => Promise<AxiosResponse>)>);
-  createRoute?: string | undefined;
-  updateRoute?: string | undefined;
-  showRoute?: string | undefined;
-  contextItems?: GenericMDtBtn[] | undefined;
+  createRoute?: string;
+  updateRoute?: string;
+  showRoute?: string;
+  contextItems?: GenericMDtBtn[];
   offsetAddBtn?: QPageStickyProps['offset'];
   positionAddBtn?: QPageStickyProps['position'];
   filterDialogProps?: Record<any, any>;
@@ -205,13 +227,13 @@ export interface MDatatableProps extends QTableProps {
   formDialogProps?: Record<any, any>;
   searchInputProps?: QInputProps;
   excludedKeys?: string[] | ((from: any) => any);
-  requestParams?: Record<string, any> | ((params: any) => any);
+  requestParams?: (params: ApiServiceParams) => Partial<GenericFormValues> | GenericFormValues;
 }
 
 export interface MDtAvatarProps extends QAvatarProps {
-  width?: string | undefined;
-  src?: string | undefined;
-  href?: string | undefined;
+  width?: string;
+  src?: string;
+  href?: string;
 }
 
 export interface MDtAvatarSlots extends QAvatarSlots {
@@ -226,9 +248,9 @@ export interface MDtBtnProps extends MBtnProps {
   update?: boolean;
   destroy?: boolean;
   tooltip?: string;
-  color?: string | undefined;
-  icon?: string | undefined;
-  listItem?: boolean | undefined;
+  color?: string;
+  icon?: string;
+  listItem?: boolean;
 }
 
 export interface MDtBtnSlots extends MBtnSlots {
@@ -241,5 +263,3 @@ export interface MDtBtnSlots extends MBtnSlots {
    */
   loading: () => VNode[];
 }
-
-export {}

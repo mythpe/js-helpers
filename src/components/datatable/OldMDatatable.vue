@@ -10,7 +10,7 @@ import { AxiosResponse } from 'axios'
 import { QDialogProps, QInputProps, QPageStickyProps, QTableProps, useQuasar } from 'quasar'
 import { computed, defineEmits, onBeforeMount, onMounted, ref, useSlots, watch } from 'vue'
 import { getMyThPluginOptions } from '../../utils/Const'
-import { GenericMDtBtn, MDatatableProps, MDtItem, PaginationOptionsProps, TableDialogsProps, TableMetaServerProps, TableOptionsProps } from './models'
+import { GenericMDtBtn, MDatatableProps, MDtItem, MDatatablePagination, MDatatableDialogsOptions, TableMetaServerProps, MDatatableOptions } from './models'
 import { initMetaServer, initPaginationOptions, initTableOptions, useDatatable } from './useMDatatable'
 
 interface Props extends MDatatableProps {
@@ -132,10 +132,10 @@ type Emits = {
 const emit = defineEmits<Emits>()
 
 const metaServer = ref<TableMetaServerProps>({ ...initMetaServer })
-const tableOptions = ref<TableOptionsProps>({ ...initTableOptions })
-const paginationOptions = ref<PaginationOptionsProps>({ ...initPaginationOptions })
+const tableOptions = ref<MDatatableOptions>({ ...initTableOptions })
+const paginationOptions = ref<MDatatablePagination>({ ...initPaginationOptions })
 const rows = ref<MDtItem[]>([])
-const dialogs = ref<TableDialogsProps>({
+const dialogs = ref<MDatatableDialogsOptions>({
   filter: !1,
   show: !1,
   form: !1,

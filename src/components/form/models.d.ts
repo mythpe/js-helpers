@@ -325,8 +325,8 @@ export interface MFormSlots {
 }
 
 export interface MFormProps {
-  form?: UnwrapNestedRefs<Record<string, any>> | undefined;
-  errors?: UnwrapNestedRefs<Record<string, string[]>> | undefined;
+  form?: Record<string|symbol|number, any>;
+  errors?: Record<string|symbol|number, any>;
 }
 
 export type MAvatarViewerItem = Record<string, string | File | any> | any

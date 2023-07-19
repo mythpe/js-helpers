@@ -37,6 +37,10 @@ interface Props extends MInputProps {
   hideRequired?: boolean | undefined;
   email?: boolean | undefined;
   clearable?: boolean | undefined;
+  /**
+   * Custom icon to use for the clear button when using along with 'clearable' prop
+   */
+  clearIcon?: string | undefined;
   loading?: boolean | undefined;
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
@@ -65,6 +69,7 @@ const props = withDefaults(defineProps<Props>(), {
   email: undefined,
   stackLabel: undefined,
   clearable: undefined,
+  clearIcon: undefined,
   dense: undefined,
   loading: undefined,
   hideBottomSpace: !0,
@@ -134,6 +139,8 @@ export default {
         :placeholder="getPlaceholder"
         :stack-label="stackLabel"
         :standout="standout"
+        :debounce="debounce"
+        :clear-icon="clearIcon"
         v-bind="{...def,...$attrs,...fieldScope.field}"
       >
         <template

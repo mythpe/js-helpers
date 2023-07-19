@@ -41,6 +41,8 @@ export const MHelpers = {
     number = number ?? 2
     number = parseInt(number.toString())
     const defaultValue = undefined
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const { t, te } = getMyThPluginOptions().i18n
 
     // Not is route
@@ -135,6 +137,8 @@ export const MHelpers = {
     }
 
     const result: ParseHeadersType[] = []
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const { t, te } = getMyThPluginOptions().i18n
     headers.forEach((elm: string | ParseHeadersType) => {
       if (typeof elm !== 'string' && !elm?.name) return elm
@@ -201,6 +205,8 @@ export const MHelpers = {
     const defaultValue = undefined
     if (!string) return string
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const { t, te } = getMyThPluginOptions().i18n
     const key = string && typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
 

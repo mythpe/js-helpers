@@ -15,8 +15,7 @@ export type ParseHeaderOptions = {
   sortable?: boolean | undefined;
   classes?: string | (() => string)
 }
-
-export type ParseHeadersType = QTableProps['columns'] & {
+export interface ParsedHeader {
   /**
    * Unique id, identifies column, (used by pagination.sortBy, 'body-cell-[name]' slot, ...)
    */
@@ -83,7 +82,8 @@ export type ParseHeadersType = QTableProps['columns'] & {
    * Classes to add on header cells of the column
    */
   headerClasses?: string;
-} | undefined
+}
+export type ParseHeadersType = QTableProps['columns'] | ParsedHeader | undefined
 
 export type UrlType = string | number | boolean | undefined | null
 

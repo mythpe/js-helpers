@@ -27,7 +27,6 @@ interface Props extends MDtBtnProps {
   round?: boolean | undefined;
   dense?: boolean | undefined;
 }
-
 const props = withDefaults(defineProps<Props>(), {
   show: !1,
   update: !1,
@@ -41,6 +40,11 @@ const props = withDefaults(defineProps<Props>(), {
   round: !0,
   dense: undefined
 })
+type Events = {
+  (e: 'click', evt: Event): void;
+}
+defineEmits<Events>()
+
 const hasTooltip = computed(() => props.tooltip || props.show || props.update || props.destroy)
 
 const { t } = useTranslate()
@@ -90,6 +94,7 @@ const getColor = computed<string | undefined>(() => {
     :round="round"
     v-bind="$attrs"
     :dense="dense"
+    @click="$emit('click',$event)"
   >
     <slot />
     <q-tooltip v-if="hasTooltip">
@@ -101,6 +106,7 @@ const getColor = computed<string | undefined>(() => {
     v-close-popup
     clickable
     v-bind="$attrs"
+    @click="$emit('click',$event)"
   >
     <q-item-section>
       <q-item-label>
