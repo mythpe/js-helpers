@@ -74,7 +74,8 @@ const props = withDefaults(defineProps<Props>(), {
   loading: undefined,
   hideBottomSpace: !0,
   errors: () => ({}),
-  modelValue: undefined
+  modelValue: undefined,
+  debounce: undefined
 })
 
 type EmitsTypes = {
