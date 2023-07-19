@@ -1399,8 +1399,8 @@ export default {
     thead tr:first-child th
       background: var(--q-dark-page)
 
-.m--datatable
-  max-height: calc(100vh - 200px)
+.m--datatable:not(.m--datatable-grid)
+  max-height: 80vh
 
   thead tr th
     position: sticky
