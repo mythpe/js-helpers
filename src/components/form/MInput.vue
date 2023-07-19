@@ -45,6 +45,10 @@ interface Props extends MInputProps {
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
   modelValue: any;
+  /**
+   * Debounce amount (in milliseconds) when updating model
+   */
+  debounce?: string | number | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {

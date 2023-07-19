@@ -123,6 +123,10 @@ export interface MInputProps extends MColProps, Omit<QInputProps, 'rules'> {
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
   modelValue: any;
+  /**
+   * Debounce amount (in milliseconds) when updating model
+   */
+  debounce?: string | number | undefined;
 }
 
 export interface MInputSlots extends QInputSlots {
