@@ -7,8 +7,8 @@
 
 <script lang="ts" setup>
 
-import { useMyTh } from '@mythpe/js-helpers'
-import { MCardProps } from '@mythpe/js-helpers/src/components'
+import { useMyTh } from '../../vue3'
+import { MCardProps } from './models'
 import { computed, onMounted, reactive, useSlots } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -93,13 +93,14 @@ export default {
 <template>
   <q-card
     class="m--card"
+    flat
     v-bind="$attrs"
   >
     <q-card-section v-if="hasTopSection || backRoute">
       <div class="row">
         <MBtn
           v-if="backRoute"
-          :icon="`arrow_${appRtl ? 'forward' : 'back'}`"
+          :icon="`arrow_${$q.lang.rtl ? 'forward' : 'back'}`"
           class="q-mr-sm print-hide"
           @click="$router.back()"
         >

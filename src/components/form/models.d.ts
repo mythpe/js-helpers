@@ -34,8 +34,9 @@ import {
   QUploaderSlots
 } from 'quasar'
 import { FormActions } from 'vee-validate'
-import { Ref, UnwrapNestedRefs, VNode } from 'vue'
+import { Ref, VNode } from 'vue'
 import { ColStyleType, MColProps } from '../grid/models'
+import { VueClassProp, VueStyleProp } from 'quasar/dist/types/api'
 
 export declare type GenericFormValues = Record<any, unknown>;
 
@@ -127,6 +128,22 @@ export interface MInputProps extends MColProps, Omit<QInputProps, 'rules'> {
    * Debounce amount (in milliseconds) when updating model
    */
   debounce?: string | number | undefined;
+  /**
+   * Make field autogrow along with its content (uses a textarea)
+   */
+  autogrow?: boolean | undefined;
+  /**
+   * Class definitions to be attributed to the underlying input tag
+   */
+  inputClass?: VueClassProp | undefined;
+  /**
+   * Style definitions to be attributed to the underlying input tag
+   */
+  inputStyle?: VueStyleProp | undefined;
+  /**
+   * Hide error icon when there is an error
+   */
+  noErrorIcon?: boolean | undefined;
 }
 
 export interface MInputSlots extends QInputSlots {

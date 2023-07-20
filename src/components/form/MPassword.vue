@@ -5,26 +5,28 @@
   - https://www.4myth.com
   -->
 
-<script lang="ts">
-
+<script lang="ts" setup>
 import { ref } from 'vue'
+
+const inputType = ref<'text' | 'password'>('password')
+</script>
+<script lang="ts">
 
 export default {
   name: 'MPassword',
-  data: () => ({
-    inputType: ref<'text' | 'password'>('password')
-  })
+  inheritAttrs: !1
 }
 </script>
 
 <template>
   <MInput
+    v-bind="$attrs"
     :type="inputType"
   >
     <template #prepend>
       <q-icon name="password" />
     </template>
-    <template #after>
+    <template #append>
       <q-btn
         :icon="inputType !== 'password' ? 'visibility_off' : 'visibility'"
         flat

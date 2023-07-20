@@ -58,5 +58,3 @@ export type MColProps = {
 export type MColSlots = {
   default: () => VNode[];
 }
-
-export {}

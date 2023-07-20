@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   show: !1,
   update: !1,
   destroy: !1,
-  color: 'blue-grey',
+  color: undefined,
   icon: undefined,
   tooltip: undefined,
   listItem: !1,
@@ -45,13 +45,13 @@ type Events = {
 }
 defineEmits<Events>()
 
-const hasTooltip = computed(() => props.tooltip || props.show || props.update || props.destroy)
+const hasTooltip = computed(() => Boolean(props.tooltip) || Boolean(props.show) || Boolean(props.update) || Boolean(props.destroy))
 
-const { t } = useTranslate()
+const { t, te } = useTranslate()
 
 const getTooltip = computed(() => {
   if (props.tooltip) {
-    return t(props.tooltip) !== props.tooltip ? t(props.tooltip) : props.tooltip
+    return te(props.tooltip) ? t(props.tooltip) : props.tooltip
   } else if (props.show) {
     return t('show')
   } else if (props.update) {
@@ -63,11 +63,11 @@ const getTooltip = computed(() => {
 })
 const getIcon = computed(() => {
   if (props.show) {
-    return 'visibility'
+    return 'o_visibility'
   } else if (props.update) {
-    return 'edit'
+    return 'o_edit'
   } else if (props.destroy) {
-    return 'delete_outline'
+    return 'o_delete'
   }
   return props.icon
 })
@@ -97,7 +97,9 @@ const getColor = computed<string | undefined>(() => {
     @click="$emit('click',$event)"
   >
     <slot />
-    <q-tooltip v-if="hasTooltip">
+    <q-tooltip
+      v-if="hasTooltip"
+    >
       {{ getTooltip }}
     </q-tooltip>
   </q-btn>

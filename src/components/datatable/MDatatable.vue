@@ -12,8 +12,6 @@
       context-menu
       max-width="300px"
       touch-position
-      transition-hide="fade"
-      transition-show="fade"
     >
       <q-list
         v-show="Boolean(dialogs.item)"
@@ -24,10 +22,10 @@
           :key="i"
         >
           <MDtBtn
-            v-if="dtBtn.show === !0"
+            v-if="dtBtn.show !== !1"
             :[dtBtn.name]="!0"
             list-item
-            v-bind="dtBtn.attr || {}"
+            v-bind="dtBtn.attr"
             @click="dtBtn.click ? dtBtn.click(dialogs.item,dialogs.index) : undefined"
           >
             {{ $t(dtBtn.name) }}
@@ -38,6 +36,7 @@
     <q-pull-to-refresh
       :no-mouse="noMouse"
       @refresh="refresh"
+      color="primary"
     >
       <q-table
         ref="table"
@@ -76,19 +75,25 @@
               :debounce="searchDebounce"
               autocomplete="none"
               class="self-start"
-              clearable
-              clear-icon="o_clear"
               col="12"
               dense
-              input-style="min-width: 220px"
               name="search"
               placeholder="myth.datatable.searchInput"
               sm="9"
-              standout="bg-primary"
               v-bind="{...(defSearchInputProps||{}),...(searchInputProps||{})}"
+              outlined
             >
               <template #prepend>
-                <q-icon :name="tableOptions.search ? 'manage_search' : 'search'" />
+                <q-icon
+                  v-if="!tableOptions.search"
+                  name="search"
+                />
+                <q-icon
+                  v-else
+                  name="clear"
+                  class="cursor-pointer"
+                  @click="tableOptions.search = ''"
+                />
               </template>
             </MInput>
             <MCol
@@ -96,17 +101,31 @@
               sm="auto"
             >
               <MBtn
+                :color="undefined"
+                v-if="hasFilterDialog"
+                @click="openFilterDialog()"
+                icon="o_filter_alt"
+                :label="$q.screen.gt.sm ? $t('filter') : undefined"
+                flat
+              >
+                <q-tooltip class="touch-hide">
+                  {{ $t('filter') }}
+                </q-tooltip>
+              </MBtn>
+              <q-btn
                 v-if="hasMenu"
-                color="blue-grey"
                 flat
                 icon="o_more_vert"
                 round
+                dense
               >
-                <q-tooltip v-if="$q.screen.gt.sm">
+                <q-tooltip class="touch-hide">
                   {{ $t('more') }}
                 </q-tooltip>
-                <q-menu square>
-                  <q-list style="min-width: 250px">
+                <q-menu :square="Boolean($attrs.square)">
+                  <q-list
+                    style="min-width: 250px"
+                  >
                     <template v-if="hasAddBtn">
                       <q-item
                         v-close-popup
@@ -125,7 +144,6 @@
                           <span> {{ getFormTitle }}</span>
                         </q-item-section>
                       </q-item>
-                      <q-separator />
                     </template>
                     <template v-if="hasFilterDialog">
                       <q-item
@@ -166,7 +184,7 @@
                           <span>
                             {{ $t('export_pdf') }}
                             <q-badge
-                              v-if="tableOptions.selected.length>0"
+                              v-if="tableOptions.selected.length>1"
                               :label="tableOptions.selected.length"
                               align="top"
                               rounded
@@ -193,7 +211,7 @@
                           <span>
                             {{ $t('export_excel') }}
                             <q-badge
-                              v-if="tableOptions.selected.length>0"
+                              v-if="tableOptions.selected.length>1"
                               :label="tableOptions.selected.length"
                               align="top"
                               rounded
@@ -204,15 +222,22 @@
                     </template>
                   </q-list>
                 </q-menu>
-              </MBtn>
-              <MDtBtn
-                color="blue-grey"
+              </q-btn>
+              <q-btn
                 :disabled="tableOptions.loading"
                 flat
                 round
+                dense
                 icon="o_refresh"
                 @click="refreshNoUpdate()"
-              />
+              >
+                <q-tooltip
+                  class="touch-hide"
+                  v-if="!tableOptions.loading"
+                >
+                  {{ $t('refresh') }}
+                </q-tooltip>
+              </q-btn>
             </MCol>
             <q-slide-transition>
               <MCol
@@ -221,7 +246,7 @@
               >
                 <MRow class="items-center">
                   <MCol col="auto">
-                    <span class="text-subtitle1 q-mr-sm">{{ $t('datatable.filtered_by') }}</span>
+                    <span class="text-subtitle1 q-mr-sm">{{ $t('myth.datatable.filteredBy') }}</span>
                   </MCol>
                   <template
                     v-for="(filterValue,filterKey) in tableOptions.filter"
@@ -232,18 +257,16 @@
                       col="auto"
                     >
                       <q-chip
-                        :label="$t(`attributes.${filterKey}`) ?? filterKey"
                         clickable
                         color="primary"
+                        icon-remove="clear"
                         outline
                         removable
                         @click="openFilterDialog"
                         @remove="onRemoveFilter(filterKey)"
                       >
-                        <span
-                          v-if="typeof filterValue === 'string'"
-                          class="q-ml-sm"
-                        >{{ filterValue }}</span>
+                        <span>{{ $t(`attributes.${filterKey}`) }}</span>
+                        <span v-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
                       </q-chip>
                     </MCol>
                   </template>
@@ -261,6 +284,7 @@
             </MCol>
           </MRow>
         </template>
+
         <template #top-selection>
           <div class="row items-center q-gutter-xs order-last order-sm-first">
             <slot
@@ -300,6 +324,16 @@
                 fab-mini
                 @click="deleteSelectionItem()"
               />
+              <template v-for="(contextBtn,i) in contextItems">
+                <MBtn
+                  :key="`top-s-${i.toString()}`"
+                  v-if="contextBtn.show !== !1"
+                  v-bind="contextBtn.attr"
+                  @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
+                >
+                  {{ $t(contextBtn.name) }}
+                </MBtn>
+              </template>
             </slot>
             <slot
               name="selection"
@@ -307,15 +341,6 @@
             />
           </div>
         </template>
-        <!--<template-->
-        <!--  v-for="(i,slot) in bodySlots"-->
-        <!--  #[slot]="SlotBinds"-->
-        <!--&gt;-->
-        <!--  <slot-->
-        <!--    :name="slot"-->
-        <!--    v-bind="{...SlotBinds,dt:datatableItemsScope}"-->
-        <!--  />-->
-        <!--</template>-->
         <template
           v-if="endReach"
           #bottom
@@ -331,7 +356,8 @@
           <slot
             v-if="inputSlot"
             :name="slotName"
-            v-bind="{...inputSlot,dt:datatableItemsScope}"
+            v-bind="inputSlot"
+            :dt="datatableItemsScope"
           />
           <slot
             v-else-if="slotName !== 'default'"
@@ -341,11 +367,9 @@
       </q-table>
       <slot />
     </q-pull-to-refresh>
-
+    <!-- Filter dialog -->
     <q-dialog
       v-model="dialogs.filter"
-      transition-hide="fade"
-      transition-show="fade"
       v-bind="filterDialogProps"
     >
       <q-card class="m--dialog-card">
@@ -386,6 +410,7 @@
       </q-card>
     </q-dialog>
 
+    <!-- Show dialog -->
     <q-dialog
       v-model="dialogs.show"
       transition-hide="fade"
@@ -420,10 +445,9 @@
       </q-card>
     </q-dialog>
 
+    <!-- Form dialog -->
     <q-dialog
       v-model="dialogs.form"
-      transition-hide="fade"
-      transition-show="fade"
       v-bind="formDialogProps"
     >
       <q-card class="m--dialog-card">
@@ -483,7 +507,7 @@
 
     <q-slide-transition>
       <q-page-sticky
-        v-if="hasAddBtn"
+        v-if="hasAddBtn && fabBtn === !0"
         :offset="offsetAddBtn"
         :position="positionAddBtn"
       >
@@ -706,10 +730,13 @@ export default {
       type: Object as PropType<QDialogProps>,
       default: () => ({
         'allow-focus-outside': !0,
-        'full-width': !0,
+        // 'full-width': !0,
         'no-backdrop-dismiss': !0,
         persistent: !0,
-        position: 'top'
+        // position: 'top',
+        transitionShow: 'slide-down',
+        transitionHide: 'slide-down',
+        maximized: !0
       })
     },
     excludedKeys: {
@@ -723,6 +750,10 @@ export default {
     positionAddBtn: {
       type: String as PropType<QPageStickyProps['position']>,
       default: () => 'bottom-right'
+    },
+    fabBtn: {
+      type: Boolean,
+      default: () => !1
     }
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -733,7 +764,20 @@ export default {
     const router = useRouter()
     const $q = useQuasar()
     const { t } = useI18n({ useScope: 'global' })
-
+    router.beforeResolve(() => {
+      if (dialogs.filter) {
+        closeFilterDialog()
+        return !1
+      } else if (dialogs.show) {
+        closeShowDialog()
+        return !1
+      } else if (dialogs.form) {
+        closeFormDialog()
+        return !1
+      }
+      // console.log(dialogs.filter, dialogs.show, dialogs.form)
+      return !hasAction.value
+    })
     const getRows = ref<MDtItem[]>([])
     const filterDialogModel = ref(!1)
     const showDialogModel = ref(!1)
@@ -762,6 +806,7 @@ export default {
     const loading = ref<boolean>(!1)
     const filterForm = ref<MDatatableFilterForm>({})
     const tempFilterForm = ref<MDatatableFilterForm>({})
+    const hasAction = ref<boolean>(!1)
 
     const tableOptions = reactive<MDatatableOptions>({
       search,
@@ -770,7 +815,8 @@ export default {
       meta,
       filter: filterForm,
       tempFilter: tempFilterForm,
-      selected
+      selected,
+      hasAction
     })
 
     /** --- */
@@ -1194,7 +1240,8 @@ export default {
     }
     const onDeleteItem = (item: MDtItem, index: number) => {
       if ($q.loading.isActive || !item?.id) return
-      myth.confirmMessage(t('messages.are_you_sure')).onOk(async () => {
+      tableOptions.hasAction = !0
+      myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
         $q.loading.show()
         try {
           const { _message, _success } = await getApiServices().destroy(item.id)
@@ -1213,7 +1260,8 @@ export default {
             selected.value = []
           })
         }
-        // console.log(item)
+      }).onDismiss(() => {
+        tableOptions.hasAction = !1
       })
     }
     const deleteSelectionItem = () => {
@@ -1224,7 +1272,9 @@ export default {
         return onDeleteItem(dtItem, index)
       }
       if ($q.loading.isActive || !tableOptions.selected.length) return
-      myth.confirmMessage(t('messages.are_you_sure')).onOk(async () => {
+
+      tableOptions.hasAction = !0
+      myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
         $q.loading.show()
         try {
           const {
@@ -1246,6 +1296,8 @@ export default {
           })
         }
         // console.log(item)
+      }).onDismiss(() => {
+        tableOptions.hasAction = !1
       })
     }
     const logoutDatatable = () => {
@@ -1269,7 +1321,9 @@ export default {
       e.preventDefault()
       dialogs.item = row
       dialogs.index = index
-      contextmenu.value = !0
+      nextTick(() => {
+        contextmenu.value = !0
+      })
     }
     const dtButtons = computed(() => ([
       {
@@ -1297,8 +1351,19 @@ export default {
     onMounted(() => {
       refresh()
     })
-    watch(loading, v => (v ? $q.loading.show() : $q.loading.hide()))
 
+    watch(loading, v => {
+      if (v) {
+        $q.loading.show()
+      } else {
+        $q.loading.hide()
+      }
+      tableOptions.hasAction = Boolean(v)
+    })
+    watch(filterForm, () => refreshNoUpdate())
+    watch(() => $q.lang.nativeName, () => {
+      refreshNoUpdate()
+    })
     const datatableItemsScope = computed(() => ({
       openShowDialog,
       closeShowDialog,
@@ -1421,5 +1486,19 @@ export default {
   .q-card__actions
     .q-btn
       padding: 4px 16px !important
+
+.m--datatable-component
+  .q-table__separator.col
+    display: none !important
+
+  .q-table__top
+    align-items: center
+    .q-table__control:last-child
+      padding-left: 8px
+      display: block
+      flex: 10000 1 0
+      width: auto
+      min-width: 0
+      max-width: 100%
 
 </style>

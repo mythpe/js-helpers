@@ -13,6 +13,7 @@ import { computed, defineProps, onMounted, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MInputProps } from './models'
+import { VueClassProp, VueStyleProp } from 'quasar/dist/types/api'
 
 interface Props extends MInputProps {
   auto?: boolean | undefined;
@@ -49,6 +50,39 @@ interface Props extends MInputProps {
    * Debounce amount (in milliseconds) when updating model
    */
   debounce?: string | number | undefined;
+  /**
+   * Make field autogrow along with its content (uses a textarea)
+   */
+  autogrow?: boolean | undefined;
+  /**
+   * Class definitions to be attributed to the underlying input tag
+   */
+  inputClass?: VueClassProp | undefined;
+  /**
+   * Style definitions to be attributed to the underlying input tag
+   */
+  inputStyle?: VueStyleProp | undefined;
+  /**
+   * Hide error icon when there is an error
+   */
+  noErrorIcon?: boolean | undefined;
+  /**
+   * Input type
+   * Default value: text
+   */
+  type?:
+    | 'text'
+    | 'password'
+    | 'textarea'
+    | 'email'
+    | 'search'
+    | 'tel'
+    | 'file'
+    | 'number'
+    | 'url'
+    | 'time'
+    | 'date'
+    | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -73,13 +107,18 @@ const props = withDefaults(defineProps<Props>(), {
   email: undefined,
   stackLabel: undefined,
   clearable: undefined,
-  clearIcon: undefined,
+  clearIcon: 'clear',
   dense: undefined,
   loading: undefined,
   hideBottomSpace: !0,
   errors: () => ({}),
   modelValue: undefined,
-  debounce: undefined
+  debounce: undefined,
+  autogrow: undefined,
+  inputClass: undefined,
+  inputStyle: undefined,
+  noErrorIcon: () => !0,
+  type: undefined
 })
 
 type EmitsTypes = {
@@ -146,6 +185,11 @@ export default {
         :standout="standout"
         :debounce="debounce"
         :clear-icon="clearIcon"
+        :autogrow="autogrow"
+        :input-class="inputClass"
+        :input-style="inputStyle"
+        :no-error-icon="noErrorIcon"
+        :type="type"
         v-bind="{...def,...$attrs,...fieldScope.field}"
       >
         <template

@@ -63,11 +63,14 @@ export interface ApiServiceParams {
 
 export interface MDtApiServices {
   index: ((opt: { params: Partial<ApiServiceParams>, [index: string | number | symbol]: any }) => Promise<any>);
-  show: (id: number | string, opt: { params: Partial<ApiServiceParams>, [index: string | number | symbol]: any }) => Promise<any>;
+  show: (id: number | string, opt: {
+    params: Partial<ApiServiceParams>,
+    [index: string | number | symbol]: any
+  }) => Promise<any>;
   store: (opt: Record<string, any>) => Promise<any>;
   update: (id: (number | string | undefined), opt: Record<string, any>) => Promise<any>;
   destroy: (id: (number | string)) => Promise<any>;
-  destroyAll: (id: (number|string)[]) => Promise<any>;
+  destroyAll: (id: (number | string)[]) => Promise<any>;
   export: ((opt: Record<string, any>) => Promise<any>);
 }
 
@@ -81,6 +84,8 @@ export interface MDatatableMetaServer {
 }
 
 export type MDatatableOptions = {
+  // Table has action like : delete, update, etc...
+  hasAction: Ref<boolean>;
   // Table is loading
   loading: Ref<boolean>;
   // Search input
@@ -139,10 +144,11 @@ export type MDatatableScope = {
 
 export type GenericMDtBtn = Record<string, any> & {
   name: string;
-  click: (item: MDtItem, index: number) => void;
-  show: boolean | undefined;
+  click?: (item: MDtItem, index: number) => void;
+  multiClick?: (items: MDtItem[]) => void;
+  show?: boolean;
   order?: number;
-  attr?: { icon?: string; textColor?: string; color?: string; [key : (string | symbol | number)] : unknown };
+  attr?: { icon?: string; textColor?: string; color?: string; [key: (string | symbol | number)]: unknown };
 }
 
 export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-cell-${string}`> {
@@ -228,6 +234,7 @@ export interface MDatatableProps extends QTableProps {
   searchInputProps?: QInputProps;
   excludedKeys?: string[] | ((from: any) => any);
   requestParams?: (params: ApiServiceParams) => Partial<GenericFormValues> | GenericFormValues;
+  fabBtn?: boolean;
 }
 
 export interface MDtAvatarProps extends QAvatarProps {

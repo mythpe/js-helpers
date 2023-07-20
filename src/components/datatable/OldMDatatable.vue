@@ -481,7 +481,7 @@ export default {
               >
                 <MRow class="items-center">
                   <MCol col="auto">
-                    <span class="text-subtitle1 q-mr-sm">{{ $t('datatable.filtered_by') }}</span>
+                    <span class="text-subtitle1 q-mr-sm">{{ $t('myth.datatable.filteredBy') }}</span>
                   </MCol>
                   <template
                     v-for="(filterValue,filterKey) in tableOptions.filter"

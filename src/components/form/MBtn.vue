@@ -6,7 +6,13 @@
   -->
 
 <template>
-  <q-btn v-bind="{...def,...$attrs}">
+  <q-btn
+    v-bind="{
+      noCaps: !0,
+      ...def,
+      ...$attrs
+    }"
+  >
     <template
       v-for="(k,v) in _slots"
       #[v]="scope"

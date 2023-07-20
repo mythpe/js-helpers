@@ -30,7 +30,8 @@ const props = withDefaults(defineProps<Props>(), {
   options: () => ([]),
   service: undefined,
   params: () => ({}),
-  exclude: 1
+  exclude: 1,
+  name: undefined
 })
 
 interface Emits {
@@ -87,6 +88,7 @@ export default {
     v-model="model"
     :loading="loading"
     :options="items"
+    :name="name"
     v-bind="$attrs"
   >
     <template
