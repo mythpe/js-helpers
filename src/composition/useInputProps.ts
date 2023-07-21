@@ -1,12 +1,13 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
- * https://www.4myth.com
+ * Website: https://www.4myth.com
+ * Github: https://github.com/mythpe
  */
 
 import { computed, ref } from 'vue'
-import { useMyTh } from '../vue3'
+import { useMyth } from '../vue3'
 
 export const useDefaultInputProps = {
   auto: undefined,
@@ -37,7 +38,7 @@ export const useDefaultInputProps = {
 }
 export default function useInputProps (Props: any) {
   const props = ref(Props)
-  const { parseAttribute } = useMyTh()
+  const { parseAttribute } = useMyth()
 
   const getRules = computed<string | undefined>(() => {
     let rules = props.value.rules || []

@@ -1,13 +1,18 @@
 /*
- *  MyTh Ahmed Faiz Copyright © 2016-2022 All rights reserved.
- *  Email: mythpe@gmail.com
- *  Mobile: +966590470092
- *  https://www.4myth.com
+ * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+ * Email: mythpe@gmail.com
+ * Mobile: +966590470092
+ * Website: https://www.4myth.com
+ * Github: https://github.com/mythpe
  */
-import install from './src/vue3/InstallPlugin'
+import installPlugin from './src/vue3/InstallPlugin'
 
-export const Vue3Plugin = {
-  install
-}
-
+export { installPlugin }
 export * from './src'
+import { Dates as dates, Helpers as helpers, Str as str } from './src/utils'
+
+export default {
+  str,
+  dates,
+  helpers
+}

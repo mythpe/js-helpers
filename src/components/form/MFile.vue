@@ -1,14 +1,15 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script lang="ts" setup>
 
 import { QFile } from 'quasar'
-import { getMyThPluginOptions } from '../../utils/Const'
+import { getMythPluginOptions } from '../../utils/Const'
 import useAcceptProp from '../../composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref } from 'vue'
@@ -108,7 +109,7 @@ const pickFiles = (...args: any[]) => {
 const removeAtIndex = (...args: any[]) => {
   fileInput.value?.removeAtIndex(...args)
 }
-const def = getMyThPluginOptions().options?.input || {}
+const def = getMythPluginOptions().options?.input || {}
 defineExpose({
   pickFiles,
   removeAtIndex
@@ -129,12 +130,12 @@ defineExpose({
 <template>
   <MCol
     :auto="auto"
+    :class="$attrs.class"
     :col="col"
     :lg="lg"
     :md="md"
     :sm="sm"
     :xs="xs"
-    :class="$attrs.class"
   >
     <VeeField
       v-slot="fieldScope"

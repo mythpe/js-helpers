@@ -1,19 +1,20 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <template>
   <MCol
     :auto="auto"
+    :class="$attrs.class"
     :col="col"
     :lg="lg"
     :md="md"
     :sm="sm"
     :xs="xs"
-    :class="$attrs.class"
   >
     <p v-if="getLabel">
       {{ getLabel }}
@@ -40,7 +41,7 @@
 
 <script lang="ts" setup>
 import { useQuasar } from 'quasar'
-import { getMyThPluginOptions } from '../../utils/Const'
+import { getMythPluginOptions } from '../../utils/Const'
 import { computed } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
@@ -178,7 +179,7 @@ const inputValue = computed({
 })
 
 const { getLabel, inputErrors } = useInputProps(props)
-const def = getMyThPluginOptions().options?.editor || {}
+const def = getMythPluginOptions().options?.editor || {}
 
 </script>
 

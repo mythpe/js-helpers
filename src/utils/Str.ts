@@ -1,8 +1,9 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
- * https://www.4myth.com
+ * Website: https://www.4myth.com
+ * Github: https://github.com/mythpe
  */
 
 import _ from 'lodash'
@@ -14,6 +15,7 @@ export const Str = {
    * @param needle
    */
   strBefore (str: string, needle = '_to_string'): string {
+    if (!str) return ''
     if (str.slice(-needle.length) === needle) {
       str = str.slice(0, str.length - needle.length)
     }
@@ -38,12 +40,15 @@ export const Str = {
     if (c) t = `${t} ${c}`
     return t
   },
-  fromArabicNumber (n: any): string {
-    if (!n) return ''
-    n = '' + n
-    n = n.replace(/٠/g, 0).replace(/١/g, 1).replace(/٢/g, 2).replace(/٣/g, 3).replace(/٤/g, 4).replace(/٥/g, 5).replace(/٦/g, 6).replace(/٧/g, 7).replace(/٨/g, 8).replace(/٩/g, 9)
+  /**
+   * Convert To string
+   * @param value
+   */
+  fromArabicNumber (value: any): string {
+    if (!value) return ''
+    value = value?.toString().replace(/٠/g, 0).replace(/١/g, 1).replace(/٢/g, 2).replace(/٣/g, 3).replace(/٤/g, 4).replace(/٥/g, 5).replace(/٦/g, 6).replace(/٧/g, 7).replace(/٨/g, 8).replace(/٩/g, 9)
 
-    return '' + n
+    return '' + (value || '')
   },
   /**
    * String to number 'return string'
@@ -162,6 +167,11 @@ export const Str = {
     const s = parseFloat(Str.toNumber(b).replace(/[^\d]/g, '')) || 0
     return f - s
   },
+  /**
+   * Convert string new line to BR
+   * @param str
+   * @param isXhtml
+   */
   nl2br (str: null | undefined | string | number, isXhtml: (boolean | null | undefined) = !1) {
     if (!str) {
       return ''

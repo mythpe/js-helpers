@@ -1,13 +1,13 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
- * https://www.4myth.com
+ * Website: https://www.4myth.com
+ * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios'
-import { GlobalComponentConstructor, QBtnProps, QCheckboxProps, QDateProps, QDialogOptions, QEditorProps, QFileProps, QInputProps, QRadioProps, QSelectProps, QTimeProps, QToggleProps, QUploaderProps } from 'quasar'
-import { VueI18n } from 'vue-i18n'
+import { AxiosResponse } from 'axios'
+import { GlobalComponentConstructor } from 'quasar'
 import {
   MAvatarViewerProps,
   MAvatarViewerSlots,
@@ -58,52 +58,9 @@ import {
   MUploaderProps,
   MUploaderSlots
 } from '../components'
-import { MAlerts, MHelpers } from '../vue3'
-import { GlobalsMyThVue3 } from '../vue3/MyThVue3'
+import { LegacyMythType } from '../vue3'
 
-export {}
-
-export type MyThVue3InstallOptions = {
-  i18n: VueI18n;
-  api: {
-    baseUrl: string;
-    axios: AxiosInstance;
-    services: {
-      [key: string]: Record<string, (() => Promise<AxiosResponse>) | any> | any;
-    };
-  },
-  options: Record<string, any> & {
-    google?: {
-      apiKey: string;
-      mapsOptions?: Record<string, any>;
-    };
-    dialog?: {
-      props?: Partial<QDialogOptions>;
-      btnsProps?: Partial<QBtnProps>;
-      okProps?: Partial<QBtnProps>;
-      cancelProps?: Partial<QBtnProps>;
-    };
-    dt?: {
-      searchInputProps?: Partial<QInputProps>;
-      dialogsBtnsProps?: Partial<QBtnProps>;
-    };
-    button?: Partial<QBtnProps>;
-    input?: Partial<QInputProps>;
-    file?: Partial<QFileProps>;
-    date?: Partial<QDateProps>;
-    time?: Partial<QTimeProps>;
-    select?: Partial<QSelectProps>;
-    checkbox?: Partial<QCheckboxProps>;
-    editor?: Partial<QEditorProps>;
-    radio?: Partial<QRadioProps>;
-    toggle?: Partial<QToggleProps>;
-    uploader?: Partial<QUploaderProps>;
-  }
-}
-
-type Vue3MGlobals = typeof GlobalsMyThVue3 & typeof MAlerts & typeof MHelpers
-
-export type MyThVue3PluginType = Vue3MGlobals & MyThVue3InstallOptions
+type ServiceType = () => Promise<AxiosResponse>
 
 declare module '@vue/runtime-core' {
   interface GlobalComponents {
@@ -137,13 +94,13 @@ declare module '@vue/runtime-core' {
   }
 
   interface ComponentCustomProperties {
-    $myth: MyThVue3PluginType
+    $myth: LegacyMythType
   }
 }
 
-declare global {
-  interface Window {
-    push_token?: string | null | undefined;
-    MyThVue3Plugin: MyThVue3InstallOptions
-  }
-}
+// declare global {
+//   interface Window {
+// push_token?: string | null | undefined;
+// MythVue3Plugin: MythVue3InstallOptions
+// }
+// }

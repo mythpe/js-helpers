@@ -1,15 +1,16 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script lang="ts">
 import { QInput } from 'quasar'
-import { computed, defineEmits, onMounted, PropType, ref } from 'vue'
+import { computed, onMounted, PropType, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
-import { getMyThPluginOptions } from '../../utils/Const'
+import { getMythPluginOptions } from '../../utils/Const'
 import { Field as VeeField } from 'vee-validate'
 
 // interface Props extends MInputProps {
@@ -165,7 +166,7 @@ export default {
     } = useInputProps(props)
 
     const ready = ref(!1)
-    const def = getMyThPluginOptions().options?.input || {}
+    const def = getMythPluginOptions().options?.input || {}
     onMounted(() => {
       ready.value = !0
     })
@@ -183,12 +184,12 @@ export default {
 <template>
   <MCol
     :auto="auto"
+    :class="$attrs.class"
     :col="col"
     :lg="lg"
     :md="md"
     :sm="sm"
     :xs="xs"
-    :class="$attrs.class"
   >
     <VeeField
       v-slot="fieldScope"

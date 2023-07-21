@@ -1,8 +1,9 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script
@@ -12,7 +13,7 @@
 
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import { computed, defineEmits, defineProps, onBeforeMount, onMounted, ref, watch } from 'vue'
-import { useMyTh } from '../../vue3'
+import { useMyth } from '../../vue3'
 import { MAxiosProps } from './models'
 
 interface Props extends MAxiosProps {
@@ -36,6 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 interface Emits {
   (e: 'update:modelValue', value: any): void;
+
   (e: 'items', value: any[]): void
 }
 
@@ -56,7 +58,7 @@ onBeforeMount(() => {
 watch(() => props.options, (v) => {
   items.value = v ?? []
 })
-const $myth = useMyTh()
+const $myth = useMyth()
 onMounted(async () => {
   const prepare = async () => {
     if (!props.service) return
@@ -87,8 +89,8 @@ export default {
   <MSelect
     v-model="model"
     :loading="loading"
-    :options="items"
     :name="name"
+    :options="items"
     v-bind="$attrs"
   >
     <template

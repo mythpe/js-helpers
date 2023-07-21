@@ -1,8 +1,9 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
- * https://www.4myth.com
+ * Website: https://www.4myth.com
+ * Github: https://github.com/mythpe
  */
 
 import _ from 'lodash'
@@ -11,7 +12,7 @@ import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { ParseHeaderOptions, ParseHeadersType } from '../types'
 import { Str } from '../utils'
-import { getMyThPluginOptions } from '../utils/Const'
+import { getMythI18n } from './MythVueConfig'
 
 export const MHelpers = {
   storage: {
@@ -41,9 +42,7 @@ export const MHelpers = {
     number = number ?? 2
     number = parseInt(number.toString())
     const defaultValue = undefined
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { t, te } = getMyThPluginOptions().i18n
+    const { t, te } = getMythI18n()
 
     // Not is route
     // No page title
@@ -86,21 +85,30 @@ export const MHelpers = {
       _.snakeCase(singular)
     ]))
 
-    let k
+    let k: string
     for (const f in keys) {
       if (!(k = keys[f])) {
         continue
       }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (te && te(k) && _.isString(t(k))) {
         if (_.startsWith(k, 'choice.')) {
-          const pop: string = k.split('.').pop() ?? ''
+          const pop: string = k.split('.').pop() || ''
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           str = t(k, number, { [pop]: number })
         } else {
           const parents: string[] = routeName.split('.')
           if (parents.length > 1) {
             // console.log(parents[parents.length - 2])
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             str = t(k, { name: t(`choice.${Str.pascalCase(_.pluralize(parents[parents.length - 2]))}`, '1') })
           } else {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             str = t(k, { name: '' })
           }
         }
@@ -137,35 +145,49 @@ export const MHelpers = {
     }
 
     const result: ParseHeadersType[] = []
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { t, te } = getMyThPluginOptions().i18n
+    const { t, te } = getMythI18n()
     headers.forEach((elm: string | ParseHeadersType) => {
       if (typeof elm !== 'string' && !elm?.name) return elm
       const isString = typeof elm === 'string'
 
-      let item: ParseHeadersType | any = isString ? {
+      // Todo: will do this
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      let item: ParseHeadersType = isString ? {
         name: elm,
         label: elm,
         field: elm
       } : { ...elm }
+      item.name = item.name || ''
+      item.label = item.label || ''
+
       item = {
         ...item,
         name: Str.strBefore(Str.strBefore(item.name), 'ToString'),
-        label: Str.strBefore(Str.strBefore(item.label ?? item.name), 'ToString')
+        label: Str.strBefore(Str.strBefore(item.label || item.name), 'ToString')
       }
       const name = item.name
       let k
       if (te) {
         if (te((k = `attributes.${item.label}`))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           item.label = t(k)
         } else if (te((k = `attributes.${_.snakeCase(item.label)}`))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           item.label = t(k)
         } else if (te((k = `attributes.${_.camelCase(item.label)}`))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           item.label = t(k)
         } else if (te((k = `attributes.${Str.pascalCase(item.label)}`))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           item.label = t(k)
         } else if (te((k = item.label))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           item.label = t(k)
         }
       }
@@ -201,13 +223,11 @@ export const MHelpers = {
    * @param string
    * @param args
    */
-  parseAttribute (string: string | { text: string } | any, ...args: []): string | undefined | any {
-    const defaultValue = undefined
+  parseAttribute (string: string | { text: string } | any, ...args: []): string | null {
+    const defaultValue = null
     if (!string) return string
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { t, te } = getMyThPluginOptions().i18n
+    const { t, te } = getMythI18n()
     const key = string && typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
 
     if (!key) {
@@ -216,16 +236,28 @@ export const MHelpers = {
 
     let transKey: string
     if (te) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (te((transKey = `attributes.${key}`)) && _.isString(t(transKey))) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         return t(transKey, ...args)
       }
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (te((transKey = `choice.${key}`)) && _.isString(t(transKey))) {
         args = args || [2]
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         return t(transKey, ...args)
       }
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (te(key) && _.isString(t(key))) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         return t(key, ...args)
       }
     }
@@ -250,68 +282,7 @@ export const MHelpers = {
    */
   copyText (text: string | any): Promise<void> {
     return copyToClipboard(text)
-  },
-  /**
-   * Customized helper to download blob from axios response
-   * @param response
-   * @param callback
-   */
-  downloadFromResponse (response: any, callback?: ((url: string, response: any) => void)) {
-    try {
-      if (response?.data?.data?.url) {
-        const url = response?.data?.data?.url
-        if (callback) {
-          callback(url, response)
-        } else {
-          window.open(url, 'AppWindow')
-        }
-        return
-      }
-
-      if (!response) return
-
-      let name = response.headers['content-disposition'] || ''
-      // console.log(response.headers['Content-Disposition'])
-      // name = name.split('filename=').pop().replace(/^\"+|\"+$/g, '');
-      name = name.split('filename=').pop().replace(/^"+|"+$/g, '')
-      // console.log(response)
-      // name = name ||
-      if (!name) {
-        alert('No file name')
-        console.log(response.headers)
-        return
-      }
-
-      const file = new Blob([response.data])
-      // console.log(file.type)
-      const fileURL = window.URL.createObjectURL(file)
-      const fileLink = document.createElement('a')
-      if (!fileLink || !fileURL) return
-
-      fileLink.href = fileURL
-      fileLink.setAttribute('download', name)
-      document.body.appendChild(fileLink)
-      fileLink.click()
-      setTimeout(() => {
-        try {
-          document.body.removeChild(fileLink)
-          URL.revokeObjectURL(fileURL)
-        } catch (e) {
-
-        }
-      }, 3000)
-    } catch (e) {
-      // console.log(e)
-    }
-  },
-  /**
-   * Open unique window popup of application
-   *
-   * @param url
-   * @param name
-   * @param args
-   */
-  openWindow (url: string | null, name = 'AppWindow', ...args: []) {
-    return url ? window.open(url, name, ...args) : null
   }
 }
+
+export default {}

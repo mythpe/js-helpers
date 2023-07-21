@@ -1,12 +1,13 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script lang="ts" setup>
-import { getMyThPluginOptions } from '../../utils/Const'
+import { getMythPluginOptions } from '../../utils/Const'
 import { Field as VeeField } from 'vee-validate'
 import { defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
@@ -40,7 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const inputValue = ref(props.modelValue)
 const { getRules, getLabel, getPlaceholder } = useInputProps(props)
-const def = getMyThPluginOptions().options?.radio || {}
+const def = getMythPluginOptions().options?.radio || {}
 
 </script>
 
@@ -53,12 +54,12 @@ export default {
 <template>
   <MCol
     :auto="auto"
+    :class="$attrs.class"
     :col="col"
     :lg="lg"
     :md="md"
     :sm="sm"
     :xs="xs"
-    :class="$attrs.class"
   >
     <VeeField
       v-slot="fieldProps"

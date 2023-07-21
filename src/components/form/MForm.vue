@@ -1,8 +1,9 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script lang="ts" setup>
@@ -115,10 +116,10 @@ export default {
   <VeeForm
     ref="veeForm"
     v-slot="v"
+    :class="$attrs.class"
     :initial-errors="errors"
     :initial-values="form"
     as="div"
-    :class="$attrs.class"
   >
     <form @submit="v.handleSubmit($event, onSubmit)">
       <slot v-bind="v" />

@@ -1,8 +1,9 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
- * https://www.4myth.com
+ * Website: https://www.4myth.com
+ * Github: https://github.com/mythpe
  */
 
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
@@ -149,5 +150,68 @@ export const Helpers = {
     arrayFormat: 'indices'
     // encodeValuesOnly: true,
     // encode: false,
-  }))
+  })),
+  /**
+   * Open unique window popup of application
+   *
+   * @param url
+   * @param name
+   * @param args
+   */
+  openWindow (url: string | null, name = 'AppWindow', ...args: []) {
+    return url ? window.open(url, name, ...args) : null
+  },
+  /**
+   * Customized helper to download blob from axios response
+   * @param response
+   * @param callback
+   */
+  downloadFromResponse (response: any, callback?: ((url: string, response: any) => void)) {
+    try {
+      if (response?.data?.data?.url) {
+        const url = response?.data?.data?.url
+        if (callback) {
+          callback(url, response)
+        } else {
+          window.open(url, 'AppWindow')
+        }
+        return
+      }
+
+      if (!response) return
+
+      let name = response.headers['content-disposition'] || ''
+      // console.log(response.headers['Content-Disposition'])
+      // name = name.split('filename=').pop().replace(/^\"+|\"+$/g, '');
+      name = name.split('filename=').pop().replace(/^"+|"+$/g, '')
+      // console.log(response)
+      // name = name ||
+      if (!name) {
+        alert('No file name')
+        console.log(response.headers)
+        return
+      }
+
+      const file = new Blob([response.data])
+      // console.log(file.type)
+      const fileURL = window.URL.createObjectURL(file)
+      const fileLink = document.createElement('a')
+      if (!fileLink || !fileURL) return
+
+      fileLink.href = fileURL
+      fileLink.setAttribute('download', name)
+      document.body.appendChild(fileLink)
+      fileLink.click()
+      setTimeout(() => {
+        try {
+          document.body.removeChild(fileLink)
+          URL.revokeObjectURL(fileURL)
+        } catch (e) {
+
+        }
+      }, 3000)
+    } catch (e) {
+      // console.log(e)
+    }
+  }
 }

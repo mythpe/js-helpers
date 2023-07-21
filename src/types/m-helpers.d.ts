@@ -1,8 +1,9 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
- * https://www.4myth.com
+ * Website: https://www.4myth.com
+ * Github: https://github.com/mythpe
  */
 
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
@@ -15,6 +16,7 @@ export type ParseHeaderOptions = {
   sortable?: boolean | undefined;
   classes?: string | (() => string)
 }
+
 export interface ParsedHeader {
   /**
    * Unique id, identifies column, (used by pagination.sortBy, 'body-cell-[name]' slot, ...)
@@ -83,7 +85,8 @@ export interface ParsedHeader {
    */
   headerClasses?: string;
 }
-export type ParseHeadersType = QTableProps['columns'] | ParsedHeader | undefined
+
+export type ParseHeadersType = QTableProps['columns'] & ParsedHeader
 
 export type UrlType = string | number | boolean | undefined | null
 

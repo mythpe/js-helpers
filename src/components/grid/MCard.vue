@@ -1,13 +1,14 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script lang="ts" setup>
 
-import { useMyTh } from '../../vue3'
+import { useMyth } from '../../vue3'
 import { MCardProps } from './models'
 import { computed, onMounted, reactive, useSlots } from 'vue'
 import { useRoute } from 'vue-router'
@@ -32,7 +33,7 @@ const {
   str: { nl2br },
   translate,
   getPageTitle
-} = useMyTh()
+} = useMyth()
 const {
   t,
   te

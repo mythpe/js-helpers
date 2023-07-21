@@ -1,8 +1,9 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <template>
@@ -35,13 +36,14 @@
     </q-menu>
     <q-pull-to-refresh
       :no-mouse="noMouse"
-      @refresh="refresh"
       color="primary"
+      @refresh="refresh"
     >
       <q-table
         ref="table"
         v-model:pagination="pagination"
         v-model:selected="selected"
+        :bordered="bordered"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
         :dense="dense"
@@ -54,7 +56,6 @@
         :selection="hideSelection !== !0 ? (singleSelection ? 'single' : 'multiple') : 'none'"
         :separator="separator"
         :title="title"
-        :bordered="bordered"
         card-container-class="m--datatable-container"
         flat
         square
@@ -78,10 +79,10 @@
               col="12"
               dense
               name="search"
+              outlined
               placeholder="myth.datatable.searchInput"
               sm="9"
               v-bind="{...(defSearchInputProps||{}),...(searchInputProps||{})}"
-              outlined
             >
               <template #prepend>
                 <q-icon
@@ -90,8 +91,8 @@
                 />
                 <q-icon
                   v-else
-                  name="clear"
                   class="cursor-pointer"
+                  name="clear"
                   @click="tableOptions.search = ''"
                 />
               </template>
@@ -101,12 +102,12 @@
               sm="auto"
             >
               <MBtn
-                :color="undefined"
                 v-if="hasFilterDialog"
-                @click="openFilterDialog()"
-                icon="o_filter_alt"
+                :color="undefined"
                 :label="$q.screen.gt.sm ? $t('filter') : undefined"
                 flat
+                icon="o_filter_alt"
+                @click="openFilterDialog()"
               >
                 <q-tooltip class="touch-hide">
                   {{ $t('filter') }}
@@ -114,10 +115,10 @@
               </MBtn>
               <q-btn
                 v-if="hasMenu"
+                dense
                 flat
                 icon="o_more_vert"
                 round
-                dense
               >
                 <q-tooltip class="touch-hide">
                   {{ $t('more') }}
@@ -225,15 +226,15 @@
               </q-btn>
               <q-btn
                 :disabled="tableOptions.loading"
-                flat
-                round
                 dense
+                flat
                 icon="o_refresh"
+                round
                 @click="refreshNoUpdate()"
               >
                 <q-tooltip
-                  class="touch-hide"
                   v-if="!tableOptions.loading"
+                  class="touch-hide"
                 >
                   {{ $t('refresh') }}
                 </q-tooltip>
@@ -295,39 +296,39 @@
                 v-if="hasUpdateBtn"
                 :disable="!isSingleSelectedItem || tableOptions.loading"
                 :loading="tableOptions.loading"
-                tooltip="update"
-                icon="o_edit"
-                flat
-                round
                 fab-mini
+                flat
+                icon="o_edit"
+                round
+                tooltip="update"
                 @click="openUpdateDialog(tableOptions.selected[0])"
               />
               <MDtBtn
                 v-if="hasShowBtn"
                 :disable="!isSingleSelectedItem || tableOptions.loading"
                 :loading="tableOptions.loading"
-                tooltip="show"
-                icon="o_visibility"
-                flat
-                round
                 fab-mini
+                flat
+                icon="o_visibility"
+                round
+                tooltip="show"
                 @click="openShowDialog(tableOptions.selected[0])"
               />
               <MDtBtn
                 v-if="hasDestroyBtn"
                 :disable="!hasSelectedItem || tableOptions.loading"
                 :loading="tableOptions.loading"
-                tooltip="destroy"
-                icon="delete_outline"
-                flat
-                round
                 fab-mini
+                flat
+                icon="delete_outline"
+                round
+                tooltip="destroy"
                 @click="deleteSelectionItem()"
               />
               <template v-for="(contextBtn,i) in contextItems">
                 <MBtn
-                  :key="`top-s-${i.toString()}`"
                   v-if="contextBtn.show !== !1"
+                  :key="`top-s-${i.toString()}`"
                   v-bind="contextBtn.attr"
                   @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
                 >
@@ -355,9 +356,9 @@
         >
           <slot
             v-if="inputSlot"
+            :dt="datatableItemsScope"
             :name="slotName"
             v-bind="inputSlot"
-            :dt="datatableItemsScope"
           />
           <slot
             v-else-if="slotName !== 'default'"
@@ -476,8 +477,8 @@
             </q-card-section>
             <q-separator />
             <q-card-actions
-              class="m--datatable-form-actions print-hide"
               align="between"
+              class="m--datatable-form-actions print-hide"
             >
               <MBtn
                 :disable="tableOptions.loading"
@@ -512,9 +513,9 @@
         :position="positionAddBtn"
       >
         <q-btn
+          color="primary"
           fab
           icon="add"
-          color="primary"
           @click="openCreateDialog()"
         >
           <q-tooltip
@@ -533,9 +534,8 @@
 
 import { QDialogProps, QPageStickyProps, QTable, QTableProps, useQuasar } from 'quasar'
 import { computed, nextTick, onMounted, PropType, reactive, ref, useSlots, watch } from 'vue'
-import { useMyTh } from '../../vue3'
+import { getMythOptions, useMyth } from '../../vue3'
 import _ from 'lodash'
-import { getMyThPluginOptions } from '../../utils/Const'
 import { useRouter } from 'vue-router'
 import {
   ApiServiceParams,
@@ -759,7 +759,7 @@ export default {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   setup (props) {
-    const myth = useMyTh()
+    const myth = useMyth()
     const slots = useSlots()
     const router = useRouter()
     const $q = useQuasar()
@@ -1315,7 +1315,7 @@ export default {
     /**
      * Dom
      */
-    const defSearchInputProps = getMyThPluginOptions().options?.dt?.searchInputProps || {}
+    const defSearchInputProps = getMythOptions().dt?.searchInputProps || {}
     const contextmenu = ref(!1)
     const onRowContextmenu = (e: Event, row: MDtItem, index: number) => {
       e.preventDefault()
@@ -1346,7 +1346,7 @@ export default {
     const endReach = computed<boolean>(() => props.endReach)
     const rowsPerPageOptions = computed<any[]>(() => props.rowsPerPageOptions)
     const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))
-    const dialogsBtnsProps = getMyThPluginOptions().options?.dt?.dialogsBtnsProps || {}
+    const dialogsBtnsProps = getMythPluginOptions().options?.dt?.dialogsBtnsProps || {}
 
     onMounted(() => {
       refresh()
@@ -1493,6 +1493,7 @@ export default {
 
   .q-table__top
     align-items: center
+
     .q-table__control:last-child
       padding-left: 8px
       display: block

@@ -1,12 +1,12 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script lang="ts" setup>
-import { getMyThPluginOptions } from '../../utils/Const'
 import { Field as VeeField } from 'vee-validate'
 
 import { computed, defineProps, onMounted, ref } from 'vue'
@@ -14,6 +14,7 @@ import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MInputProps } from './models'
 import { VueClassProp, VueStyleProp } from 'quasar/dist/types/api'
+import { getMythOptions } from '../../vue3'
 
 interface Props extends MInputProps {
   auto?: boolean | undefined;
@@ -139,7 +140,7 @@ const {
 } = useInputProps(props)
 
 const ready = ref(!1)
-const def = getMyThPluginOptions().options?.input || {}
+const def = getMythOptions().options?.input || {}
 onMounted(() => {
   ready.value = !0
 })
@@ -154,12 +155,12 @@ export default {
 <template>
   <MCol
     :auto="auto"
+    :class="$attrs.class"
     :col="col"
     :lg="lg"
     :md="md"
     :sm="sm"
     :xs="xs"
-    :class="$attrs.class"
   >
     <VeeField
       v-slot="fieldScope"
@@ -169,26 +170,26 @@ export default {
       v-bind="$attrs"
     >
       <q-input
+        :autogrow="autogrow"
         :borderless="borderless"
+        :clear-icon="clearIcon"
         :clearable="clearable"
+        :debounce="debounce"
         :dense="dense"
         :error="fieldScope.errors.length>0"
         :error-message="fieldScope.errorMessage"
         :filled="filled"
         :hide-bottom-space="hideBottomSpace"
+        :input-class="inputClass"
+        :input-style="inputStyle"
         :label="getLabel"
         :loading="loading"
         :model-value="inputValue"
+        :no-error-icon="noErrorIcon"
         :outlined="outlined"
         :placeholder="getPlaceholder"
         :stack-label="stackLabel"
         :standout="standout"
-        :debounce="debounce"
-        :clear-icon="clearIcon"
-        :autogrow="autogrow"
-        :input-class="inputClass"
-        :input-style="inputStyle"
-        :no-error-icon="noErrorIcon"
         :type="type"
         v-bind="{...def,...$attrs,...fieldScope.field}"
       >

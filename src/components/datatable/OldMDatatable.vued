@@ -1,16 +1,17 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script lang="ts" setup>
 import { AxiosResponse } from 'axios'
 import { QDialogProps, QInputProps, QPageStickyProps, QTableProps, useQuasar } from 'quasar'
 import { computed, defineEmits, onBeforeMount, onMounted, ref, useSlots, watch } from 'vue'
-import { getMyThPluginOptions } from '../../utils/Const'
-import { GenericMDtBtn, MDatatableProps, MDtItem, MDatatablePagination, MDatatableDialogsOptions, TableMetaServerProps, MDatatableOptions } from './models'
+import { getMythPluginOptions } from '../../utils/Const'
+import { GenericMDtBtn, MDatatableDialogsOptions, MDatatableOptions, MDatatablePagination, MDatatableProps, MDtItem, TableMetaServerProps } from './models'
 import { initMetaServer, initPaginationOptions, initTableOptions, useDatatable } from './useMDatatable'
 
 interface Props extends MDatatableProps {
@@ -121,8 +122,8 @@ const props = withDefaults(defineProps<Props>(), {
   requestParams: undefined
 })
 
-const defSearchInputProps = getMyThPluginOptions().options?.dt?.searchInputProps || {}
-const dialogsBtnsProps = getMyThPluginOptions().options?.dt?.dialogsBtnsProps || {}
+const defSearchInputProps = getMythPluginOptions().options?.dt?.searchInputProps || {}
+const dialogsBtnsProps = getMythPluginOptions().options?.dt?.dialogsBtnsProps || {}
 
 type Emits = {
   (e: 'update:rows', value: MDtItem[]): void
@@ -304,6 +305,7 @@ export default {
         ref="table"
         v-model:pagination="paginationOptions"
         v-model:selected="tableOptions.selected"
+        :bordered="bordered"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
         :dense="dense"
@@ -316,7 +318,6 @@ export default {
         :selection="hideSelection !== !0 ? (singleSelection ? 'single' : 'multiple') : 'none'"
         :separator="separator"
         :title="title"
-        :bordered="bordered"
         card-container-class="m--datatable-container"
         flat
         square
@@ -337,8 +338,8 @@ export default {
               :debounce="searchDebounce"
               autocomplete="none"
               class="self-start"
-              clearable
               clear-icon="clear"
+              clearable
               col="12"
               dense
               input-style="min-width: 220px"
@@ -469,8 +470,8 @@ export default {
               <MDtBtn
                 :disable="tableOptions.loading"
                 flat
-                round
                 icon="o_refresh"
+                round
                 @click="refreshNoUpdate()"
               />
             </MCol>
@@ -532,10 +533,10 @@ export default {
                 :disable="!isSingleSelectedItem || tableOptions.loading"
                 :loading="tableOptions.loading"
                 :tooltip="$t('update')"
-                icon="o_edit"
-                flat
-                round
                 fab-mini
+                flat
+                icon="o_edit"
+                round
                 @click="openUpdateDialog(tableOptions.selected[0])"
               />
               <MDtBtn
@@ -543,10 +544,10 @@ export default {
                 :disable="!isSingleSelectedItem || tableOptions.loading"
                 :loading="tableOptions.loading"
                 :tooltip="$t('show')"
-                icon="o_visibility"
-                flat
-                round
                 fab-mini
+                flat
+                icon="o_visibility"
+                round
                 @click="openShowDialog(tableOptions.selected[0])"
               />
               <MDtBtn
@@ -554,10 +555,10 @@ export default {
                 :disable="!hasSelectedItem || tableOptions.loading"
                 :loading="tableOptions.loading"
                 :tooltip="$t('destroy')"
-                icon="delete_outline"
-                flat
-                round
                 fab-mini
+                flat
+                icon="delete_outline"
+                round
                 @click="deleteSelectionItem()"
               />
             </slot>
@@ -712,8 +713,8 @@ export default {
             </q-card-section>
             <q-separator />
             <q-card-actions
-              class="m--datatable-form-actions print-hide"
               align="between"
+              class="m--datatable-form-actions print-hide"
             >
               <MBtn
                 :disable="tableOptions.loading"

@@ -1,12 +1,13 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script lang="ts" setup>
-import { getMyThPluginOptions } from '../../utils/Const'
+import { getMythPluginOptions } from '../../utils/Const'
 import { computed, defineEmits } from 'vue'
 import { ColStyleType } from '../grid/models'
 import { MPickerProps } from './models'
@@ -50,8 +51,8 @@ const isDate = computed(() => props.type === 'date')
 const mask = isDate.value ? '####-##-##' : '##:##'
 const format = isDate.value ? 'YYYY-MM-DD' : 'HH:mm'
 const icon = isDate.value ? 'event' : 'access_time'
-const defTime = getMyThPluginOptions().options?.time || {}
-const defDate = getMyThPluginOptions().options?.date || {}
+const defTime = getMythPluginOptions().options?.time || {}
+const defDate = getMythPluginOptions().options?.date || {}
 </script>
 
 <script lang="ts">
@@ -63,12 +64,12 @@ export default {
 <template>
   <MCol
     :auto="auto"
+    :class="$attrs.class"
     :col="col"
     :lg="lg"
     :md="md"
     :sm="sm"
     :xs="xs"
-    :class="$attrs.class"
   >
     <MInput
       v-model="inputValue"

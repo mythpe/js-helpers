@@ -1,8 +1,9 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
- * https://www.4myth.com
+ * Website: https://www.4myth.com
+ * Github: https://github.com/mythpe
  */
 
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
@@ -346,8 +347,8 @@ export interface MFormSlots {
 }
 
 export interface MFormProps {
-  form?: Record<string|symbol|number, any>;
-  errors?: Record<string|symbol|number, any>;
+  form?: Record<string | symbol | number, any>;
+  errors?: Record<string | symbol | number, any>;
 }
 
 export type MAvatarViewerItem = Record<string, string | File | any> | any

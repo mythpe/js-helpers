@@ -1,13 +1,21 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
- * https://www.4myth.com
+ * Website: https://www.4myth.com
+ * Github: https://github.com/mythpe
  */
 
-import { App, defineAsyncComponent, provide } from 'vue'
-import { MyThVue3InstallOptions } from '../types'
-import { useMyTh } from './MyThVue3'
+import { App, defineAsyncComponent } from 'vue'
+import { createMyth } from './MythVue'
+import { MythConfigInterface, setupConfig } from './MythVueConfig'
+
+// const ini = <I18nT extends MythVue3InstallOptions['i18n'] = any> ({ i18n }: any): { i18n: I18nT } => ({ i18n })
+// const main: { myth: unknown } = { myth: undefined }
+
+// declare module '@mythpe/js-helpers' {
+//   type myth = MythVue3InstallOptions
+// }
 
 /**
  * Install Plugin
@@ -16,19 +24,10 @@ import { useMyTh } from './MyThVue3'
  * @param api
  * @param options
  */
-export default async function install (app: App, {
-  i18n,
-  api,
-  options = {}
-}: MyThVue3InstallOptions) {
-  if (typeof window !== 'undefined') {
-    window.MyThVue3Plugin = {
-      i18n,
-      api,
-      options
-    }
-  }
-  app.config.globalProperties.$myth = useMyTh()
+export default async function install (app: App, { i18n, api, options = {} }: MythConfigInterface) {
+  setupConfig({ i18n, api, options })
+
+  app.config.globalProperties.$myth = createMyth()
 
   // Datatable
   app.component('MDatatable', defineAsyncComponent(() => import('../components/datatable/MDatatable.vue')))

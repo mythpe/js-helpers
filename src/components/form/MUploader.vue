@@ -1,17 +1,18 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script lang="ts" setup>
 import { QBtnProps, QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
-import { getMyThPluginOptions } from '../../utils/Const'
+import { getMythPluginOptions } from '../../utils/Const'
 import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
 import useAcceptProp from '../../composition/useAcceptProp'
-import { useMyTh, useTranslate } from '../../vue3'
+import { useMyth, useTranslate } from '../../vue3'
 import { ColStyleType } from '../grid/models'
 import { MUploaderMediaItem, MUploaderProps, MUploaderServiceType, MUploaderXhrInfo } from './models'
 
@@ -101,7 +102,7 @@ interface Events {
 
 const emit = defineEmits<Events>()
 const $q = useQuasar()
-const $myth = useMyTh()
+const $myth = useMyth()
 const { alertError, alertSuccess, confirmMessage } = $myth
 const { t } = useTranslate()
 
@@ -245,7 +246,7 @@ const onClickDeleteAttachment = (file: File | MUploaderMediaItem) => {
  */
 // const getMaxFileSize: number = (parseInt(props.maxFileSize?.toString()) ?? 1) * Math.pow(1024, 2)
 // const getMaxTotalSize: number = (parseInt(props.maxTotalSize?.toString()) ?? 1) * Math.pow(1024, 2)
-const def = getMyThPluginOptions().options?.uploader || {}
+const def = getMythPluginOptions().options?.uploader || {}
 
 </script>
 
@@ -257,12 +258,12 @@ export default {
 <template>
   <MCol
     :auto="auto"
+    :class="$attrs.class"
     :col="col"
     :lg="lg"
     :md="md"
     :sm="sm"
     :xs="xs"
-    :class="$attrs.class"
   >
     <div
       v-if="errors && errors.length"

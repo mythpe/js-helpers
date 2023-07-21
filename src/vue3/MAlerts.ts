@@ -1,18 +1,17 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
- * https://www.4myth.com
+ * Website: https://www.4myth.com
+ * Github: https://github.com/mythpe
  */
 
 import { Dialog, Notify, QDialogOptions, QNotifyCreateOptions } from 'quasar'
-import { getMyThPluginOptions } from '../utils/Const'
 import { Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from '../types'
+import { getMythI18n, getMythOptions } from './MythVueConfig'
 
 export const MAlerts = {
   quasarNotifyOptions: (opts: QNotifyCreateOptions | string): QNotifyCreateOptions => ({
-    // position: 'top-right',
-    // timeout: 1500,
     message: typeof opts === 'string' ? opts : opts.message,
     ...(typeof opts !== 'string' ? opts : {})
   }),
@@ -20,10 +19,10 @@ export const MAlerts = {
   alertSuccess: (message: string) => MAlerts.alertMessage({ type: 'positive', message }),
   alertError: (message: string) => MAlerts.alertMessage({ type: 'negative', message }),
   confirmMessage (message?: string, title?: string, opts?: QDialogOptions): Vue3MConfirmMessage {
+    const { t } = getMythI18n()
+    const { options } = getMythOptions()
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const { t } = getMyThPluginOptions().i18n
-    const { options } = getMyThPluginOptions()
     title = title || t('messages.are_you_sure') || ''
     message = message || ''
     opts = opts || {}
@@ -44,6 +43,8 @@ export const MAlerts = {
         color: cancelProps.color || 'positive'
       },
       ok: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         label: t('yes'),
         ...btnsProps,
         ...okProps,
@@ -57,3 +58,5 @@ export const MAlerts = {
 }
 
 export const useAlerts = (): typeof MAlerts => MAlerts
+
+export default {}

@@ -1,8 +1,9 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script
@@ -27,6 +28,7 @@ interface Props extends MDtBtnProps {
   round?: boolean | undefined;
   dense?: boolean | undefined;
 }
+
 const props = withDefaults(defineProps<Props>(), {
   show: !1,
   update: !1,
@@ -88,12 +90,12 @@ const getColor = computed<string | undefined>(() => {
   <q-btn
     v-if="!listItem"
     :color="getColor"
-    :icon="getIcon"
+    :dense="dense"
     :fab-mini="fabMini"
     :flat="flat"
+    :icon="getIcon"
     :round="round"
     v-bind="$attrs"
-    :dense="dense"
     @click="$emit('click',$event)"
   >
     <slot />

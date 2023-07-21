@@ -1,16 +1,17 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2022 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
-  - https://www.4myth.com
+  - Website: https://www.4myth.com
+  - Github: https://github.com/mythpe
   -->
 
 <script lang="ts" setup>
-import { getMyThPluginOptions } from '../../utils/Const'
+import { getMythPluginOptions } from '../../utils/Const'
 import { Field as VeeField } from 'vee-validate'
 import { computed, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
-import { useMyTh } from '../../vue3'
+import { useMyth } from '../../vue3'
 import { ColStyleType } from '../grid/models'
 import { MToggleProps } from './models'
 
@@ -68,7 +69,7 @@ const props = withDefaults(defineProps<Props>(), {
 const {
   getRules
 } = useInputProps(props)
-const { parseAttribute } = useMyTh()
+const { parseAttribute } = useMyth()
 const inputValue = ref(props.modelValue)
 const topLabel = computed<string | null>(() => parseAttribute(props.label === undefined ? props.name : props.label) ?? null)
 
@@ -82,7 +83,7 @@ const getLabel = computed<string>(() => {
   }
   return parseAttribute('none')
 })
-const def = getMyThPluginOptions().options?.toggle || {}
+const def = getMythPluginOptions().options?.toggle || {}
 
 </script>
 
@@ -95,12 +96,12 @@ export default {
 <template>
   <MCol
     :auto="auto"
+    :class="$attrs.class"
     :col="col"
     :lg="lg"
     :md="md"
     :sm="sm"
     :xs="xs"
-    :class="$attrs.class"
   >
     <VeeField
       v-slot="fieldProps"
