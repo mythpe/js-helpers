@@ -41,7 +41,7 @@
 
 <script lang="ts" setup>
 import { useQuasar } from 'quasar'
-import { getMythPluginOptions } from '../../utils/Const'
+import { getMythOptions } from '../../vue3'
 import { computed } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
@@ -179,7 +179,7 @@ const inputValue = computed({
 })
 
 const { getLabel, inputErrors } = useInputProps(props)
-const def = getMythPluginOptions().options?.editor || {}
+const def = getMythOptions()?.editor || {}
 
 </script>
 

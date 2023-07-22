@@ -10,7 +10,7 @@
 import { QInput } from 'quasar'
 import { computed, onMounted, PropType, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
-import { getMythPluginOptions } from '../../utils/Const'
+import { getMythOptions } from '../../vue3'
 import { Field as VeeField } from 'vee-validate'
 
 // interface Props extends MInputProps {
@@ -166,7 +166,7 @@ export default {
     } = useInputProps(props)
 
     const ready = ref(!1)
-    const def = getMythPluginOptions().options?.input || {}
+    const def = getMythOptions()?.input || {}
     onMounted(() => {
       ready.value = !0
     })

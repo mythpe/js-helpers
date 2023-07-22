@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 
 import { QFile } from 'quasar'
-import { getMythPluginOptions } from '../../utils/Const'
+import { getMythOptions } from '../../vue3'
 import useAcceptProp from '../../composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref } from 'vue'
@@ -109,7 +109,7 @@ const pickFiles = (...args: any[]) => {
 const removeAtIndex = (...args: any[]) => {
   fileInput.value?.removeAtIndex(...args)
 }
-const def = getMythPluginOptions().options?.input || {}
+const def = getMythOptions()?.input || {}
 defineExpose({
   pickFiles,
   removeAtIndex

@@ -7,12 +7,12 @@
   -->
 
 <script lang="ts" setup>
-import { getMythPluginOptions } from '../../utils/Const'
 import { Field as VeeField } from 'vee-validate'
 import { defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MCheckboxProps } from './models'
+import { getMythOptions } from 'src/vue3'
 
 interface Props extends MCheckboxProps {
   auto?: boolean | undefined;
@@ -41,7 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const inputValue = ref(props.modelValue)
 const { getRules, getLabel, getPlaceholder } = useInputProps(props)
-const def = getMythPluginOptions().options?.radio || {}
+const def = getMythOptions().radio || {}
 
 </script>
 

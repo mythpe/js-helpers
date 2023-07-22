@@ -7,7 +7,7 @@
   -->
 
 <script lang="ts" setup>
-import { getMythPluginOptions } from '../../utils/Const'
+import { getMythOptions } from '../../vue3'
 import { Field as VeeField } from 'vee-validate'
 import { defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
@@ -84,7 +84,7 @@ const props = withDefaults(defineProps<Props>(), {
 const inputValue = ref(props.modelValue)
 
 const { getRules, getLabel } = useInputProps(props)
-const def = getMythPluginOptions().options?.select || {}
+const def = getMythOptions()?.select || {}
 
 </script>
 

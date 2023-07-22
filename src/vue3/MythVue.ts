@@ -13,7 +13,9 @@ import { MAlerts } from './MAlerts'
 import { useGeolocation } from './MGeolocation'
 import { MHelpers } from './MHelpers'
 import { useTranslate } from './MTranslate'
-import { MythConfigInterface, MythVueConfig } from './MythVueConfig'
+import { reactive } from 'vue'
+import { MythConfigApi, MythConfigInterface, MythVueConfig } from './MythVueConfig'
+import { I18n } from 'vue-i18n'
 
 /**
  * Global of plugin inside Vue app
@@ -22,29 +24,34 @@ export const MythVue = {
   str,
   dates,
   helpers
-  // geolocation: useGeolocation
-  // translate: useTranslate
 }
+export type LegacyMythType = typeof MythVue & typeof MAlerts & typeof MHelpers
 
-export type LegacyMythType = typeof MythVue & typeof MAlerts & typeof MHelpers & {
-  options: MythConfigInterface['options']
-}
-
-export type UseMythType = typeof MythVue & typeof MAlerts & typeof MHelpers & {
+export type UseMythType<I extends I18n, A extends MythConfigApi<A>> = LegacyMythType & {
   geolocation: typeof useGeolocation
-  translate: typeof useTranslate
-  options: MythConfigInterface['options']
+  translate: typeof useTranslate,
+  i18n: I,
+  api: A,
+  options: MythConfigInterface<I, A>['options']
 }
 
 /**
  * Helper to use plugin
  */
-const options = MythVueConfig.options
-export const useMyth = (): UseMythType => Object.assign({}, MythVue, MAlerts, MHelpers, {
-  options,
-  geolocation: useGeolocation,
-  translate: useTranslate
-})
-export const createMyth = (): LegacyMythType => Object.assign({}, MythVue, MAlerts, MHelpers, { options })
+export const useMyth = <I extends I18n, A extends MythConfigApi<A>>(): UseMythType<I, A> => {
+  const legacy = Object.assign(MythVue, MAlerts, MHelpers)
+  return Object.assign<object, UseMythType<I, A>, typeof legacy>({}, {
+    geolocation: useGeolocation,
+    translate: useTranslate,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    i18n: reactive(MythVueConfig.i18n),
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    api: reactive(MythVueConfig.api),
+    options: reactive(MythVueConfig.options)
+  }, legacy)
+}
+export const createMyth = (): LegacyMythType => Object.assign({}, MythVue, MAlerts, MHelpers)
 
 export default {}

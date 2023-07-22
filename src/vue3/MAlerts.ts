@@ -20,7 +20,7 @@ export const MAlerts = {
   alertError: (message: string) => MAlerts.alertMessage({ type: 'negative', message }),
   confirmMessage (message?: string, title?: string, opts?: QDialogOptions): Vue3MConfirmMessage {
     const { t } = getMythI18n()
-    const { options } = getMythOptions()
+    const options = getMythOptions()
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     title = title || t('messages.are_you_sure') || ''

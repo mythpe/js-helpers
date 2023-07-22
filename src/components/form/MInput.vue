@@ -140,7 +140,7 @@ const {
 } = useInputProps(props)
 
 const ready = ref(!1)
-const def = getMythOptions().options?.input || {}
+const def = getMythOptions()?.input || {}
 onMounted(() => {
   ready.value = !0
 })

@@ -7,11 +7,11 @@
   -->
 
 <script lang="ts" setup>
-import { getMythPluginOptions } from '../../utils/Const'
+import { getMythOptions, useMyth } from '../../vue3'
 import { Field as VeeField } from 'vee-validate'
 import { computed, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
-import { useMyth } from '../../vue3'
+
 import { ColStyleType } from '../grid/models'
 import { MToggleProps } from './models'
 
@@ -83,7 +83,7 @@ const getLabel = computed<string>(() => {
   }
   return parseAttribute('none')
 })
-const def = getMythPluginOptions().options?.toggle || {}
+const def = getMythOptions()?.toggle || {}
 
 </script>
 

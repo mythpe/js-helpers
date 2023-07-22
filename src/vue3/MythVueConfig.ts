@@ -5,10 +5,24 @@
  * Website: https://www.4myth.com
  * Github: https://github.com/mythpe
  */
-import { I18n } from 'vue-i18n'
-import { AxiosInstance } from 'axios'
+import axios, { AxiosStatic } from 'axios'
 import { ServiceType } from '../types'
-import { QBtnProps, QCheckboxProps, QDateProps, QDialogOptions, QEditorProps, QFileProps, QInputProps, QRadioProps, QSelectProps, QTimeProps, QToggleProps, QUploaderProps } from 'quasar'
+import {
+  QBtnProps,
+  QCheckboxProps,
+  QDateProps,
+  QDialogOptions,
+  QEditorProps,
+  QFileProps,
+  QInputProps,
+  QRadioProps,
+  QSelectProps,
+  QTimeProps,
+  QToggleProps,
+  QUploaderProps
+} from 'quasar'
+import { reactive, Ref, ref } from 'vue'
+import { I18n } from 'vue-i18n'
 
 interface MythConfigOptions extends Record<string | number | symbol, any> {
   google?: {
@@ -42,46 +56,45 @@ interface MythConfigServices {
   [key: string]: Record<string, ServiceType> | any;
 }
 
-interface MythConfigApi {
+export interface MythConfigApi<AT, ST extends MythConfigServices = MythConfigServices> {
   baseUrl: string;
-  axios: AxiosInstance;
-  services: MythConfigServices
+  axios: AT;
+  services: ST
 }
 
-export type MythConfigInterface = {
-  i18n: I18n;
-  api: MythConfigApi;
+export type MythConfigInterface<I, A> = {
+  i18n: I;
+  api: MythConfigApi<A>;
   options: MythConfigOptions
 }
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const _i18n: Ref<Required<I18n>> = ref<Required<I18n>>()
+const _baseUrl = ref()
+const _axios = ref(axios)
+const _services = ref<MythConfigServices>({})
+const _options = ref({})
+export const MythVueConfig = reactive({
+  i18n: _i18n,
+  api: reactive({
+    baseUrl: _baseUrl,
+    axios: _axios,
+    services: _services
+  }),
+  options: _options
+})
 
-export const setupConfig = ({ i18n, api, options = {} }: MythConfigInterface) => {
-  MythVueConfig.i18n = i18n || {}
-  MythVueConfig.api = {
-    baseUrl: api?.baseUrl,
-    axios: api?.axios || null,
-    services: api?.services || {}
-  }
+export const setupConfig = <I extends I18n, A extends AxiosStatic>({ i18n, api: { baseUrl, axios, services }, options = {} }: MythConfigInterface<I, A>) => {
+  MythVueConfig.i18n = i18n
+  MythVueConfig.api.axios = axios
+  MythVueConfig.api.baseUrl = baseUrl
+  MythVueConfig.api.services = services
   MythVueConfig.options = options || {}
 }
 
 export const getMythConfig = () => MythVueConfig
 export const getMythI18n = () => MythVueConfig.i18n.global
-export const getMythApi = (): MythConfigApi => MythVueConfig.api
+export const getMythApi = () => MythVueConfig.api
 export const getMythOptions = (): MythConfigOptions => MythVueConfig.options
 
-export const MythVueConfig: MythConfigInterface = {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  i18n: undefined,
-  api: {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    baseUrl: undefined,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    axios: undefined,
-    services: {}
-  },
-  options: {}
-}
 export default MythVueConfig

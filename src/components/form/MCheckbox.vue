@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getMythPluginOptions } from '../../utils/Const'
+import { getMythOptions } from '../../vue3'
 import { Field as VeeField } from 'vee-validate'
 import { defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
@@ -91,7 +91,7 @@ const {
   getLabel,
   getPlaceholder
 } = useInputProps(props)
-const def = getMythPluginOptions().options?.button || {}
+const def = getMythOptions()?.button || {}
 
 </script>
 

@@ -9,10 +9,9 @@
 <script lang="ts" setup>
 import { QBtnProps, QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
-import { getMythPluginOptions } from '../../utils/Const'
 import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
 import useAcceptProp from '../../composition/useAcceptProp'
-import { useMyth, useTranslate } from '../../vue3'
+import { getMythOptions, useMyth, useTranslate } from '../../vue3'
 import { ColStyleType } from '../grid/models'
 import { MUploaderMediaItem, MUploaderProps, MUploaderServiceType, MUploaderXhrInfo } from './models'
 
@@ -246,7 +245,7 @@ const onClickDeleteAttachment = (file: File | MUploaderMediaItem) => {
  */
 // const getMaxFileSize: number = (parseInt(props.maxFileSize?.toString()) ?? 1) * Math.pow(1024, 2)
 // const getMaxTotalSize: number = (parseInt(props.maxTotalSize?.toString()) ?? 1) * Math.pow(1024, 2)
-const def = getMythPluginOptions().options?.uploader || {}
+const def = getMythOptions()?.uploader || {}
 
 </script>
 

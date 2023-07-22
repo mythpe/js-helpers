@@ -7,12 +7,11 @@
   -->
 
 <script lang="ts" setup>
-import { getMythPluginOptions } from '../../utils/Const'
+import { getMythOptions } from '../../vue3'
 import { computed, defineEmits } from 'vue'
 import { ColStyleType } from '../grid/models'
-import { MPickerProps } from './models'
 
-interface Props extends MPickerProps {
+interface Props {
   auto?: boolean | undefined;
   col?: ColStyleType;
   xs?: ColStyleType;
@@ -51,13 +50,13 @@ const isDate = computed(() => props.type === 'date')
 const mask = isDate.value ? '####-##-##' : '##:##'
 const format = isDate.value ? 'YYYY-MM-DD' : 'HH:mm'
 const icon = isDate.value ? 'event' : 'access_time'
-const defTime = getMythPluginOptions().options?.time || {}
-const defDate = getMythPluginOptions().options?.date || {}
+const defTime = getMythOptions()?.time || {}
+const defDate = getMythOptions()?.date || {}
 </script>
 
 <script lang="ts">
 export default {
-  inheritAttrs: !1
+  inheritAttrs: !0
 }
 </script>
 

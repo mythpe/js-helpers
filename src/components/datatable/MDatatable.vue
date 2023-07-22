@@ -462,7 +462,16 @@
           >
             <q-card-section>
               <q-toolbar>
-                <q-toolbar-title>{{ getFormTitle }}</q-toolbar-title>
+                <q-toolbar-title>
+                  <q-btn
+                    v-if="formDialogProps.maximized"
+                    :icon="!$q.lang.rtl ?'arrow_back_ios' : 'arrow_forward_ios'"
+                    fab-mini
+                    flat
+                    @click="closeFormDialog"
+                  />
+                  {{ getFormTitle }}
+                </q-toolbar-title>
               </q-toolbar>
             </q-card-section>
             <q-separator />
@@ -713,17 +722,23 @@ export default {
         'full-width': !0,
         'no-backdrop-dismiss': !0,
         persistent: !0,
-        position: 'top'
+        position: 'top',
+        transitionShow: 'slide-down',
+        transitionHide: 'slide-up'
+        // maximized: !0
       })
     },
     showDialogProps: {
       type: Object as PropType<QDialogProps>,
       default: () => ({
         'allow-focus-outside': !0,
-        'full-width': !0,
+        // 'full-width': !0,
         'no-backdrop-dismiss': !0,
         persistent: !0,
-        position: 'top'
+        // position: 'top',
+        transitionShow: 'slide-down',
+        transitionHide: 'slide-up',
+        maximized: !0
       })
     },
     formDialogProps: {
@@ -735,7 +750,7 @@ export default {
         persistent: !0,
         // position: 'top',
         transitionShow: 'slide-down',
-        transitionHide: 'slide-down',
+        transitionHide: 'slide-up',
         maximized: !0
       })
     },
@@ -1346,7 +1361,7 @@ export default {
     const endReach = computed<boolean>(() => props.endReach)
     const rowsPerPageOptions = computed<any[]>(() => props.rowsPerPageOptions)
     const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))
-    const dialogsBtnsProps = getMythPluginOptions().options?.dt?.dialogsBtnsProps || {}
+    const dialogsBtnsProps = getMythOptions()?.dt?.dialogsBtnsProps || {}
 
     onMounted(() => {
       refresh()
@@ -1488,11 +1503,11 @@ export default {
       padding: 4px 16px !important
 
 .m--datatable-component
-  .q-table__separator.col
-    display: none !important
 
   .q-table__top
     align-items: center
+    .q-table__separator.col
+      display: none !important
 
     .q-table__control:last-child
       padding-left: 8px

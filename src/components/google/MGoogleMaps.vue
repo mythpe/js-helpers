@@ -15,20 +15,20 @@ import { ColStyleType } from '../grid/models'
 import { CoordsType, GeocoderResult, GoogleGeocoder, GoogleMapsApi, GoogleMapsMVCObject, GooglePlacesService, MapCoordsClick, MGoogleMapsProps, PlaceResult } from './models'
 
 interface Props extends MGoogleMapsProps {
-  auto?: boolean | undefined;
+  auto?: boolean;
   col?: ColStyleType;
   xs?: ColStyleType;
   sm?: ColStyleType;
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  style?: string | undefined;
-  center?: CoordsType | undefined;
-  zoom?: number | undefined;
-  markers?: CoordsType[] | undefined;
-  centerMarker?: boolean | undefined;
-  label?: string | undefined;
-  errors?: Record<string, any> | undefined;
+  style?: string;
+  center?: CoordsType;
+  zoom?: number;
+  markers?: CoordsType[];
+  centerMarker?: boolean;
+  label?: string;
+  errors?: Record<string, any>;
   region?: string;
 }
 
@@ -46,7 +46,7 @@ const props = withDefaults(defineProps<Props>(), {
   zoom: 17,
   centerMarker: !0,
   label: undefined,
-  errors: undefined,
+  errors: () => ({}),
   region: 'sa'
 })
 

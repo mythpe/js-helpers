@@ -24,9 +24,8 @@ import { MythConfigInterface, setupConfig } from './MythVueConfig'
  * @param api
  * @param options
  */
-export default async function install (app: App, { i18n, api, options = {} }: MythConfigInterface) {
-  setupConfig({ i18n, api, options })
-
+export default async function install<T, A> (app: App, { i18n, api, options = {} }: MythConfigInterface<T, A>) {
+  setupConfig<T, A>({ i18n, api, options })
   app.config.globalProperties.$myth = createMyth()
 
   // Datatable

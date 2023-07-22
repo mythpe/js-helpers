@@ -7,13 +7,13 @@
   -->
 
 <script
-  lang="ts"
-  setup
+    lang="ts"
+    setup
 >
 import { computed } from 'vue'
-import { ColStyleType, MColProps } from './models'
+import { ColStyleType } from './models'
 
-interface Props extends MColProps {
+interface Props {
   auto?: boolean | undefined
   col?: ColStyleType
   xs?: ColStyleType

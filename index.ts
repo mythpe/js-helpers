@@ -7,12 +7,8 @@
  */
 import installPlugin from './src/vue3/InstallPlugin'
 
-export { installPlugin }
 export * from './src'
-import { Dates as dates, Helpers as helpers, Str as str } from './src/utils'
+export { installPlugin }
+// import { Dates as dates, Helpers as helpers, Str as str } from './src/utils'
 
-export default {
-  str,
-  dates,
-  helpers
-}
+export default {}

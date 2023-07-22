@@ -14,10 +14,10 @@ import { computed, onMounted, reactive, useSlots } from 'vue'
 import { useRoute } from 'vue-router'
 
 interface Props extends MCardProps {
-  titleFromRoute?: boolean;
-  title?: string | (() => string);
-  subtitle?: string | (() => string);
-  backRoute?: boolean;
+  titleFromRoute?: boolean | undefined;
+  title?: string | (() => string) | undefined;
+  subtitle?: string | (() => string) | undefined;
+  backRoute?: boolean | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {

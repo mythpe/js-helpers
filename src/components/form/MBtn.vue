@@ -40,7 +40,7 @@
 import { useSlots } from 'vue'
 import { getMythOptions } from '../../vue3'
 
-const def = getMythOptions().options?.button || {}
+const def = getMythOptions()?.button || {}
 
 const _slots = useSlots()
 </script>
