@@ -6,72 +6,52 @@
   - Github: https://github.com/mythpe
   -->
 
-<template>
-  <VeeForm
-    v-bind="$attrs"
-    ref="veeForm"
-    v-slot="v"
-    :initial-errors="errors"
-    :initial-values="form"
-    as=""
-  >
-    <form
-      @submit="v.handleSubmit($event, onSubmit)"
-      v-bind="formProps"
-    >
-      <slot v-bind="v" />
-    </form>
-  </VeeForm>
-</template>
-
 <script lang="ts" setup>
-import { Form as VeeForm, FormContext, SubmissionContext } from 'vee-validate'
-import { nextTick, ref, watch } from 'vue'
+import { Form as VeeForm } from 'vee-validate'
+import { nextTick, ref, UnwrapNestedRefs, watch } from 'vue'
 import { MFormProps } from './models'
 
-type VeeFormElm = InstanceType<typeof VeeForm>
 interface Props extends MFormProps {
-  form?: Record<string, any>;
-  errors?: Record<string, string[]>;
-  formProps?: Record<string, any>;
+  form?: UnwrapNestedRefs<Record<string, any>> | undefined;
+  errors?: UnwrapNestedRefs<Record<string, string[]>> | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   form: () => ({}),
-  errors: () => ({}),
-  formProps: undefined
+  errors: () => ({})
 })
 
 type Events = {
-  (e: 'submit', values: Record<string, any>, ctx: SubmissionContext): void;
+  (e: 'submit', evt?: Event): void;
+// (e: 'update:form', values?: any): void;
+// (e: 'update:errors', values?: any): void;
 }
-
 const emit = defineEmits<Events>()
 
 watch(() => props.errors, (v) => {
   setErrors(v || {})
+  // console.log(v)
   nextTick(() => {
     setTouched(Object.keys(v))
   })
 })
 
 watch(() => props.form, (v) => setValues(v))
-const onSubmit = (values: Record<string, any>, ctx: SubmissionContext): void => {
-  emit('submit', values, ctx)
+const onSubmit = (...args: any[]): void => {
+  emit('submit', ...args)
 }
 
-const veeForm = ref<VeeFormElm>()
-
-const resetForm = (state?: Partial<FormContext['resetForm']>) => {
+const veeForm = ref<typeof VeeForm>()
+const resetForm = (...args: any[]) => {
   if (veeForm.value) {
-    veeForm.value.resetForm(state)
+    veeForm.value?.resetForm(...args)
   }
 }
-
-const validate : VeeFormElm['validate'] = (...args : Parameters<VeeFormElm['validate']>) => {
-  return veeForm.value.validate(...args)
+const validate = (...args: any[]) => {
+  if (veeForm.value) {
+    veeForm.value?.validate(...args)
+  }
 }
-
 const setTouched = (...args: any[]) => {
   if (veeForm.value) {
     veeForm.value?.setTouched(...args)
@@ -128,6 +108,25 @@ defineExpose({
 
 <script lang="ts">
 export default {
-  inheritAttrs: !1
+  // inheritAttrs: false
 }
 </script>
+
+<template>
+  <VeeForm
+    ref="veeForm"
+    v-slot="v"
+    :class="$attrs.class"
+    :initial-errors="errors"
+    :initial-values="form"
+    as="div"
+  >
+    <form @submit="v.handleSubmit($event, onSubmit)">
+      <slot v-bind="v" />
+    </form>
+  </VeeForm>
+</template>
+
+<style scoped>
+
+</style>

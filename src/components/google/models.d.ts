@@ -75,5 +75,3 @@ export type MGoogleMapsProps = {
 export type MGoogleMapsSlots = {
   default: () => VNode[];
 }
-
-export {}
