@@ -6,8 +6,8 @@
  * Github: https://github.com/mythpe
  */
 
-export * from './datatable/models'
-export * from './form/models'
-export * from './google/models'
-export * from './grid/models'
-export * from './transition/models'
+import { VNode } from 'vue'
+
+export type MTransitionsSlots = {
+  default: () => VNode[];
+}

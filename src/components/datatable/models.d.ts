@@ -7,8 +7,8 @@
  */
 
 import { AxiosResponse } from 'axios'
-import { QAvatarProps, QAvatarSlots, QInputProps, QPageStickyProps, QTableProps, QTableSlots } from 'quasar'
-import { ComputedRef, Ref, SetupContext, VNode } from 'vue'
+import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
+import { ComputedRef, Ref, SetupContext, UnwrapRef, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
 
 export interface MDtItem extends GenericFormValues {
@@ -16,6 +16,7 @@ export interface MDtItem extends GenericFormValues {
 }
 
 export type MDtItemIndex = number | undefined
+export type MDtExportOptions = 'pdf' | 'excel'
 
 export interface MDatatablePagination {
   /**
@@ -109,8 +110,30 @@ export type MDatatableDialogsOptions = {
   form: Ref<boolean>,
   isUpdate: Ref<boolean>,
   item: Ref<MDtItem | null>,
+  itemForm: MDtItem | null,
   index?: Ref<MDtItemIndex>,
   errors: Record<string | number, string[] | string> | object,
+}
+
+export interface MDtBtnProps extends MBtnProps {
+  show?: boolean;
+  update?: boolean;
+  destroy?: boolean;
+  tooltip?: string;
+  color?: string;
+  icon?: string;
+  listItem?: boolean;
+}
+
+export interface MDtBtnSlots extends MBtnSlots {
+  /**
+   * Use for custom content, instead of relying on 'icon' and 'label' props
+   */
+  default: () => VNode[];
+  /**
+   * Override the default QSpinner when in 'loading' state
+   */
+  loading: () => VNode[];
 }
 
 export interface UseDatatableOptions {
@@ -145,11 +168,11 @@ export type MDatatableScope = {
 
 export type GenericMDtBtn = Record<string, any> & {
   name: string;
-  click?: (item: MDtItem, index: number) => void;
+  click?: (item: UnwrapRef<MDatatableDialogsOptions['item']>, index: UnwrapRef<MDatatableDialogsOptions['index']>) => void;
   multiClick?: (items: MDtItem[]) => void;
-  show?: boolean;
+  showIf?: boolean;
   order?: number;
-  attr?: { icon?: string; textColor?: string; color?: string; [key: (string | symbol | number)]: unknown };
+  attr?: Partial<MDtBtnProps> & Partial<{ icon?: string; textColor?: string; color?: string; }>;
 }
 
 export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-cell-${string}`> {
@@ -196,46 +219,43 @@ export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-c
   }) => VNode[]);
 }
 
-export interface MDatatableProps extends QTableProps {
-  separator?: QTableProps['separator'];
-  noMouse?: boolean;
-  rowsPerPageOptions?: any[];
-  title?: string;
-  search?: boolean;
+export type MDtServiceNameCallbackProp = (() => Record<string, (() => Promise<AxiosResponse>)>)
+export type MDtServiceNameStringProp = string
+export type MDtRequestParamsCallbackProp = (params: ApiServiceParams) => Partial<GenericFormValues>
+export type MDtRequestParamsObjectProp = Partial<GenericFormValues>
+
+export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPageOptions' | 'grid' | 'title'> {
+  defaultItem?: Partial<MDtItem>;
+  contextItems?: GenericMDtBtn[];
+  hideAutoMessage?: boolean;
+  headers: string[] | Partial<QTableProps['columns'][]>;
+  rows?: readonly any[] | undefined;
+  serviceName: MDtServiceNameStringProp | MDtServiceNameCallbackProp;
+  requestParams?: MDtRequestParamsObjectProp | MDtRequestParamsCallbackProp;
   pdf?: boolean;
   excel?: boolean;
   exportToUrl?: boolean;
-  hideSelection?: boolean;
-  singleSelection?: boolean;
-  headers: any[];
-  items?: any[];
-  dense?: boolean;
-  endReach?: boolean;
-  hideAddBtn?: boolean;
-  hideUpdateBtn?: boolean;
-  hideShowBtn?: boolean;
-  hideDestroyBtn?: boolean;
-  defaultItem?: Partial<MDtItem>;
-  noAutoMessage?: boolean;
+  hideSearch?: boolean;
   searchDebounce?: string | number;
   withIndex?: string | string[];
   withStore?: string | string[];
   withShow?: string | string[];
   withUpdate?: string | string[];
-  serviceName: string | (() => Record<string, (() => Promise<AxiosResponse>)>);
+  hideAddBtn?: boolean;
+  hideUpdateBtn?: boolean;
+  hideShowBtn?: boolean;
+  hideDestroyBtn?: boolean;
   createRoute?: string;
   updateRoute?: string;
   showRoute?: string;
-  contextItems?: GenericMDtBtn[];
-  offsetAddBtn?: QPageStickyProps['offset'];
-  positionAddBtn?: QPageStickyProps['position'];
-  filterDialogProps?: Record<any, any>;
-  showDialogProps?: Record<any, any>;
-  formDialogProps?: Record<any, any>;
-  searchInputProps?: QInputProps;
+  noMouse?: boolean;
+  endReach?: boolean;
+  hideSelection?: boolean;
+  singleSelection?: boolean;
+  rowsPerPageOptions?: (string | number)[];
   excludedKeys?: string[] | ((from: any) => any);
-  requestParams?: (params: ApiServiceParams) => Partial<GenericFormValues> | GenericFormValues;
-  fabBtn?: boolean;
+  grid?: boolean;
+  title?: string;
 }
 
 export interface MDtAvatarProps extends QAvatarProps {
@@ -249,25 +269,4 @@ export interface MDtAvatarSlots extends QAvatarSlots {
    * Default slot can be used for captions. See examples
    */
   default: () => VNode[];
-}
-
-export interface MDtBtnProps extends MBtnProps {
-  show?: boolean;
-  update?: boolean;
-  destroy?: boolean;
-  tooltip?: string;
-  color?: string;
-  icon?: string;
-  listItem?: boolean;
-}
-
-export interface MDtBtnSlots extends MBtnSlots {
-  /**
-   * Use for custom content, instead of relying on 'icon' and 'label' props
-   */
-  default: () => VNode[];
-  /**
-   * Override the default QSpinner when in 'loading' state
-   */
-  loading: () => VNode[];
 }

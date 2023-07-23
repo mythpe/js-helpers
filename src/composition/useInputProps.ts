@@ -6,47 +6,17 @@
  * Github: https://github.com/mythpe
  */
 
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useMyth } from '../vue3'
 
-export const useDefaultInputProps = {
-  auto: undefined,
-  col: undefined,
-  xs: undefined,
-  sm: undefined,
-  md: undefined,
-  lg: undefined,
-  xl: undefined,
-  name: undefined,
-  label: undefined,
-  placeholder: undefined,
-  hidePlaceholder: undefined,
-  outlined: undefined,
-  filled: undefined,
-  standout: undefined,
-  borderless: undefined,
-  rules: () => ([]),
-  required: undefined,
-  hideRequired: undefined,
-  email: undefined,
-  stackLabel: undefined,
-  clearable: undefined,
-  dense: undefined,
-  loading: undefined,
-  hideBottomSpace: undefined,
-  errors: () => ({})
-}
 export default function useInputProps (Props: any) {
-  const props = ref(Props)
+  const props = computed(() => Props)
   const { parseAttribute } = useMyth()
 
   const getRules = computed<string | undefined>(() => {
-    let rules = props.value.rules || []
-    if (!rules) {
-      rules = []
-    }
+    let rules = props.value?.rules || []
 
-    if (rules && typeof rules === 'string') {
+    if (typeof rules === 'string') {
       rules = rules.split('|')
     }
 
@@ -63,7 +33,7 @@ export default function useInputProps (Props: any) {
   const getLabel = computed<string | undefined>(() => {
     const k = props.value.label === undefined && props.value.placeholder === undefined ? props.value.name : props.value.label
     if (k) {
-      let label = parseAttribute(k) ?? k
+      let label = parseAttribute(k) || k
       if (label && hasRequired.value && !props.value.hideRequired) {
         label = `${label} *`
       }
@@ -71,7 +41,7 @@ export default function useInputProps (Props: any) {
     }
     return undefined
   })
-  const getPlaceholder = computed<string | undefined>(() => {
+  const getPlaceholder = computed<string | undefined | null>(() => {
     if (props.value.hidePlaceholder) {
       return props.value.placeholder !== undefined ? parseAttribute(props.value.placeholder) : undefined
     }
@@ -83,7 +53,7 @@ export default function useInputProps (Props: any) {
   })
   const inputErrors = computed<string[]>(() => {
     if (!props.value.errors || !props.value.name) return []
-    return props.value.errors[props.value.name] ?? []
+    return props.value.errors[props.value.name] || []
   })
 
   return { getRules, hasRequired, getLabel, getPlaceholder, inputErrors }

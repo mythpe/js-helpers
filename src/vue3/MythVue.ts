@@ -13,17 +13,71 @@ import { MAlerts } from './MAlerts'
 import { useGeolocation } from './MGeolocation'
 import { MHelpers } from './MHelpers'
 import { useTranslate } from './MTranslate'
-import { reactive } from 'vue'
-import { MythConfigApi, MythConfigInterface, MythVueConfig } from './MythVueConfig'
+import { reactive, TransitionProps } from 'vue'
+import { MythConfigApi, MythConfigInterface, MythConfigOptions, MythVueConfig } from './MythVueConfig'
 import { I18n } from 'vue-i18n'
+import { GlobalComponentConstructor } from 'quasar'
+import {
+  MAvatarViewerProps,
+  MAvatarViewerSlots,
+  MAxiosProps,
+  MAxiosSlots,
+  MBtnProps,
+  MBtnSlots,
+  MCardProps,
+  MCardSlots,
+  MCheckboxProps,
+  MCheckboxSlots,
+  MColProps,
+  MColSlots,
+  MColumnProps,
+  MColumnSlots,
+  MContainerProps,
+  MContainerSlots,
+  MDatatableProps,
+  MDatatableSlots,
+  MDateProps,
+  MDateSlots,
+  MDtAvatarProps,
+  MDtAvatarSlots,
+  MDtBtnProps,
+  MDtBtnSlots,
+  MEditorProps,
+  MEditorSlots,
+  MFileProps,
+  MFileSlots,
+  MFormProps,
+  MFormSlots,
+  MGoogleMapsProps,
+  MGoogleMapsSlots,
+  MInputProps,
+  MInputSlots,
+  MPickerProps,
+  MPickerSlots,
+  MRadioProps,
+  MRadioSlots,
+  MRowProps,
+  MRowSlots,
+  MSelectProps,
+  MSelectSlots,
+  MTimeProps,
+  MTimeSlots,
+  MToggleProps,
+  MToggleSlots,
+  MTransitionsSlots,
+  MUploaderProps,
+  MUploaderSlots
+} from '../components'
 
+const vueConfig: MythConfigOptions = {}
 /**
  * Global of plugin inside Vue app
  */
 export const MythVue = {
   str,
   dates,
-  helpers
+  helpers,
+  vueConfig
 }
 export type LegacyMythType = typeof MythVue & typeof MAlerts & typeof MHelpers
 
@@ -38,7 +92,7 @@ export type UseMythType<I extends I18n, A extends MythConfigApi<A>> = LegacyMyth
 /**
  * Helper to use plugin
  */
-export const useMyth = <I extends I18n, A extends MythConfigApi<A>>(): UseMythType<I, A> => {
+export const useMyth = <I extends I18n, A extends MythConfigApi<A>> (): UseMythType<I, A> => {
   const legacy = Object.assign(MythVue, MAlerts, MHelpers)
   return Object.assign<object, UseMythType<I, A>, typeof legacy>({}, {
     geolocation: useGeolocation,
@@ -55,3 +109,40 @@ export const useMyth = <I extends I18n, A extends MythConfigApi<A>>(): UseMythTy
 export const createMyth = (): LegacyMythType => Object.assign({}, MythVue, MAlerts, MHelpers)
 
 export default {}
+
+declare module '@vue/runtime-core' {
+  interface GlobalComponents {
+    MDatatable: GlobalComponentConstructor<MDatatableProps, MDatatableSlots>;
+    MDtAvatar: GlobalComponentConstructor<MDtAvatarProps, MDtAvatarSlots>;
+    MDtBtn: GlobalComponentConstructor<MDtBtnProps, MDtBtnSlots>;
+    MAvatarViewer: GlobalComponentConstructor<MAvatarViewerProps, MAvatarViewerSlots>;
+    MUploader: GlobalComponentConstructor<MUploaderProps, MUploaderSlots>;
+    MAxios: GlobalComponentConstructor<MAxiosProps, MAxiosSlots>;
+    MBtn: GlobalComponentConstructor<MBtnProps, MBtnSlots>;
+    MCheckbox: GlobalComponentConstructor<MCheckboxProps, MCheckboxSlots>;
+    MRadio: GlobalComponentConstructor<MRadioProps, MRadioSlots>;
+    MDate: GlobalComponentConstructor<MDateProps, MDateSlots>;
+    MEditor: GlobalComponentConstructor<MEditorProps, MEditorSlots>;
+    MEmail: GlobalComponentConstructor<MInputProps, MInputSlots>;
+    MFile: GlobalComponentConstructor<MFileProps, MFileSlots>;
+    MForm: GlobalComponentConstructor<MFormProps, MFormSlots>;
+    MInput: GlobalComponentConstructor<MInputProps, MInputSlots>;
+    MMobile: GlobalComponentConstructor<MInputProps, MInputSlots>;
+    MPassword: GlobalComponentConstructor<MInputProps, MInputSlots>;
+    MPicker: GlobalComponentConstructor<MPickerProps, MPickerSlots>;
+    MSelect: GlobalComponentConstructor<MSelectProps, MSelectSlots>;
+    MTime: GlobalComponentConstructor<MTimeProps, MTimeSlots>;
+    MToggle: GlobalComponentConstructor<MToggleProps, MToggleSlots>;
+    MGoogleMaps: GlobalComponentConstructor<MGoogleMapsProps, MGoogleMapsSlots>;
+    MCard: GlobalComponentConstructor<MCardProps, MCardSlots>;
+    MCol: GlobalComponentConstructor<MColProps, MColSlots>;
+    MColumn: GlobalComponentConstructor<MColumnProps, MColumnSlots>;
+    MContainer: GlobalComponentConstructor<MContainerProps, MContainerSlots>;
+    MRow: GlobalComponentConstructor<MRowProps, MRowSlots>;
+    MFadeTransition: GlobalComponentConstructor<TransitionProps, MTransitionsSlots>;
+  }
+
+  interface ComponentCustomProperties {
+    $myth: LegacyMythType
+  }
+}

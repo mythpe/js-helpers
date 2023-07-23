@@ -37,7 +37,7 @@ import {
 import { FormActions } from 'vee-validate'
 import { Ref, VNode } from 'vue'
 import { ColStyleType, MColProps } from '../grid/models'
-import { VueClassProp, VueStyleProp } from 'quasar/dist/types/api'
+import { ValidationRule, VueClassProp, VueStyleProp } from 'quasar/dist/types/api'
 
 export declare type GenericFormValues = Record<any, unknown>;
 
@@ -98,7 +98,7 @@ export interface MBtnSlots extends QBtnSlots {
   loading: () => VNode[];
 }
 
-export interface MInputProps extends MColProps, Omit<QInputProps, 'rules'> {
+export interface MInputProps extends MColProps, Omit<QInputProps, 'rules' | 'modelValue' | 'errors'> {
   auto?: boolean | undefined;
   col?: ColStyleType;
   xs?: ColStyleType;
@@ -106,45 +106,14 @@ export interface MInputProps extends MColProps, Omit<QInputProps, 'rules'> {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  outlined?: boolean | undefined;
-  standout?: boolean | string | undefined;
-  borderless?: boolean | undefined;
-  stackLabel?: boolean | undefined;
-  filled?: boolean | undefined;
-  dense?: boolean | undefined;
-  hideBottomSpace?: boolean | undefined;
-  name?: string | undefined;
-  label?: string | undefined;
   placeholder?: string | undefined;
   hidePlaceholder?: boolean | undefined;
   required?: boolean | undefined;
   hideRequired?: boolean | undefined;
   email?: boolean | undefined;
-  clearable?: boolean | undefined;
-  loading?: boolean | undefined;
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
-  modelValue: any;
-  /**
-   * Debounce amount (in milliseconds) when updating model
-   */
-  debounce?: string | number | undefined;
-  /**
-   * Make field autogrow along with its content (uses a textarea)
-   */
-  autogrow?: boolean | undefined;
-  /**
-   * Class definitions to be attributed to the underlying input tag
-   */
-  inputClass?: VueClassProp | undefined;
-  /**
-   * Style definitions to be attributed to the underlying input tag
-   */
-  inputStyle?: VueStyleProp | undefined;
-  /**
-   * Hide error icon when there is an error
-   */
-  noErrorIcon?: boolean | undefined;
+  modelValue: string | number | null | symbol | undefined;
 }
 
 export interface MInputSlots extends QInputSlots {
@@ -347,8 +316,9 @@ export interface MFormSlots {
 }
 
 export interface MFormProps {
-  form?: Record<string | symbol | number, any>;
-  errors?: Record<string | symbol | number, any>;
+  form?: Record<string, any>;
+  errors?: Record<string, string[]>;
+  formProps?: Record<string, any>;
 }
 
 export type MAvatarViewerItem = Record<string, string | File | any> | any

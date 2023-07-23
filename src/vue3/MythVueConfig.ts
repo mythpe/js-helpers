@@ -12,9 +12,13 @@ import {
   QCheckboxProps,
   QDateProps,
   QDialogOptions,
+  QDialogProps,
   QEditorProps,
   QFileProps,
   QInputProps,
+  QItemProps,
+  QListProps,
+  QMenuProps, QPageStickyProps,
   QRadioProps,
   QSelectProps,
   QTimeProps,
@@ -23,8 +27,9 @@ import {
 } from 'quasar'
 import { reactive, Ref, ref } from 'vue'
 import { I18n } from 'vue-i18n'
+import { GenericMDtBtn, MBtnProps, MDatatableProps, MDtBtnProps } from '../components'
 
-interface MythConfigOptions extends Record<string | number | symbol, any> {
+export interface MythConfigOptions extends Record<string | number | symbol, any> {
   google?: {
     apiKey: string;
     mapsOptions?: Record<string | number | symbol, any>;
@@ -36,8 +41,35 @@ interface MythConfigOptions extends Record<string | number | symbol, any> {
     cancelProps?: Partial<QBtnProps>;
   };
   dt?: {
+    props?: Partial<MDatatableProps>;
+    filterDialogProps?: Partial<QDialogProps>;
+    showDialogProps?: Partial<QDialogProps>;
+    formDialogProps?: Partial<QDialogProps>;
+    fabBtn?: {
+      pageStickyProps?: Partial<QPageStickyProps>;
+      hide?: boolean;
+      offset?: QPageStickyProps['offset'];
+      position?: QPageStickyProps['position'];
+      buttonProps?: Partial<QBtnProps>;
+    },
+    contextmenu?: {
+      menu?: Partial<QMenuProps>;
+      list?: Partial<QListProps>;
+      btn?: Partial<GenericMDtBtn>;
+    },
+    buttons?: {
+      filter?: Partial<MDtBtnProps>;
+      refresh?: Partial<MDtBtnProps>;
+      more?: Partial<MDtBtnProps>;
+      moreMenu?: Partial<QMenuProps>;
+      moreList?: Partial<QListProps>;
+      moreItem?: Partial<QItemProps>;
+    },
+    topSelection?: {
+      btn?: Partial<MDtBtnProps>;
+    },
     searchInputProps?: Partial<QInputProps>;
-    dialogsBtnsProps?: Partial<QBtnProps>;
+    dialogButtonsProps?: Partial<MBtnProps>;
   };
   button?: Partial<QBtnProps>;
   input?: Partial<QInputProps>;
@@ -52,7 +84,7 @@ interface MythConfigOptions extends Record<string | number | symbol, any> {
   uploader?: Partial<QUploaderProps>;
 }
 
-interface MythConfigServices {
+export interface MythConfigServices {
   [key: string]: Record<string, ServiceType> | any;
 }
 
@@ -67,6 +99,7 @@ export type MythConfigInterface<I, A> = {
   api: MythConfigApi<A>;
   options: MythConfigOptions
 }
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const _i18n: Ref<Required<I18n>> = ref<Required<I18n>>()
@@ -84,7 +117,7 @@ export const MythVueConfig = reactive({
   options: _options
 })
 
-export const setupConfig = <I extends I18n, A extends AxiosStatic>({ i18n, api: { baseUrl, axios, services }, options = {} }: MythConfigInterface<I, A>) => {
+export const setupConfig = <I extends I18n, A extends AxiosStatic> ({ i18n, api: { baseUrl, axios, services }, options = {} }: MythConfigInterface<I, A>) => {
   MythVueConfig.i18n = i18n
   MythVueConfig.api.axios = axios
   MythVueConfig.api.baseUrl = baseUrl

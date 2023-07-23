@@ -9,6 +9,8 @@
 import { App, defineAsyncComponent } from 'vue'
 import { createMyth } from './MythVue'
 import { MythConfigInterface, setupConfig } from './MythVueConfig'
+import { I18n } from 'vue-i18n'
+import { AxiosStatic } from 'axios'
 
 // const ini = <I18nT extends MythVue3InstallOptions['i18n'] = any> ({ i18n }: any): { i18n: I18nT } => ({ i18n })
 // const main: { myth: unknown } = { myth: undefined }
@@ -24,7 +26,7 @@ import { MythConfigInterface, setupConfig } from './MythVueConfig'
  * @param api
  * @param options
  */
-export default async function install<T, A> (app: App, { i18n, api, options = {} }: MythConfigInterface<T, A>) {
+export default async function install<T extends I18n, A extends AxiosStatic> (app: App, { i18n, api, options = {} }: MythConfigInterface<T, A>) {
   setupConfig<T, A>({ i18n, api, options })
   app.config.globalProperties.$myth = createMyth()
 
@@ -44,7 +46,6 @@ export default async function install<T, A> (app: App, { i18n, api, options = {}
   app.component('MEmail', defineAsyncComponent(() => import('../components/form/MEmail.vue')))
   app.component('MFile', defineAsyncComponent(() => import('../components/form/MFile.vue')))
   app.component('MForm', defineAsyncComponent(() => import('../components/form/MForm.vue')))
-  app.component('AMForm', defineAsyncComponent(() => import('../components/form/AMForm.vue')))
   app.component('MInput', defineAsyncComponent(() => import('../components/form/MInput.vue')))
   app.component('MMobile', defineAsyncComponent(() => import('../components/form/MMobile.vue')))
   app.component('MPassword', defineAsyncComponent(() => import('../components/form/MPassword.vue')))
@@ -63,4 +64,7 @@ export default async function install<T, A> (app: App, { i18n, api, options = {}
   app.component('MColumn', defineAsyncComponent(() => import('../components/grid/MColumn.vue')))
   app.component('MContainer', defineAsyncComponent(() => import('../components/grid/MContainer.vue')))
   app.component('MRow', defineAsyncComponent(() => import('../components/grid/MRow.vue')))
+
+  // Transition
+  app.component('MFadeTransition', defineAsyncComponent(() => import('../components/transition/MFadeTransition.vue')))
 }

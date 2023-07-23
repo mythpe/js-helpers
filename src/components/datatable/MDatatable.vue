@@ -13,23 +13,23 @@
       context-menu
       max-width="300px"
       touch-position
+      v-bind="$myth.vueConfig.dt?.contextmenu?.menu"
     >
       <q-list
-        v-show="Boolean(dialogs.item)"
-        separator
+        v-bind="$myth.vueConfig.dt?.contextmenu?.list"
       >
         <template
-          v-for="(dtBtn,i) in dtButtons"
+          v-for="(contextmenuItem,i) in contextmenuItems"
           :key="i"
         >
           <MDtBtn
-            v-if="dtBtn.show !== !1"
-            :[dtBtn.name]="!0"
+            v-if="contextmenuItem.showIf !== !1"
             list-item
-            v-bind="dtBtn.attr"
-            @click="dtBtn.click ? dtBtn.click(dialogs.item,dialogs.index) : undefined"
+            v-bind="{...($myth.vueConfig.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
+            @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
+            :[contextmenuItem.name]="!0"
           >
-            {{ $t(dtBtn.name) }}
+            {{ $t(contextmenuItem.name) }}
           </MDtBtn>
         </template>
       </q-list>
@@ -43,10 +43,8 @@
         ref="table"
         v-model:pagination="pagination"
         v-model:selected="selected"
-        :bordered="bordered"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
-        :dense="dense"
         :filter="tableOptions.search"
         :grid="grid === undefined ? $q.screen.lt.md : grid"
         :hide-pagination="endReach"
@@ -54,294 +52,319 @@
         :rows="getRows"
         :rows-per-page-options="getRowsPerPageOptions"
         :selection="hideSelection !== !0 ? (singleSelection ? 'single' : 'multiple') : 'none'"
-        :separator="separator"
         :title="title"
         card-container-class="m--datatable-container"
-        flat
-        square
         table-class="m--datatable-container"
-        v-bind="$attrs"
+        v-bind="$myth.vueConfig.dt?.props"
         @request="fetchDatatableItems"
         @virtual-scroll="endReach ? onScroll : undefined"
         @row-contextmenu="onRowContextmenu"
       >
-        <template #top-right>
-          <MRow
-            :style="`min-width: ${$q.screen.lt.md ? '100%' : parseInt(($q.screen.width/2).toString()) + 'px'}`"
-            class="justify-between"
-          >
-            <MInput
-              v-if="search"
-              v-model="tableOptions.search"
-              :debounce="searchDebounce"
-              autocomplete="none"
-              class="self-start"
-              col="12"
-              dense
-              name="search"
-              outlined
-              placeholder="myth.datatable.searchInput"
-              sm="9"
-              v-bind="{...(defSearchInputProps||{}),...(searchInputProps||{})}"
+        <template #top>
+          <div class="col-all">
+            <!--<q-page-scroller
+              :offset="[0,0]"
+              :scroll-offset="50"
+              position="top-left"
+              style="z-index: 1001"
+              expand
             >
-              <template #prepend>
-                <q-icon
-                  v-if="!tableOptions.search"
+              <div
+                style="min-height: 76px;"
+                class="bg-black"
+              >
+                asfsd
+              </div>
+            </q-page-scroller>-->
+            <div>
+              <div class="row q-col-gutter-sm items-center justify-between">
+                <div
+                  :class="{'col-12':$q.screen.xs, 'col-auto': !$q.screen.xs,'self-start':!0}"
+                  v-show="Boolean(title)"
+                >
+                  <div
+                    class="text-h5"
+                    v-text="title"
+                  />
+                </div>
+                <MInput
+                  v-if="hideSearch !== !1"
+                  v-model="tableOptions.search"
+                  :debounce="searchDebounce"
+                  autocomplete="none"
+                  class="self-start"
+                  col="12"
+                  sm="9"
+                  md="6"
+                  lg="6"
+                  dense
                   name="search"
-                />
-                <q-icon
-                  v-else
-                  class="cursor-pointer"
-                  name="clear"
-                  @click="tableOptions.search = ''"
-                />
-              </template>
-            </MInput>
-            <MCol
-              col="12"
-              sm="auto"
-            >
-              <MBtn
-                v-if="hasFilterDialog"
-                :color="undefined"
-                :label="$q.screen.gt.sm ? $t('filter') : undefined"
-                flat
-                icon="o_filter_alt"
-                @click="openFilterDialog()"
-              >
-                <q-tooltip class="touch-hide">
-                  {{ $t('filter') }}
-                </q-tooltip>
-              </MBtn>
-              <q-btn
-                v-if="hasMenu"
-                dense
-                flat
-                icon="o_more_vert"
-                round
-              >
-                <q-tooltip class="touch-hide">
-                  {{ $t('more') }}
-                </q-tooltip>
-                <q-menu :square="Boolean($attrs.square)">
-                  <q-list
-                    style="min-width: 250px"
-                  >
-                    <template v-if="hasAddBtn">
-                      <q-item
-                        v-close-popup
-                        clickable
-                        @click="openCreateDialog()"
-                      >
-                        <q-item-section thumbnail>
-                          <q-icon
-                            color="primary"
-                            name="add"
-                            right
-                            size="xs"
-                          />
-                        </q-item-section>
-                        <q-item-section>
-                          <span> {{ getFormTitle }}</span>
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                    <template v-if="hasFilterDialog">
-                      <q-item
-                        v-close-popup
-                        clickable
-                        @click="openFilterDialog()"
-                      >
-                        <q-item-section thumbnail>
-                          <q-icon
-                            color="blue"
-                            name="filter_alt"
-                            right
-                            size="xs"
-                          />
-                        </q-item-section>
-                        <q-item-section>
-                          <span>
-                            {{ $t('filter') }}
-                          </span>
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                    <template v-if="pdf">
-                      <q-item
-                        v-close-popup
-                        clickable
-                        @click="exportData('pdf')"
-                      >
-                        <q-item-section thumbnail>
-                          <q-icon
-                            color="red"
-                            name="fa-solid fa-file-pdf"
-                            right
-                            size="xs"
-                          />
-                        </q-item-section>
-                        <q-item-section>
-                          <span>
-                            {{ $t('export_pdf') }}
-                            <q-badge
-                              v-if="tableOptions.selected.length>1"
-                              :label="tableOptions.selected.length"
-                              align="top"
-                              rounded
-                            />
-                          </span>
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                    <template v-if="excel">
-                      <q-item
-                        v-close-popup
-                        clickable
-                        @click="exportData('excel')"
-                      >
-                        <q-item-section thumbnail>
-                          <q-icon
-                            color="green"
-                            name="fa-solid fa-file-excel"
-                            right
-                            size="xs"
-                          />
-                        </q-item-section>
-                        <q-item-section>
-                          <span>
-                            {{ $t('export_excel') }}
-                            <q-badge
-                              v-if="tableOptions.selected.length>1"
-                              :label="tableOptions.selected.length"
-                              align="top"
-                              rounded
-                            />
-                          </span>
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                  </q-list>
-                </q-menu>
-              </q-btn>
-              <q-btn
-                :disabled="tableOptions.loading"
-                dense
-                flat
-                icon="o_refresh"
-                round
-                @click="refreshNoUpdate()"
-              >
-                <q-tooltip
-                  v-if="!tableOptions.loading"
-                  class="touch-hide"
+                  outlined
+                  placeholder="myth.datatable.searchInput"
+                  v-bind="$myth.vueConfig.dt?.searchInputProps"
                 >
-                  {{ $t('refresh') }}
-                </q-tooltip>
-              </q-btn>
-            </MCol>
-            <q-slide-transition>
-              <MCol
-                v-if="Object.values(tableOptions.filter).filter(e => Boolean(e)).length > 0"
-                col="12"
-              >
-                <MRow class="items-center">
-                  <MCol col="auto">
-                    <span class="text-subtitle1 q-mr-sm">{{ $t('myth.datatable.filteredBy') }}</span>
-                  </MCol>
-                  <template
-                    v-for="(filterValue,filterKey) in tableOptions.filter"
-                    :key="`filter-${filterKey}`"
-                  >
-                    <MCol
-                      v-if="Boolean(filterValue)"
-                      col="auto"
-                    >
-                      <q-chip
-                        clickable
-                        color="primary"
-                        icon-remove="clear"
-                        outline
-                        removable
-                        @click="openFilterDialog"
-                        @remove="onRemoveFilter(filterKey)"
-                      >
-                        <span>{{ $t(`attributes.${filterKey}`) }}</span>
-                        <span v-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
-                      </q-chip>
-                    </MCol>
+                  <template #prepend>
+                    <q-icon
+                      v-if="!tableOptions.search"
+                      name="search"
+                    />
+                    <q-icon
+                      v-else
+                      class="cursor-pointer"
+                      name="clear"
+                      @click="tableOptions.search = ''"
+                    />
                   </template>
-                </MRow>
-              </MCol>
-            </q-slide-transition>
-            <MCol
-              v-if="$slots['top-right']"
-              col="12"
-            >
-              <slot
-                name="top-right"
-                v-bind="tableOptions"
-              />
-            </MCol>
-          </MRow>
-        </template>
-
-        <template #top-selection>
-          <div class="row items-center q-gutter-xs order-last order-sm-first">
-            <slot
-              name="tools"
-              v-bind="{dt:datatableItemsScope}"
-            >
-              <MDtBtn
-                v-if="hasUpdateBtn"
-                :disable="!isSingleSelectedItem || tableOptions.loading"
-                :loading="tableOptions.loading"
-                fab-mini
-                flat
-                icon="o_edit"
-                round
-                tooltip="update"
-                @click="openUpdateDialog(tableOptions.selected[0])"
-              />
-              <MDtBtn
-                v-if="hasShowBtn"
-                :disable="!isSingleSelectedItem || tableOptions.loading"
-                :loading="tableOptions.loading"
-                fab-mini
-                flat
-                icon="o_visibility"
-                round
-                tooltip="show"
-                @click="openShowDialog(tableOptions.selected[0])"
-              />
-              <MDtBtn
-                v-if="hasDestroyBtn"
-                :disable="!hasSelectedItem || tableOptions.loading"
-                :loading="tableOptions.loading"
-                fab-mini
-                flat
-                icon="delete_outline"
-                round
-                tooltip="destroy"
-                @click="deleteSelectionItem()"
-              />
-              <template v-for="(contextBtn,i) in contextItems">
-                <MBtn
-                  v-if="contextBtn.show !== !1"
-                  :key="`top-s-${i.toString()}`"
-                  v-bind="contextBtn.attr"
-                  @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
+                </MInput>
+                <MCol
+                  col="12"
+                  sm="auto"
                 >
-                  {{ $t(contextBtn.name) }}
-                </MBtn>
-              </template>
-            </slot>
-            <slot
-              name="selection"
-              v-bind="{dt:datatableItemsScope}"
-            />
+                  <div class="row q-gutter-x-sm">
+                    <MDtBtn
+                      v-if="hasFilterDialog"
+                      icon="o_filter_alt"
+                      @click="openFilterDialog()"
+                      v-bind="$myth.vueConfig.dt?.buttons?.filter"
+                    >
+                      <q-tooltip class="touch-hide">
+                        {{ $t('filter') }}
+                      </q-tooltip>
+                    </MDtBtn>
+                    <MDtBtn
+                      v-if="hasMenu"
+                      icon="o_more_vert"
+                      v-bind="$myth.vueConfig.dt?.buttons?.more"
+                    >
+                      <q-tooltip class="touch-hide">
+                        {{ $t('more') }}
+                      </q-tooltip>
+                      <q-menu
+                        v-bind="$myth.vueConfig.dt?.buttons?.moreMenu"
+                      >
+                        <q-list
+                          style="min-width: 250px"
+                          v-bind="$myth.vueConfig.dt?.buttons?.moreList"
+                        >
+                          <template v-if="hasAddBtn">
+                            <q-item
+                              v-close-popup
+                              clickable
+                              @click="openCreateDialog()"
+                              v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                            >
+                              <q-item-section thumbnail>
+                                <q-icon
+                                  color="primary"
+                                  name="add"
+                                  right
+                                  size="xs"
+                                />
+                              </q-item-section>
+                              <q-item-section>
+                                <span> {{ getFormTitle }}</span>
+                              </q-item-section>
+                            </q-item>
+                          </template>
+                          <template v-if="hasFilterDialog">
+                            <q-item
+                              v-close-popup
+                              clickable
+                              @click="openFilterDialog()"
+                              v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                            >
+                              <q-item-section thumbnail>
+                                <q-icon
+                                  color="blue"
+                                  name="filter_alt"
+                                  right
+                                  size="xs"
+                                />
+                              </q-item-section>
+                              <q-item-section>
+                                <span>
+                                  {{ $t('filter') }}
+                                </span>
+                              </q-item-section>
+                            </q-item>
+                          </template>
+                          <template v-if="pdf">
+                            <q-item
+                              v-close-popup
+                              clickable
+                              @click="exportData('pdf')"
+                              v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                            >
+                              <q-item-section thumbnail>
+                                <q-icon
+                                  color="red"
+                                  name="fa-solid fa-file-pdf"
+                                  right
+                                  size="xs"
+                                />
+                              </q-item-section>
+                              <q-item-section>
+                                <span>
+                                  {{ $t('export_pdf') }}
+                                  <q-badge
+                                    v-if="tableOptions.selected.length>1"
+                                    :label="tableOptions.selected.length"
+                                    align="top"
+                                    rounded
+                                  />
+                                </span>
+                              </q-item-section>
+                            </q-item>
+                          </template>
+                          <template v-if="excel">
+                            <q-item
+                              v-close-popup
+                              clickable
+                              @click="exportData('excel')"
+                              v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                            >
+                              <q-item-section thumbnail>
+                                <q-icon
+                                  color="green"
+                                  name="fa-solid fa-file-excel"
+                                  right
+                                  size="xs"
+                                />
+                              </q-item-section>
+                              <q-item-section>
+                                <span>
+                                  {{ $t('export_excel') }}
+                                  <q-badge
+                                    v-if="tableOptions.selected.length>1"
+                                    :label="tableOptions.selected.length"
+                                    align="top"
+                                    rounded
+                                  />
+                                </span>
+                              </q-item-section>
+                            </q-item>
+                          </template>
+                        </q-list>
+                      </q-menu>
+                    </MDtBtn>
+                    <MDtBtn
+                      :disabled="tableOptions.loading"
+                      icon="o_refresh"
+                      @click="refreshNoUpdate()"
+                      v-bind="$myth.vueConfig.dt?.buttons?.refresh"
+                    >
+                      <q-tooltip
+                        v-if="!tableOptions.loading"
+                        class="touch-hide"
+                      >
+                        {{ $t('refresh') }}
+                      </q-tooltip>
+                    </MDtBtn>
+                  </div>
+                </MCol>
+                <MFadeTransition>
+                  <MCol
+                    v-if="Object.values(tableOptions.filter).filter(e => Boolean(e)).length > 0"
+                    col="12"
+                  >
+                    <MRow class="items-center">
+                      <MCol col="auto">
+                        <span class="text-subtitle1 q-mr-sm">{{ $t('myth.datatable.filteredBy') }}</span>
+                      </MCol>
+                      <template
+                        v-for="(filterValue,filterKey) in tableOptions.filter"
+                        :key="`filter-${filterKey}`"
+                      >
+                        <MCol
+                          v-if="Boolean(filterValue)"
+                          col="auto"
+                        >
+                          <q-chip
+                            clickable
+                            color="primary"
+                            icon-remove="clear"
+                            outline
+                            removable
+                            @click="openFilterDialog"
+                            @remove="onRemoveFilter(filterKey)"
+                            class="q-pr-md"
+                          >
+                            <span>{{ $t(`attributes.${filterKey}`) }}</span>
+                            <span v-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
+                          </q-chip>
+                        </MCol>
+                      </template>
+                    </MRow>
+                  </MCol>
+                </MFadeTransition>
+              </div>
+              <div
+                class="row items-center q-gutter-xs order-last order-sm-first"
+                v-show="hasSelectedItem"
+              >
+                <div class="col-12">
+                  <q-separator />
+                </div>
+                <slot
+                  name="tools"
+                  :dt="datatableItemsScope"
+                >
+                  <MDtBtn
+                    v-if="hasUpdateBtn && isSingleSelectedItem"
+                    :disable="!isSingleSelectedItem || tableOptions.loading"
+                    :loading="tableOptions.loading"
+                    fab-mini
+                    flat
+                    icon="o_edit"
+                    round
+                    tooltip="update"
+                    @click="openUpdateDialog(tableOptions.selected[0])"
+                    v-bind="$myth.vueConfig.dt?.topSelection?.btn"
+                  />
+                  <MDtBtn
+                    v-if="hasShowBtn && isSingleSelectedItem"
+                    :disable="!isSingleSelectedItem || tableOptions.loading"
+                    :loading="tableOptions.loading"
+                    fab-mini
+                    flat
+                    icon="o_visibility"
+                    round
+                    tooltip="show"
+                    @click="openShowDialog(tableOptions.selected[0])"
+                    v-bind="$myth.vueConfig.dt?.topSelection?.btn"
+                  />
+                  <MDtBtn
+                    v-if="hasDestroyBtn && isSingleSelectedItem"
+                    :disable="!hasSelectedItem || tableOptions.loading"
+                    :loading="tableOptions.loading"
+                    fab-mini
+                    flat
+                    icon="delete_outline"
+                    round
+                    tooltip="destroy"
+                    @click="deleteSelectionItem()"
+                    v-bind="$myth.vueConfig.dt?.topSelection?.btn"
+                  />
+                  <template v-for="(contextBtn,i) in contextItems">
+                    <MBtn
+                      v-if="contextBtn.showIf !== !1 && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
+                      :key="`top-s-${i.toString()}`"
+                      v-bind="{...(contextBtn.attr||{}),...($myth.vueConfig.dt?.topSelection?.btn||{})}"
+                      @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
+                    >
+                      {{ $t(contextBtn.name) }}
+                    </MBtn>
+                  </template>
+                </slot>
+                <slot
+                  name="selection"
+                  :dt="datatableItemsScope"
+                />
+              </div>
+            </div>
           </div>
         </template>
+
         <template
           v-if="endReach"
           #bottom
@@ -368,10 +391,18 @@
       </q-table>
       <slot />
     </q-pull-to-refresh>
+
     <!-- Filter dialog -->
     <q-dialog
       v-model="dialogs.filter"
-      v-bind="filterDialogProps"
+      allow-focus-outside
+      full-width
+      no-backdrop-dismiss
+      persistent
+      transition-show="slide-down"
+      transition-hide="slide-up"
+      position="top"
+      v-bind="$myth.vueConfig.dt?.filterDialogProps"
     >
       <q-card class="m--dialog-card">
         <q-card-section>
@@ -398,13 +429,13 @@
           <MBtn
             :label="$t('cancel')"
             color="negative"
-            v-bind="dialogsBtnsProps"
+            v-bind="$myth.vueConfig.dt?.dialogButtonsProps"
             @click="closeFilterDialog"
           />
           <MBtn
             :label="$t('save')"
             color="positive"
-            v-bind="dialogsBtnsProps"
+            v-bind="$myth.vueConfig.dt?.dialogButtonsProps"
             @click="saveFilterDialog"
           />
         </q-card-actions>
@@ -414,9 +445,13 @@
     <!-- Show dialog -->
     <q-dialog
       v-model="dialogs.show"
-      transition-hide="fade"
-      transition-show="fade"
-      v-bind="showDialogProps"
+      allow-focus-outside
+      no-backdrop-dismiss
+      maximized
+      persistent
+      transition-show="slide-down"
+      transition-hide="slide-up"
+      v-bind="$myth.vueConfig.dt?.showDialogProps"
     >
       <q-card class="m--dialog-card">
         <q-card-section>
@@ -439,7 +474,7 @@
           <MBtn
             :label="$t('close')"
             color="negative"
-            v-bind="dialogsBtnsProps"
+            v-bind="$myth.vueConfig.dt?.dialogButtonsProps"
             @click="closeShowDialog"
           />
         </q-card-actions>
@@ -449,82 +484,94 @@
     <!-- Form dialog -->
     <q-dialog
       v-model="dialogs.form"
-      v-bind="formDialogProps"
+      allow-focus-outside
+      no-backdrop-dismiss
+      maximized
+      persistent
+      transition-show="slide-down"
+      transition-hide="slide-up"
+      v-bind="$myth.vueConfig.dt?.formDialogProps"
     >
       <q-card class="m--dialog-card">
-        <q-slide-transition>
-          <m-form
-            ref="dialogForm"
-            v-slot="form"
-            :errors="dialogs.errors"
-            :form="dialogs.item"
-            @submit="defaultSubmitItem"
+        <MForm
+          v-slot="form"
+          :initial-errors="dialogs.errors"
+          :initial-values="dialogs.item"
+          @submit="defaultSubmitItem"
+        >
+          <q-card-section>
+            <q-toolbar>
+              <q-toolbar-title>
+                <q-btn
+                  v-if="$myth.vueConfig.dt?.formDialogProps?.maximized"
+                  :icon="!$q.lang.rtl ?'arrow_back_ios' : 'arrow_forward_ios'"
+                  fab-mini
+                  flat
+                  @click="closeFormDialog"
+                />
+                {{ getFormTitle }}
+              </q-toolbar-title>
+            </q-toolbar>
+          </q-card-section>
+          <q-separator />
+          <q-card-section
+            :style="`max-height: ${$q.screen.height- ($myth.vueConfig.dt?.formDialogProps?.maximized ? 140 : 300)}px`"
+            class="scroll"
           >
-            <q-card-section>
-              <q-toolbar>
-                <q-toolbar-title>
-                  <q-btn
-                    v-if="formDialogProps.maximized"
-                    :icon="!$q.lang.rtl ?'arrow_back_ios' : 'arrow_forward_ios'"
-                    fab-mini
-                    flat
-                    @click="closeFormDialog"
-                  />
-                  {{ getFormTitle }}
-                </q-toolbar-title>
-              </q-toolbar>
-            </q-card-section>
-            <q-separator />
-            <q-card-section
-              :style="`max-height: ${$q.screen.height- (formDialogProps?.maximized ? 140 : 300)}px`"
-              class="scroll"
-            >
-              <slot
-                name="form"
-                v-bind="{item:dialogs.item,index:dialogs.index,form,...datatableItemsScope}"
-              />
-            </q-card-section>
-            <q-separator />
-            <q-card-actions
-              align="between"
-              class="m--datatable-form-actions print-hide"
+            <slot
+              name="form"
+              v-bind="datatableItemsScope"
+              :item-ref="dialogs.item"
+              :item="dialogs.itemForm"
+              :index="dialogs.index"
+              :form="form"
+            />
+          </q-card-section>
+          <q-separator />
+          <q-card-actions
+            align="between"
+            class="m--datatable-form-actions print-hide"
+          >
+            <MBtn
+              :disable="tableOptions.loading"
+              :label="$t('close')"
+              color="negative"
+              v-bind="$myth.vueConfig.dt?.dialogButtonsProps"
+              @click="closeFormDialog"
+            />
+            <slot
+              name="form-actions"
+              v-bind="datatableItemsScope"
+              :item="dialogs.item"
+              :index="dialogs.index"
+              :form="form"
             >
               <MBtn
-                :disable="tableOptions.loading"
-                :label="$t('close')"
-                color="negative"
-                v-bind="dialogsBtnsProps"
-                @click="closeFormDialog"
+                :disable="tableOptions.loading "
+                :label="$t(isUpdateMode ? 'save' : 'create')"
+                :loading="tableOptions.loading"
+                color="positive"
+                type="submit"
+                v-bind="$myth.vueConfig.dt?.dialogButtonsProps"
               />
-              <slot
-                name="form-actions"
-                v-bind="{item:dialogs.item,index:dialogs.index,form,...datatableItemsScope}"
-              >
-                <MBtn
-                  :disable="tableOptions.loading "
-                  :label="$t(isUpdateMode ? 'save' : 'create')"
-                  :loading="tableOptions.loading"
-                  color="positive"
-                  type="submit"
-                  v-bind="dialogsBtnsProps"
-                />
-              </slot>
-            </q-card-actions>
-          </m-form>
-        </q-slide-transition>
+            </slot>
+          </q-card-actions>
+        </MForm>
       </q-card>
     </q-dialog>
 
-    <q-slide-transition>
+    <MFadeTransition>
       <q-page-sticky
-        v-if="hasAddBtn && fabBtn === !0"
-        :offset="offsetAddBtn"
-        :position="positionAddBtn"
+        v-if="hasAddBtn && $myth.vueConfig.dt?.fabBtn?.hide !== !1"
+        :offset="$myth.vueConfig.dt?.fabBtn?.offset|| [25,25]"
+        :position="$myth.vueConfig.dt?.fabBtn?.position || 'bottom-right'"
+        v-bind="$myth.vueConfig.dt?.fabBtn?.pageStickyProps"
       >
         <q-btn
           color="primary"
           fab
           icon="add"
+          v-bind="$myth.vueConfig.dt?.fabBtn?.buttonProps"
           @click="openCreateDialog()"
         >
           <q-tooltip
@@ -535,15 +582,15 @@
           </q-tooltip>
         </q-btn>
       </q-page-sticky>
-    </q-slide-transition>
+    </MFadeTransition>
   </div>
 </template>
 
 <script lang="ts">
 
-import { QDialogProps, QPageStickyProps, QTable, QTableProps, useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
 import { computed, nextTick, onMounted, PropType, reactive, ref, useSlots, watch } from 'vue'
-import { getMythOptions, useMyth } from '../../vue3'
+import { useMyth } from '../../vue3'
 import _ from 'lodash'
 import { useRouter } from 'vue-router'
 import {
@@ -555,9 +602,14 @@ import {
   MDatatableMetaServer,
   MDatatableOptions,
   MDatatablePagination,
+  MDatatableProps,
   MDtApiServices,
+  MDtExportOptions,
   MDtItem,
-  MDtItemIndex
+  MDtItemIndex,
+  MDtRequestParamsCallbackProp,
+  MDtRequestParamsObjectProp,
+  MDtServiceNameCallbackProp
 } from './models'
 import { useI18n } from 'vue-i18n'
 
@@ -578,21 +630,22 @@ export default {
   name: 'MDatatable',
   inheritAttrs: !1,
   props: {
-    ...QTable.props,
     defaultItem: {
-      type: Object as PropType<Partial<(MDtItem & Record<string | number | symbol, unknown>)>>,
+      // type: Object as PropType<Partial<(MDtItem & Record<string | number | symbol, unknown>)>>,
+      type: Object as PropType<Partial<MDatatableProps['defaultItem']>>,
       default: () => undefined
     },
     contextItems: {
-      type: Array as PropType<GenericMDtBtn[]>,
+      type: Array as PropType<MDatatableProps['contextItems']>,
       default: () => undefined
     },
-    noAutoMessage: {
-      type: Boolean,
+    hideAutoMessage: {
+      type: Boolean as PropType<MDatatableProps['hideAutoMessage']>,
       default: () => !1
     },
     headers: {
-      type: Array as PropType<string[] | Partial<QTableProps['columns']>[] | (string & QTableProps['columns'])[]>,
+      type: Array as PropType<MDatatableProps['headers']>,
+      required: !0,
       default: () => ([])
     },
     rows: {
@@ -600,11 +653,11 @@ export default {
       default: () => ([])
     },
     serviceName: {
-      type: [String, Function as PropType<() => Record<string, any>>],
+      type: [String, Function as PropType<MDtServiceNameCallbackProp>],
       default: () => undefined
     },
     requestParams: {
-      type: [Function, Object],
+      type: [Function as PropType<MDtRequestParamsCallbackProp>, Object as PropType<MDtRequestParamsObjectProp>],
       default: () => undefined
     },
     pdf: {
@@ -619,17 +672,13 @@ export default {
       type: Boolean,
       default: () => !0
     },
-    search: {
-      type: Boolean,
-      default: () => !0
+    hideSearch: {
+      type: Boolean as PropType<MDatatableProps['hideSearch']>,
+      default: () => undefined
     },
     searchDebounce: {
       type: [String, Number],
       default: () => 600
-    },
-    searchInputProps: {
-      type: Object as PropType<QTableProps>,
-      default: () => undefined
     },
     withIndex: {
       type: [String, Array],
@@ -645,10 +694,6 @@ export default {
     },
     withUpdate: {
       type: [String, Array],
-      default: () => undefined
-    },
-    grid: {
-      type: Boolean,
       default: () => undefined
     },
     hideAddBtn: {
@@ -695,80 +740,22 @@ export default {
       type: Boolean,
       default: () => !0
     },
-    separator: {
-      type: String as PropType<'horizontal' | 'vertical' | 'cell' | 'none'>,
-      default: 'horizontal'
+    rowsPerPageOptions: {
+      type: Array as PropType<MDatatableProps['rowsPerPageOptions']>,
+      default: () => [50, 250, 500, 0]
     },
-    dense: {
+    excludedKeys: {
+      type: [String, Function],
+      default: () => undefined
+    },
+    // Style
+    grid: {
       type: Boolean,
       default: () => undefined
     },
     title: {
       type: String,
       default: () => undefined
-    },
-    bordered: {
-      type: Boolean,
-      default: () => undefined
-    },
-    rowsPerPageOptions: {
-      type: Array as PropType<(string | number)[]>,
-      default: () => [50, 250, 500, 0]
-    },
-    filterDialogProps: {
-      type: Object as PropType<QDialogProps>,
-      default: () => ({
-        'allow-focus-outside': !0,
-        'full-width': !0,
-        'no-backdrop-dismiss': !0,
-        persistent: !0,
-        position: 'top',
-        transitionShow: 'slide-down',
-        transitionHide: 'slide-up'
-        // maximized: !0
-      })
-    },
-    showDialogProps: {
-      type: Object as PropType<QDialogProps>,
-      default: () => ({
-        'allow-focus-outside': !0,
-        // 'full-width': !0,
-        'no-backdrop-dismiss': !0,
-        persistent: !0,
-        // position: 'top',
-        transitionShow: 'slide-down',
-        transitionHide: 'slide-up',
-        maximized: !0
-      })
-    },
-    formDialogProps: {
-      type: Object as PropType<QDialogProps>,
-      default: () => ({
-        'allow-focus-outside': !0,
-        // 'full-width': !0,
-        'no-backdrop-dismiss': !0,
-        persistent: !0,
-        // position: 'top',
-        transitionShow: 'slide-down',
-        transitionHide: 'slide-up',
-        maximized: !0
-      })
-    },
-    excludedKeys: {
-      type: [String, Function],
-      default: () => undefined
-    },
-    offsetAddBtn: {
-      type: Array as PropType<QPageStickyProps['offset']>,
-      default: () => [25, 25]
-    },
-    positionAddBtn: {
-      type: String as PropType<QPageStickyProps['position']>,
-      default: () => 'bottom-right'
-    },
-    fabBtn: {
-      type: Boolean,
-      default: () => !1
     }
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -808,6 +795,7 @@ export default {
       form: formDialogModel,
       isUpdate: isUpdateDialog,
       item: itemDialog,
+      itemForm: null,
       index: itemIndexDialog,
       errors: errorsDialog
     })
@@ -1024,12 +1012,12 @@ export default {
         }
       })
     }
-    const exportData = (type: 'pdf' | 'excel') => {
-      if ($q.loading.isActive) {
+    const exportData = (type: MDtExportOptions) => {
+      if (loading.value) {
         return
       }
       const ex = async () => {
-        $q.loading.show()
+        loading.value = !0
         const data = {
           ...getDatatableParams({
             pagination: tableOptions.pagination,
@@ -1045,7 +1033,7 @@ export default {
         } catch (e: any) {
           e?._message && myth.alertError(e._message)
         } finally {
-          $q.loading.hide()
+          loading.value = !1
         }
       }
       if (!tableOptions.selected.length) {
@@ -1094,8 +1082,10 @@ export default {
         })
         return
       }
-      if ($q.loading.isActive) return
-      $q.loading.show()
+      if (loading.value) {
+        return
+      }
+      loading.value = !0
       try {
         const params = { requestWith: getRequestWith('withShow') }
         if (!params.requestWith) {
@@ -1115,7 +1105,7 @@ export default {
         const message = e?._message || e?.message
         message && myth.alertError(message)
       } finally {
-        $q.loading.hide()
+        loading.value = !1
       }
     }
     const closeShowDialog = () => {
@@ -1134,8 +1124,10 @@ export default {
         })
         return
       }
-      if ($q.loading.isActive) return
-      $q.loading.show()
+      if (loading.value) {
+        return
+      }
+      loading.value = !0
       try {
         isUpdateMode.value = !0
         const params = { requestWith: getRequestWith('withUpdate') }
@@ -1157,7 +1149,7 @@ export default {
         const message = e?._message || e?.message
         message && myth.alertError(message)
       } finally {
-        $q.loading.hide()
+        loading.value = !1
       }
     }
     const openCreateDialog = (dtItem?: MDtItem) => {
@@ -1209,10 +1201,11 @@ export default {
     }
     const defaultSubmitItem = async (_form: Record<string, any>) => {
       let form = { ..._form }
-      if ($q.loading.isActive) return
+      if (loading.value) {
+        return
+      }
+      loading.value = !0
       const api = getApiServices()
-      // const isUpdate = isUpdateMode
-      $q.loading.show()
       // console.log(form)
       form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withIndex')
       if (!form.requestWith) {
@@ -1257,18 +1250,21 @@ export default {
         _errors && (dialogs.errors = _errors)
         _message && myth.alertError(_message)
       } finally {
-        $q.loading.hide()
+        loading.value = !1
       }
       // console.log('defaultSubmitItem: ', form)
     }
+    const hideAutoMessage = computed(() => props.hideAutoMessage)
     const onDeleteItem = (item: MDtItem, index: number) => {
-      if ($q.loading.isActive || !item?.id) return
+      if (loading.value || !item?.id) {
+        return
+      }
       tableOptions.hasAction = !0
       myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
-        $q.loading.show()
+        loading.value = !0
         try {
           const { _message, _success } = await getApiServices().destroy(item.id)
-          if (!props.noAutoMessage && _success && _message) {
+          if (!hideAutoMessage.value && _success && _message) {
             _message && myth.alertSuccess(_message)
           }
           if (_success) {
@@ -1278,7 +1274,7 @@ export default {
         } catch (e: any) {
           e?._message && myth.alertError(e._message)
         } finally {
-          $q.loading.hide()
+          loading.value = !1
           nextTick(() => {
             selected.value = []
           })
@@ -1294,17 +1290,19 @@ export default {
         const index = getRows.value.findIndex((e: any) => parseInt(e.id) === parseInt(dtItem.id.toString()))
         return onDeleteItem(dtItem, index)
       }
-      if ($q.loading.isActive || !tableOptions.selected.length) return
+      if (loading.value || !tableOptions.selected.length) {
+        return
+      }
 
       tableOptions.hasAction = !0
       myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
-        $q.loading.show()
+        loading.value = !0
         try {
           const {
             _message,
             _success
           } = await getApiServices().destroyAll(tableOptions.selected.map((e: MDtItem) => e.id))
-          if (!props.noAutoMessage && _success && _message) {
+          if (!hideAutoMessage.value && _success && _message) {
             _message && myth.alertSuccess(_message)
           }
           if (_success) {
@@ -1313,7 +1311,7 @@ export default {
         } catch (e: any) {
           e?._message && myth.alertError(e._message)
         } finally {
-          $q.loading.hide()
+          loading.value = !1
           nextTick(() => {
             selected.value = []
           })
@@ -1338,7 +1336,6 @@ export default {
     /**
      * Dom
      */
-    const defSearchInputProps = getMythOptions().dt?.searchInputProps || {}
     const contextmenu = ref(!1)
     const onRowContextmenu = (e: Event, row: MDtItem, index: number) => {
       e.preventDefault()
@@ -1348,28 +1345,27 @@ export default {
         contextmenu.value = !0
       })
     }
-    const dtButtons = computed(() => ([
+    const contextmenuItems = computed<GenericMDtBtn[]>(() => ([
       {
         name: 'update',
         click: (item: MDtItem, index: number) => openUpdateDialog(item, index),
-        show: hasUpdateBtn.value
+        showIf: hasUpdateBtn.value
       },
       {
         name: 'show',
         click: (item: MDtItem, index: number) => openShowDialog(item, index),
-        show: hasShowBtn.value
+        showIf: hasShowBtn.value
       },
       {
         name: 'destroy',
         click: (item: MDtItem, index: number) => onDeleteItem(item, index),
-        show: hasDestroyBtn.value
+        showIf: hasDestroyBtn.value
       },
-      ...(props.contextItems ?? [])
+      ...(props.contextItems || [])
     ].sort((a: GenericMDtBtn, b: GenericMDtBtn) => (a.order ?? 0) - (b.order ?? 0))))
     const endReach = computed<boolean>(() => props.endReach)
     const rowsPerPageOptions = computed<any[]>(() => props.rowsPerPageOptions)
     const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))
-    const dialogsBtnsProps = getMythOptions()?.dt?.dialogsBtnsProps || {}
 
     onMounted(() => {
       refresh()
@@ -1386,6 +1382,11 @@ export default {
     watch(filterForm, () => refreshNoUpdate())
     watch(() => $q.lang.nativeName, () => {
       refreshNoUpdate()
+    })
+
+    // Watch on Form dialog
+    watch(() => dialogs.item, (v, o) => {
+      dialogs.itemForm = v ? { ...v } : v
     })
     const datatableItemsScope = computed(() => ({
       openShowDialog,
@@ -1404,12 +1405,11 @@ export default {
     }))
 
     return {
-      dtButtons,
+      contextmenuItems,
       dialogs,
       contextmenu,
       onRowContextmenu,
       getRowsPerPageOptions,
-      dialogsBtnsProps,
 
       getHeaders,
       hasAddBtn,
@@ -1456,8 +1456,6 @@ export default {
       onRemoveFilter,
       updateFilterOptions,
       logoutDatatable,
-
-      defSearchInputProps,
 
       selected,
       pagination,
@@ -1514,6 +1512,7 @@ export default {
 
   .q-table__top
     align-items: center
+
     .q-table__separator.col
       display: none !important
 
