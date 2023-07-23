@@ -778,6 +778,7 @@ export default {
     const slots = useSlots()
     const router = useRouter()
     const $q = useQuasar()
+    const serviceName = computed(() => props.serviceName)
     const { t } = useI18n({ useScope: 'global' })
     router.beforeResolve(() => {
       if (dialogs.filter) {
@@ -869,24 +870,28 @@ export default {
 
     /* Titles */
     const getShowTitle = computed(() => {
-      if (props.serviceName && typeof props.serviceName !== 'function') {
-        const c = myth.str.pascalCase(myth.str.pluralize(props.serviceName))
+      if (serviceName.value && typeof serviceName.value !== 'function') {
+        const c = myth.str.pascalCase(myth.str.pluralize(serviceName.value.split('/').pop()))
         return t('replace.show_details', { name: t(`choice.${c}`, 1) })
       }
       return t('show_details')
     })
     const getFormTitle = computed(() => {
-      const name = props.serviceName && typeof props.serviceName !== 'function' ? t(`choice.${myth.str.pascalCase(myth.str.pluralize(props.serviceName))}`, 1) : ''
+      const name = serviceName.value && typeof serviceName.value !== 'function' ? t(`choice.${myth.str.pascalCase(myth.str.pluralize(serviceName.value.split('/').pop()))}`, 1) : ''
       return t(`replace.${formMode.value}`, { name })
     })
     /* Titles */
 
     /** Methods */
     const getApiServices = (): MDtApiServices => {
-      if (typeof props.serviceName === 'function') {
-        return props.serviceName()
+      if (typeof serviceName.value === 'function') {
+        return serviceName.value()
       }
-      return myth.api.services[props.serviceName]
+      const c = myth.api.services[serviceName.value]
+      if (!c) {
+        throw Error(`No Service: ${serviceName.value}`)
+      }
+      return c
     }
     const updateSelectedItems = (selected: MDtItem[]) => {
       tableOptions.selected = selected
@@ -980,7 +985,7 @@ export default {
       if (props.endReach && tableOptions.meta.last_page && tableOptions.pagination.page >= tableOptions.meta.last_page) {
         return
       }
-      if (tableOptions.loading || !props.serviceName) return
+      if (tableOptions.loading || !serviceName.value) return
       tableOptions.loading = !0
       nextTick(async () => {
         const params = getDatatableParams(opts)
@@ -1036,7 +1041,7 @@ export default {
         }
         try {
           const response = await getApiServices().export(data)
-          myth.downloadFromResponse(response)
+          myth.helpers.downloadFromResponse(response)
         } catch (e: any) {
           e?._message && myth.alertError(e._message)
         } finally {
@@ -1044,9 +1049,12 @@ export default {
         }
       }
       if (!tableOptions.selected.length) {
-        if (confirm(t('messages.export_all'))) {
+        myth.confirmMessage(t('messages.export_all')).onOk(() => {
           ex()
-        }
+        })
+        // if (confirm(t('messages.export_all'))) {
+        //   ex()
+        // }
       } else {
         ex()
       }

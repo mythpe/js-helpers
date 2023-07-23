@@ -44,6 +44,7 @@ export default async function install<T, A> (app: App, { i18n, api, options = {}
   app.component('MEmail', defineAsyncComponent(() => import('../components/form/MEmail.vue')))
   app.component('MFile', defineAsyncComponent(() => import('../components/form/MFile.vue')))
   app.component('MForm', defineAsyncComponent(() => import('../components/form/MForm.vue')))
+  app.component('AMForm', defineAsyncComponent(() => import('../components/form/AMForm.vue')))
   app.component('MInput', defineAsyncComponent(() => import('../components/form/MInput.vue')))
   app.component('MMobile', defineAsyncComponent(() => import('../components/form/MMobile.vue')))
   app.component('MPassword', defineAsyncComponent(() => import('../components/form/MPassword.vue')))
