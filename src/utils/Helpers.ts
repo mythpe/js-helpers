@@ -173,7 +173,7 @@ export const Helpers = {
    */
   downloadFromResponse (response: any, callback?: ((url: string, response: any) => void)) {
     return new Promise<DownloadFromResponse>((resolve, reject) => {
-      const rejectPromise = (e?:any) => reject(e || { status: !1, code: 'none' })
+      const rejectPromise = (e?: any) => reject(e || { status: !1, code: 'none' })
       const resolvePromise = (response: DownloadFromResponse['response']) => resolve({ status: !0, response })
       try {
         if (!response) {

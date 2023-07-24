@@ -8,9 +8,10 @@
 
 import { App, defineAsyncComponent } from 'vue'
 import { createMyth } from './MythVue'
-import { MythConfigInterface, setupConfig } from './MythVueConfig'
+import { setupConfig } from './MythVueConfig'
 import { I18n } from 'vue-i18n'
 import { AxiosStatic } from 'axios'
+import { MythConfigInterface } from '../types'
 
 // const ini = <I18nT extends MythVue3InstallOptions['i18n'] = any> ({ i18n }: any): { i18n: I18nT } => ({ i18n })
 // const main: { myth: unknown } = { myth: undefined }

@@ -8,9 +8,9 @@
 
 <template>
   <MInput
-    v-bind="$attrs"
     email
     type="email"
+    v-bind="$attrs"
   />
 </template>
 

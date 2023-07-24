@@ -9,7 +9,6 @@
 <script lang="ts" setup>
 
 import { QFile } from 'quasar'
-import { getMythOptions } from '../../vue3'
 import useAcceptProp from '../../composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref } from 'vue'

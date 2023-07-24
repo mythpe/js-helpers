@@ -8,14 +8,14 @@
 
 <template>
   <VeeForm
-    v-bind="$attrs"
     ref="veeForm"
     v-slot="v"
     as=""
+    v-bind="$attrs"
   >
     <form
-      @submit="v.handleSubmit($event, onSubmit)"
       v-bind="formProps"
+      @submit="v.handleSubmit($event, onSubmit)"
     >
       <slot v-bind="v" />
     </form>

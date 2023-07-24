@@ -18,18 +18,18 @@
   >
     <VeeField
       v-slot="fieldScope"
-      v-bind="$attrs"
       v-model="inputValue"
       :name="name"
       :rules="getRules"
+      v-bind="$attrs"
     >
       <q-input
         :error="fieldScope.errors.length > 0"
         :error-message="fieldScope.errorMessage"
-        v-bind="{...($myth.vueConfig.input||{}),...$attrs,...fieldScope.field}"
         :label="getLabel"
-        :placeholder="getPlaceholder"
         :model-value="inputValue"
+        :placeholder="getPlaceholder"
+        v-bind="{...($myth.vueConfig.input||{}),...$attrs,...fieldScope.field}"
       >
         <template
           v-for="(_,slot) in $slots"

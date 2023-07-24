@@ -9,16 +9,16 @@
 <template>
   <div class="m--datatable-component">
     <q-popup-proxy
-      @before-hide="resetDialogs()"
       :v-model="contextmenu"
       context-menu
-      touch-position
       max-width="300px"
+      touch-position
       v-bind="$myth.vueConfig.dt?.contextmenu?.menu"
+      @before-hide="resetDialogs()"
     >
       <q-list
-        v-bind="$myth.vueConfig.dt?.contextmenu?.list"
         v-show="dialogs.item"
+        v-bind="$myth.vueConfig.dt?.contextmenu?.list"
       >
         <template
           v-for="(contextmenuItem,i) in contextmenuItems"
@@ -26,11 +26,11 @@
         >
           <MDtBtn
             v-if="contextmenuItem.showIf !== !1"
+            :[contextmenuItem.name]="!0"
+            :label="$t(contextmenuItem.name)"
             list-item
             v-bind="{...($myth.vueConfig.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
             @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
-            :[contextmenuItem.name]="!0"
-            :label="$t(contextmenuItem.name)"
           />
         </template>
       </q-list>
@@ -46,7 +46,6 @@
         v-model:selected="selected"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
-        :visible-columns="visibleColumnsModel"
         :filter="tableOptions.search"
         :grid="grid === undefined ? $q.screen.lt.md : grid"
         :hide-pagination="endReach"
@@ -55,6 +54,7 @@
         :rows-per-page-options="getRowsPerPageOptions"
         :selection="hideSelection !== !0 ? (singleSelection ? 'single' : 'multiple') : 'none'"
         :title="title"
+        :visible-columns="visibleColumnsModel"
         card-container-class="m--datatable-container"
         table-class="m--datatable-container"
         v-bind="$myth.vueConfig.dt?.props"
@@ -81,8 +81,8 @@
             <div>
               <div class="row q-col-gutter-sm items-center justify-between">
                 <div
-                  :class="{'col-12':$q.screen.xs, 'col-auto': !$q.screen.xs,'self-start':!0}"
                   v-show="Boolean(title)"
+                  :class="{'col-12':$q.screen.xs, 'col-auto': !$q.screen.xs,'self-start':!0}"
                 >
                   <div
                     class="text-h5"
@@ -96,13 +96,13 @@
                   autocomplete="none"
                   class="self-start"
                   col="12"
-                  sm="9"
-                  md="6"
-                  lg="6"
                   dense
+                  lg="6"
+                  md="6"
                   name="search"
                   outlined
                   placeholder="myth.datatable.searchInput"
+                  sm="9"
                   v-bind="$myth.vueConfig.dt?.searchInputProps"
                 >
                   <template #prepend>
@@ -142,8 +142,8 @@
                             <q-item
                               v-close-popup
                               clickable
-                              @click="openCreateDialog()"
                               v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                              @click="openCreateDialog()"
                             >
                               <q-item-section thumbnail>
                                 <q-icon
@@ -162,8 +162,8 @@
                             <q-item
                               v-close-popup
                               clickable
-                              @click="openFilterDialog()"
                               v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                              @click="openFilterDialog()"
                             >
                               <q-item-section thumbnail>
                                 <q-icon
@@ -184,8 +184,8 @@
                             <q-item
                               v-close-popup
                               clickable
-                              @click="exportData('pdf')"
                               v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                              @click="exportData('pdf')"
                             >
                               <q-item-section thumbnail>
                                 <q-icon
@@ -212,8 +212,8 @@
                             <q-item
                               v-close-popup
                               clickable
-                              @click="exportData('excel')"
                               v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                              @click="exportData('excel')"
                             >
                               <q-item-section thumbnail>
                                 <q-icon
@@ -242,8 +242,8 @@
                     <MDtBtn
                       v-if="hasFilterDialog"
                       icon="o_filter_alt"
-                      @click="openFilterDialog()"
                       v-bind="$myth.vueConfig.dt?.buttons?.filter"
+                      @click="openFilterDialog()"
                     >
                       <q-tooltip class="touch-hide">
                         {{ $t('filter') }}
@@ -252,8 +252,8 @@
                     <MDtBtn
                       :disabled="tableOptions.loading"
                       icon="o_refresh"
-                      @click="refreshNoUpdate()"
                       v-bind="$myth.vueConfig.dt?.buttons?.refresh"
+                      @click="refreshNoUpdate()"
                     >
                       <q-tooltip
                         v-if="!tableOptions.loading"
@@ -282,6 +282,7 @@
                           col="auto"
                         >
                           <q-chip
+                            class="q-pr-md"
                             clickable
                             color="primary"
                             icon-remove="clear"
@@ -289,7 +290,6 @@
                             removable
                             @click="openFilterDialog"
                             @remove="onRemoveFilter(filterKey)"
-                            class="q-pr-md"
                           >
                             <span>{{ $t(`attributes.${filterKey}`) }}</span>
                             <span v-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
@@ -302,18 +302,18 @@
               </div>
               <MFadeTransition>
                 <div
-                  class="row items-center"
                   v-if="noManageColumns !== !1"
+                  class="row items-center"
                 >
                   <q-list
                     bordered
                     class="rounded-borders col-12"
                   >
                     <q-expansion-item
+                      :caption="visibleColumnsModel.length.toString()"
+                      :label="$t('myth.datatable.columnsToShow')"
                       expand-separator
                       icon="list"
-                      :label="$t('myth.datatable.columnsToShow')"
-                      :caption="visibleColumnsModel.length.toString()"
                     >
                       <q-card>
                         <q-card-section>
@@ -323,9 +323,9 @@
                           >
                             <q-checkbox
                               v-model="visibleColumnsModel"
-                              :val="h.name"
-                              :label="h.label"
                               :disable="visibleColumnsModel.length < 2 && visibleColumnsModel.indexOf(h.name) !== -1"
+                              :label="h.label"
+                              :val="h.name"
                             />
                           </template>
                         </q-card-section>
@@ -335,15 +335,15 @@
                 </div>
               </MFadeTransition>
               <div
-                :class="`row items-center q-gutter-xs order-last order-sm-first ` + $q.screen.lt.md ? 'fixed-selection' : ''"
                 v-if="hasSelectedItem"
+                :class="`row items-center q-gutter-xs order-last order-sm-first ` + $q.screen.lt.md ? 'fixed-selection' : ''"
               >
                 <div class="col-12">
                   <q-separator />
                 </div>
                 <slot
-                  name="tools"
                   :dt="datatableItemsScope"
+                  name="tools"
                 >
                   <MDtBtn
                     v-if="hasUpdateBtn && isSingleSelectedItem"
@@ -354,8 +354,8 @@
                     icon="o_edit"
                     round
                     tooltip="update"
-                    @click="openUpdateDialog(tableOptions.selected[0])"
                     v-bind="$myth.vueConfig.dt?.topSelection?.btn"
+                    @click="openUpdateDialog(tableOptions.selected[0])"
                   />
                   <MDtBtn
                     v-if="hasShowBtn && isSingleSelectedItem"
@@ -366,8 +366,8 @@
                     icon="o_visibility"
                     round
                     tooltip="show"
-                    @click="openShowDialog(tableOptions.selected[0])"
                     v-bind="$myth.vueConfig.dt?.topSelection?.btn"
+                    @click="openShowDialog(tableOptions.selected[0])"
                   />
                   <MDtBtn
                     v-if="hasDestroyBtn && isSingleSelectedItem"
@@ -378,8 +378,8 @@
                     icon="delete_outline"
                     round
                     tooltip="destroy"
-                    @click="deleteSelectionItem()"
                     v-bind="$myth.vueConfig.dt?.topSelection?.btn"
+                    @click="deleteSelectionItem()"
                   />
                   <template v-for="(contextBtn,i) in contextItems">
                     <MBtn
@@ -393,8 +393,8 @@
                   </template>
                 </slot>
                 <slot
-                  name="selection"
                   :dt="datatableItemsScope"
+                  name="selection"
                 />
               </div>
             </div>
@@ -434,9 +434,9 @@
       full-width
       no-backdrop-dismiss
       persistent
-      transition-show="slide-down"
-      transition-hide="slide-up"
       position="top"
+      transition-hide="slide-up"
+      transition-show="slide-down"
       v-bind="$myth.vueConfig.dt?.filterDialogProps"
     >
       <q-card class="m--dialog-card">
@@ -481,11 +481,11 @@
     <q-dialog
       v-model="dialogs.show"
       allow-focus-outside
-      no-backdrop-dismiss
       maximized
+      no-backdrop-dismiss
       persistent
-      transition-show="slide-down"
       transition-hide="slide-up"
+      transition-show="slide-down"
       v-bind="$myth.vueConfig.dt?.showDialogProps"
     >
       <q-card class="m--dialog-card">
@@ -520,11 +520,11 @@
     <q-dialog
       v-model="dialogs.form"
       allow-focus-outside
-      no-backdrop-dismiss
       maximized
+      no-backdrop-dismiss
       persistent
-      transition-show="slide-down"
       transition-hide="slide-up"
+      transition-show="slide-down"
       v-bind="$myth.vueConfig.dt?.formDialogProps"
     >
       <q-card class="m--dialog-card">
@@ -554,12 +554,12 @@
             class="scroll"
           >
             <slot
+              :form="form"
+              :index="dialogs.index"
+              :item="dialogs.itemForm"
+              :item-ref="dialogs.item"
               name="form"
               v-bind="datatableItemsScope"
-              :item-ref="dialogs.item"
-              :item="dialogs.itemForm"
-              :index="dialogs.index"
-              :form="form"
             />
           </q-card-section>
           <q-separator />
@@ -575,11 +575,11 @@
               @click="closeFormDialog"
             />
             <slot
+              :form="form"
+              :index="dialogs.index"
+              :item="dialogs.item"
               name="form-actions"
               v-bind="datatableItemsScope"
-              :item="dialogs.item"
-              :index="dialogs.index"
-              :form="form"
             >
               <MBtn
                 :disable="tableOptions.loading "

@@ -7,8 +7,8 @@
   -->
 
 <script
-    lang="ts"
-    setup
+  lang="ts"
+  setup
 >
 import { computed } from 'vue'
 import { ColStyleType } from './models'

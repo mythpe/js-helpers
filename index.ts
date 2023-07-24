@@ -9,6 +9,5 @@ import installPlugin from './src/vue3/InstallPlugin'
 
 export * from './src'
 export { installPlugin }
-// import { Dates as dates, Helpers as helpers, Str as str } from './src/utils'
 
 export default {}

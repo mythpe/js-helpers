@@ -14,7 +14,7 @@ import { useGeolocation } from './MGeolocation'
 import { MHelpers } from './MHelpers'
 import { useTranslate } from './MTranslate'
 import { reactive, TransitionProps } from 'vue'
-import { MythConfigApi, MythConfigInterface, MythConfigOptions, MythVueConfig } from './MythVueConfig'
+import { MythVueConfig } from './MythVueConfig'
 import { I18n } from 'vue-i18n'
 import { GlobalComponentConstructor } from 'quasar'
 import {
@@ -68,6 +68,7 @@ import {
   MUploaderProps,
   MUploaderSlots
 } from '../components'
+import { MythConfigApi, MythConfigInterface, MythConfigOptions } from '../types'
 
 const vueConfig: MythConfigOptions = {}
 /**

@@ -15,8 +15,8 @@ export default {
 
 <template>
   <Transition
-    name="myth-transition__fade"
     appear
+    name="myth-transition__fade"
     v-bind="$attrs"
   >
     <slot />

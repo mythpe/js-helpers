@@ -7,12 +7,10 @@
   -->
 
 <script lang="ts" setup>
-import { getMythOptions } from '../../vue3'
 import { Field as VeeField } from 'vee-validate'
 import { defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
-import { MSelectProps } from './models'
 
 interface Props {
   auto?: boolean;

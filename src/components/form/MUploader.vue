@@ -13,7 +13,7 @@ import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
 import useAcceptProp from '../../composition/useAcceptProp'
 import { useMyth, useTranslate } from '../../vue3'
 import { ColStyleType } from '../grid/models'
-import { MUploaderMediaItem, MUploaderProps, MUploaderServiceType, MUploaderXhrInfo } from './models'
+import { MUploaderMediaItem, MUploaderServiceType, MUploaderXhrInfo } from './models'
 
 interface Props {
   auto?: boolean | undefined;

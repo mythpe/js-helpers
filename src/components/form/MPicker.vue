@@ -7,7 +7,6 @@
   -->
 
 <script lang="ts" setup>
-import { getMythOptions } from '../../vue3'
 import { computed, defineEmits } from 'vue'
 import { ColStyleType } from '../grid/models'
 

@@ -31,7 +31,7 @@ const inputValue = computed({
 <template>
   <MPicker
     v-model="inputValue"
-    v-bind="$attrs"
     type="date"
+    v-bind="$attrs"
   />
 </template>
