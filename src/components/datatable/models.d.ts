@@ -123,6 +123,11 @@ export interface MDtBtnProps extends MBtnProps {
   color?: string;
   icon?: string;
   listItem?: boolean;
+  fabMini?: boolean;
+  flat?: boolean;
+  round?: boolean;
+  dense?: boolean;
+  label?: string;
 }
 
 export interface MDtBtnSlots extends MBtnSlots {
@@ -224,7 +229,7 @@ export type MDtServiceNameStringProp = string
 export type MDtRequestParamsCallbackProp = (params: ApiServiceParams) => Partial<GenericFormValues>
 export type MDtRequestParamsObjectProp = Partial<GenericFormValues>
 
-export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPageOptions' | 'grid' | 'title'> {
+export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPageOptions' | 'grid' | 'title'|'visibleColumns'> {
   defaultItem?: Partial<MDtItem>;
   contextItems?: GenericMDtBtn[];
   hideAutoMessage?: boolean;
@@ -256,6 +261,8 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   excludedKeys?: string[] | ((from: any) => any);
   grid?: boolean;
   title?: string;
+  noManageColumns?: boolean;
+  visibleColumns?: string[];
 }
 
 export interface MDtAvatarProps extends QAvatarProps {

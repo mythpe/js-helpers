@@ -30,7 +30,7 @@
         :model-value="modelValue"
         :placeholder="getPlaceholder"
         :val="val"
-        v-bind="{...def,...$attrs,...fieldProps.field}"
+        v-bind="{...($myth.vueConfig.checkbox),...$attrs,...fieldProps.field}"
       >
         <template
           v-for="(_,slot) in $slots"
@@ -53,14 +53,12 @@
 </template>
 
 <script lang="ts" setup>
-import { getMythOptions } from '../../vue3'
 import { Field as VeeField } from 'vee-validate'
 import { defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
-import { MCheckboxProps } from './models'
 
-interface Props extends MCheckboxProps {
+interface Props {
   auto?: boolean | undefined;
   col?: ColStyleType;
   xs?: ColStyleType;
@@ -86,12 +84,7 @@ const props = withDefaults(defineProps<Props>(), {
   val: undefined
 })
 const inputValue = ref(props.modelValue)
-const {
-  getRules,
-  getLabel,
-  getPlaceholder
-} = useInputProps(props)
-const def = getMythOptions()?.button || {}
+const { getRules, getLabel, getPlaceholder } = useInputProps(props)
 
 </script>
 

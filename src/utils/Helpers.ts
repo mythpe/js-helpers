@@ -6,12 +6,17 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance, AxiosRequestConfig } from 'axios'
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import _ from 'lodash'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import qs from 'qs'
 import { ConfigType, ParamsType, StubSchema, UrlType } from '../types'
+
+export type DownloadFromResponse = {
+  status: boolean;
+  response: AxiosResponse;
+}
 
 export const Helpers = {
   appendArray (formData: FormData, values: File | Blob | Record<string, any> | any, name?: string | null | undefined) {
@@ -158,7 +163,7 @@ export const Helpers = {
    * @param name
    * @param args
    */
-  openWindow (url: string | null, name = 'AppWindow', ...args: []) {
+  openWindow (url: string | undefined | null, name = 'AppWindow', ...args: any[]) {
     return url ? window.open(url, name, ...args) : null
   },
   /**
@@ -167,51 +172,59 @@ export const Helpers = {
    * @param callback
    */
   downloadFromResponse (response: any, callback?: ((url: string, response: any) => void)) {
-    try {
-      if (response?.data?.data?.url) {
-        const url = response?.data?.data?.url
-        if (callback) {
-          callback(url, response)
-        } else {
-          window.open(url, 'AppWindow')
+    return new Promise<DownloadFromResponse>((resolve, reject) => {
+      const rejectPromise = (e?:any) => reject(e || { status: !1, code: 'none' })
+      const resolvePromise = (response: DownloadFromResponse['response']) => resolve({ status: !0, response })
+      try {
+        if (!response) {
+          rejectPromise({ code: 'no_response' })
+          return
         }
-        return
-      }
 
-      if (!response) return
-
-      let name = response.headers['content-disposition'] || ''
-      // console.log(response.headers['Content-Disposition'])
-      // name = name.split('filename=').pop().replace(/^\"+|\"+$/g, '');
-      name = name.split('filename=').pop().replace(/^"+|"+$/g, '')
-      // console.log(response)
-      // name = name ||
-      if (!name) {
-        alert('No file name')
-        console.log(response.headers)
-        return
-      }
-
-      const file = new Blob([response.data])
-      // console.log(file.type)
-      const fileURL = window.URL.createObjectURL(file)
-      const fileLink = document.createElement('a')
-      if (!fileLink || !fileURL) return
-
-      fileLink.href = fileURL
-      fileLink.setAttribute('download', name)
-      document.body.appendChild(fileLink)
-      fileLink.click()
-      setTimeout(() => {
-        try {
-          document.body.removeChild(fileLink)
-          URL.revokeObjectURL(fileURL)
-        } catch (e) {
-
+        if (response?.data?.data?.url) {
+          const url = response?.data?.data?.url
+          if (callback) {
+            callback(url, response)
+            resolvePromise(response)
+            return
+          }
+          const a = window.open(url, 'AppWindow')
+          if (!a) {
+            rejectPromise({ code: 'window_blocked' })
+          } else {
+            resolvePromise(response)
+          }
+          return
         }
-      }, 3000)
-    } catch (e) {
-      // console.log(e)
-    }
+
+        const name = (response.headers['content-disposition'] || '').name.split('filename=').pop().replace(/^"+|"+$/g, '')
+        if (!name) {
+          rejectPromise({ code: 'no_file_name' })
+          return
+        }
+        const file = new Blob([response.data])
+        const fileURL = window.URL.createObjectURL(file)
+        const fileLink = document.createElement('a')
+        if (!fileLink || !fileURL) {
+          rejectPromise({ code: 'no_file_url' })
+          return
+        }
+
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', name)
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        resolvePromise(response)
+        setTimeout(() => {
+          try {
+            document.body.removeChild(fileLink)
+            URL.revokeObjectURL(fileURL)
+          } catch (e) {
+          }
+        }, 3000)
+      } catch (e: any) {
+        rejectPromise(e)
+      }
+    })
   }
 }

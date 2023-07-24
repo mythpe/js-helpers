@@ -8,7 +8,14 @@
 
 <template>
   <MInput
+    v-bind="$attrs"
     email
     type="email"
   />
 </template>
+
+<script lang="ts">
+export default {
+  inheritAttrs: !1
+}
+</script>

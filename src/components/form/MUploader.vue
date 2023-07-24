@@ -7,15 +7,15 @@
   -->
 
 <script lang="ts" setup>
-import { QBtnProps, QUploader, useQuasar } from 'quasar'
+import { QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
 import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
 import useAcceptProp from '../../composition/useAcceptProp'
-import { getMythOptions, useMyth, useTranslate } from '../../vue3'
+import { useMyth, useTranslate } from '../../vue3'
 import { ColStyleType } from '../grid/models'
 import { MUploaderMediaItem, MUploaderProps, MUploaderServiceType, MUploaderXhrInfo } from './models'
 
-interface Props extends MUploaderProps {
+interface Props {
   auto?: boolean | undefined;
   col?: ColStyleType;
   xs?: ColStyleType;
@@ -46,8 +46,6 @@ interface Props extends MUploaderProps {
   hideDeleteMedia?: boolean | undefined;
   service: MUploaderServiceType;
   modelId: string | number;
-  downloadBtnProps?: QBtnProps;
-  removeBtnProps?: QBtnProps;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -80,9 +78,7 @@ const props = withDefaults(defineProps<Props>(), {
   hideDeleteMedia: !1,
   errors: undefined,
   service: undefined,
-  modelId: undefined,
-  downloadBtnProps: undefined,
-  removeBtnProps: undefined
+  modelId: undefined
 })
 
 interface Events {
@@ -105,7 +101,7 @@ const $myth = useMyth()
 const { alertError, alertSuccess, confirmMessage } = $myth
 const { t } = useTranslate()
 
-const uploader = ref<QUploader>()
+const uploader = ref<InstanceType<typeof QUploader>>()
 // const formRef = ref<Record<string, any>>(props.modelValue)
 const attachmentsRef = computed({
   get: () => props.modelValue,
@@ -245,7 +241,6 @@ const onClickDeleteAttachment = (file: File | MUploaderMediaItem) => {
  */
 // const getMaxFileSize: number = (parseInt(props.maxFileSize?.toString()) ?? 1) * Math.pow(1024, 2)
 // const getMaxTotalSize: number = (parseInt(props.maxTotalSize?.toString()) ?? 1) * Math.pow(1024, 2)
-const def = getMythOptions()?.uploader || {}
 
 </script>
 
@@ -280,7 +275,7 @@ export default {
       :label="label"
       :readonly="readonly"
       :style="style"
-      v-bind="{...def,...$attrs}"
+      v-bind="{...($myth.vueConfig.uploader?.props || {}),...$attrs}"
       @failed="onError"
       @rejected="onReject"
       @uploaded="onFinishUpload"
@@ -352,7 +347,7 @@ export default {
                   :href="file.url"
                   target="_blank"
                   unelevated
-                  v-bind="downloadBtnProps"
+                  v-bind="$myth.vueConfig.uploader?.downloadBtnProps"
                 >
                   {{ $t('download') }}
                 </MBtn>
@@ -381,7 +376,7 @@ export default {
                 icon="delete"
                 round
                 size="12px"
-                v-bind="removeBtnProps"
+                v-bind="$myth.vueConfig.uploader?.removeBtnProps"
                 @click="onClickDeleteAttachment(file)"
               />
             </q-item-section>

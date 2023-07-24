@@ -7,16 +7,15 @@
   -->
 
 <script lang="ts" setup>
-import { getMythOptions, useMyth } from '../../vue3'
+import { useMyth } from '../../vue3'
 import { Field as VeeField } from 'vee-validate'
 import { computed, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 
 import { ColStyleType } from '../grid/models'
-import { MToggleProps } from './models'
 
-interface Props extends MToggleProps {
-  auto?: boolean | undefined;
+interface Props {
+  auto?: boolean;
   col?: ColStyleType;
   xs?: ColStyleType;
   sm?: ColStyleType;
@@ -73,17 +72,16 @@ const { parseAttribute } = useMyth()
 const inputValue = ref(props.modelValue)
 const topLabel = computed<string | null>(() => parseAttribute(props.label === undefined ? props.name : props.label) ?? null)
 
-const getLabel = computed<string>(() => {
+const getLabel = computed<string | undefined>(() => {
   const v = props.modelValue
   if (v === props.trueValue) {
-    return parseAttribute(props.statusLabels ? 'active' : props.activeLabel)
+    return parseAttribute(props.statusLabels ? 'active' : props.activeLabel) || undefined
   }
   if (v === props.falseValue) {
-    return parseAttribute(props.statusLabels ? 'inactive' : props.inactiveLabel)
+    return parseAttribute(props.statusLabels ? 'inactive' : props.inactiveLabel) || undefined
   }
-  return parseAttribute('none')
+  return parseAttribute('none') || undefined
 })
-const def = getMythOptions()?.toggle || {}
 
 </script>
 
@@ -138,7 +136,7 @@ export default {
             :true-value="trueValue"
             :unchecked-icon="uncheckedIcon"
             keep-color
-            v-bind="{...def,...$attrs,...fieldProps.field}"
+            v-bind="{...($myth.vueConfig.toggle||{}),...$attrs,...fieldProps.field}"
           >
             <template
               v-for="(_,slot) in $slots"

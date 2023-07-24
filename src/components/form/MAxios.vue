@@ -11,18 +11,18 @@
   setup
 >
 
-import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import { computed, defineEmits, defineProps, onBeforeMount, onMounted, ref, watch } from 'vue'
 import { useMyth } from '../../vue3'
 import { MAxiosProps } from './models'
 
-interface Props extends MAxiosProps {
-  modelValue?: any | undefined;
-  requestWith?: string | undefined;
-  options?: any[];
-  service: string | ((config?: AxiosRequestConfig) => Promise<AxiosInstance>);
-  params?: Record<string, any> | undefined;
-  exclude?: string | number | undefined;
+interface Props {
+  name: MAxiosProps['name'];
+  modelValue?: MAxiosProps['modelValue'];
+  requestWith?: MAxiosProps['requestWith'];
+  options?: MAxiosProps['options'];
+  service: MAxiosProps['service'];
+  params?: MAxiosProps['params'];
+  exclude?: MAxiosProps['exclude'];
 }
 
 const props = withDefaults(defineProps<Props>(), {

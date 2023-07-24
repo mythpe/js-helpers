@@ -50,8 +50,6 @@ const isDate = computed(() => props.type === 'date')
 const mask = isDate.value ? '####-##-##' : '##:##'
 const format = isDate.value ? 'YYYY-MM-DD' : 'HH:mm'
 const icon = isDate.value ? 'event' : 'access_time'
-const defTime = getMythOptions()?.time || {}
-const defDate = getMythOptions()?.date || {}
 </script>
 
 <script lang="ts">
@@ -90,7 +88,7 @@ export default {
               v-model="inputValue"
               :mask="format"
               today-btn
-              v-bind="{...defDate,...$attrs}"
+              v-bind="{...($myth.vueConfig.date||{}),...$attrs}"
             >
               <div class="row items-center justify-end">
                 <MBtn
@@ -105,7 +103,7 @@ export default {
               v-model="inputValue"
               :mask="format"
               now-btn
-              v-bind="{...defTime,...$attrs}"
+              v-bind="{...($myth.vueConfig.time||{}),...$attrs}"
             >
               <div class="row items-center justify-end">
                 <MBtn

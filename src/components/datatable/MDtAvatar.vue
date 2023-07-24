@@ -11,9 +11,7 @@
   setup
 >
 
-import { MDtAvatarProps } from './models'
-
-interface Props extends MDtAvatarProps {
+interface Props {
   width?: string | undefined
   src?: string | undefined
   href?: string | undefined;
@@ -44,7 +42,7 @@ export default {
       :width="width"
       class="cursor-pointer"
       fit="contain"
-      @click="$myth.openWindow(Boolean(href) ? href: src)"
+      @click="$myth.helpers.openWindow(Boolean(href) ? href: src)"
     />
   </q-avatar>
 </template>

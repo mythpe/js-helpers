@@ -37,7 +37,6 @@ import {
 import { FormActions } from 'vee-validate'
 import { Ref, VNode } from 'vue'
 import { ColStyleType, MColProps } from '../grid/models'
-import { ValidationRule, VueClassProp, VueStyleProp } from 'quasar/dist/types/api'
 
 export declare type GenericFormValues = Record<any, unknown>;
 
@@ -98,14 +97,7 @@ export interface MBtnSlots extends QBtnSlots {
   loading: () => VNode[];
 }
 
-export interface MInputProps extends MColProps, Omit<QInputProps, 'rules' | 'modelValue' | 'errors'> {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
+export interface MInputProps extends MColProps, Omit<QInputProps, 'rules' | 'modelValue' | 'errors'>, MColProps {
   placeholder?: string | undefined;
   hidePlaceholder?: boolean | undefined;
   required?: boolean | undefined;
@@ -199,13 +191,6 @@ export interface MTimeSlots extends QTimeSlots {
 }
 
 export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
   behavior?: 'default' | 'menu' | 'dialog' | undefined;
   borderless?: boolean | undefined;
   dense?: boolean | undefined;
@@ -243,10 +228,8 @@ export interface MAxiosProps extends Omit<MSelectProps, 'options' | 'modelValue'
   modelValue?: any | undefined;
   requestWith?: string | undefined;
   options?: any[];
-  service: string | ((config?: AxiosRequestConfig) => Promise<AxiosInstance>);
-
+  service: ((config?: AxiosRequestConfig) => Promise<AxiosInstance>) | string;
   params?: Record<string, any> | undefined;
-
   exclude?: string | number | undefined;
 }
 
@@ -323,14 +306,7 @@ export interface MFormProps {
 
 export type MAvatarViewerItem = Record<string, string | File | any> | any
 
-export interface MAvatarViewerProps extends QAvatarProps {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
+export interface MAvatarViewerProps extends QAvatarProps, MColProps {
   /**
    * Model of the component; Must be FileList or Array if using 'multiple' prop; Either use this property (along with a listener for 'update:modelValue' event) OR use v-model directive
    */
@@ -338,11 +314,11 @@ export interface MAvatarViewerProps extends QAvatarProps {
   /**
    * Comma separated list of unique file type specifiers. Maps to 'accept' attribute of native input type=file element
    */
-  accept?: string | undefined;
-  images?: boolean | undefined;
-  video?: boolean | undefined;
-  pdf?: boolean | undefined;
-  excel?: boolean | undefined;
+  accept?: string;
+  images?: boolean;
+  video?: boolean;
+  pdf?: boolean;
+  excel?: boolean;
   /**
    * The value that will be used to modify the image
    */
@@ -350,11 +326,11 @@ export interface MAvatarViewerProps extends QAvatarProps {
   /**
    * List of errors contains prop name { [name]: ['error1','error2']}
    */
-  errors: Record<string, any[]> | undefined;
+  errors?: Record<string, any[]>;
   /**
    * Size in CSS units, including unit name or standard size name (xs|sm|md|lg|xl)
    */
-  size?: string | undefined;
+  size?: string;
   /**
    * The name of the file for the image used and the field
    */
@@ -366,7 +342,7 @@ export interface MAvatarViewerProps extends QAvatarProps {
   /**
    * Show text if no image
    */
-  avatarText?: string | undefined;
+  avatarText?: string;
   /**
    * How the image will fit into the container; Equivalent of the object-fit prop; Can be coordinated with 'position' prop
    * Default value: cover
@@ -375,15 +351,15 @@ export interface MAvatarViewerProps extends QAvatarProps {
   /**
    * Can clear the input & not required
    */
-  clearable?: boolean | undefined;
+  clearable?: boolean;
   /**
    * The label that will appear above the image
    */
-  label?: string | undefined;
+  label?: string;
   /**
    * Applies a small standard border-radius for a squared shape of the component
    */
-  rounded?: boolean | undefined;
+  rounded?: boolean;
 }
 
 export interface MAvatarViewerSlots extends QAvatarSlots {
@@ -417,81 +393,68 @@ export type MUploaderServiceType = string | {
   deleteAttachment: (media: MUploaderMediaItem) => Promise<any>;
 }
 
-export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'headers' | 'url'> {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
+export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'headers' | 'url'>, MColProps {
   /**
    * Put component in disabled mode
    */
-  disable?: boolean | undefined;
+  disable?: boolean;
   /**
    * Put component in readonly mode
    */
-  readonly?: boolean | undefined;
+  readonly?: boolean;
   /**
    * Comma separated list of unique file type specifiers. Maps to 'accept' attribute of native input type=file element
    */
-  accept?: string | undefined;
+  accept?: string;
   /** Support for uploading images */
-  images?: boolean | undefined;
+  images?: boolean;
   /** Support for uploading videos  */
-  video?: boolean | undefined;
+  video?: boolean;
   /** Support for uploading pdf  */
-  pdf?: boolean | undefined;
+  pdf?: boolean;
   /** Support for uploading excel  */
-  excel?: boolean | undefined;
+  excel?: boolean;
   /** Uploader style */
   style?: string;
   /**
    * Upload files immediately when added
    */
-  autoUpload?: boolean | undefined;
-  /** Maximum size of individual file in megabytes */
-  // maxFileSize?: number | string | undefined;
-  /** Maximum size of all files combined in megabytes */
-  // maxTotalSize?: number | string | undefined;
-  /** Maximum number of files to contain */
-  // maxFiles?: number | string | undefined;
+  autoUpload?: boolean;
   /**
    * Field name for each file upload; This goes into the following header: 'Content-Disposition: form-data; name="__HERE__"; filename="somefile.png"; If using a function then for best performance, reference it from your scope and do not define it inline
    * Default value: (file) => file.name
    * @param files The current file being processed
    * @returns Field name for the current file upload
    */
-  fieldName?: string | ((files: File) => string) | undefined;
+  fieldName?: string | ((files: File) => string);
   /**
    * Collection send to API
    */
-  collection?: string | undefined;
+  collection?: string;
   /**
    * Field Attachment Type
    */
-  attachmentType?: string | undefined;
+  attachmentType?: string;
   /**
    * Object with additional fields definitions (used by Form to be uploaded);
    */
-  formFields?: Record<string, any> | undefined;
+  formFields?: Record<string, any>;
   /**
    * Extra headers
    */
-  headers?: Record<string, any> | undefined;
+  headers?: Record<string, any>;
   /**
    * Label for the uploader
    */
-  label?: string | undefined;
+  label?: string;
   /** The Attachments list */
   modelValue: MUploaderMediaItem[];
   /** Input errors */
-  errors?: string[] | undefined;
+  errors?: string[];
   /**
    *  Hide delete media items from uploader, no delete media For API
    */
-  hideDeleteMedia?: boolean | undefined;
+  hideDeleteMedia?: boolean;
   /**
    * User APi service for upload & delete
    */
@@ -500,7 +463,6 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
    * The ID of model will use in attachments
    */
   modelId: string | number;
-  downloadBtnProps?: QBtnProps;
   removeBtnProps?: QBtnProps;
 }
 
@@ -513,22 +475,15 @@ export interface MUploaderSlots extends QUploaderSlots {
 
 export type MUploaderXhrInfo = { files: readonly any[]; xhr: any; }
 
-export interface MEditorProps extends QEditorProps {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
+export interface MEditorProps extends QEditorProps, MColProps {
   modelValue: string;
-  minHeight?: string | undefined;
-  name?: string | undefined;
-  label?: string | undefined;
-  errors?: Record<string, string[]> | undefined;
-  dense?: boolean | undefined;
-  toolbar?: readonly any[] | undefined;
-  fonts?: any | undefined;
+  minHeight?: string;
+  name?: string;
+  label?: string;
+  errors?: Record<string, string[]>;
+  dense?: boolean;
+  toolbar?: readonly any[];
+  fonts?: any;
 }
 
 export interface MEditorSlots extends QEditorSlots {
@@ -538,17 +493,10 @@ export interface MEditorSlots extends QEditorSlots {
   default: () => VNode[];
 }
 
-export interface MRadioProps extends QRadioProps {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
+export interface MRadioProps extends QRadioProps, MColProps {
   name: string;
   modelValue: any;
-  val: any | undefined;
+  val: any;
 }
 
 export interface MRadioSlots extends QRadioSlots {

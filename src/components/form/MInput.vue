@@ -26,11 +26,9 @@
       <q-input
         :error="fieldScope.errors.length > 0"
         :error-message="fieldScope.errorMessage"
-        v-bind="{...def,...$attrs,...fieldScope.field}"
-        :clear-icon="clearIcon"
+        v-bind="{...($myth.vueConfig.input||{}),...$attrs,...fieldScope.field}"
         :label="getLabel"
         :placeholder="getPlaceholder"
-        :type="type"
         :model-value="inputValue"
       >
         <template
@@ -59,32 +57,31 @@
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
 
-import { computed, defineProps, onMounted, ref } from 'vue'
+import { computed, defineProps } from 'vue'
 import useInputProps from '../../composition/useInputProps'
-import { ColStyleType } from '../grid/models'
 import { MInputProps } from './models'
-import { VueClassProp, VueStyleProp } from 'quasar/dist/types/api'
-import { getMythOptions } from '../../vue3'
 
-interface Props extends MInputProps {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  placeholder?: string | undefined;
-  hidePlaceholder?: boolean | undefined;
-  required?: boolean | undefined;
-  hideRequired?: boolean | undefined;
-  email?: boolean | undefined;
-  rules?: string | string[] | undefined;
-  errors?: Record<string, string[]>;
-  modelValue: string | number | null | symbol | undefined;
+interface Props {
+  name: MInputProps['name'];
+  auto?: MInputProps['auto'];
+  col?: MInputProps['col'];
+  xs?: MInputProps['xs'];
+  sm?: MInputProps['sm'];
+  md?: MInputProps['md'];
+  lg?: MInputProps['lg'];
+  xl?: MInputProps['xl'];
+  placeholder?: MInputProps['placeholder'];
+  hidePlaceholder?: MInputProps['hidePlaceholder'];
+  required?: MInputProps['required'];
+  hideRequired?: MInputProps['hideRequired'];
+  email?: MInputProps['email'];
+  rules?: MInputProps['rules'];
+  errors?: MInputProps['errors'];
+  modelValue: MInputProps['modelValue'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  name: undefined,
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -111,15 +108,7 @@ const inputValue = computed({
   get: () => props.modelValue,
   set: value => emit('update:modelValue', value)
 })
-// const inputValue = ref(props.modelValue)
-
 const { getRules, getLabel, getPlaceholder } = useInputProps(props)
-
-const ready = ref(!1)
-const def = getMythOptions()?.input || {}
-onMounted(() => {
-  ready.value = !0
-})
 </script>
 
 <script lang="ts">

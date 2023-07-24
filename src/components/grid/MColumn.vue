@@ -8,13 +8,17 @@
 
 <script
   lang="ts"
-  setup
 >
-
+export default {
+  inheritAttrs: !1
+}
 </script>
 
 <template>
-  <div class="m--column column">
+  <div
+    class="m--column column"
+    v-bind="$attrs"
+  >
     <slot />
   </div>
 </template>

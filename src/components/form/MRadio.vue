@@ -11,11 +11,9 @@ import { Field as VeeField } from 'vee-validate'
 import { defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
-import { MCheckboxProps } from './models'
-import { getMythOptions } from 'src/vue3'
 
-interface Props extends MCheckboxProps {
-  auto?: boolean | undefined;
+interface Props {
+  auto?: boolean;
   col?: ColStyleType;
   xs?: ColStyleType;
   sm?: ColStyleType;
@@ -41,7 +39,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const inputValue = ref(props.modelValue)
 const { getRules, getLabel, getPlaceholder } = useInputProps(props)
-const def = getMythOptions().radio || {}
 
 </script>
 
@@ -75,7 +72,7 @@ export default {
         :model-value="modelValue"
         :placeholder="getPlaceholder"
         :val="val"
-        v-bind="{...def,...$attrs,...fieldProps.field}"
+        v-bind="{...($myth.vueConfig.radio||{}),...$attrs,...fieldProps.field}"
       >
         <template
           v-for="(_,slot) in $slots"

@@ -9,5 +9,12 @@
 <template>
   <MInput
     mobile
+    v-bind="$attrs"
   />
 </template>
+
+<script lang="ts">
+export default {
+  inheritAttrs: !1
+}
+</script>

@@ -8,15 +8,17 @@
 
 <template>
   <div class="m--datatable-component">
-    <q-menu
-      v-model="contextmenu"
+    <q-popup-proxy
+      @before-hide="resetDialogs()"
+      :v-model="contextmenu"
       context-menu
-      max-width="300px"
       touch-position
+      max-width="300px"
       v-bind="$myth.vueConfig.dt?.contextmenu?.menu"
     >
       <q-list
         v-bind="$myth.vueConfig.dt?.contextmenu?.list"
+        v-show="dialogs.item"
       >
         <template
           v-for="(contextmenuItem,i) in contextmenuItems"
@@ -28,12 +30,11 @@
             v-bind="{...($myth.vueConfig.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
             @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
             :[contextmenuItem.name]="!0"
-          >
-            {{ $t(contextmenuItem.name) }}
-          </MDtBtn>
+            :label="$t(contextmenuItem.name)"
+          />
         </template>
       </q-list>
-    </q-menu>
+    </q-popup-proxy>
     <q-pull-to-refresh
       :no-mouse="noMouse"
       color="primary"
@@ -45,6 +46,7 @@
         v-model:selected="selected"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
+        :visible-columns="visibleColumnsModel"
         :filter="tableOptions.search"
         :grid="grid === undefined ? $q.screen.lt.md : grid"
         :hide-pagination="endReach"
@@ -122,16 +124,6 @@
                 >
                   <div class="row q-gutter-x-sm">
                     <MDtBtn
-                      v-if="hasFilterDialog"
-                      icon="o_filter_alt"
-                      @click="openFilterDialog()"
-                      v-bind="$myth.vueConfig.dt?.buttons?.filter"
-                    >
-                      <q-tooltip class="touch-hide">
-                        {{ $t('filter') }}
-                      </q-tooltip>
-                    </MDtBtn>
-                    <MDtBtn
                       v-if="hasMenu"
                       icon="o_more_vert"
                       v-bind="$myth.vueConfig.dt?.buttons?.more"
@@ -207,7 +199,7 @@
                                 <span>
                                   {{ $t('export_pdf') }}
                                   <q-badge
-                                    v-if="tableOptions.selected.length>1"
+                                    v-if="tableOptions.selected.length > 1"
                                     :label="tableOptions.selected.length"
                                     align="top"
                                     rounded
@@ -246,6 +238,16 @@
                           </template>
                         </q-list>
                       </q-menu>
+                    </MDtBtn>
+                    <MDtBtn
+                      v-if="hasFilterDialog"
+                      icon="o_filter_alt"
+                      @click="openFilterDialog()"
+                      v-bind="$myth.vueConfig.dt?.buttons?.filter"
+                    >
+                      <q-tooltip class="touch-hide">
+                        {{ $t('filter') }}
+                      </q-tooltip>
                     </MDtBtn>
                     <MDtBtn
                       :disabled="tableOptions.loading"
@@ -298,9 +300,43 @@
                   </MCol>
                 </MFadeTransition>
               </div>
+              <MFadeTransition>
+                <div
+                  class="row items-center"
+                  v-if="noManageColumns !== !1"
+                >
+                  <q-list
+                    bordered
+                    class="rounded-borders col-12"
+                  >
+                    <q-expansion-item
+                      expand-separator
+                      icon="list"
+                      :label="$t('myth.datatable.columnsToShow')"
+                      :caption="visibleColumnsModel.length.toString()"
+                    >
+                      <q-card>
+                        <q-card-section>
+                          <template
+                            v-for="h in getHeaders"
+                            :key="h.name"
+                          >
+                            <q-checkbox
+                              v-model="visibleColumnsModel"
+                              :val="h.name"
+                              :label="h.label"
+                              :disable="visibleColumnsModel.length < 2 && visibleColumnsModel.indexOf(h.name) !== -1"
+                            />
+                          </template>
+                        </q-card-section>
+                      </q-card>
+                    </q-expansion-item>
+                  </q-list>
+                </div>
+              </MFadeTransition>
               <div
-                class="row items-center q-gutter-xs order-last order-sm-first"
-                v-show="hasSelectedItem"
+                :class="`row items-center q-gutter-xs order-last order-sm-first ` + $q.screen.lt.md ? 'fixed-selection' : ''"
+                v-if="hasSelectedItem"
               >
                 <div class="col-12">
                   <q-separator />
@@ -364,7 +400,6 @@
             </div>
           </div>
         </template>
-
         <template
           v-if="endReach"
           #bottom
@@ -648,6 +683,11 @@ export default {
       required: !0,
       default: () => ([])
     },
+    visibleColumns: {
+      type: Array as PropType<MDatatableProps['visibleColumns']>,
+      required: !1,
+      default: () => undefined
+    },
     rows: {
       type: Array,
       default: () => ([])
@@ -662,11 +702,11 @@ export default {
     },
     pdf: {
       type: Boolean,
-      default: () => !0
+      default: () => undefined
     },
     excel: {
       type: Boolean,
-      default: () => !0
+      default: () => undefined
     },
     exportToUrl: {
       type: Boolean,
@@ -756,6 +796,10 @@ export default {
     title: {
       type: String,
       default: () => undefined
+    },
+    noManageColumns: {
+      type: Boolean,
+      default: () => undefined
     }
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -767,6 +811,7 @@ export default {
     const $q = useQuasar()
     const serviceName = computed(() => props.serviceName)
     const { t } = useI18n({ useScope: 'global' })
+    // Prevent user from back
     router.beforeResolve(() => {
       if (dialogs.filter) {
         closeFilterDialog()
@@ -778,7 +823,6 @@ export default {
         closeFormDialog()
         return !1
       }
-      // console.log(dialogs.filter, dialogs.show, dialogs.form)
       return !hasAction.value
     })
     const getRows = ref<MDtItem[]>([])
@@ -799,10 +843,18 @@ export default {
       index: itemIndexDialog,
       errors: errorsDialog
     })
+    const resetDialogs = () => {
+      dialogs.filter = !1
+      dialogs.show = !1
+      dialogs.form = !1
+      dialogs.isUpdate = !1
+      dialogs.item = null
+      dialogs.itemForm = null
+      dialogs.index = undefined
+      dialogs.errors = {}
+    }
 
-    /**
-     * Table
-     */
+    /** Table */
     const selected = ref<MDtItem[]>([])
     const meta = ref<MDatatableMetaServer>({ ...initMetaServer })
     const pagination = ref<MDatatablePagination>({ ...initPaginationOptions })
@@ -811,7 +863,6 @@ export default {
     const filterForm = ref<MDatatableFilterForm>({})
     const tempFilterForm = ref<MDatatableFilterForm>({})
     const hasAction = ref<boolean>(!1)
-
     const tableOptions = reactive<MDatatableOptions>({
       search,
       loading,
@@ -822,11 +873,12 @@ export default {
       selected,
       hasAction
     })
+    /** Table */
 
     /** --- */
     const headersProp = computed(() => props.headers)
-    // const getHeaders = computed<QTableProps['columns'][]>(() => myth.parseHeaders(headersProp.value) ?? [])
     const getHeaders = computed<any[]>(() => myth.parseHeaders(headersProp.value) ?? [])
+    const visibleColumnsModel = ref(myth.parseHeaders(props.visibleColumns || headersProp.value).map(e => e.name))
 
     const hasAddBtn = computed<boolean>(() => {
       if (props.hideAddBtn) {
@@ -943,7 +995,6 @@ export default {
       }
       return v.join(',') ?? null
     }
-
     const getDatatableParams = ({ pagination, filter }: FetchRowsArgs = {}): ApiServiceParams => {
       let params: ApiServiceParams = {
         filter: tableOptions.filter,
@@ -1025,13 +1076,21 @@ export default {
           }),
           indexType: type,
           toUrl: props.exportToUrl,
-          headerItems: getHeaders.value.filter((e) => e?.field !== 'control')
+          headerItems: getHeaders.value.filter(e => e?.field !== 'control' && visibleColumnsModel.value.indexOf(e.name) !== -1)
         }
         try {
           const response = await getApiServices().export(data)
-          myth.helpers.downloadFromResponse(response)
+          await myth.helpers.downloadFromResponse(response)
         } catch (e: any) {
-          e?._message && myth.alertError(e._message)
+          if (e?.code === 'window_blocked') {
+            myth.alertError(t('messages.window_blocked'))
+          } else if (e?._message) {
+            myth.alertError(e._message)
+          } else if (e?.message) {
+            myth.alertError(e.message)
+          } else {
+            myth.alertError(t('messages.error'))
+          }
         } finally {
           loading.value = !1
         }
@@ -1047,7 +1106,9 @@ export default {
         ex()
       }
     }
+    /** Methods */
 
+    /** Filter Dialog */
     const openFilterDialog = () => {
       dialogs.filter = !0
       tempFilterForm.value = { ...tableOptions.filter }
@@ -1073,6 +1134,8 @@ export default {
         ...data
       }
     }
+    /** Filter Dialog */
+
     /** Show Dialog */
     const openShowDialog = async (item: MDtItem, index?: MDtItemIndex) => {
       if (props.showRoute) {
@@ -1330,20 +1393,17 @@ export default {
       //   this.$router.replace({ name })
       // }
     }
-
     /** --- */
 
     /**
      * Dom
      */
     const contextmenu = ref(!1)
-    const onRowContextmenu = (e: Event, row: MDtItem, index: number) => {
-      e.preventDefault()
+    const onRowContextmenu = (e: MouseEvent, row: MDtItem, index: number) => {
+      // e.preventDefault()
       dialogs.item = row
       dialogs.index = index
-      nextTick(() => {
-        contextmenu.value = !0
-      })
+      // contextmenu.value = !0
     }
     const contextmenuItems = computed<GenericMDtBtn[]>(() => ([
       {
@@ -1371,6 +1431,9 @@ export default {
       refresh()
     })
 
+    watch(contextmenu, v => {
+      console.log(v)
+    })
     watch(loading, v => {
       if (v) {
         $q.loading.show()
@@ -1385,7 +1448,8 @@ export default {
     })
 
     // Watch on Form dialog
-    watch(() => dialogs.item, (v, o) => {
+    watch(() => dialogs.item, (v) => {
+      // console.log(dialogs.item)
       dialogs.itemForm = v ? { ...v } : v
     })
     const datatableItemsScope = computed(() => ({
@@ -1406,10 +1470,11 @@ export default {
 
     return {
       contextmenuItems,
-      dialogs,
       contextmenu,
       onRowContextmenu,
       getRowsPerPageOptions,
+      dialogs,
+      resetDialogs,
 
       getHeaders,
       hasAddBtn,
@@ -1460,7 +1525,8 @@ export default {
       selected,
       pagination,
       tableOptions,
-      getRows
+      getRows,
+      visibleColumnsModel
     }
   }
 }

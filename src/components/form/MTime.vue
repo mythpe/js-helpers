@@ -7,9 +7,8 @@
   -->
 <script lang="ts" setup>
 import { computed, defineEmits } from 'vue'
-import { MDateProps } from './models'
 
-interface Props extends MDateProps {
+interface Props {
   modelValue: any
 }
 

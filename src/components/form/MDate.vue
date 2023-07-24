@@ -6,10 +6,9 @@
   - Github: https://github.com/mythpe
   -->
 <script lang="ts" setup>
-import { MDateProps } from './models'
 import { computed, defineEmits } from 'vue'
 
-interface Props extends MDateProps {
+interface Props {
   modelValue: any
 }
 
@@ -32,7 +31,7 @@ const inputValue = computed({
 <template>
   <MPicker
     v-model="inputValue"
-    type="date"
     v-bind="$attrs"
+    type="date"
   />
 </template>

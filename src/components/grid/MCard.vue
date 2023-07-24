@@ -9,11 +9,10 @@
 <script lang="ts" setup>
 
 import { useMyth } from '../../vue3'
-import { MCardProps } from './models'
 import { computed, onMounted, reactive, useSlots } from 'vue'
 import { useRoute } from 'vue-router'
 
-interface Props extends MCardProps {
+interface Props {
   titleFromRoute?: boolean | undefined;
   title?: string | (() => string) | undefined;
   subtitle?: string | (() => string) | undefined;

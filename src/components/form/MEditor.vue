@@ -25,7 +25,7 @@
       :fonts="fonts === undefined ? _fonts : fonts"
       :min-height="minHeight"
       :toolbar="toolbar === undefined ? _toolbar : toolbar"
-      v-bind="{...def,...$attrs}"
+      v-bind="{...($myth.vueConfig.editor || {}),...$attrs}"
     />
     <slot />
     <q-slide-transition>
@@ -45,9 +45,8 @@ import { getMythOptions } from '../../vue3'
 import { computed } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
-import { MEditorProps } from './models'
 
-interface Props extends MEditorProps {
+interface Props {
   auto?: boolean | undefined;
   col?: ColStyleType;
   xs?: ColStyleType;
@@ -179,8 +178,6 @@ const inputValue = computed({
 })
 
 const { getLabel, inputErrors } = useInputProps(props)
-const def = getMythOptions()?.editor || {}
-
 </script>
 
 <script lang="ts">

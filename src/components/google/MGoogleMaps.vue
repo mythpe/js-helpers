@@ -12,9 +12,9 @@ import { computed, ref, watch } from 'vue'
 import { GoogleMap, Marker } from 'vue3-google-map'
 import { useGeolocation, useTranslate } from '../../vue3'
 import { ColStyleType } from '../grid/models'
-import { CoordsType, GeocoderResult, GoogleGeocoder, GoogleMapsApi, GoogleMapsMVCObject, GooglePlacesService, MapCoordsClick, MGoogleMapsProps, PlaceResult } from './models'
+import { CoordsType, GeocoderResult, GoogleGeocoder, GoogleMapsApi, GoogleMapsMVCObject, GooglePlacesService, MapCoordsClick, PlaceResult } from './models'
 
-interface Props extends MGoogleMapsProps {
+interface Props {
   auto?: boolean;
   col?: ColStyleType;
   xs?: ColStyleType;

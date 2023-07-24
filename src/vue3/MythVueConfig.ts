@@ -18,7 +18,9 @@ import {
   QInputProps,
   QItemProps,
   QListProps,
-  QMenuProps, QPageStickyProps,
+  QMenuProps,
+  QPageStickyProps,
+  QPopupProxyProps,
   QRadioProps,
   QSelectProps,
   QTimeProps,
@@ -53,7 +55,7 @@ export interface MythConfigOptions extends Record<string | number | symbol, any>
       buttonProps?: Partial<QBtnProps>;
     },
     contextmenu?: {
-      menu?: Partial<QMenuProps>;
+      menu?: Partial<QPopupProxyProps>;
       list?: Partial<QListProps>;
       btn?: Partial<GenericMDtBtn>;
     },
@@ -81,7 +83,11 @@ export interface MythConfigOptions extends Record<string | number | symbol, any>
   editor?: Partial<QEditorProps>;
   radio?: Partial<QRadioProps>;
   toggle?: Partial<QToggleProps>;
-  uploader?: Partial<QUploaderProps>;
+  uploader?: {
+    props?: Partial<QUploaderProps>;
+    downloadBtnProps?: Partial<MBtnProps>;
+    removeBtnProps?: Partial<QBtnProps>;
+  }
 }
 
 export interface MythConfigServices {

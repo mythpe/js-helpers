@@ -14,8 +14,8 @@ import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MSelectProps } from './models'
 
-interface Props extends MSelectProps {
-  auto?: boolean | undefined;
+interface Props {
+  auto?: boolean;
   col?: ColStyleType;
   xs?: ColStyleType;
   sm?: ColStyleType;
@@ -84,7 +84,6 @@ const props = withDefaults(defineProps<Props>(), {
 const inputValue = ref(props.modelValue)
 
 const { getRules, getLabel } = useInputProps(props)
-const def = getMythOptions()?.select || {}
 
 </script>
 
@@ -133,7 +132,7 @@ export default {
         :stack-label="stackLabel"
         :standout="standout"
         :use-input="useInput"
-        v-bind="{...def,...$attrs,...fieldProps.field}"
+        v-bind="{...($myth.vueConfig.select||{}),...$attrs,...fieldProps.field}"
       >
         <template #no-option>
           <slot name="no-option">

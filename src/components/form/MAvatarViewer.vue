@@ -8,7 +8,6 @@
 
 <script lang="ts" setup>
 
-import { QImgProps } from 'quasar'
 import useAcceptProp from '../../composition/useAcceptProp'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { ColStyleType } from '../grid/models'
@@ -16,8 +15,8 @@ import { ColStyleType } from '../grid/models'
 import MFile from './MFile.vue'
 import { MAvatarViewerItem, MAvatarViewerProps } from './models'
 
-interface Props extends MAvatarViewerProps {
-  auto?: boolean | undefined;
+interface Props {
+  auto?: boolean;
   col?: ColStyleType;
   xs?: ColStyleType;
   sm?: ColStyleType;
@@ -25,21 +24,21 @@ interface Props extends MAvatarViewerProps {
   lg?: ColStyleType;
   xl?: ColStyleType;
   modelValue: MAvatarViewerItem;
-  accept?: string | undefined;
-  images?: boolean | undefined;
-  video?: boolean | undefined;
-  pdf?: boolean | undefined;
-  excel?: boolean | undefined;
+  accept?: string;
+  images?: boolean;
+  video?: boolean;
+  pdf?: boolean;
+  excel?: boolean;
   item?: MAvatarViewerItem;
-  errors: Record<string, any[]> | undefined;
-  size?: string | undefined;
+  errors: Record<string, any[]>;
+  size?: string;
   name?: string;
   url?: string;
-  avatarText?: string | undefined;
-  fit?: QImgProps['fit'];
-  clearable?: boolean | undefined;
-  label?: string | undefined;
-  rounded?: boolean | undefined;
+  avatarText?: string;
+  fit?: MAvatarViewerProps['fit'];
+  clearable?: boolean;
+  label?: string;
+  rounded?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -71,8 +70,8 @@ const props = withDefaults(defineProps<Props>(), {
 type Events = {
   (e: 'click', evt?: Event): void;
   (e: 'remove-avatar', evt?: Event): void;
-  (e: 'update:modelValue', value: any | undefined): void;
-  (e: 'update:errors', value: any | undefined): void;
+  (e: 'update:modelValue', value: any): void;
+  (e: 'update:errors', value: any): void;
 }
 const emit = defineEmits<Events>()
 const fileInput = ref<typeof MFile>()
@@ -158,9 +157,7 @@ export default {
         v-if="label"
         col="auto"
       >
-        <p
-          class="text-h6 q-mb-sm"
-        >
+        <p class="text-h6 q-mb-sm">
           {{ label }}
           <span
             v-if="!clearable"

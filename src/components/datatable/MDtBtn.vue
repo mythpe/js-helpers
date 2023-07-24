@@ -13,20 +13,20 @@
 
 import { computed } from 'vue'
 import { useTranslate } from '../../vue3'
-import { MDtBtnProps } from './models'
 
-interface Props extends MDtBtnProps {
+interface Props {
   show?: boolean;
   update?: boolean;
   destroy?: boolean;
   tooltip?: string;
-  color?: string | undefined;
-  icon?: string | undefined;
-  listItem?: boolean | undefined;
-  fabMini?: boolean | undefined;
-  flat?: boolean | undefined;
-  round?: boolean | undefined;
-  dense?: boolean | undefined;
+  color?: string;
+  icon?: string;
+  listItem?: boolean;
+  fabMini?: boolean;
+  flat?: boolean;
+  round?: boolean;
+  dense?: boolean;
+  label?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -40,7 +40,8 @@ const props = withDefaults(defineProps<Props>(), {
   fabMini: !0,
   flat: !0,
   round: !0,
-  dense: undefined
+  dense: undefined,
+  label: undefined
 })
 type Events = {
   (e: 'click', evt: Event): void;
@@ -83,7 +84,6 @@ const getColor = computed<string | undefined>(() => {
   }
   return props.color
 })
-
 </script>
 
 <template>
@@ -112,14 +112,17 @@ const getColor = computed<string | undefined>(() => {
     v-bind="$attrs"
     @click="$emit('click',$event)"
   >
+    <q-item-section avatar>
+      <q-icon
+        :color="getColor"
+        :name="getIcon"
+      />
+    </q-item-section>
     <q-item-section>
       <q-item-label>
-        <q-icon
-          :color="getColor"
-          :name="getIcon"
-          left
-        />
-        <slot />
+        <slot>
+          {{ label || $attrs.label }}
+        </slot>
       </q-item-label>
     </q-item-section>
   </q-item>

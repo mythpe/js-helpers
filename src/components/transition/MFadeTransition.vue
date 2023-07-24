@@ -5,20 +5,20 @@
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
-
-<script setup lang="ts">
-
+<script
+  lang="ts"
+>
+export default {
+  inheritAttrs: !1
+}
 </script>
 
 <template>
   <Transition
     name="myth-transition__fade"
     appear
+    v-bind="$attrs"
   >
     <slot />
   </Transition>
 </template>
-
-<style scoped>
-
-</style>

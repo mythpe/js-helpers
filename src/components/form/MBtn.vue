@@ -7,13 +7,7 @@
   -->
 
 <template>
-  <q-btn
-    v-bind="{
-      noCaps: !0,
-      ...def,
-      ...$attrs
-    }"
-  >
+  <q-btn v-bind="{...($myth.vueConfig.button||{}),...$attrs}">
     <template
       v-for="(k,v) in _slots"
       #[v]="scope"
@@ -38,10 +32,6 @@
 
 <script lang="ts" setup>
 import { useSlots } from 'vue'
-import { getMythOptions } from '../../vue3'
-
-const def = getMythOptions()?.button || {}
-
 const _slots = useSlots()
 </script>
 

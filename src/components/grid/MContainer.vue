@@ -6,12 +6,19 @@
   - Github: https://github.com/mythpe
   -->
 
-<script lang="ts" setup>
-
+<script
+  lang="ts"
+>
+export default {
+  inheritAttrs: !1
+}
 </script>
 
 <template>
-  <div class="m--container q-pa-md">
+  <div
+    class="m--container q-pa-md"
+    v-bind="$attrs"
+  >
     <slot />
   </div>
 </template>

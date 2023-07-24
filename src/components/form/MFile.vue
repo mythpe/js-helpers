@@ -15,38 +15,37 @@ import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
-import { MFileProps } from './models'
 
-interface Props extends MFileProps {
-  auto?: boolean | undefined;
+interface Props {
+  auto?: boolean;
   col?: ColStyleType;
   xs?: ColStyleType;
   sm?: ColStyleType;
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  accept?: string | undefined;
-  images?: boolean | undefined;
-  video?: boolean | undefined;
-  pdf?: boolean | undefined;
-  excel?: boolean | undefined;
-  outlined?: boolean | undefined;
-  standout?: boolean | string | undefined;
-  borderless?: boolean | undefined;
-  stackLabel?: boolean | undefined;
-  filled?: boolean | undefined;
-  dense?: boolean | undefined;
-  hideBottomSpace?: boolean | undefined;
-  name?: string | undefined;
-  label?: string | undefined;
-  placeholder?: string | undefined;
-  hidePlaceholder?: boolean | undefined;
-  required?: boolean | undefined;
-  hideRequired?: boolean | undefined;
-  email?: boolean | undefined;
-  clearable?: boolean | undefined;
-  loading?: boolean | undefined;
-  rules?: string | string[] | undefined;
+  accept?: string;
+  images?: boolean;
+  video?: boolean;
+  pdf?: boolean;
+  excel?: boolean;
+  outlined?: boolean;
+  standout?: boolean | string;
+  borderless?: boolean;
+  stackLabel?: boolean;
+  filled?: boolean;
+  dense?: boolean;
+  hideBottomSpace?: boolean;
+  name?: string;
+  label?: string;
+  placeholder?: string;
+  hidePlaceholder?: boolean;
+  required?: boolean;
+  hideRequired?: boolean;
+  email?: boolean;
+  clearable?: boolean;
+  loading?: boolean;
+  rules?: string | string[];
   errors?: Record<string, string[]>;
   modelValue: any;
 }
@@ -109,7 +108,7 @@ const pickFiles = (...args: any[]) => {
 const removeAtIndex = (...args: any[]) => {
   fileInput.value?.removeAtIndex(...args)
 }
-const def = getMythOptions()?.input || {}
+
 defineExpose({
   pickFiles,
   removeAtIndex
@@ -161,7 +160,7 @@ defineExpose({
         :placeholder="getPlaceholder"
         :stack-label="stackLabel"
         :standout="standout"
-        v-bind="{...def,...$attrs}"
+        v-bind="{...($myth.vueConfig.input||{}),...$attrs}"
         @clear="fieldScope.handleBlur()"
       >
         <template

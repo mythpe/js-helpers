@@ -24,12 +24,11 @@
 
 <script lang="ts" setup>
 import { Form as VeeForm, SubmissionContext } from 'vee-validate'
-import { nextTick, ref, watch } from 'vue'
-import { MFormProps } from './models'
+import { ref } from 'vue'
 
 type VeeFormElm = InstanceType<typeof VeeForm>
 
-interface Props extends MFormProps {
+interface Props {
   form?: Record<string, any>;
   errors?: Record<string, string[]>;
   formProps?: Record<string, any>;
