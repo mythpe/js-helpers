@@ -6,30 +6,26 @@
  * Github: https://github.com/mythpe
  */
 
-import { App, defineAsyncComponent } from 'vue'
-import { createMyth } from './MythVue'
-import { setupConfig } from './MythVueConfig'
+import { App, defineAsyncComponent, reactive } from 'vue'
+import { MythApiAxiosType, MythApiServicesType, MythPluginOptionsType } from '../types'
 import { I18n } from 'vue-i18n'
-import { AxiosStatic } from 'axios'
-import { MythConfigInterface } from '../types'
-
-// const ini = <I18nT extends MythVue3InstallOptions['i18n'] = any> ({ i18n }: any): { i18n: I18nT } => ({ i18n })
-// const main: { myth: unknown } = { myth: undefined }
-
-// declare module '@mythpe/js-helpers' {
-//   type myth = MythVue3InstallOptions
-// }
+import MythVue, { createMyth } from './MythVue'
 
 /**
  * Install Plugin
  * @param app
- * @param i18n
  * @param api
  * @param options
  */
-export default async function install<T extends I18n, A extends AxiosStatic> (app: App, { i18n, api, options = {} }: MythConfigInterface<T, A>) {
-  setupConfig<T, A>({ i18n, api, options })
-  app.config.globalProperties.$myth = createMyth()
+export default async function install<I18nT extends I18n = I18n, AxiosType extends MythApiAxiosType = MythApiAxiosType, Services extends MythApiServicesType = MythApiServicesType> (app: App, {
+  i18n,
+  api,
+  options = {}
+}: MythPluginOptionsType) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  createMyth<I18nT, AxiosType, Services>({ i18n, api, options })
+  app.config.globalProperties.$myth = reactive(MythVue)
 
   // Datatable
   app.component('MDatatable', defineAsyncComponent(() => import('../components/datatable/MDatatable.vue')))

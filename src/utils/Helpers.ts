@@ -147,7 +147,10 @@ export const Helpers = {
     }
     return methods
   },
-  StubUrl: (group?: UrlType): ((segments?: UrlType, parent?: UrlType) => string) => (segments?: UrlType, parent?: UrlType): string => ((parent ?? '') + (parent && group ? '/' : '')) + (group ?? '') + ((group && segments ? '/' : '') + (segments ?? '')),
+  StubUrl: (group?: UrlType): ((segments?: UrlType, parent?: UrlType) => string) => (
+    segments?: UrlType,
+    parent?: UrlType
+  ): string => ((parent ?? '') + (parent && group ? '/' : '')) + (group ?? '') + ((group && segments ? '/' : '') + (segments ?? '')),
   findBy (search: any, value: any, column: string | number = 'id') {
     return _.find(search, (e: any) => _.isPlainObject(e) ? e[column] === value : e === value)
   },

@@ -12,7 +12,7 @@ import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { ParseHeaderOptions, ParseHeadersType } from '../types'
 import { Str } from '../utils'
-import { getMythI18n } from './MythVueConfig'
+import { getMythI18n } from './MythVue'
 
 export const MHelpers = {
   storage: {
@@ -42,7 +42,7 @@ export const MHelpers = {
     number = number ?? 2
     number = parseInt(number.toString())
     const defaultValue = undefined
-    const { t, te } = getMythI18n()
+    const { t, te } = getMythI18n().global
 
     // Not is route
     // No page title
@@ -145,7 +145,7 @@ export const MHelpers = {
     }
 
     const result: ParseHeadersType[] = []
-    const { t, te } = getMythI18n()
+    const { t, te } = getMythI18n().global
     headers.forEach((elm: string | ParseHeadersType) => {
       if (typeof elm !== 'string' && !elm?.name) return elm
       const isString = typeof elm === 'string'
@@ -227,7 +227,7 @@ export const MHelpers = {
     const defaultValue = null
     if (!string) return string
 
-    const { t, te } = getMythI18n()
+    const { t, te } = getMythI18n().global
     const key = string && typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
 
     if (!key) {

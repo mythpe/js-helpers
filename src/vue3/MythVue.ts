@@ -10,12 +10,8 @@ import { Dates as dates } from '../utils/Dates'
 import { Helpers as helpers } from '../utils/Helpers'
 import { Str as str } from '../utils/Str'
 import { MAlerts } from './MAlerts'
-import { useGeolocation } from './MGeolocation'
 import { MHelpers } from './MHelpers'
-import { useTranslate } from './MTranslate'
-import { reactive, TransitionProps } from 'vue'
-import { MythVueConfig } from './MythVueConfig'
-import { I18n } from 'vue-i18n'
+import { reactive, ref, TransitionProps } from 'vue'
 import { GlobalComponentConstructor } from 'quasar'
 import {
   MAvatarViewerProps,
@@ -68,48 +64,53 @@ import {
   MUploaderProps,
   MUploaderSlots
 } from '../components'
-import { MythConfigApi, MythConfigInterface, MythConfigOptions } from '../types'
+import { MythApiAxiosType, MythApiServicesType, MythOptionsConfig, MythPluginOptionsType } from '../types'
+import axios from 'axios'
+import { I18n } from 'vue-i18n'
 
-const vueConfig: MythConfigOptions = {}
-/**
- * Global of plugin inside Vue app
- */
-export const MythVue = {
+const _baseUrl = ref<string>()
+const _axios = ref<MythApiAxiosType>(axios.create())
+const _i18n = ref()
+const _services = ref<MythApiServicesType>({})
+const _options = ref({})
+export const MythVue = reactive({
   str,
   dates,
   helpers,
-  vueConfig
-}
-export type LegacyMythType = typeof MythVue & typeof MAlerts & typeof MHelpers
+  i18: reactive(_i18n),
+  api: reactive({
+    baseUrl: _baseUrl,
+    axios: _axios,
+    services: _services
+  }),
+  options: _options,
+  ...MAlerts,
+  ...MHelpers
+})
 
-export type UseMythType<I extends I18n, A extends MythConfigApi<A>> = LegacyMythType & {
-  geolocation: typeof useGeolocation
-  translate: typeof useTranslate,
-  i18n: I,
-  api: A,
-  options: MythConfigInterface<I, A>['options']
+export const createMyth = <I18nT extends I18n = I18n, Axios extends MythApiAxiosType = MythApiAxiosType, Services extends MythApiServicesType = MythApiServicesType> ({
+  i18n,
+  api: { baseUrl, axios, services },
+  options = {}
+}: MythPluginOptionsType<I18nT, Axios, Services>) => {
+  _i18n.value = i18n
+  _baseUrl.value = baseUrl
+  _axios.value = axios
+  _services.value = services
+  _options.value = options || {}
+
+  return reactive(MythVue)
 }
 
-/**
- * Helper to use plugin
- */
-export const useMyth = <I extends I18n, A extends MythConfigApi<A>> (): UseMythType<I, A> => {
-  const legacy = Object.assign(MythVue, MAlerts, MHelpers)
-  return Object.assign<object, UseMythType<I, A>, typeof legacy>({}, {
-    geolocation: useGeolocation,
-    translate: useTranslate,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    i18n: reactive(MythVueConfig.i18n),
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    api: reactive(MythVueConfig.api),
-    options: reactive(MythVueConfig.options)
-  }, legacy)
-}
-export const createMyth = (): LegacyMythType => Object.assign({}, MythVue, MAlerts, MHelpers)
+export const getMythConfig = () => reactive(MythVue)
+export const getMythI18n = () => reactive(MythVue.i18)
+export const getMythApi = () => reactive(MythVue.api)
+export const getMythOptions = (): MythOptionsConfig => reactive(MythVue.options)
 
-export default {}
+export default MythVue
+
+/** Global of plugin inside Vue app */
+export const useMyth = () => MythVue
 
 declare module '@vue/runtime-core' {
   interface GlobalComponents {
@@ -144,6 +145,6 @@ declare module '@vue/runtime-core' {
   }
 
   interface ComponentCustomProperties {
-    $myth: LegacyMythType
+    $myth: typeof MythVue
   }
 }

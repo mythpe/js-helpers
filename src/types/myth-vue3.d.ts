@@ -6,28 +6,33 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosResponse } from 'axios'
+import { AxiosInstance, AxiosResponse } from 'axios'
 import {
   QBtnProps,
   QCheckboxProps,
   QDateProps,
   QDialogOptions,
-  QDialogProps, QEditorProps,
+  QDialogProps,
+  QEditorProps,
   QFileProps,
   QInputProps,
   QItemProps,
   QListProps,
   QMenuProps,
   QPageStickyProps,
-  QPopupProxyProps, QRadioProps,
+  QPopupProxyProps,
+  QRadioProps,
   QSelectProps,
-  QTimeProps, QToggleProps, QUploaderProps
+  QTimeProps,
+  QToggleProps,
+  QUploaderProps
 } from 'quasar'
 import { GenericMDtBtn, MBtnProps, MDatatableProps, MDtBtnProps } from '../components'
+import { I18n } from 'vue-i18n'
 
 type ServiceType = () => Promise<AxiosResponse>
 
-export interface MythConfigOptions extends Record<string | number | symbol, any> {
+export interface MythOptionsConfig extends Record<string | number | symbol, any> {
   google?: {
     apiKey: string;
     mapsOptions?: Record<string | number | symbol, any>;
@@ -86,20 +91,21 @@ export interface MythConfigOptions extends Record<string | number | symbol, any>
   }
 }
 
-export interface MythConfigServices {
+export type MythApiAxiosType = AxiosInstance
+export type MythApiServicesType = {
   [key: string]: Record<string, ServiceType> | any;
 }
 
-export interface MythConfigApi<AT, ST extends MythConfigServices = MythConfigServices> {
+export interface MythApiConfig<AxiosType extends MythApiAxiosType = MythApiAxiosType, ServicesType extends MythApiServicesType = MythApiServicesType> {
   baseUrl: string;
-  axios: AT;
-  services: ST
+  axios: AxiosType;
+  services: ServicesType
 }
 
-export type MythConfigInterface<I, A> = {
-  i18n: I;
-  api: MythConfigApi<A>;
-  options: MythConfigOptions
+export type MythPluginOptionsType<I18nT extends I18n = I18n, AxiosType extends MythApiAxiosType = MythApiAxiosType, Services extends MythApiServicesType = MythApiServicesType> = {
+  i18n: I18nT;
+  api: MythApiConfig<AxiosType, Services>;
+  options: MythOptionsConfig;
 }
 
 // declare global {
