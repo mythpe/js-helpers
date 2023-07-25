@@ -16,7 +16,7 @@ export default {
 
 <template>
   <div
-    class="m--container q-pa-md"
+    class="m--container"
     v-bind="$attrs"
   >
     <slot />

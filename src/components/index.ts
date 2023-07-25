@@ -6,8 +6,8 @@
  * Github: https://github.com/mythpe
  */
 
-export * from './datatable/models'
-export * from './form/models'
-export * from './google/models'
-export * from './grid/models'
-export * from './transition/models'
+export * from './datatable/models.d'
+export * from './form/models.d'
+export * from './google/models.d'
+export * from './grid/models.d'
+export * from './transition/models.d'

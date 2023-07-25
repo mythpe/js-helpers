@@ -8,6 +8,8 @@
 import installPlugin from './src/vue3/InstallPlugin'
 
 export * from './src'
+export * from './src/components'
+
 export { installPlugin }
 
 export default {}

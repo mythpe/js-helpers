@@ -41,7 +41,9 @@ export type MColumnSlots = {
 }
 
 export type MRowProps = {
-  //
+  defaultGutters?: string | undefined;
+  gutters?: boolean | string | undefined;
+  col?: boolean | string | undefined;
 }
 export type MRowSlots = {
   default: () => VNode[];

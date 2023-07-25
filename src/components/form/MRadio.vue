@@ -72,7 +72,7 @@ export default {
         :model-value="modelValue"
         :placeholder="getPlaceholder"
         :val="val"
-        v-bind="{...($myth.vueConfig.radio||{}),...$attrs,...fieldProps.field}"
+        v-bind="{...($myth.options.radio||{}),...$attrs,...fieldProps.field}"
       >
         <template
           v-for="(_,slot) in $slots"

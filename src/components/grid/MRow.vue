@@ -5,19 +5,62 @@
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
-
 <script
   lang="ts"
 >
-export default {
-  inheritAttrs: !1
-}
+
+import { defineComponent } from 'vue'
+import { MythVue } from '../../vue3'
+export default defineComponent({
+  inheritAttrs: !1,
+  props: {
+    defaultGutters: {
+      type: String,
+      default: () => MythVue.options.row?.defaultGutters
+    },
+    gutters: {
+      type: [String, Boolean],
+      default: () => MythVue.options.row?.gutters
+    },
+    col: {
+      type: [String, Boolean],
+      default: () => MythVue.options.row?.col
+    }
+  },
+  computed: {
+    classes () {
+      const l = ['m--row', 'row']
+      const gutters = this.gutters
+      const col = this.col
+
+      if (typeof gutters === 'string') {
+        if (gutters.length >= 1) {
+          l.push(`q-gutter-${gutters}`)
+        } else {
+          l.push(`q-gutter-${this.$myth.options.row?.defaultGutters || 'sm'}`)
+        }
+      }
+      if (typeof col === 'string') {
+        if (col.length >= 1) {
+          l.push(`q-col-gutter-${col}`)
+        } else {
+          l.push(`q-col-gutter-${this.$myth.options.row?.defaultGutters || 'sm'}`)
+        }
+      }
+
+      return l
+    }
+  }
+})
 </script>
 
 <template>
   <div
-    class="m--row row q-col-gutter-sm"
-    v-bind="$attrs"
+    :class="classes"
+    v-bind="{...($myth.options.row),...$attrs}"
+    :default-gutters="undefined"
+    :gutters="undefined"
+    :col="undefined"
   >
     <slot />
   </div>

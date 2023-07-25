@@ -87,7 +87,7 @@ export default {
               v-model="inputValue"
               :mask="format"
               today-btn
-              v-bind="{...($myth.vueConfig.date||{}),...$attrs}"
+              v-bind="{...($myth.options.date||{}),...$attrs}"
             >
               <div class="row items-center justify-end">
                 <MBtn
@@ -102,7 +102,7 @@ export default {
               v-model="inputValue"
               :mask="format"
               now-btn
-              v-bind="{...($myth.vueConfig.time||{}),...$attrs}"
+              v-bind="{...($myth.options.time||{}),...$attrs}"
             >
               <div class="row items-center justify-end">
                 <MBtn

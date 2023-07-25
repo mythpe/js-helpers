@@ -9,7 +9,7 @@
 import axios from 'axios'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { CoordsProps } from '../types'
-import { getMythOptions } from './MythVueConfig'
+import { getMythOptions } from './MythVue'
 
 const getStreetAddress = async (lat: number, long: number) => {
   const options = getMythOptions()

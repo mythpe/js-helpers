@@ -275,7 +275,7 @@ export default {
       :label="label"
       :readonly="readonly"
       :style="style"
-      v-bind="{...($myth.vueConfig.uploader?.props || {}),...$attrs}"
+      v-bind="{...($myth.options.uploader?.props || {}),...$attrs}"
       @failed="onError"
       @rejected="onReject"
       @uploaded="onFinishUpload"
@@ -347,7 +347,7 @@ export default {
                   :href="file.url"
                   target="_blank"
                   unelevated
-                  v-bind="$myth.vueConfig.uploader?.downloadBtnProps"
+                  v-bind="$myth.options.uploader?.downloadBtnProps"
                 >
                   {{ $t('download') }}
                 </MBtn>
@@ -376,7 +376,7 @@ export default {
                 icon="delete"
                 round
                 size="12px"
-                v-bind="$myth.vueConfig.uploader?.removeBtnProps"
+                v-bind="$myth.options.uploader?.removeBtnProps"
                 @click="onClickDeleteAttachment(file)"
               />
             </q-item-section>

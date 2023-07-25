@@ -25,7 +25,7 @@
       :fonts="fonts === undefined ? _fonts : fonts"
       :min-height="minHeight"
       :toolbar="toolbar === undefined ? _toolbar : toolbar"
-      v-bind="{...($myth.vueConfig.editor || {}),...$attrs}"
+      v-bind="{...($myth.options.editor || {}),...$attrs}"
     />
     <slot />
     <q-slide-transition>

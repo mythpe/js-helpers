@@ -136,7 +136,7 @@ export default {
             :true-value="trueValue"
             :unchecked-icon="uncheckedIcon"
             keep-color
-            v-bind="{...($myth.vueConfig.toggle||{}),...$attrs,...fieldProps.field}"
+            v-bind="{...($myth.options.toggle||{}),...$attrs,...fieldProps.field}"
           >
             <template
               v-for="(_,slot) in $slots"

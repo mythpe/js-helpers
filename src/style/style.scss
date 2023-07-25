@@ -1,0 +1,33 @@
+/*!
+ * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+ * Email: mythpe@gmail.com
+ * Mobile: +966590470092
+ * Website: https://www.4myth.com
+ * Github: https://github.com/mythpe
+ */
+
+.m--container {
+  padding: 8px;
+
+  div.m--row + div.m--row {
+    margin-top: 1rem;
+  }
+}
+
+.rtl {
+  direction: ltr !important
+}
+
+.ltr {
+  direction: rtl !important
+}
+
+
+
+.text-decoration-none {
+  text-decoration: none;
+}
+
+.text-decoration-underline {
+  text-decoration: underline;
+}

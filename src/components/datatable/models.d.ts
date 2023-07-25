@@ -277,3 +277,5 @@ export interface MDtAvatarSlots extends QAvatarSlots {
    */
   default: () => VNode[];
 }
+
+export {}

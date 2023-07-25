@@ -87,26 +87,8 @@ const getColor = computed<string | undefined>(() => {
 </script>
 
 <template>
-  <q-btn
-    v-if="!listItem"
-    :color="getColor"
-    :dense="dense"
-    :fab-mini="fabMini"
-    :flat="flat"
-    :icon="getIcon"
-    :round="round"
-    v-bind="$attrs"
-    @click="$emit('click',$event)"
-  >
-    <slot />
-    <q-tooltip
-      v-if="hasTooltip"
-    >
-      {{ getTooltip }}
-    </q-tooltip>
-  </q-btn>
   <q-item
-    v-else
+    v-if="listItem"
     v-close-popup
     clickable
     v-bind="$attrs"
@@ -126,4 +108,23 @@ const getColor = computed<string | undefined>(() => {
       </q-item-label>
     </q-item-section>
   </q-item>
+  <q-btn
+    v-else
+    :color="getColor"
+    :dense="dense"
+    :fab-mini="fabMini"
+    :flat="flat"
+    :icon="getIcon"
+    :round="round"
+    :label="label"
+    v-bind="$attrs"
+    @click="$emit('click',$event)"
+  >
+    <slot />
+    <q-tooltip
+      v-if="hasTooltip"
+    >
+      {{ getTooltip }}
+    </q-tooltip>
+  </q-btn>
 </template>

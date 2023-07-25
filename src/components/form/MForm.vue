@@ -10,7 +10,9 @@
   <VeeForm
     ref="veeForm"
     v-slot="v"
-    as=""
+    as="div"
+    :initial-values="form"
+    :initial-errors="errors"
     v-bind="$attrs"
   >
     <form
@@ -24,7 +26,7 @@
 
 <script lang="ts" setup>
 import { Form as VeeForm, SubmissionContext } from 'vee-validate'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 type VeeFormElm = InstanceType<typeof VeeForm>
 
@@ -34,7 +36,7 @@ interface Props {
   formProps?: Record<string, any>;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   form: () => ({}),
   errors: () => ({}),
   formProps: undefined
@@ -46,6 +48,31 @@ type Events = {
 
 const emit = defineEmits<Events>()
 const veeForm = ref<VeeFormElm>()
+
+watch(() => props.errors, (v) => {
+  // resetForm({ errors })
+  // console.log(v)
+  const errors: Record<string, string> = {}
+  for (const errorsKey in v) {
+    if (v[errorsKey].length > 0) {
+      errors[errorsKey] = v[errorsKey][0]
+    }
+  }
+  resetForm({ errors })
+  // nextTick(() => {
+  //   const touched:Record<string, boolean> = {}
+  //   for (const errorsKey in v) {
+  //     touched[errorsKey] = !1
+  //   }
+  //   setTouched(touched)
+  //   // console.log(v, touched)
+  //   // validate()
+  // })
+})
+watch(() => props.form, (values) => {
+  resetForm({ values })
+})
+
 const onSubmit = (values: Record<string, any>, ctx: SubmissionContext): void => emit('submit', values, ctx)
 const setFieldValue: VeeFormElm['setFieldValue'] = (...args: Parameters<VeeFormElm['setFieldValue']>) => veeForm.value?.setFieldValue(...args)
 const setFieldError: VeeFormElm['setFieldError'] = (...args: Parameters<VeeFormElm['setFieldError']>) => veeForm.value?.setFieldError(...args)

@@ -130,7 +130,7 @@ export default {
         :stack-label="stackLabel"
         :standout="standout"
         :use-input="useInput"
-        v-bind="{...($myth.vueConfig.select||{}),...$attrs,...fieldProps.field}"
+        v-bind="{...($myth.options.select||{}),...$attrs,...fieldProps.field}"
       >
         <template #no-option>
           <slot name="no-option">

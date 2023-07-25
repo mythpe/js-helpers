@@ -6,8 +6,8 @@
  * Github: https://github.com/mythpe
  */
 
-export * from './m-alerts'
-export * from './m-geolocation'
-export * from './m-helpers'
-export * from './m-translate'
-export * from './myth-vue3'
+export * from './m-alerts.d'
+export * from './m-geolocation.d'
+export * from './m-helpers.d'
+export * from './m-translate.d'
+export * from './myth-vue3.d'

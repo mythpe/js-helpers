@@ -27,7 +27,7 @@ import {
   QToggleProps,
   QUploaderProps
 } from 'quasar'
-import { GenericMDtBtn, MBtnProps, MDatatableProps, MDtBtnProps } from '../components'
+import { GenericMDtBtn, MBtnProps, MColProps, MContainerProps, MDatatableProps, MDtBtnProps, MRowProps } from '../components'
 import { I18n } from 'vue-i18n'
 
 type ServiceType = () => Promise<AxiosResponse>
@@ -88,7 +88,10 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     props?: Partial<QUploaderProps>;
     downloadBtnProps?: Partial<MBtnProps>;
     removeBtnProps?: Partial<QBtnProps>;
-  }
+  };
+  container?: Partial<MContainerProps>;
+  row?: Partial<MRowProps>;
+  col?: Partial<MColProps>;
 }
 
 export type MythApiAxiosType = AxiosInstance

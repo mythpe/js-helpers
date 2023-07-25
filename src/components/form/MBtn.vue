@@ -7,7 +7,7 @@
   -->
 
 <template>
-  <q-btn v-bind="{...($myth.vueConfig.button||{}),...$attrs}">
+  <q-btn v-bind="{...($myth.options.button||{}),...$attrs}">
     <template
       v-for="(k,v) in _slots"
       #[v]="scope"

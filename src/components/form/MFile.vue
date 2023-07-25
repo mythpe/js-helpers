@@ -159,7 +159,7 @@ defineExpose({
         :placeholder="getPlaceholder"
         :stack-label="stackLabel"
         :standout="standout"
-        v-bind="{...($myth.vueConfig.input||{}),...$attrs}"
+        v-bind="{...($myth.options.input||{}),...$attrs}"
         @clear="fieldScope.handleBlur()"
       >
         <template

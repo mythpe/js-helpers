@@ -6,6 +6,15 @@
   - Github: https://github.com/mythpe
   -->
 
+<template>
+  <div
+    :class="classes"
+    v-bind="$attrs"
+  >
+    <slot />
+  </div>
+</template>
+
 <script
   lang="ts"
   setup
@@ -14,7 +23,7 @@ import { computed } from 'vue'
 import { ColStyleType } from './models'
 
 interface Props {
-  auto?: boolean | undefined
+  auto?: boolean
   col?: ColStyleType
   xs?: ColStyleType
   sm?: ColStyleType
@@ -38,8 +47,12 @@ const classes = computed(() => {
     list.push('col-auto')
   }
 
-  if (props.col && props.col?.toString()?.length > 0) {
-    list.push(`col-${props.col}`)
+  if (props.col) {
+    if (props.col?.toString()?.length > 0) {
+      list.push(`col-${props.col}`)
+    } else {
+      list.push('col')
+    }
   }
 
   let k: keyof Props
@@ -56,15 +69,11 @@ const classes = computed(() => {
   return list
 })
 </script>
-
-<template>
-  <div
-    :class="classes"
-  >
-    <slot />
-  </div>
-</template>
-
+<script lang="ts">
+export default {
+  inheritAttrs: !1
+}
+</script>
 <style>
 .m--col {
 

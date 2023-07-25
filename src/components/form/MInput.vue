@@ -29,7 +29,7 @@
         :label="getLabel"
         :model-value="inputValue"
         :placeholder="getPlaceholder"
-        v-bind="{...($myth.vueConfig.input||{}),...$attrs,...fieldScope.field}"
+        v-bind="{...($myth.options.input||{}),...$attrs,...fieldScope.field}"
       >
         <template
           v-for="(_,slot) in $slots"

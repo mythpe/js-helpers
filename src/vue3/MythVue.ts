@@ -72,7 +72,7 @@ const _baseUrl = ref<string>()
 const _axios = ref<MythApiAxiosType>(axios.create())
 const _i18n = ref()
 const _services = ref<MythApiServicesType>({})
-const _options = ref({})
+// const _options = ref<MythOptionsConfig>({})
 export const MythVue = reactive({
   str,
   dates,
@@ -83,7 +83,7 @@ export const MythVue = reactive({
     axios: _axios,
     services: _services
   }),
-  options: _options,
+  options: {},
   ...MAlerts,
   ...MHelpers
 })
@@ -97,54 +97,17 @@ export const createMyth = <I18nT extends I18n = I18n, Axios extends MythApiAxios
   _baseUrl.value = baseUrl
   _axios.value = axios
   _services.value = services
-  _options.value = options || {}
+  MythVue.options = options
 
-  return reactive(MythVue)
+  return MythVue
 }
 
-export const getMythConfig = () => reactive(MythVue)
-export const getMythI18n = () => reactive(MythVue.i18)
-export const getMythApi = () => reactive(MythVue.api)
-export const getMythOptions = (): MythOptionsConfig => reactive(MythVue.options)
+export const getMythConfig = () => MythVue
+export const getMythI18n = () => MythVue.i18
+export const getMythApi = () => MythVue.api
+export const getMythOptions = (): MythOptionsConfig => MythVue.options
 
 export default MythVue
 
 /** Global of plugin inside Vue app */
 export const useMyth = () => MythVue
-
-declare module '@vue/runtime-core' {
-  interface GlobalComponents {
-    MDatatable: GlobalComponentConstructor<MDatatableProps, MDatatableSlots>;
-    MDtAvatar: GlobalComponentConstructor<MDtAvatarProps, MDtAvatarSlots>;
-    MDtBtn: GlobalComponentConstructor<MDtBtnProps, MDtBtnSlots>;
-    MAvatarViewer: GlobalComponentConstructor<MAvatarViewerProps, MAvatarViewerSlots>;
-    MUploader: GlobalComponentConstructor<MUploaderProps, MUploaderSlots>;
-    MAxios: GlobalComponentConstructor<MAxiosProps, MAxiosSlots>;
-    MBtn: GlobalComponentConstructor<MBtnProps, MBtnSlots>;
-    MCheckbox: GlobalComponentConstructor<MCheckboxProps, MCheckboxSlots>;
-    MRadio: GlobalComponentConstructor<MRadioProps, MRadioSlots>;
-    MDate: GlobalComponentConstructor<MDateProps, MDateSlots>;
-    MEditor: GlobalComponentConstructor<MEditorProps, MEditorSlots>;
-    MEmail: GlobalComponentConstructor<MInputProps, MInputSlots>;
-    MFile: GlobalComponentConstructor<MFileProps, MFileSlots>;
-    MForm: GlobalComponentConstructor<MFormProps, MFormSlots>;
-    MInput: GlobalComponentConstructor<MInputProps, MInputSlots>;
-    MMobile: GlobalComponentConstructor<MInputProps, MInputSlots>;
-    MPassword: GlobalComponentConstructor<MInputProps, MInputSlots>;
-    MPicker: GlobalComponentConstructor<MPickerProps, MPickerSlots>;
-    MSelect: GlobalComponentConstructor<MSelectProps, MSelectSlots>;
-    MTime: GlobalComponentConstructor<MTimeProps, MTimeSlots>;
-    MToggle: GlobalComponentConstructor<MToggleProps, MToggleSlots>;
-    MGoogleMaps: GlobalComponentConstructor<MGoogleMapsProps, MGoogleMapsSlots>;
-    MCard: GlobalComponentConstructor<MCardProps, MCardSlots>;
-    MCol: GlobalComponentConstructor<MColProps, MColSlots>;
-    MColumn: GlobalComponentConstructor<MColumnProps, MColumnSlots>;
-    MContainer: GlobalComponentConstructor<MContainerProps, MContainerSlots>;
-    MRow: GlobalComponentConstructor<MRowProps, MRowSlots>;
-    MFadeTransition: GlobalComponentConstructor<TransitionProps, MTransitionsSlots>;
-  }
-
-  interface ComponentCustomProperties {
-    $myth: typeof MythVue
-  }
-}

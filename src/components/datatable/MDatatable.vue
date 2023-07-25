@@ -13,12 +13,12 @@
       context-menu
       max-width="300px"
       touch-position
-      v-bind="$myth.vueConfig.dt?.contextmenu?.menu"
+      v-bind="$myth.options.dt?.contextmenu?.menu"
       @before-hide="resetDialogs()"
     >
       <q-list
         v-show="dialogs.item"
-        v-bind="$myth.vueConfig.dt?.contextmenu?.list"
+        v-bind="$myth.options.dt?.contextmenu?.list"
       >
         <template
           v-for="(contextmenuItem,i) in contextmenuItems"
@@ -29,7 +29,7 @@
             :[contextmenuItem.name]="!0"
             :label="$t(contextmenuItem.name)"
             list-item
-            v-bind="{...($myth.vueConfig.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
+            v-bind="{...($myth.options.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
             @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
           />
         </template>
@@ -57,13 +57,13 @@
         :visible-columns="visibleColumnsModel"
         card-container-class="m--datatable-container"
         table-class="m--datatable-container"
-        v-bind="$myth.vueConfig.dt?.props"
+        v-bind="$myth.options.dt?.props"
         @request="fetchDatatableItems"
         @virtual-scroll="endReach ? onScroll : undefined"
         @row-contextmenu="onRowContextmenu"
       >
         <template #top>
-          <div class="col-all">
+          <div class="col-12">
             <!--<q-page-scroller
               :offset="[0,0]"
               :scroll-offset="50"
@@ -78,7 +78,7 @@
                 asfsd
               </div>
             </q-page-scroller>-->
-            <div>
+            <MContainer>
               <div class="row q-col-gutter-sm items-center justify-between">
                 <div
                   v-show="Boolean(title)"
@@ -101,9 +101,10 @@
                   md="6"
                   name="search"
                   outlined
-                  placeholder="myth.datatable.searchInput"
+                  dplaceholder="myth.datatable.searchInput"
+                  :placeholder="searchPlaceholder"
                   sm="9"
-                  v-bind="$myth.vueConfig.dt?.searchInputProps"
+                  v-bind="$myth.options.dt?.searchInputProps"
                 >
                   <template #prepend>
                     <q-icon
@@ -126,23 +127,23 @@
                     <MDtBtn
                       v-if="hasMenu"
                       icon="o_more_vert"
-                      v-bind="$myth.vueConfig.dt?.buttons?.more"
+                      v-bind="$myth.options.dt?.buttons?.more"
                     >
                       <q-tooltip class="touch-hide">
                         {{ $t('more') }}
                       </q-tooltip>
                       <q-menu
-                        v-bind="$myth.vueConfig.dt?.buttons?.moreMenu"
+                        v-bind="$myth.options.dt?.buttons?.moreMenu"
                       >
                         <q-list
                           style="min-width: 250px"
-                          v-bind="$myth.vueConfig.dt?.buttons?.moreList"
+                          v-bind="$myth.options.dt?.buttons?.moreList"
                         >
                           <template v-if="hasAddBtn">
                             <q-item
                               v-close-popup
                               clickable
-                              v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                              v-bind="$myth.options.dt?.buttons?.moreItem"
                               @click="openCreateDialog()"
                             >
                               <q-item-section thumbnail>
@@ -162,7 +163,7 @@
                             <q-item
                               v-close-popup
                               clickable
-                              v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                              v-bind="$myth.options.dt?.buttons?.moreItem"
                               @click="openFilterDialog()"
                             >
                               <q-item-section thumbnail>
@@ -184,7 +185,7 @@
                             <q-item
                               v-close-popup
                               clickable
-                              v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                              v-bind="$myth.options.dt?.buttons?.moreItem"
                               @click="exportData('pdf')"
                             >
                               <q-item-section thumbnail>
@@ -212,7 +213,7 @@
                             <q-item
                               v-close-popup
                               clickable
-                              v-bind="$myth.vueConfig.dt?.buttons?.moreItem"
+                              v-bind="$myth.options.dt?.buttons?.moreItem"
                               @click="exportData('excel')"
                             >
                               <q-item-section thumbnail>
@@ -242,7 +243,7 @@
                     <MDtBtn
                       v-if="hasFilterDialog"
                       icon="o_filter_alt"
-                      v-bind="$myth.vueConfig.dt?.buttons?.filter"
+                      v-bind="$myth.options.dt?.buttons?.filter"
                       @click="openFilterDialog()"
                     >
                       <q-tooltip class="touch-hide">
@@ -252,7 +253,7 @@
                     <MDtBtn
                       :disabled="tableOptions.loading"
                       icon="o_refresh"
-                      v-bind="$myth.vueConfig.dt?.buttons?.refresh"
+                      v-bind="$myth.options.dt?.buttons?.refresh"
                       @click="refreshNoUpdate()"
                     >
                       <q-tooltip
@@ -264,46 +265,11 @@
                     </MDtBtn>
                   </div>
                 </MCol>
-                <MFadeTransition>
-                  <MCol
-                    v-if="Object.values(tableOptions.filter).filter(e => Boolean(e)).length > 0"
-                    col="12"
-                  >
-                    <MRow class="items-center">
-                      <MCol col="auto">
-                        <span class="text-subtitle1 q-mr-sm">{{ $t('myth.datatable.filteredBy') }}</span>
-                      </MCol>
-                      <template
-                        v-for="(filterValue,filterKey) in tableOptions.filter"
-                        :key="`filter-${filterKey}`"
-                      >
-                        <MCol
-                          v-if="Boolean(filterValue)"
-                          col="auto"
-                        >
-                          <q-chip
-                            class="q-pr-md"
-                            clickable
-                            color="primary"
-                            icon-remove="clear"
-                            outline
-                            removable
-                            @click="openFilterDialog"
-                            @remove="onRemoveFilter(filterKey)"
-                          >
-                            <span>{{ $t(`attributes.${filterKey}`) }}</span>
-                            <span v-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
-                          </q-chip>
-                        </MCol>
-                      </template>
-                    </MRow>
-                  </MCol>
-                </MFadeTransition>
               </div>
               <MFadeTransition>
-                <div
+                <MRow
                   v-if="noManageColumns !== !1"
-                  class="row items-center"
+                  class="items-center"
                 >
                   <q-list
                     bordered
@@ -332,72 +298,105 @@
                       </q-card>
                     </q-expansion-item>
                   </q-list>
-                </div>
+                </MRow>
               </MFadeTransition>
-              <div
-                v-if="hasSelectedItem"
-                :class="`row items-center q-gutter-xs order-last order-sm-first ` + $q.screen.lt.md ? 'fixed-selection' : ''"
-              >
-                <div class="col-12">
-                  <q-separator />
-                </div>
-                <slot
-                  :dt="datatableItemsScope"
-                  name="tools"
+
+              <MFadeTransition>
+                <MRow
+                  class="items-center"
+                  v-if="Object.values(tableOptions.filter).filter(e => Boolean(e)).length > 0"
                 >
-                  <MDtBtn
-                    v-if="hasUpdateBtn && isSingleSelectedItem"
-                    :disable="!isSingleSelectedItem || tableOptions.loading"
-                    :loading="tableOptions.loading"
-                    fab-mini
-                    flat
-                    icon="o_edit"
-                    round
-                    tooltip="update"
-                    v-bind="$myth.vueConfig.dt?.topSelection?.btn"
-                    @click="openUpdateDialog(tableOptions.selected[0])"
-                  />
-                  <MDtBtn
-                    v-if="hasShowBtn && isSingleSelectedItem"
-                    :disable="!isSingleSelectedItem || tableOptions.loading"
-                    :loading="tableOptions.loading"
-                    fab-mini
-                    flat
-                    icon="o_visibility"
-                    round
-                    tooltip="show"
-                    v-bind="$myth.vueConfig.dt?.topSelection?.btn"
-                    @click="openShowDialog(tableOptions.selected[0])"
-                  />
-                  <MDtBtn
-                    v-if="hasDestroyBtn && isSingleSelectedItem"
-                    :disable="!hasSelectedItem || tableOptions.loading"
-                    :loading="tableOptions.loading"
-                    fab-mini
-                    flat
-                    icon="delete_outline"
-                    round
-                    tooltip="destroy"
-                    v-bind="$myth.vueConfig.dt?.topSelection?.btn"
-                    @click="deleteSelectionItem()"
-                  />
-                  <template v-for="(contextBtn,i) in contextItems">
-                    <MBtn
-                      v-if="contextBtn.showIf !== !1 && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
-                      :key="`top-s-${i.toString()}`"
-                      v-bind="{...(contextBtn.attr||{}),...($myth.vueConfig.dt?.topSelection?.btn||{})}"
-                      @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
+                  <MCol col="auto">
+                    <span class="text-subtitle1 q-mr-sm">{{ $t('myth.datatable.filteredBy') }}</span>
+                  </MCol>
+                  <template
+                    v-for="(filterValue,filterKey) in tableOptions.filter"
+                    :key="`filter-${filterKey}`"
+                  >
+                    <MCol
+                      v-if="Boolean(filterValue)"
+                      col="auto"
                     >
-                      {{ $t(contextBtn.name) }}
-                    </MBtn>
+                      <q-chip
+                        class="q-pr-md"
+                        clickable
+                        color="primary"
+                        icon-remove="clear"
+                        outline
+                        removable
+                        @click="openFilterDialog"
+                        @remove="onRemoveFilter(filterKey)"
+                      >
+                        <span>{{ $t(`attributes.${filterKey}`) }}</span>
+                        <span v-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
+                      </q-chip>
+                    </MCol>
                   </template>
-                </slot>
-                <slot
-                  :dt="datatableItemsScope"
-                  name="selection"
-                />
-              </div>
-            </div>
+                </MRow>
+              </MFadeTransition>
+              <MFadeTransition>
+                <MRow
+                  v-if="hasSelectedItem"
+                  class="items-center q-gutter-xs"
+                >
+                  <slot
+                    :dt="datatableItemsScope"
+                    name="tools"
+                  >
+                    <MDtBtn
+                      v-if="hasUpdateBtn"
+                      :disable="!isSingleSelectedItem || tableOptions.loading"
+                      :loading="tableOptions.loading"
+                      fab-mini
+                      flat
+                      icon="o_edit"
+                      round
+                      tooltip="update"
+                      v-bind="$myth.options.dt?.topSelection?.btn"
+                      @click="openUpdateDialog(tableOptions.selected[0])"
+                    />
+                    <MDtBtn
+                      v-if="hasShowBtn"
+                      :disable="!isSingleSelectedItem || tableOptions.loading"
+                      :loading="tableOptions.loading"
+                      fab-mini
+                      flat
+                      icon="o_visibility"
+                      round
+                      tooltip="show"
+                      v-bind="$myth.options.dt?.topSelection?.btn"
+                      @click="openShowDialog(tableOptions.selected[0])"
+                    />
+                    <MDtBtn
+                      v-if="hasDestroyBtn"
+                      :disable="!isSingleSelectedItem || tableOptions.loading"
+                      :loading="tableOptions.loading"
+                      fab-mini
+                      flat
+                      icon="delete_outline"
+                      round
+                      tooltip="destroy"
+                      v-bind="$myth.options.dt?.topSelection?.btn"
+                      @click="deleteSelectionItem()"
+                    />
+                    <template v-for="(contextBtn,i) in contextItems">
+                      <MBtn
+                        v-if="contextBtn.showIf !== !1 && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
+                        :key="`top-s-${i.toString()}`"
+                        v-bind="{...(contextBtn.attr||{}),...($myth.options.dt?.topSelection?.btn||{})}"
+                        @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
+                      >
+                        {{ $t(contextBtn.name) }}
+                      </MBtn>
+                    </template>
+                  </slot>
+                  <slot
+                    :dt="datatableItemsScope"
+                    name="selection"
+                  />
+                </MRow>
+              </MFadeTransition>
+            </MContainer>
           </div>
         </template>
         <template
@@ -437,7 +436,7 @@
       position="top"
       transition-hide="slide-up"
       transition-show="slide-down"
-      v-bind="$myth.vueConfig.dt?.filterDialogProps"
+      v-bind="$myth.options.dt?.filterDialogProps"
     >
       <q-card class="m--dialog-card">
         <q-card-section>
@@ -464,13 +463,13 @@
           <MBtn
             :label="$t('cancel')"
             color="negative"
-            v-bind="$myth.vueConfig.dt?.dialogButtonsProps"
+            v-bind="$myth.options.dt?.dialogButtonsProps"
             @click="closeFilterDialog"
           />
           <MBtn
             :label="$t('save')"
             color="positive"
-            v-bind="$myth.vueConfig.dt?.dialogButtonsProps"
+            v-bind="$myth.options.dt?.dialogButtonsProps"
             @click="saveFilterDialog"
           />
         </q-card-actions>
@@ -486,7 +485,7 @@
       persistent
       transition-hide="slide-up"
       transition-show="slide-down"
-      v-bind="$myth.vueConfig.dt?.showDialogProps"
+      v-bind="$myth.options.dt?.showDialogProps"
     >
       <q-card class="m--dialog-card">
         <q-card-section>
@@ -509,7 +508,7 @@
           <MBtn
             :label="$t('close')"
             color="negative"
-            v-bind="$myth.vueConfig.dt?.dialogButtonsProps"
+            v-bind="$myth.options.dt?.dialogButtonsProps"
             @click="closeShowDialog"
           />
         </q-card-actions>
@@ -525,7 +524,7 @@
       persistent
       transition-hide="slide-up"
       transition-show="slide-down"
-      v-bind="$myth.vueConfig.dt?.formDialogProps"
+      v-bind="$myth.options.dt?.formDialogProps"
     >
       <q-card class="m--dialog-card">
         <MForm
@@ -538,7 +537,7 @@
             <q-toolbar>
               <q-toolbar-title>
                 <q-btn
-                  v-if="$myth.vueConfig.dt?.formDialogProps?.maximized"
+                  v-if="$myth.options.dt?.formDialogProps?.maximized"
                   :icon="!$q.lang.rtl ?'arrow_back_ios' : 'arrow_forward_ios'"
                   fab-mini
                   flat
@@ -550,7 +549,7 @@
           </q-card-section>
           <q-separator />
           <q-card-section
-            :style="`max-height: ${$q.screen.height- ($myth.vueConfig.dt?.formDialogProps?.maximized ? 140 : 300)}px`"
+            :style="`max-height: ${$q.screen.height- ($myth.options.dt?.formDialogProps?.maximized ? 140 : 300)}px`"
             class="scroll"
           >
             <slot
@@ -571,7 +570,7 @@
               :disable="tableOptions.loading"
               :label="$t('close')"
               color="negative"
-              v-bind="$myth.vueConfig.dt?.dialogButtonsProps"
+              v-bind="$myth.options.dt?.dialogButtonsProps"
               @click="closeFormDialog"
             />
             <slot
@@ -587,7 +586,7 @@
                 :loading="tableOptions.loading"
                 color="positive"
                 type="submit"
-                v-bind="$myth.vueConfig.dt?.dialogButtonsProps"
+                v-bind="$myth.options.dt?.dialogButtonsProps"
               />
             </slot>
           </q-card-actions>
@@ -597,16 +596,16 @@
 
     <MFadeTransition>
       <q-page-sticky
-        v-if="hasAddBtn && $myth.vueConfig.dt?.fabBtn?.hide !== !1"
-        :offset="$myth.vueConfig.dt?.fabBtn?.offset|| [25,25]"
-        :position="$myth.vueConfig.dt?.fabBtn?.position || 'bottom-right'"
-        v-bind="$myth.vueConfig.dt?.fabBtn?.pageStickyProps"
+        v-if="hasAddBtn && $myth.options.dt?.fabBtn?.hide !== !1"
+        :offset="$myth.options.dt?.fabBtn?.offset|| [25,25]"
+        :position="$myth.options.dt?.fabBtn?.position || 'bottom-right'"
+        v-bind="$myth.options.dt?.fabBtn?.pageStickyProps"
       >
         <q-btn
           color="primary"
           fab
           icon="add"
-          v-bind="$myth.vueConfig.dt?.fabBtn?.buttonProps"
+          v-bind="$myth.options.dt?.fabBtn?.buttonProps"
           @click="openCreateDialog()"
         >
           <q-tooltip
@@ -625,7 +624,7 @@
 
 import { useQuasar } from 'quasar'
 import { computed, nextTick, onMounted, PropType, reactive, ref, useSlots, watch } from 'vue'
-import { useMyth } from '../../vue3'
+import { useMyth, useTranslate } from '../../vue3'
 import _ from 'lodash'
 import { useRouter } from 'vue-router'
 import {
@@ -646,7 +645,6 @@ import {
   MDtRequestParamsObjectProp,
   MDtServiceNameCallbackProp
 } from './models'
-import { useI18n } from 'vue-i18n'
 
 export const initPaginationOptions: MDatatablePagination = {
   sortBy: undefined,
@@ -810,7 +808,7 @@ export default {
     const router = useRouter()
     const $q = useQuasar()
     const serviceName = computed(() => props.serviceName)
-    const { t } = useI18n({ useScope: 'global' })
+    const { t } = useTranslate()
     // Prevent user from back
     router.beforeResolve(() => {
       if (dialogs.filter) {
@@ -859,6 +857,12 @@ export default {
     const meta = ref<MDatatableMetaServer>({ ...initMetaServer })
     const pagination = ref<MDatatablePagination>({ ...initPaginationOptions })
     const search = ref<string | null>(null)
+    const searchPlaceholder = computed<string>(() => {
+      if (getHeaders.value.length > 0) {
+        return t('myth.datatable.searchInputPlaceholder', { v: getHeaders.value.map(e => e.label).join(', ') })
+      }
+      return 'myth.datatable.searchInput'
+    })
     const loading = ref<boolean>(!1)
     const filterForm = ref<MDatatableFilterForm>({})
     const tempFilterForm = ref<MDatatableFilterForm>({})
@@ -1475,6 +1479,8 @@ export default {
       getRowsPerPageOptions,
       dialogs,
       resetDialogs,
+
+      searchPlaceholder,
 
       getHeaders,
       hasAddBtn,
