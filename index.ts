@@ -5,9 +5,8 @@
  * Website: https://www.4myth.com
  * Github: https://github.com/mythpe
  */
-import installPlugin from './src/vue3/InstallPlugin'
 
 export * from './src'
-export { installPlugin }
+export { installPlugin } from './src/vue3/InstallPlugin'
 
 export default {}

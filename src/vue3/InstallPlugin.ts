@@ -19,7 +19,7 @@ import { RouteLocationNormalizedLoaded } from 'vue-router'
  * @param api
  * @param options
  */
-export default async function install<I18nT extends I18n = I18n, AxiosType extends MythApiAxiosType = MythApiAxiosType, Services extends MythApiServicesType = MythApiServicesType> (app: App, {
+export async function installPlugin<I18nT extends I18n = I18n, AxiosType extends MythApiAxiosType = MythApiAxiosType, Services extends MythApiServicesType = MythApiServicesType> (app: App, {
   i18n,
   api,
   options = {}

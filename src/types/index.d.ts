@@ -6,6 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
+export * from './lodash.d'
 export * from './m-alerts.d'
 export * from './m-geolocation.d'
 export * from './m-helpers.d'

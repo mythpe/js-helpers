@@ -82,8 +82,7 @@ import {
 } from '../components'
 import { I18n } from 'vue-i18n'
 import { TransitionProps } from 'vue'
-import MythVue from '../vue3/MythVue'
-import { MHelpers } from '../vue3'
+import { MHelpers, MythVue } from '../vue3'
 
 type ServiceType = () => Promise<AxiosResponse>
 
