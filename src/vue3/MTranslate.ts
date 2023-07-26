@@ -13,5 +13,3 @@ export function useTranslate (options?: UseTranslateOptions) {
   Object.assign(options || {}, { useScope: 'global' })
   return useI18n(options)
 }
-
-export default {}

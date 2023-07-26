@@ -52,5 +52,3 @@ export function useGeolocation () {
 
   return { coords, isSupported, getStreetAddress }
 }
-
-export default {}

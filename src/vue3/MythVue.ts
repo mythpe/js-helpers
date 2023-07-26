@@ -46,7 +46,6 @@ export const createMyth = <I18nT extends I18n = I18n, Axios extends MythApiAxios
   _axios.value = axios
   _services.value = services
   MythVue.options = options
-
   return MythVue
 }
 
@@ -54,8 +53,6 @@ export const getMythConfig = () => MythVue
 export const getMythI18n = () => MythVue.i18
 export const getMythApi = () => MythVue.api
 export const getMythOptions = (): MythOptionsConfig => MythVue.options
-
-export default MythVue
 
 /** Global of plugin inside Vue app */
 export const useMyth = () => MythVue

@@ -9,7 +9,7 @@
 import { App, defineAsyncComponent } from 'vue'
 import { MythApiAxiosType, MythApiServicesType, MythPluginOptionsType } from '../types'
 import { I18n } from 'vue-i18n'
-import MythVue, { createMyth } from './MythVue'
+import { createMyth, MythVue } from './MythVue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 
 /**
