@@ -54,3 +54,5 @@ export const MAlerts = {
     })
   }
 }
+
+export default MAlerts

@@ -9,11 +9,11 @@
 import { Dates as dates } from '../utils/Dates'
 import { Helpers as helpers } from '../utils/Helpers'
 import { Str as str } from '../utils/Str'
-import { MAlerts } from './MAlerts'
-import { MHelpers } from './MHelpers'
 import { reactive, ref } from 'vue'
 import { MythApiAxiosType, MythApiServicesType, MythOptionsConfig, MythPluginOptionsType } from '../types'
 import axios from 'axios'
+import MAlerts from './MAlerts'
+import MHelpers from './MHelpers'
 import { I18n } from 'vue-i18n'
 
 const _baseUrl = ref<string>()
@@ -25,17 +25,16 @@ export const MythVue = reactive({
   str,
   dates,
   helpers,
+  ...MAlerts,
+  ...MHelpers,
   i18: reactive(_i18n),
   api: reactive({
     baseUrl: _baseUrl,
     axios: _axios,
     services: _services
   }),
-  options: {},
-  ...MAlerts,
-  ...MHelpers
+  options: {}
 })
-
 export const createMyth = <I18nT extends I18n = I18n, Axios extends MythApiAxiosType = MythApiAxiosType, Services extends MythApiServicesType = MythApiServicesType> ({
   i18n,
   api: { baseUrl, axios, services },
@@ -49,10 +48,11 @@ export const createMyth = <I18nT extends I18n = I18n, Axios extends MythApiAxios
   return MythVue
 }
 
-export const getMythConfig = () => MythVue
-export const getMythI18n = () => MythVue.i18
-export const getMythApi = () => MythVue.api
-export const getMythOptions = (): MythOptionsConfig => MythVue.options
-
 /** Global of plugin inside Vue app */
 export const useMyth = () => MythVue
+export const getMythI18n = () => useMyth().i18
+export const getMythApi = () => useMyth().api
+export const getMythApiServices = () => useMyth().api.services
+export const getMythOptions = (): MythOptionsConfig => useMyth().options
+
+export default MythVue
