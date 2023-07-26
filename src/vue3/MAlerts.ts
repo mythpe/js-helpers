@@ -54,7 +54,3 @@ export const MAlerts = {
     })
   }
 }
-
-export const useAlerts = (): typeof MAlerts => MAlerts
-
-export default {}

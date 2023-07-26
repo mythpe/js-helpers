@@ -253,5 +253,3 @@ export const MHelpers = {
     return copyToClipboard(text)
   }
 }
-
-export default {}

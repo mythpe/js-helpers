@@ -9,5 +9,3 @@
 export * from './Dates'
 export * from './Helpers'
 export * from './Str'
-
-export default {}

@@ -180,4 +180,3 @@ export const Str = {
     return str.toString().replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, `$1${breakTag}$2`)
   }
 }
-export default {}

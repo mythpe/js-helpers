@@ -8,6 +8,3 @@
 
 export * from './utils'
 export * from './vue3'
-export * from './MythHelpers'
-
-export default {}

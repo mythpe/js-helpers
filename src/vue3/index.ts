@@ -11,5 +11,3 @@ export * from './MGeolocation'
 export * from './MHelpers'
 export * from './MTranslate'
 export * from './MythVue'
-
-export default {}
