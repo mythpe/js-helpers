@@ -26,7 +26,7 @@ export const MAlerts = {
     opts = opts || {}
     const btnsProps = {
       ...(options?.button || {}),
-      ...(options?.dialog?.btnsProps || {})
+      ...(options?.dialog?.buttons || {})
     }
     const okProps = options?.dialog?.okProps || {}
     const cancelProps = options?.dialog?.cancelProps || {}

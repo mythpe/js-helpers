@@ -37,9 +37,9 @@ const props = withDefaults(defineProps<Props>(), {
   icon: undefined,
   tooltip: undefined,
   listItem: !1,
-  fabMini: !0,
+  fabMini: undefined,
   flat: !0,
-  round: !0,
+  round: undefined,
   dense: undefined,
   label: undefined
 })
@@ -110,6 +110,7 @@ const getColor = computed<string | undefined>(() => {
   </q-item>
   <q-btn
     v-else
+    no-caps
     :color="getColor"
     :dense="dense"
     :fab-mini="fabMini"
@@ -120,11 +121,9 @@ const getColor = computed<string | undefined>(() => {
     v-bind="$attrs"
     @click="$emit('click',$event)"
   >
-    <slot />
-    <q-tooltip
-      v-if="hasTooltip"
-    >
+    <q-tooltip v-if="hasTooltip">
       {{ getTooltip }}
     </q-tooltip>
+    <slot />
   </q-btn>
 </template>

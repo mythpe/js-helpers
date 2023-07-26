@@ -38,10 +38,10 @@ export const MHelpers = {
    * @param number
    * @param route
    */
-  getPageTitle (number: number | string | any, route?: RouteLocationNormalizedLoaded): string | undefined {
+  getPageTitle (number: number | string | any, route?: RouteLocationNormalizedLoaded): string | null {
     number = number ?? 2
     number = parseInt(number.toString())
-    const defaultValue = undefined
+    const defaultValue = null
     const { t, te } = getMythI18n().global
 
     // Not is route
@@ -50,8 +50,8 @@ export const MHelpers = {
       return defaultValue
     }
 
-    const routePath = route?.path?.toString() || ''
-    const routeName = route?.name?.toString() || ''
+    const routePath = route?.path?.toString() || null
+    const routeName = route?.name?.toString() || null
 
     let str = null
 
@@ -90,25 +90,16 @@ export const MHelpers = {
       if (!(k = keys[f])) {
         continue
       }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       if (te && te(k) && _.isString(t(k))) {
         if (_.startsWith(k, 'choice.')) {
           const pop: string = k.split('.').pop() || ''
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           str = t(k, number, { [pop]: number })
         } else {
           const parents: string[] = routeName.split('.')
           if (parents.length > 1) {
             // console.log(parents[parents.length - 2])
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             str = t(k, { name: t(`choice.${Str.pascalCase(_.pluralize(parents[parents.length - 2]))}`, '1') })
           } else {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             str = t(k, { name: '' })
           }
         }
@@ -170,24 +161,14 @@ export const MHelpers = {
       let k
       if (te) {
         if (te((k = `attributes.${item.label}`))) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           item.label = t(k)
         } else if (te((k = `attributes.${_.snakeCase(item.label)}`))) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           item.label = t(k)
         } else if (te((k = `attributes.${_.camelCase(item.label)}`))) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           item.label = t(k)
         } else if (te((k = `attributes.${Str.pascalCase(item.label)}`))) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           item.label = t(k)
         } else if (te((k = item.label))) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           item.label = t(k)
         }
       }
@@ -236,28 +217,16 @@ export const MHelpers = {
 
     let transKey: string
     if (te) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       if (te((transKey = `attributes.${key}`)) && _.isString(t(transKey))) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         return t(transKey, ...args)
       }
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       if (te((transKey = `choice.${key}`)) && _.isString(t(transKey))) {
         args = args || [2]
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         return t(transKey, ...args)
       }
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       if (te(key) && _.isString(t(key))) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         return t(key, ...args)
       }
     }

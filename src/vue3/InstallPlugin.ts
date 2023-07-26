@@ -18,9 +18,17 @@ import {
   MAxiosProps,
   MAxiosSlots,
   MBtnProps,
-  MBtnSlots, MCardProps, MCardSlots,
+  MBtnSlots,
+  MCardProps,
+  MCardSlots,
   MCheckboxProps,
-  MCheckboxSlots, MColProps, MColSlots, MColumnProps, MColumnSlots, MContainerProps, MContainerSlots,
+  MCheckboxSlots,
+  MColProps,
+  MColSlots,
+  MColumnProps,
+  MColumnSlots,
+  MContainerProps,
+  MContainerSlots,
   MDatatableProps,
   MDatatableSlots,
   MDateProps,
@@ -34,16 +42,24 @@ import {
   MFileProps,
   MFileSlots,
   MFormProps,
-  MFormSlots, MGoogleMapsProps, MGoogleMapsSlots,
+  MFormSlots,
+  MGoogleMapsProps,
+  MGoogleMapsSlots,
   MInputProps,
   MInputSlots,
   MPickerProps,
   MPickerSlots,
   MRadioProps,
-  MRadioSlots, MRowProps, MRowSlots,
+  MRadioSlots,
+  MRowProps,
+  MRowSlots,
   MSelectProps,
   MSelectSlots,
-  MTimeProps, MTimeSlots, MToggleProps, MToggleSlots, MTransitionsSlots,
+  MTimeProps,
+  MTimeSlots,
+  MToggleProps,
+  MToggleSlots,
+  MTransitionsSlots,
   MUploaderProps,
   MUploaderSlots
 } from '../components'
@@ -73,7 +89,7 @@ export default async function install<I18nT extends I18n = I18n, AxiosType exten
   app.config.globalProperties.parseAttribute = function (string: string | { text: string } | any, ...args: []): string | undefined | any {
     return this.$myth.parseAttribute(string, ...args)
   }
-  app.config.globalProperties.getPageTitle = function (number: number | string = 2, route?: RouteLocationNormalizedLoaded): string | undefined {
+  app.config.globalProperties.getPageTitle = function (number: number | string = 2, route?: RouteLocationNormalizedLoaded): string | null {
     return this.$myth.getPageTitle(number, route || this.$route)
   }
 
@@ -114,44 +130,4 @@ export default async function install<I18nT extends I18n = I18n, AxiosType exten
 
   // Transition
   app.component('MFadeTransition', defineAsyncComponent(() => import('../components/transition/MFadeTransition.vue')))
-}
-
-declare module '@vue/runtime-core' {
-  interface GlobalComponents {
-    MDatatable: GlobalComponentConstructor<MDatatableProps, MDatatableSlots>;
-    MDtAvatar: GlobalComponentConstructor<MDtAvatarProps, MDtAvatarSlots>;
-    MDtBtn: GlobalComponentConstructor<MDtBtnProps, MDtBtnSlots>;
-    MAvatarViewer: GlobalComponentConstructor<MAvatarViewerProps, MAvatarViewerSlots>;
-    MUploader: GlobalComponentConstructor<MUploaderProps, MUploaderSlots>;
-    MAxios: GlobalComponentConstructor<MAxiosProps, MAxiosSlots>;
-    MBtn: GlobalComponentConstructor<MBtnProps, MBtnSlots>;
-    MCheckbox: GlobalComponentConstructor<MCheckboxProps, MCheckboxSlots>;
-    MRadio: GlobalComponentConstructor<MRadioProps, MRadioSlots>;
-    MDate: GlobalComponentConstructor<MDateProps, MDateSlots>;
-    MEditor: GlobalComponentConstructor<MEditorProps, MEditorSlots>;
-    MEmail: GlobalComponentConstructor<MInputProps, MInputSlots>;
-    MFile: GlobalComponentConstructor<MFileProps, MFileSlots>;
-    MForm: GlobalComponentConstructor<MFormProps, MFormSlots>;
-    MInput: GlobalComponentConstructor<MInputProps, MInputSlots>;
-    MMobile: GlobalComponentConstructor<MInputProps, MInputSlots>;
-    MPassword: GlobalComponentConstructor<MInputProps, MInputSlots>;
-    MPicker: GlobalComponentConstructor<MPickerProps, MPickerSlots>;
-    MSelect: GlobalComponentConstructor<MSelectProps, MSelectSlots>;
-    MTime: GlobalComponentConstructor<MTimeProps, MTimeSlots>;
-    MToggle: GlobalComponentConstructor<MToggleProps, MToggleSlots>;
-    MGoogleMaps: GlobalComponentConstructor<MGoogleMapsProps, MGoogleMapsSlots>;
-    MCard: GlobalComponentConstructor<MCardProps, MCardSlots>;
-    MCol: GlobalComponentConstructor<MColProps, MColSlots>;
-    MColumn: GlobalComponentConstructor<MColumnProps, MColumnSlots>;
-    MContainer: GlobalComponentConstructor<MContainerProps, MContainerSlots>;
-    MRow: GlobalComponentConstructor<MRowProps, MRowSlots>;
-    MFadeTransition: GlobalComponentConstructor<TransitionProps, MTransitionsSlots>;
-  }
-
-  interface ComponentCustomProperties {
-    $myth: typeof MythVue
-    openWindow: typeof window.open;
-    parseAttribute: typeof MHelpers.parseAttribute;
-    getPageTitle: typeof MHelpers.getPageTitle;
-  }
 }

@@ -8,7 +8,7 @@
 
 import { AxiosResponse } from 'axios'
 import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
-import { ComputedRef, Ref, SetupContext, UnwrapRef, VNode } from 'vue'
+import { ComputedRef, Ref, UnwrapRef, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
 
 export interface MDtItem extends GenericFormValues {
@@ -49,16 +49,21 @@ export interface FetchRowsArgs {
 }
 
 export interface ApiServiceParams {
-  filter: Record<string, any>;
-  search: string | null;
-  headers: string[];
-  ids: number[];
+  filter?: Record<string, any>;
+  search?: string | null;
+  searchColumns?: string[];
+  // headers: string[];
+  headerItems?: Record<number, any>[];
+  ids?: number[];
   indexType: 'index' | 'pdf' | 'excel';
-  requestWith?: string | any;
+  // For Datatable, index,export-pdf|excel,update,store,delete
+  fdt: 'i' | 'e' | 'u' | 's' | 'd';
+  requestWith?: string;
   itemsPerPage: number;
   page: number;
-  sortBy: string | undefined;
-  sortDesc: number | undefined;
+  sortBy?: string;
+  sortDesc?: number;
+  toUrl?: boolean;
 
   [key: string]: any;
 }
@@ -101,7 +106,9 @@ export type MDatatableOptions = {
   // Temp of filter form
   tempFilter: Ref<MDatatableFilterForm>;
   // Selected rows
-  selected: Ref<MDtItem[]>
+  selected: Ref<MDtItem[]>;
+  // Fullscreen of datatable
+  fullscreen: Ref<boolean>;
 }
 
 export type MDatatableDialogsOptions = {
@@ -139,20 +146,6 @@ export interface MDtBtnSlots extends MBtnSlots {
    * Override the default QSpinner when in 'loading' state
    */
   loading: () => VNode[];
-}
-
-export interface UseDatatableOptions {
-  props: any;
-  slots: SetupContext['slots'];
-  emit: {
-    (e: 'update:rows', value: MDtItem[]): void
-    (e: 'refresh'): void
-  };
-  rows: Ref<MDtItem[]>,
-  dialogs: Ref<MDatatableDialogsOptions>,
-  tableOptions: Ref<MDatatableOptions>,
-  metaServer: Ref<MDatatableMetaServer>,
-  paginationOptions: Ref<MDatatablePagination>,
 }
 
 export type MDatatableScope = {
@@ -263,6 +256,7 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   title?: string;
   noManageColumns?: boolean;
   visibleColumns?: string[];
+  searchColumns?: string[];
 }
 
 export interface MDtAvatarProps extends QAvatarProps {

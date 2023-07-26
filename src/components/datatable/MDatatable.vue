@@ -42,6 +42,7 @@
     >
       <q-table
         ref="table"
+        v-model:fullscreen="tableOptions.fullscreen"
         v-model:pagination="pagination"
         v-model:selected="selected"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
@@ -54,7 +55,7 @@
         :rows-per-page-options="getRowsPerPageOptions"
         :selection="hideSelection !== !0 ? (singleSelection ? 'single' : 'multiple') : 'none'"
         :title="title"
-        :visible-columns="visibleColumnsModel"
+        :visible-columns="visibleHeaders"
         card-container-class="m--datatable-container"
         table-class="m--datatable-container"
         v-bind="$myth.options.dt?.props"
@@ -90,6 +91,7 @@
                   />
                 </div>
                 <MInput
+                  autofocus
                   v-if="hideSearch !== !1"
                   v-model="tableOptions.search"
                   :debounce="searchDebounce"
@@ -104,19 +106,84 @@
                   dplaceholder="myth.datatable.searchInput"
                   :placeholder="searchPlaceholder"
                   sm="9"
-                  v-bind="$myth.options.dt?.searchInputProps"
+                  v-bind="$myth.options.dt?.searchInput?.props"
                 >
                   <template #prepend>
                     <q-icon
                       v-if="!tableOptions.search"
                       name="search"
-                    />
+                    >
+                      <q-tooltip>
+                        {{ $t('myth.datatable.searchInput') }}
+                      </q-tooltip>
+                    </q-icon>
                     <q-icon
                       v-else
                       class="cursor-pointer"
                       name="clear"
                       @click="tableOptions.search = ''"
-                    />
+                    >
+                      <q-tooltip>
+                        {{ $t('myth.datatable.searchInputClear') }}
+                      </q-tooltip>
+                    </q-icon>
+                  </template>
+                  <template #append>
+                    <q-btn
+                      flat
+                      dense
+                      round
+                      aria-label="Menu"
+                      icon="o_ballot"
+                      v-bind="$myth.options.dt?.searchInput?.menuBtn"
+                    >
+                      <q-popup-proxy
+                        anchor="bottom end"
+                        self="top end"
+                        v-bind="$myth.options.dt?.searchInput?.menuProps"
+                      >
+                        <q-card flat>
+                          <div
+                            class="q-pa-md"
+                            style="max-width: 400px"
+                          >
+                            <div class="text-body2 q-mb-md">
+                              {{ $t('myth.datatable.searchColumns') }}
+                            </div>
+                            <div class="row items-center">
+                              <div class="col-12">
+                                <template
+                                  v-for="h in getHeaders"
+                                  :key="h.name"
+                                >
+                                  <q-checkbox
+                                    v-model="searchColumnsRef"
+                                    :disable="searchColumnsRef.length < 2 && searchColumnsRef.indexOf(h.name) !== -1"
+                                    :label="h.label"
+                                    :val="h.name"
+                                  />
+                                </template>
+                              </div>
+                              <div class="col-12 q-pt-lg row justify-end">
+                                <q-btn
+                                  flat
+                                  dense
+                                  no-caps
+                                  size="md"
+                                  style="min-width: 68px"
+                                  :label="$t('done')"
+                                  @click="tableOptions.search ? refresh() : undefined"
+                                  v-close-popup
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </q-card>
+                      </q-popup-proxy>
+                      <q-tooltip>
+                        {{ $t('myth.datatable.searchColumns') }}
+                      </q-tooltip>
+                    </q-btn>
                   </template>
                 </MInput>
                 <MCol
@@ -125,12 +192,16 @@
                 >
                   <div class="row q-gutter-x-sm">
                     <MDtBtn
-                      v-if="hasMenu"
-                      icon="o_more_vert"
+                      id="filter-table"
                       v-bind="$myth.options.dt?.buttons?.more"
+                      :disable="tableOptions.loading"
                     >
-                      <q-tooltip class="touch-hide">
-                        {{ $t('more') }}
+                      <div class="column items-center">
+                        <q-icon name="o_more_vert" />
+                        <div v-text="$t('more')" />
+                      </div>
+                      <q-tooltip v-if="!tableOptions.loading">
+                        {{ $t('myth.datatable.hints.more') }}
                       </q-tooltip>
                       <q-menu
                         v-bind="$myth.options.dt?.buttons?.moreMenu"
@@ -237,30 +308,101 @@
                               </q-item-section>
                             </q-item>
                           </template>
+                          <q-item
+                            v-close-popup
+                            clickable
+                            v-bind="$myth.options.dt?.buttons?.moreItem"
+                            @click="tableOptions.fullscreen = !tableOptions.fullscreen"
+                          >
+                            <q-item-section thumbnail>
+                              <q-icon
+                                :name="tableOptions.fullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                                right
+                              />
+                            </q-item-section>
+                            <q-item-section>
+                              <q-item-label>{{ $t('myth.datatable.' + (tableOptions.fullscreen ? 'exitFullscreen' : 'fullscreen')) }}</q-item-label>
+                            </q-item-section>
+                          </q-item>
                         </q-list>
                       </q-menu>
                     </MDtBtn>
                     <MDtBtn
                       v-if="hasFilterDialog"
-                      icon="o_filter_alt"
+                      tooltip="myth.datatable.hints.filter"
                       v-bind="$myth.options.dt?.buttons?.filter"
                       @click="openFilterDialog()"
                     >
-                      <q-tooltip class="touch-hide">
-                        {{ $t('filter') }}
-                      </q-tooltip>
+                      <div class="column items-center">
+                        <q-icon name="o_filter_alt" />
+                        <div v-text="$t('filter')" />
+                      </div>
+
+                      <!-- Filter dialog -->
+                      <q-popup-proxy
+                        anchor="bottom end"
+                        self="top end"
+                        :breakpoint="769"
+                        allow-focus-outside
+                        full-width
+                        no-backdrop-dismiss
+                        persistent
+                        position="top"
+                        transition-show="fade"
+                        transition-hide="fade"
+                        v-bind="$myth.options.dt?.filterDialogProps"
+                      >
+                        <q-card flat>
+                          <MContainer class="q-pa-md">
+                            <div
+                              class="text-body1 q-mb-md"
+                              v-text="$t('myth.datatable.filter.title')"
+                            />
+                            <div class="row items-center">
+                              <div class="col-12">
+                                <MContainer class="q-pa-md">
+                                  <slot
+                                    name="filter"
+                                    v-bind="{filter:tableOptions.tempFilter}"
+                                  />
+                                </MContainer>
+                              </div>
+                              <div class="col-12 q-pt-lg">
+                                <div class="row justify-between">
+                                  <MBtn
+                                    flat
+                                    color="negative"
+                                    :label="$t('myth.datatable.filter.cancel')"
+                                    v-bind="$myth.options.dt?.dialogButtonsProps"
+                                    v-close-popup
+                                    @click="closeFilterDialog"
+                                  />
+                                  <MBtn
+                                    flat
+                                    color="positive"
+                                    :label="$t('myth.datatable.filter.save')"
+                                    v-bind="$myth.options.dt?.dialogButtonsProps"
+                                    v-close-popup
+                                    @click="saveFilterDialog"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </MContainer>
+                        </q-card>
+                      </q-popup-proxy>
                     </MDtBtn>
                     <MDtBtn
-                      :disabled="tableOptions.loading"
-                      icon="o_refresh"
                       v-bind="$myth.options.dt?.buttons?.refresh"
+                      :disabled="tableOptions.loading"
                       @click="refreshNoUpdate()"
                     >
-                      <q-tooltip
-                        v-if="!tableOptions.loading"
-                        class="touch-hide"
-                      >
-                        {{ $t('refresh') }}
+                      <div class="column items-center">
+                        <q-icon name="o_refresh" />
+                        <div v-text="$t('refresh')" />
+                      </div>
+                      <q-tooltip v-if="!tableOptions.loading">
+                        {{ $t('myth.datatable.hints.refresh') }}
                       </q-tooltip>
                     </MDtBtn>
                   </div>
@@ -276,7 +418,7 @@
                     class="rounded-borders col-12"
                   >
                     <q-expansion-item
-                      :caption="visibleColumnsModel.length.toString()"
+                      :caption="visibleHeaders.length.toString()"
                       :label="$t('myth.datatable.columnsToShow')"
                       expand-separator
                       icon="list"
@@ -288,8 +430,8 @@
                             :key="h.name"
                           >
                             <q-checkbox
-                              v-model="visibleColumnsModel"
-                              :disable="visibleColumnsModel.length < 2 && visibleColumnsModel.indexOf(h.name) !== -1"
+                              v-model="visibleHeaders"
+                              :disable="visibleHeaders.length < 2 && visibleHeaders.indexOf(h.name) !== -1"
                               :label="h.label"
                               :val="h.name"
                             />
@@ -425,56 +567,6 @@
       </q-table>
       <slot />
     </q-pull-to-refresh>
-
-    <!-- Filter dialog -->
-    <q-dialog
-      v-model="dialogs.filter"
-      allow-focus-outside
-      full-width
-      no-backdrop-dismiss
-      persistent
-      position="top"
-      transition-hide="slide-up"
-      transition-show="slide-down"
-      v-bind="$myth.options.dt?.filterDialogProps"
-    >
-      <q-card class="m--dialog-card">
-        <q-card-section>
-          <p
-            class="text-h6"
-            v-text="$t('filter')"
-          />
-        </q-card-section>
-        <q-separator />
-        <q-card-section
-          :style="`max-height: ${$q.screen.height-300}px`"
-          class="scroll"
-        >
-          <slot
-            name="filter"
-            v-bind="{filter:tableOptions.tempFilter}"
-          />
-        </q-card-section>
-        <q-separator />
-        <q-card-actions
-          align="between"
-          class="print-hide"
-        >
-          <MBtn
-            :label="$t('cancel')"
-            color="negative"
-            v-bind="$myth.options.dt?.dialogButtonsProps"
-            @click="closeFilterDialog"
-          />
-          <MBtn
-            :label="$t('save')"
-            color="positive"
-            v-bind="$myth.options.dt?.dialogButtonsProps"
-            @click="saveFilterDialog"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
 
     <!-- Show dialog -->
     <q-dialog
@@ -686,6 +778,11 @@ export default {
       required: !1,
       default: () => undefined
     },
+    searchColumns: {
+      type: Array as PropType<MDatatableProps['searchColumns']>,
+      required: !1,
+      default: () => undefined
+    },
     rows: {
       type: Array,
       default: () => ([])
@@ -853,13 +950,22 @@ export default {
     }
 
     /** Table */
+
+    /** --- */
+    const headersProp = computed(() => props.headers)
+    const getHeaders = computed<any[]>(() => myth.parseHeaders(headersProp.value) || [])
+    const visibleHeaders = ref(myth.parseHeaders(props.visibleColumns || headersProp.value).map(e => e.name))
+    /** --- */
+
     const selected = ref<MDtItem[]>([])
     const meta = ref<MDatatableMetaServer>({ ...initMetaServer })
     const pagination = ref<MDatatablePagination>({ ...initPaginationOptions })
     const search = ref<string | null>(null)
+    const searchColumnsProp = computed(() => props.searchColumns)
+    const searchColumnsRef = ref<string[]>(myth.parseHeaders(searchColumnsProp.value || headersProp.value).map(e => e.name))
     const searchPlaceholder = computed<string>(() => {
-      if (getHeaders.value.length > 0) {
-        return t('myth.datatable.searchInputPlaceholder', { v: getHeaders.value.map(e => e.label).join(', ') })
+      if (searchColumnsRef.value.length > 0) {
+        return t('myth.datatable.searchInputPlaceholder', { v: getHeaders.value.filter(e => e?.field !== 'control' && searchColumnsRef.value.indexOf(e.name) !== -1).map(e => e.label).join(', ') })
       }
       return 'myth.datatable.searchInput'
     })
@@ -867,6 +973,7 @@ export default {
     const filterForm = ref<MDatatableFilterForm>({})
     const tempFilterForm = ref<MDatatableFilterForm>({})
     const hasAction = ref<boolean>(!1)
+    const fullscreen = ref(!1)
     const tableOptions = reactive<MDatatableOptions>({
       search,
       loading,
@@ -875,14 +982,12 @@ export default {
       filter: filterForm,
       tempFilter: tempFilterForm,
       selected,
-      hasAction
+      hasAction,
+      fullscreen
     })
     /** Table */
 
     /** --- */
-    const headersProp = computed(() => props.headers)
-    const getHeaders = computed<any[]>(() => myth.parseHeaders(headersProp.value) ?? [])
-    const visibleColumnsModel = ref(myth.parseHeaders(props.visibleColumns || headersProp.value).map(e => e.name))
 
     const hasAddBtn = computed<boolean>(() => {
       if (props.hideAddBtn) {
@@ -905,6 +1010,11 @@ export default {
     const hasDestroyBtn = computed<boolean>(() => !props.hideDestroyBtn)
     const hasFilterDialog = computed<boolean>(() => slots.filter !== undefined)
     const hasMenu = computed<boolean>(() => (Boolean(props.pdf) || Boolean(props.excel) || hasFilterDialog.value || hasAddBtn.value))
+    const moreMenuItems = computed(() => {
+      const items = []
+
+      return items
+    })
 
     const isUpdateMode = ref<boolean>(!1)
     const formMode = computed<'update' | 'create'>(() => isUpdateMode.value ? 'update' : 'create')
@@ -978,7 +1088,7 @@ export default {
     const refresh = (done?: () => void) => {
       return refreshNoUpdate(done)
     }
-    const getRequestWith = (type: 'withIndex' | 'withShow' | 'withUpdate' | 'withStore') => {
+    const getRequestWith = (type: 'withIndex' | 'withShow' | 'withUpdate' | 'withStore'): string | null => {
       let v: any = []
       const params: Record<string | symbol | number, unknown> | string | (() => (string[] | string)) | undefined = props[type]
       if (params) {
@@ -999,18 +1109,28 @@ export default {
       }
       return v.join(',') ?? null
     }
-    const getDatatableParams = ({ pagination, filter }: FetchRowsArgs = {}): ApiServiceParams => {
+    const getDatatableParams = ({ pagination, filter }: FetchRowsArgs = {}, merge: Partial<ApiServiceParams> = {}): ApiServiceParams => {
       let params: ApiServiceParams = {
-        filter: tableOptions.filter,
-        search: filter || null,
-        headers: getHeaders.value.map((e: any) => e.name),
-        ids: tableOptions.selected.map((e: any) => e.id),
+        // filter: tableOptions.filter,
+        // search: filter || undefined,
+        // headers: getHeaders.value.map((e: any) => e.name),
+        // headers: ['name'],
+        // ids: tableOptions.selected.map((e: any) => e.id),
         indexType: 'index',
-        requestWith: undefined,
+        fdt: 'i',
         itemsPerPage: pagination?.rowsPerPage === 0 ? -1 : (pagination?.rowsPerPage !== undefined ? pagination?.rowsPerPage : 0),
         page: pagination?.page !== undefined ? pagination.page : 0,
         sortBy: pagination?.sortBy !== undefined ? pagination.sortBy : undefined,
         sortDesc: !pagination?.sortBy ? undefined : (pagination?.descending === !0 ? 1 : (pagination?.descending === !1 ? 0 : undefined))
+      }
+      if (filter) {
+        params.search = filter
+      }
+      if (Object.keys(tableOptions.filter).length > 0) {
+        params.filter = tableOptions.filter
+      }
+      if (searchColumnsRef.value.length > 0) {
+        params.searchColumns = searchColumnsRef.value
       }
       if (props.requestParams) {
         if (typeof props.requestParams === 'function') {
@@ -1022,7 +1142,7 @@ export default {
           }
         }
       }
-      return params
+      return { ...params, ...merge }
     }
     const fetchDatatableItems = async (opts: FetchRowsArgs = {}) => {
       if (props.endReach && tableOptions.meta.last_page && tableOptions.pagination.page >= tableOptions.meta.last_page) {
@@ -1042,8 +1162,8 @@ export default {
             page: parseInt(_meta?.current_page) || 1,
             rowsPerPage: parseInt(_meta?.per_page) || 0,
             rowsNumber: parseInt(_meta?.total) || 0,
-            sortBy: opts?.pagination?.sortBy,
-            descending: opts?.pagination?.descending
+            sortBy: opts?.pagination?.sortBy || undefined,
+            descending: opts?.pagination?.descending || undefined
           }
           _meta && (meta.value = _meta)
           if (props.endReach) {
@@ -1073,14 +1193,17 @@ export default {
       }
       const ex = async () => {
         loading.value = !0
-        const data = {
-          ...getDatatableParams({
-            pagination: tableOptions.pagination,
-            filter: tableOptions.search
-          }),
+        const data = getDatatableParams({
+          pagination: tableOptions.pagination,
+          filter: tableOptions.search
+        }, {
           indexType: type,
+          fdt: 'e',
           toUrl: props.exportToUrl,
-          headerItems: getHeaders.value.filter(e => e?.field !== 'control' && visibleColumnsModel.value.indexOf(e.name) !== -1)
+          headerItems: getHeaders.value.filter(e => e?.field !== 'control' && visibleHeaders.value.indexOf(e.name) !== -1)
+        })
+        if (tableOptions.selected.length > 0) {
+          data.ids = tableOptions.selected.map((e: any) => e.id)
         }
         try {
           const response = await getApiServices().export(data)
@@ -1481,6 +1604,7 @@ export default {
       resetDialogs,
 
       searchPlaceholder,
+      searchColumnsRef,
 
       getHeaders,
       hasAddBtn,
@@ -1489,6 +1613,7 @@ export default {
       hasDestroyBtn,
       hasFilterDialog,
       hasMenu,
+      moreMenuItems,
 
       isUpdateMode,
       formMode,
@@ -1532,7 +1657,7 @@ export default {
       pagination,
       tableOptions,
       getRows,
-      visibleColumnsModel
+      visibleHeaders
     }
   }
 }
@@ -1581,6 +1706,11 @@ export default {
       padding: 4px 16px !important
 
 .m--datatable-component
+
+  .q-table__bottom
+    justify-content: start !important
+    .q-table__separator.col
+      display: none !important
 
   .q-table__top
     align-items: center
