@@ -11,3 +11,5 @@ export * from './form/models.d'
 export * from './google/models.d'
 export * from './grid/models.d'
 export * from './transition/models.d'
+
+export default {}
