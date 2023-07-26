@@ -35,11 +35,17 @@ import {
   MAxiosProps,
   MAxiosSlots,
   MBtnProps,
-  MBtnSlots, MCardProps, MCardSlots,
+  MBtnSlots,
+  MCardProps,
+  MCardSlots,
   MCheckboxProps,
   MCheckboxSlots,
-  MColProps, MColSlots, MColumnProps, MColumnSlots,
-  MContainerProps, MContainerSlots,
+  MColProps,
+  MColSlots,
+  MColumnProps,
+  MColumnSlots,
+  MContainerProps,
+  MContainerSlots,
   MDatatableProps,
   MDatatableSlots,
   MDateProps,
@@ -62,13 +68,15 @@ import {
   MPickerSlots,
   MRadioProps,
   MRadioSlots,
-  MRowProps, MRowSlots,
+  MRowProps,
+  MRowSlots,
   MSelectProps,
   MSelectSlots,
   MTimeProps,
   MTimeSlots,
   MToggleProps,
-  MToggleSlots, MTransitionsSlots,
+  MToggleSlots,
+  MTransitionsSlots,
   MUploaderProps,
   MUploaderSlots
 } from '../components'
@@ -120,8 +128,8 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     },
     searchInput?: {
       props: Partial<QInputProps>;
-      menuProps:Partial<QMenuProps>;
-      menuBtn:Partial<QBtnProps>;
+      menuProps: Partial<QMenuProps>;
+      menuBtn: Partial<QBtnProps>;
     };
     dialogButtonsProps?: Partial<MBtnProps>;
   };

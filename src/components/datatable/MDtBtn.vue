@@ -110,14 +110,14 @@ const getColor = computed<string | undefined>(() => {
   </q-item>
   <q-btn
     v-else
-    no-caps
     :color="getColor"
     :dense="dense"
     :fab-mini="fabMini"
     :flat="flat"
     :icon="getIcon"
-    :round="round"
     :label="label"
+    :round="round"
+    no-caps
     v-bind="$attrs"
     @click="$emit('click',$event)"
   >

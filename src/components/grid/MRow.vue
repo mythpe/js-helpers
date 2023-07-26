@@ -11,6 +11,7 @@
 
 import { defineComponent } from 'vue'
 import { MythVue } from '../../vue3'
+
 export default defineComponent({
   inheritAttrs: !1,
   props: {
@@ -57,10 +58,10 @@ export default defineComponent({
 <template>
   <div
     :class="classes"
-    v-bind="{...($myth.options.row),...$attrs}"
+    :col="undefined"
     :default-gutters="undefined"
     :gutters="undefined"
-    :col="undefined"
+    v-bind="{...($myth.options.row),...$attrs}"
   >
     <slot />
   </div>

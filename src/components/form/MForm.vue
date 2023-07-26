@@ -10,9 +10,9 @@
   <VeeForm
     ref="veeForm"
     v-slot="v"
-    as="div"
-    :initial-values="form"
     :initial-errors="errors"
+    :initial-values="form"
+    as="div"
     v-bind="$attrs"
   >
     <form

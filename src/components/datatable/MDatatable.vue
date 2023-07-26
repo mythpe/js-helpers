@@ -91,20 +91,20 @@
                   />
                 </div>
                 <MInput
-                  autofocus
                   v-if="hideSearch !== !1"
                   v-model="tableOptions.search"
                   :debounce="searchDebounce"
+                  :placeholder="searchPlaceholder"
                   autocomplete="none"
+                  autofocus
                   class="self-start"
                   col="12"
                   dense
+                  dplaceholder="myth.datatable.searchInput"
                   lg="6"
                   md="6"
                   name="search"
                   outlined
-                  dplaceholder="myth.datatable.searchInput"
-                  :placeholder="searchPlaceholder"
                   sm="9"
                   v-bind="$myth.options.dt?.searchInput?.props"
                 >
@@ -130,11 +130,11 @@
                   </template>
                   <template #append>
                     <q-btn
-                      flat
-                      dense
-                      round
                       aria-label="Menu"
+                      dense
+                      flat
                       icon="o_ballot"
+                      round
                       v-bind="$myth.options.dt?.searchInput?.menuBtn"
                     >
                       <q-popup-proxy
@@ -166,14 +166,14 @@
                               </div>
                               <div class="col-12 q-pt-lg row justify-end">
                                 <q-btn
-                                  flat
+                                  v-close-popup
+                                  :label="$t('done')"
                                   dense
+                                  flat
                                   no-caps
                                   size="md"
                                   style="min-width: 68px"
-                                  :label="$t('done')"
                                   @click="tableOptions.search ? refresh() : undefined"
-                                  v-close-popup
                                 />
                               </div>
                             </div>
@@ -193,8 +193,8 @@
                   <div class="row q-gutter-x-sm">
                     <MDtBtn
                       id="filter-table"
-                      v-bind="$myth.options.dt?.buttons?.more"
                       :disable="tableOptions.loading"
+                      v-bind="$myth.options.dt?.buttons?.more"
                     >
                       <div class="column items-center">
                         <q-icon name="o_more_vert" />
@@ -340,16 +340,16 @@
 
                       <!-- Filter dialog -->
                       <q-popup-proxy
-                        anchor="bottom end"
-                        self="top end"
                         :breakpoint="769"
                         allow-focus-outside
+                        anchor="bottom end"
                         full-width
                         no-backdrop-dismiss
                         persistent
                         position="top"
-                        transition-show="fade"
+                        self="top end"
                         transition-hide="fade"
+                        transition-show="fade"
                         v-bind="$myth.options.dt?.filterDialogProps"
                       >
                         <q-card flat>
@@ -370,19 +370,19 @@
                               <div class="col-12 q-pt-lg">
                                 <div class="row justify-between">
                                   <MBtn
-                                    flat
-                                    color="negative"
-                                    :label="$t('myth.datatable.filter.cancel')"
-                                    v-bind="$myth.options.dt?.dialogButtonsProps"
                                     v-close-popup
+                                    :label="$t('myth.datatable.filter.cancel')"
+                                    color="negative"
+                                    flat
+                                    v-bind="$myth.options.dt?.dialogButtonsProps"
                                     @click="closeFilterDialog"
                                   />
                                   <MBtn
-                                    flat
-                                    color="positive"
-                                    :label="$t('myth.datatable.filter.save')"
-                                    v-bind="$myth.options.dt?.dialogButtonsProps"
                                     v-close-popup
+                                    :label="$t('myth.datatable.filter.save')"
+                                    color="positive"
+                                    flat
+                                    v-bind="$myth.options.dt?.dialogButtonsProps"
                                     @click="saveFilterDialog"
                                   />
                                 </div>
@@ -393,8 +393,8 @@
                       </q-popup-proxy>
                     </MDtBtn>
                     <MDtBtn
-                      v-bind="$myth.options.dt?.buttons?.refresh"
                       :disabled="tableOptions.loading"
+                      v-bind="$myth.options.dt?.buttons?.refresh"
                       @click="refreshNoUpdate()"
                     >
                       <div class="column items-center">
@@ -445,8 +445,8 @@
 
               <MFadeTransition>
                 <MRow
-                  class="items-center"
                   v-if="Object.values(tableOptions.filter).filter(e => Boolean(e)).length > 0"
+                  class="items-center"
                 >
                   <MCol col="auto">
                     <span class="text-subtitle1 q-mr-sm">{{ $t('myth.datatable.filteredBy') }}</span>
@@ -1709,6 +1709,7 @@ export default {
 
   .q-table__bottom
     justify-content: start !important
+
     .q-table__separator.col
       display: none !important
 

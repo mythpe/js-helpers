@@ -11,60 +11,6 @@ import { MythApiAxiosType, MythApiServicesType, MythPluginOptionsType } from '..
 import { I18n } from 'vue-i18n'
 import MythVue, { createMyth } from './MythVue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
-import { GlobalComponentConstructor } from 'quasar'
-import {
-  MAvatarViewerProps,
-  MAvatarViewerSlots,
-  MAxiosProps,
-  MAxiosSlots,
-  MBtnProps,
-  MBtnSlots,
-  MCardProps,
-  MCardSlots,
-  MCheckboxProps,
-  MCheckboxSlots,
-  MColProps,
-  MColSlots,
-  MColumnProps,
-  MColumnSlots,
-  MContainerProps,
-  MContainerSlots,
-  MDatatableProps,
-  MDatatableSlots,
-  MDateProps,
-  MDateSlots,
-  MDtAvatarProps,
-  MDtAvatarSlots,
-  MDtBtnProps,
-  MDtBtnSlots,
-  MEditorProps,
-  MEditorSlots,
-  MFileProps,
-  MFileSlots,
-  MFormProps,
-  MFormSlots,
-  MGoogleMapsProps,
-  MGoogleMapsSlots,
-  MInputProps,
-  MInputSlots,
-  MPickerProps,
-  MPickerSlots,
-  MRadioProps,
-  MRadioSlots,
-  MRowProps,
-  MRowSlots,
-  MSelectProps,
-  MSelectSlots,
-  MTimeProps,
-  MTimeSlots,
-  MToggleProps,
-  MToggleSlots,
-  MTransitionsSlots,
-  MUploaderProps,
-  MUploaderSlots
-} from '../components'
-import { TransitionProps } from 'vue/dist/vue'
-import { MHelpers } from './MHelpers'
 
 /**
  * Install Plugin
