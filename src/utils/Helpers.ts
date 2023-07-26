@@ -8,7 +8,6 @@
 
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import _ from 'lodash'
-import * as qs from 'qs'
 import { ConfigType, ParamsType, StubSchema, UrlType } from '../types'
 
 export type DownloadFromResponse = {
@@ -152,11 +151,11 @@ export const Helpers = {
   findBy (search: any, value: any, column: string | number = 'id') {
     return _.find(search, (e: any) => _.isPlainObject(e) ? e[column] === value : e === value)
   },
-  queryStringify: (v: never) => new URLSearchParams(qs.stringify(v, {
-    arrayFormat: 'indices'
-    // encodeValuesOnly: true,
-    // encode: false,
-  })),
+  // queryStringify: (v: never) => new URLSearchParams(qs.stringify(v, {
+  //   arrayFormat: 'indices'
+  //   // encodeValuesOnly: true,
+  //   // encode: false,
+  // })),
   /**
    * Open unique window popup of application
    *
