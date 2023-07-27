@@ -339,19 +339,19 @@ export const createMyth = <I18nT extends I18n = I18n, Axios extends MythApiAxios
   api: { baseUrl, axios, services },
   options = {}
 }: MythPluginOptionsType<I18nT, Axios, Services>) => {
-  _i18n.value = i18n
-  _baseUrl.value = baseUrl
-  _axios.value = axios
-  _services.value = services
+  MythVue.i18 = i18n
+  MythVue.api.baseUrl = baseUrl
+  MythVue.api.axios = axios
+  MythVue.api.services = services
   MythVue.options = options
   return MythVue
 }
 
 /** Global of plugin inside Vue app */
-export const useMyth = () => MythVue
-export const getMythI18n = () => useMyth().i18
-export const getMythApi = () => useMyth().api
-export const getMythApiServices = () => useMyth().api.services
-export const getMythOptions = (): MythOptionsConfig => useMyth().options
+export const useMyth = () => reactive(MythVue)
+export const getMythI18n = () => reactive(MythVue.i18)
+export const getMythApi = () => reactive(MythVue.api)
+export const getMythApiServices = () => reactive(MythVue.api.services)
+export const getMythOptions = (): MythOptionsConfig => reactive(MythVue.options)
 
 export default MythVue

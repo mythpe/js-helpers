@@ -6,7 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
-import { App, defineAsyncComponent } from 'vue'
+import { App, defineAsyncComponent, reactive } from 'vue'
 import { MythApiAxiosType, MythApiServicesType, MythPluginOptionsType } from '../types'
 import { I18n } from 'vue-i18n'
 import { createMyth, MythVue } from './MythVue'
@@ -27,7 +27,7 @@ export default async function installPlugin<I18nT extends I18n = I18n, AxiosType
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   createMyth<I18nT, AxiosType, Services>({ i18n, api, options })
-  app.config.globalProperties.$myth = MythVue
+  app.config.globalProperties.$myth = reactive(MythVue)
 
   app.config.globalProperties.openWindow = function (...args: any) {
     return window.open(...args)
