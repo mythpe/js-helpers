@@ -22,7 +22,7 @@ import {
   Vue3MConfirmMessage
 } from '../types'
 import axios from 'axios'
-import { I18n } from 'vue-i18n'
+import { createI18n, I18n } from 'vue-i18n'
 import { copyToClipboard, Dark, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions } from 'quasar'
 import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
@@ -30,7 +30,7 @@ import _ from 'lodash'
 
 const _baseUrl = ref<string>()
 const _axios = ref<MythApiAxiosType>(axios.create())
-const _i18n = ref()
+const _i18n = ref(createI18n<false>({ legacy: !1 }))
 const _services = ref<MythApiServicesType>({})
 
 export const MHelpers = {
@@ -339,6 +339,8 @@ export const createMyth = <I18nT extends I18n = I18n, Axios extends MythApiAxios
   api: { baseUrl, axios, services },
   options = {}
 }: MythPluginOptionsType<I18nT, Axios, Services>) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   MythVue.i18 = i18n
   MythVue.api.baseUrl = baseUrl
   MythVue.api.axios = axios

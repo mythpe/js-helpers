@@ -1,6 +1,6 @@
 {
   "name": "@mythpe/js-helpers",
-  "version": "3.2.9",
+  "version": "3.2.10",
   "description": "Library of plugins & shortcuts that use JavaScript, also includes the Vue3 plugin with quasar apps",
   "author": "MyTh Ahmed Faiz",
   "email": "mythpe@gmail.com",
