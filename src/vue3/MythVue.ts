@@ -22,7 +22,7 @@ import {
   Vue3MConfirmMessage
 } from '../types'
 import axios from 'axios'
-import { createI18n, I18n } from 'vue-i18n'
+import { I18n } from 'vue-i18n'
 import { copyToClipboard, Dark, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions } from 'quasar'
 import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
@@ -30,10 +30,16 @@ import _ from 'lodash'
 
 const _baseUrl = ref<string>()
 const _axios = ref<MythApiAxiosType>(axios.create())
-const _i18n = ref(createI18n<false>({ legacy: !1 }))
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const _i18n = ref<I18n>({})
 const _services = ref<MythApiServicesType>({})
 
-export const MHelpers = {
+// const _options = ref<MythOptionsConfig>({})
+export const MythVue = reactive({
+  str,
+  dates,
+  helpers,
   storage: {
     /**
      * Set item in storage
@@ -57,7 +63,7 @@ export const MHelpers = {
    * @param number
    * @param route
    */
-  getPageTitle (number: number | string | any, route?: RouteLocationNormalizedLoaded): string | null {
+  getPageTitle: (number: number | string | any, route?: RouteLocationNormalizedLoaded): string | null => {
     number = number ?? 2
     number = parseInt(number.toString())
     const defaultValue = null
@@ -109,16 +115,24 @@ export const MHelpers = {
       if (!(k = keys[f])) {
         continue
       }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (te && te(k) && _.isString(t(k))) {
         if (_.startsWith(k, 'choice.')) {
           const pop: string = k.split('.').pop() || ''
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           str = t(k, number, { [pop]: number })
         } else {
           const parents: string[] = routeName.split('.')
           if (parents.length > 1) {
             // console.log(parents[parents.length - 2])
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             str = t(k, { name: t(`choice.${Str.pascalCase(_.pluralize(parents[parents.length - 2]))}`, '1') })
           } else {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             str = t(k, { name: '' })
           }
         }
@@ -132,12 +146,12 @@ export const MHelpers = {
    * @param headers
    * @param opts
    */
-  parseHeaders (headers: ParseHeadersType[] | string[] | any[], opts: ParseHeaderOptions = {
+  parseHeaders: (headers: ParseHeadersType[] | string[] | any[], opts: ParseHeaderOptions = {
     controlKey: 'control',
     controlStyle: 'max-width: 100px',
     align: 'center',
     sortable: !0
-  }): ParseHeadersType[] {
+  }): ParseHeadersType[] => {
     if (!headers) {
       return []
     }
@@ -180,14 +194,24 @@ export const MHelpers = {
       let k
       if (te) {
         if (te((k = `attributes.${item.label}`))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           item.label = t(k)
         } else if (te((k = `attributes.${_.snakeCase(item.label)}`))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           item.label = t(k)
         } else if (te((k = `attributes.${_.camelCase(item.label)}`))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           item.label = t(k)
         } else if (te((k = `attributes.${Str.pascalCase(item.label)}`))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           item.label = t(k)
         } else if (te((k = item.label))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           item.label = t(k)
         }
       }
@@ -236,16 +260,28 @@ export const MHelpers = {
 
     let transKey: string
     if (te) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (te((transKey = `attributes.${key}`)) && _.isString(t(transKey))) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         return t(transKey, ...args)
       }
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (te((transKey = `choice.${key}`)) && _.isString(t(transKey))) {
         args = args || [2]
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         return t(transKey, ...args)
       }
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (te(key) && _.isString(t(key))) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         return t(key, ...args)
       }
     }
@@ -270,20 +306,19 @@ export const MHelpers = {
    */
   copyText (text: string | any): Promise<void> {
     return copyToClipboard(text)
-  }
-}
-
-export const MAlerts = {
+  },
   quasarNotifyOptions: (opts: QNotifyCreateOptions | string): QNotifyCreateOptions => ({
     message: typeof opts === 'string' ? opts : opts.message,
     ...(typeof opts !== 'string' ? opts : {})
   }),
-  alertMessage: (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage => Notify.create(MAlerts.quasarNotifyOptions(opts)),
-  alertSuccess: (message: string) => MAlerts.alertMessage({ type: 'positive', message }),
-  alertError: (message: string) => MAlerts.alertMessage({ type: 'negative', message }),
+  alertMessage: (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage => Notify.create(MythVue.quasarNotifyOptions(opts)),
+  alertSuccess: (message: string) => MythVue.alertMessage({ type: 'positive', message }),
+  alertError: (message: string) => MythVue.alertMessage({ type: 'negative', message }),
   confirmMessage (message?: string, title?: string, opts?: QDialogOptions): Vue3MConfirmMessage {
     const { t } = getMythI18n().global
     const options = getMythOptions()
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     title = title || t('messages.are_you_sure') || ''
     message = message || ''
     opts = opts || {}
@@ -315,17 +350,8 @@ export const MAlerts = {
       ...dialogProps,
       ...opts
     })
-  }
-}
-
-// const _options = ref<MythOptionsConfig>({})
-export const MythVue = reactive({
-  str,
-  dates,
-  helpers,
-  ...MAlerts,
-  ...MHelpers,
-  i18: reactive(_i18n),
+  },
+  i18: _i18n,
   api: reactive({
     baseUrl: _baseUrl,
     axios: _axios,
@@ -341,16 +367,19 @@ export const createMyth = <I18nT extends I18n = I18n, Axios extends MythApiAxios
 }: MythPluginOptionsType<I18nT, Axios, Services>) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  MythVue.i18 = i18n
-  MythVue.api.baseUrl = baseUrl
-  MythVue.api.axios = axios
-  MythVue.api.services = services
+  _i18n.value = i18n
+  _baseUrl.value = baseUrl
+  _axios.value = axios
+  _services.value = services
   MythVue.options = options
   return MythVue
 }
 
 /** Global of plugin inside Vue app */
-export const useMyth = () => reactive(MythVue)
+export function useMyth () {
+  return MythVue
+}
+
 export const getMythI18n = () => reactive(MythVue.i18)
 export const getMythApi = () => reactive(MythVue.api)
 export const getMythApiServices = () => reactive(MythVue.api.services)

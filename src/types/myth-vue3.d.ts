@@ -82,7 +82,7 @@ import {
 } from '../components'
 import { I18n } from 'vue-i18n'
 import { TransitionProps } from 'vue'
-import { MHelpers, MythVue } from '../vue3'
+import { MythVue } from '../vue3'
 
 type ServiceType = () => Promise<AxiosResponse>
 
@@ -204,7 +204,7 @@ declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $myth: typeof MythVue
     openWindow: typeof window.open;
-    parseAttribute: typeof MHelpers.parseAttribute;
-    getPageTitle: typeof MHelpers.getPageTitle;
+    parseAttribute: typeof MythVue.parseAttribute;
+    getPageTitle: typeof MythVue.getPageTitle;
   }
 }

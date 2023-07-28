@@ -7,11 +7,11 @@
  */
 
 import { computed } from 'vue'
-import { useMyth } from '../vue3'
+import MythVue from '../vue3/MythVue'
 
 export default function useInputProps (Props: any) {
   const props = computed(() => Props)
-  const { parseAttribute } = useMyth()
+  const { parseAttribute } = MythVue
 
   const getRules = computed<string | undefined>(() => {
     let rules = props.value?.rules || []
