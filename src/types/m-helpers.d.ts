@@ -6,8 +6,10 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance, AxiosRequestConfig } from 'axios'
-import { QTableProps } from 'quasar'
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { DialogChainObject, QNotifyCreateOptions, QTableProps } from 'quasar'
+import { QNotifyUpdateOptions } from 'quasar/dist/types/api'
+import { ApiServiceParams } from '../components'
 
 export type ParseHeaderOptions = {
   controlKey?: 'control' | string
@@ -88,13 +90,17 @@ export interface ParsedHeader {
 
 export type ParseHeadersType = QTableProps['columns'] & ParsedHeader
 
+export type ParseHeadersHeaderAgr = ParseHeadersType[] | string[] | any[]
+
 export type UrlType = string | number | boolean | undefined | null
 
 export type ParamsType = boolean | Record<string, any> | FormData | object
 
-export type ConfigType = AxiosRequestConfig
+export type ConfigType = Partial<AxiosRequestConfig> & Partial<{
+  params: Partial<ApiServiceParams>
+}>
 
-export type GetType = (config?: ConfigType | boolean) => string | AxiosInstance['get'] | Promise<AxiosInstance['get']>
+export type GetType = ((config?: ConfigType | boolean) => string) | Promise<AxiosInstance['get']>
 
 export type PostType = (data?: ParamsType, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>
 
@@ -111,4 +117,17 @@ export interface StubSchema {
   staticShow: ((id: UrlType, config?: ConfigType) => string | AxiosInstance['get'] | Promise<AxiosInstance['get']>);
   uploadAttachments: (id: UrlType, data: ParamsType, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>;
   deleteAttachment: (id: UrlType, fileId: string | number, config?: ConfigType | boolean) => string | AxiosInstance['delete'] | Promise<AxiosInstance['delete']>;
+}
+
+export type MythApiServiceMethods = StubSchema
+
+export type Vue3MAlertMessageOptions = QNotifyCreateOptions | string
+
+export type Vue3MAlertMessage = (props?: QNotifyUpdateOptions) => void;
+
+export type Vue3MConfirmMessage = DialogChainObject
+
+export type DownloadFromResponse = {
+  status: boolean;
+  response: AxiosResponse;
 }

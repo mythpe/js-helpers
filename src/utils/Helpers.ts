@@ -6,14 +6,9 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import _ from 'lodash'
-import { ConfigType, ParamsType, StubSchema, UrlType } from '../types'
-
-export type DownloadFromResponse = {
-  status: boolean;
-  response: AxiosResponse;
-}
+import { ConfigType, DownloadFromResponse, ParamsType, UrlType } from '../types'
 
 export const Helpers = {
   appendArray (formData: FormData, values: File | Blob | Record<string, any> | any, name?: string | null | undefined) {
@@ -54,9 +49,9 @@ export const Helpers = {
     }
     return formData
   },
-  Stub (baseUrl: UrlType, axios: () => AxiosInstance): StubSchema {
+  Stub (baseUrl: UrlType, axios: () => AxiosInstance) {
     const makeUrl = Helpers.StubUrl(baseUrl)
-    const methods: StubSchema = {
+    const methods = {
       index (config?: ConfigType | boolean) {
         const u = makeUrl()
         return typeof config === 'boolean' ? u : axios().get(u, config)
@@ -228,3 +223,5 @@ export const Helpers = {
     })
   }
 }
+
+export default {}

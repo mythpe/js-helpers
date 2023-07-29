@@ -12,7 +12,7 @@
 >
 
 import { computed } from 'vue'
-import { useTranslate } from '../../vue3'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   show?: boolean;
@@ -50,7 +50,7 @@ defineEmits<Events>()
 
 const hasTooltip = computed(() => Boolean(props.tooltip) || Boolean(props.show) || Boolean(props.update) || Boolean(props.destroy))
 
-const { t, te } = useTranslate()
+const { t, te } = useI18n({ useScope: 'global' })
 
 const getTooltip = computed(() => {
   if (props.tooltip) {

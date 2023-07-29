@@ -10,9 +10,10 @@
 import { useQuasar } from 'quasar'
 import { computed, ref, watch } from 'vue'
 import { GoogleMap, Marker } from 'vue3-google-map'
-import { useGeolocation, useTranslate } from '../../vue3'
+import { useGeolocation } from '../../vue3'
 import { ColStyleType } from '../grid/models'
 import { CoordsType, GeocoderResult, GoogleGeocoder, GoogleMapsApi, GoogleMapsMVCObject, GooglePlacesService, MapCoordsClick, PlaceResult } from './models'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   auto?: boolean;
@@ -63,7 +64,7 @@ interface Events {
 const emit = defineEmits<Events>()
 const { coords } = useGeolocation()
 const $q = useQuasar()
-const { t } = useTranslate()
+const { t } = useI18n({ useScope: 'global' })
 
 const getCenter = computed<CoordsType>(() => {
   if (props.center?.lat && props.center?.lng) {

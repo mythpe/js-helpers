@@ -5,6 +5,5 @@
  * Website: https://www.4myth.com
  * Github: https://github.com/mythpe
  */
-import { UseI18nOptions } from 'vue-i18n'
 
-export type UseTranslateOptions = UseI18nOptions
+export const INJECT_KEY = 'myth'

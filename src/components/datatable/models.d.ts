@@ -10,6 +10,7 @@ import { AxiosResponse } from 'axios'
 import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
 import { ComputedRef, Ref, UnwrapRef, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
+import { MythApiServiceMethods } from '../../types'
 
 export interface MDtItem extends GenericFormValues {
   id: string | number;
@@ -68,18 +69,19 @@ export interface ApiServiceParams {
   [key: string]: any;
 }
 
-export interface MDtApiServices {
-  index: ((opt: { params: Partial<ApiServiceParams>, [index: string | number | symbol]: any }) => Promise<any>);
-  show: (id: number | string, opt: {
-    params: Partial<ApiServiceParams>,
-    [index: string | number | symbol]: any
-  }) => Promise<any>;
-  store: (opt: Record<string, any>) => Promise<any>;
-  update: (id: (number | string | undefined), opt: Record<string, any>) => Promise<any>;
-  destroy: (id: (number | string)) => Promise<any>;
-  destroyAll: (id: (number | string)[]) => Promise<any>;
-  export: ((opt: Record<string, any>) => Promise<any>);
-}
+// export interface MDtApiServices {
+//   index: ((opt: { params: Partial<ApiServiceParams>, [index: string | number | symbol]: any }) => Promise<any>);
+//   show: (id: number | string, opt: {
+//     params: Partial<ApiServiceParams>,
+//     [index: string | number | symbol]: any
+//   }) => Promise<any>;
+//   store: (opt: Record<string, any>) => Promise<any>;
+//   update: (id: (number | string | undefined), opt: Record<string, any>) => Promise<any>;
+//   destroy: (id: (number | string)) => Promise<any>;
+//   destroyAll: (id: (number | string)[]) => Promise<any>;
+//   export: ((opt: Record<string, any>) => Promise<any>);
+// }
+export type MDtApiServices = MythApiServiceMethods;
 
 export interface MDatatableMetaServer {
   // server current page

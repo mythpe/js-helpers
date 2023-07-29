@@ -48,3 +48,5 @@ export const Dates = {
     return new Date().getFullYear()
   }
 }
+
+export default {}

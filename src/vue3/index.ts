@@ -7,5 +7,5 @@
  */
 
 export * from './MGeolocation'
-export * from './MTranslate'
-export * from './MythVue'
+export * from './Const'
+export * from './InstallPlugin'

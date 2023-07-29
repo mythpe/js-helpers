@@ -6,11 +6,25 @@
  * Github: https://github.com/mythpe
  */
 
-import { App, defineAsyncComponent, reactive } from 'vue'
-import { MythApiAxiosType, MythApiServicesType, MythPluginOptionsType } from '../types'
-import { I18n } from 'vue-i18n'
-import { createMyth, MythVue } from './MythVue'
+import { App, computed, defineAsyncComponent, inject, reactive, ref } from 'vue'
+import {
+  MythPluginOptionsType,
+  ParseHeaderOptions,
+  ParseHeadersHeaderAgr,
+  ParseHeadersType,
+  UseMythVue,
+  Vue3MAlertMessage,
+  Vue3MAlertMessageOptions,
+  Vue3MConfirmMessage
+} from '../types'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
+import { INJECT_KEY } from './Const'
+import { Dates, Helpers, Str } from '../utils'
+import _ from 'lodash'
+import { copyToClipboard, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions } from 'quasar'
+import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
+
+export const pluginOptions = ref({})
 
 /**
  * Install Plugin
@@ -19,15 +33,321 @@ import { RouteLocationNormalizedLoaded } from 'vue-router'
  * @param api
  * @param options
  */
-export default async function installPlugin<I18nT extends I18n = I18n, AxiosType extends MythApiAxiosType = MythApiAxiosType, Services extends MythApiServicesType = MythApiServicesType> (app: App, {
-  i18n,
-  api,
-  options = {}
-}: MythPluginOptionsType) {
+export default async function installPlugin (app: App, { i18n, api, options = {} }: MythPluginOptionsType) {
+  options = options || {}
+  const apiBaseUrl = computed(() => api.baseUrl)
+  const apiAxios = computed(() => api.axios)
+  const apiServices = computed(() => api.services)
+  const baseI18n = computed(() => i18n)
+  const mythOptions = computed(() => options)
+  const helpers = {
+    storage: {
+      /**
+       * Set item in storage
+       * @param key Entry key
+       * @param value Entry value
+       */
+      set: (key: string, value: | Date | RegExp | number | boolean | ((...params: readonly any[]) => any) | any | readonly any[] | string | null) => {
+        LocalStorage.set(key, value)
+      },
+      get<T extends WebStorageGetMethodReturnType = WebStorageGetMethodReturnType> (key: string) {
+        return LocalStorage.getItem<T>(key)
+      },
+      remove (key: string) {
+        return LocalStorage.remove(key)
+      }
+    },
+    getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string | null {
+      number = number || 2
+      number = parseInt(number.toString())
+      const defaultValue = null
+      // Not is route
+      // No page title
+      if (!route) {
+        return defaultValue
+      }
+
+      const routePath = route?.path?.toString() || null
+      const routeName = route?.name?.toString() || null
+
+      // Not is route
+      // No page title
+      if (!routePath || !routeName) {
+        return defaultValue
+      }
+
+      let lastRouteName = routeName.split('.').pop() || ''
+      if (lastRouteName === 'index') {
+        const s = routeName.split('.')
+        lastRouteName = s[s.length - 2] ?? lastRouteName
+      }
+      const pluralize = Str.pascalCase(_.pluralize(lastRouteName))
+      const singular = Str.pascalCase(_.singularize(lastRouteName))
+      const keys = _.filter(_.uniq([
+        `routes.${routeName}`,
+        `routes.${routePath}`,
+        `${lastRouteName}Page.title`,
+        `${_.camelCase(lastRouteName)}Page.title`,
+        `choice.${pluralize}`,
+        `choice.${singular}`,
+        `replace.${lastRouteName}_details`,
+        `replace.${lastRouteName}`,
+        pluralize,
+        _.snakeCase(pluralize),
+        singular,
+        _.snakeCase(singular)
+      ]))
+
+      const { t, te } = baseI18n.value?.global
+      let str = null
+      let k: string
+      for (const f in keys) {
+        if (!(k = keys[f])) {
+          continue
+        }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (te && te(k) && _.isString(t(k))) {
+          if (_.startsWith(k, 'choice.')) {
+            const pop: string = k.split('.').pop() || ''
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            str = t(k, number, { [pop]: number })
+          } else {
+            const parents: string[] = routeName.split('.')
+            if (parents.length > 1) {
+              // console.log(parents[parents.length - 2])
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              str = t(k, { name: t(`choice.${Str.pascalCase(_.pluralize(parents[parents.length - 2]))}`, '1') })
+            } else {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              str = t(k, { name: '' })
+            }
+          }
+          return str || defaultValue
+        }
+      }
+      return defaultValue
+    },
+    /**
+     * Custom transformer
+     * @param headers
+     * @param options
+     */
+    parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[] {
+      const defaultOptions: Partial<ParseHeaderOptions> = {
+        controlKey: 'control',
+        controlStyle: 'max-width: 100px',
+        align: 'center',
+        sortable: !0
+      }
+      const opts = options || { ...defaultOptions }
+      let control: string | undefined = 'control'
+      let controlStyle: string | undefined = 'max-width: 150px'
+
+      if (opts.controlKey) {
+        control = opts.controlKey
+        delete opts.controlKey
+      }
+      if (opts.controlStyle) {
+        controlStyle = opts.controlStyle
+        delete opts.controlStyle
+      }
+
+      const result: ParseHeadersType[] = []
+      const { t, te } = baseI18n.value?.global
+      headers.forEach((elm: string | ParseHeadersType) => {
+        if (typeof elm !== 'string' && !elm?.name) return elm
+        const isString = typeof elm === 'string'
+
+        // Todo: will do this
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        let item: ParseHeadersType = isString ? {
+          name: elm,
+          label: elm,
+          field: elm
+        } : { ...elm }
+        item.name = item.name || ''
+        item.label = item.label || ''
+
+        item = {
+          ...item,
+          name: Str.strBefore(Str.strBefore(item.name), 'ToString'),
+          label: Str.strBefore(Str.strBefore(item.label || item.name), 'ToString')
+        }
+        const name = item.name
+        let k
+        if (te) {
+          if (te((k = `attributes.${item.label}`))) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            item.label = t(k)
+          } else if (te((k = `attributes.${_.snakeCase(item.label)}`))) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            item.label = t(k)
+          } else if (te((k = `attributes.${_.camelCase(item.label)}`))) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            item.label = t(k)
+          } else if (te((k = `attributes.${Str.pascalCase(item.label)}`))) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            item.label = t(k)
+          } else if (te((k = item.label))) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            item.label = t(k)
+          }
+        }
+
+        if (opts.align && item.align) {
+          opts.align = item.align
+        }
+
+        if (name === control && controlStyle) {
+          item.style = (item.style ?? '') + ` ${controlStyle}`
+        }
+        if (name === control) {
+          opts.sortable = !1
+          if (!item.align) {
+            opts.align = 'right'
+          }
+          opts.classes = opts.classes || ''
+          if (typeof opts.classes === 'function') {
+            opts.classes = opts.classes()
+          }
+          opts.classes += (opts.classes ? ' ' : '') + 'm--control-cell'
+        }
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        item = { ...opts, ...item }
+        result.push(item)
+      })
+      // console.log(result)
+      return result
+    },
+    /**
+     * Customized helper to get attribute name
+     *
+     * @param string
+     * @param args
+     */
+    parseAttribute (string: string | { text: string } | any, ...args: []): string | null {
+      const defaultValue = null
+      if (!string) return string
+
+      const { t, te } = baseI18n.value?.global
+      const key = string && typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
+
+      if (!key) {
+        return defaultValue
+      }
+
+      let transKey: string
+      if (te) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (te((transKey = `attributes.${key}`)) && _.isString(t(transKey))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return t(transKey, ...args)
+        }
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (te((transKey = `choice.${key}`)) && _.isString(t(transKey))) {
+          args = args || [2]
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return t(transKey, ...args)
+        }
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (te(key) && _.isString(t(key))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return t(key, ...args)
+        }
+      }
+
+      return string
+    },
+    /**
+     * Copy text
+     * @param text
+     */
+    async copyText (text: string | any): Promise<void> {
+      return copyToClipboard(text)
+    },
+    quasarNotifyOptions (opts: QNotifyCreateOptions | string): QNotifyCreateOptions {
+      return {
+        message: typeof opts === 'string' ? opts : opts.message,
+        ...(typeof opts !== 'string' ? opts : {})
+      }
+    },
+    alertMessage: (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage => Notify.create(helpers.quasarNotifyOptions(opts)),
+    alertSuccess: (message: string) => helpers.alertMessage({ type: 'positive', message }),
+    alertError: (message: string) => helpers.alertMessage({ type: 'negative', message }),
+    confirmMessage (message?: string, title?: string, opts?: QDialogOptions): Vue3MConfirmMessage {
+      const { t } = baseI18n.value?.global
+      const options = mythOptions.value
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      title = title || t('messages.are_you_sure') || ''
+      message = message || ''
+      opts = opts || {}
+      const btnsProps = {
+        ...(options?.button || {}),
+        ...(options?.dialog?.buttons || {})
+      }
+      const okProps = options?.dialog?.okProps || {}
+      const cancelProps = options?.dialog?.cancelProps || {}
+      const dialogProps = options?.dialog?.props || {}
+      return Dialog.create({
+        title,
+        message,
+        focus: 'none',
+        cancel: {
+          ...btnsProps,
+          ...cancelProps,
+          color: cancelProps.color || 'positive'
+        },
+        ok: {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          label: t('yes'),
+          ...btnsProps,
+          ...okProps,
+          color: okProps.color || 'negative'
+        },
+        persistent: !0,
+        ...dialogProps,
+        ...opts
+      })
+    }
+  }
+  const r = reactive<UseMythVue>({
+    i18n: baseI18n.value,
+    baseUrl: apiBaseUrl.value,
+    axios: apiAxios.value,
+    services: apiServices.value,
+    options: mythOptions.value,
+    str: Str,
+    dates: Dates,
+    helpers: Helpers,
+    ...helpers
+  })
+
+  app.provide(INJECT_KEY, r)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  createMyth<I18nT, AxiosType, Services>({ i18n, api, options })
-  app.config.globalProperties.$myth = reactive(MythVue)
+  app.config.globalProperties.$myth = r
 
   app.config.globalProperties.openWindow = function (...args: any) {
     return window.open(...args)
@@ -35,8 +355,8 @@ export default async function installPlugin<I18nT extends I18n = I18n, AxiosType
   app.config.globalProperties.parseAttribute = function (string: string | { text: string } | any, ...args: []): string | undefined | any {
     return this.$myth.parseAttribute(string, ...args)
   }
-  app.config.globalProperties.getPageTitle = function (number: number | string = 2, route?: RouteLocationNormalizedLoaded): string | null {
-    return this.$myth.getPageTitle(number, route || this.$route)
+  app.config.globalProperties.getPageTitle = function (number?: number | string, route?: RouteLocationNormalizedLoaded): string | null {
+    return this.$myth.getPageTitle(route || this.$route, number)
   }
 
   // Datatable
@@ -77,3 +397,8 @@ export default async function installPlugin<I18nT extends I18n = I18n, AxiosType
   // Transition
   app.component('MFadeTransition', defineAsyncComponent(() => import('../components/transition/MFadeTransition.vue')))
 }
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export const useMyth = <T extends UseMythVue = UseMythVue> (): T => inject<T>(INJECT_KEY)
+export { installPlugin }

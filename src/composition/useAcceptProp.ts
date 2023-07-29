@@ -6,21 +6,24 @@
  * Github: https://github.com/mythpe
  */
 
-export default function useAcceptProp (props: any) {
+import { computed } from 'vue'
+
+export default function useAcceptProp (Props: any) {
+  const props = computed(() => Props)
   const accepts: string[] = []
-  if (props.accept) {
-    accepts.push(props.accept)
+  if (props.value.accept) {
+    accepts.push(props.value.accept)
   }
-  if (props.images) {
+  if (props.value.images) {
     accepts.push('image/png,image/jpg,image/jpeg')
   }
-  if (props.video) {
+  if (props.value.video) {
     accepts.push('video/mp4,video/x-m4v,video/*')
   }
-  if (props.pdf) {
+  if (props.value.pdf) {
     accepts.push('application/pdf')
   }
-  if (props.excel) {
+  if (props.value.excel) {
     accepts.push('.csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   }
   return accepts

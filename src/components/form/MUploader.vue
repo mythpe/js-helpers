@@ -11,9 +11,10 @@ import { QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
 import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
 import useAcceptProp from '../../composition/useAcceptProp'
-import { useMyth, useTranslate } from '../../vue3'
+import { useMyth } from '../../vue3'
 import { ColStyleType } from '../grid/models'
 import { MUploaderMediaItem, MUploaderServiceType, MUploaderXhrInfo } from './models'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   auto?: boolean | undefined;
@@ -99,7 +100,7 @@ const emit = defineEmits<Events>()
 const $q = useQuasar()
 const $myth = useMyth()
 const { alertError, alertSuccess, confirmMessage } = $myth
-const { t } = useTranslate()
+const { t } = useI18n({ useScope: 'global' })
 
 const uploader = ref<InstanceType<typeof QUploader>>()
 // const formRef = ref<Record<string, any>>(props.modelValue)

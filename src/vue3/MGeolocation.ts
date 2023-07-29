@@ -9,10 +9,10 @@
 import axios from 'axios'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { CoordsProps } from '../types'
-import { getMythOptions } from './MythVue'
+import { useMyth } from './InstallPlugin'
 
 const getStreetAddress = async (lat: number, long: number) => {
-  const options = getMythOptions()
+  const options = useMyth().options || {}
   try {
     const { data } = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${options.google?.apiKey}`)
     if (data.error_message) {

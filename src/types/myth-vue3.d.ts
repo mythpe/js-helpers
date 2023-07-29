@@ -20,6 +20,7 @@ import {
   QItemProps,
   QListProps,
   QMenuProps,
+  QNotifyCreateOptions,
   QPageStickyProps,
   QPopupProxyProps,
   QRadioProps,
@@ -82,8 +83,11 @@ import {
 } from '../components'
 import { I18n } from 'vue-i18n'
 import { TransitionProps } from 'vue'
-import { MythVue } from '../vue3'
+import { RouteLocationNormalizedLoaded } from 'vue-router'
+import { ParseHeaderOptions, ParseHeadersHeaderAgr, ParseHeadersType, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
+import { Dates, Helpers, Str } from '../utils'
 
+type Generic = Record<any, any>;
 type ServiceType = () => Promise<AxiosResponse>
 
 export interface MythOptionsConfig extends Record<string | number | symbol, any> {
@@ -152,21 +156,44 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
   col?: Partial<MColProps>;
 }
 
-export type MythApiAxiosType = AxiosInstance
+export type MythApiAxiosType = Partial<AxiosInstance>
 export type MythApiServicesType = {
   [key: string]: Record<string, ServiceType> | any;
 }
 
-export interface MythApiConfig<AxiosType extends MythApiAxiosType = MythApiAxiosType, ServicesType extends MythApiServicesType = MythApiServicesType> {
+export interface MythApiConfig {
   baseUrl: string;
-  axios: AxiosType;
-  services: ServicesType
+  axios: MythApiAxiosType;
+  services: MythApiServicesType
 }
 
-export type MythPluginOptionsType<I18nT extends I18n = I18n, AxiosType extends MythApiAxiosType = MythApiAxiosType, Services extends MythApiServicesType = MythApiServicesType> = {
-  i18n: I18nT;
-  api: MythApiConfig<AxiosType, Services>;
+export type MythI18nType = I18n;
+
+export type MythPluginOptionsType = {
+  i18n: MythI18nType;
+  api: MythApiConfig;
   options: MythOptionsConfig;
+}
+
+export type UseMythVue = {
+  i18n: MythI18nType;
+  baseUrl: string;
+  axios: MythApiAxiosType;
+  services: MythApiServicesType;
+  options: MythOptionsConfig;
+  str: typeof Str,
+  dates: typeof Dates,
+  helpers: typeof Helpers,
+  getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string | null;
+  parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[];
+  parseAttribute (string: string | { text: string } | any, ...args: []): string | null;
+  copyText (text: string | any): Promise<void>;
+  quasarNotifyOptions (opts: QNotifyCreateOptions | string): QNotifyCreateOptions;
+  alertMessage (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage;
+  alertSuccess (message: string): Vue3MAlertMessage;
+  alertError (message: string): Vue3MAlertMessage;
+  confirmMessage (message?: string, title?: string, opts?: QDialogOptions): Vue3MConfirmMessage;
+  [key: string]: any;
 }
 
 declare module '@vue/runtime-core' {
@@ -202,9 +229,9 @@ declare module '@vue/runtime-core' {
   }
 
   interface ComponentCustomProperties {
-    $myth: typeof MythVue
+    $myth: UseMythVue;
     openWindow: typeof window.open;
-    parseAttribute: typeof MythVue.parseAttribute;
-    getPageTitle: typeof MythVue.getPageTitle;
+    // parseAttribute: typeof MythVue.parseAttribute;
+    // getPageTitle: typeof MythVue.getPageTitle;
   }
 }

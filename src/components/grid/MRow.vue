@@ -10,22 +10,21 @@
 >
 
 import { defineComponent } from 'vue'
-import { MythVue } from '../../vue3'
 
 export default defineComponent({
   inheritAttrs: !1,
   props: {
     defaultGutters: {
       type: String,
-      default: () => MythVue.options.row?.defaultGutters
+      default: () => undefined
     },
     gutters: {
       type: [String, Boolean],
-      default: () => MythVue.options.row?.gutters
+      default: () => undefined
     },
     col: {
       type: [String, Boolean],
-      default: () => MythVue.options.row?.col
+      default: () => undefined
     }
   },
   computed: {

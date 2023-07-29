@@ -7,8 +7,6 @@
  */
 
 export * from './lodash.d'
-export * from './m-alerts.d'
 export * from './m-geolocation.d'
 export * from './m-helpers.d'
-export * from './m-translate.d'
 export * from './myth-vue3.d'

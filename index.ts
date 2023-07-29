@@ -6,11 +6,8 @@
  * Github: https://github.com/mythpe
  */
 
-import MythVue from './src/vue3/MythVue'
-
 export * from './src'
-import installPlugin from './src/vue3/InstallPlugin'
 
-export { installPlugin }
-
-export default MythVue
+import { installPlugin, useMyth } from './src'
+export { installPlugin, useMyth }
+export default {}

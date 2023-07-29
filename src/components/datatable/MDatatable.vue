@@ -716,7 +716,6 @@
 
 import { useQuasar } from 'quasar'
 import { computed, nextTick, onMounted, PropType, reactive, ref, useSlots, watch } from 'vue'
-import { useMyth, useTranslate } from '../../vue3'
 import _ from 'lodash'
 import { useRouter } from 'vue-router'
 import {
@@ -737,6 +736,8 @@ import {
   MDtRequestParamsObjectProp,
   MDtServiceNameCallbackProp
 } from './models'
+import { useMyth } from '../../vue3'
+import { useI18n } from 'vue-i18n'
 
 export const initPaginationOptions: MDatatablePagination = {
   sortBy: undefined,
@@ -905,7 +906,7 @@ export default {
     const router = useRouter()
     const $q = useQuasar()
     const serviceName = computed(() => props.serviceName)
-    const { t } = useTranslate()
+    const { t } = useI18n({ useScope: 'global' })
     // Prevent user from back
     router.beforeResolve(() => {
       if (dialogs.filter) {
@@ -1010,11 +1011,6 @@ export default {
     const hasDestroyBtn = computed<boolean>(() => !props.hideDestroyBtn)
     const hasFilterDialog = computed<boolean>(() => slots.filter !== undefined)
     const hasMenu = computed<boolean>(() => (Boolean(props.pdf) || Boolean(props.excel) || hasFilterDialog.value || hasAddBtn.value))
-    const moreMenuItems = computed(() => {
-      const items = []
-
-      return items
-    })
 
     const isUpdateMode = ref<boolean>(!1)
     const formMode = computed<'update' | 'create'>(() => isUpdateMode.value ? 'update' : 'create')
@@ -1041,7 +1037,7 @@ export default {
       if (typeof serviceName.value === 'function') {
         return serviceName.value()
       }
-      const c = myth.api.services[serviceName.value]
+      const c = myth.services[serviceName.value]
       if (!c) {
         throw Error(`No Service: ${serviceName.value}`)
       }
@@ -1277,7 +1273,7 @@ export default {
       }
       loading.value = !0
       try {
-        const params = { requestWith: getRequestWith('withShow') }
+        const params: { requestWith?: string | null } = { requestWith: getRequestWith('withShow') }
         if (!params.requestWith) {
           delete params.requestWith
         }
@@ -1321,9 +1317,9 @@ export default {
       try {
         isUpdateMode.value = !0
         const params = { requestWith: getRequestWith('withUpdate') }
-        if (!params.requestWith) {
-          delete params.requestWith
-        }
+        // if (!params.requestWith) {
+        //   delete params.requestWith
+        // }
         if (!index) {
           index = getRows.value.findIndex(e => e.id === item.id)
         }
@@ -1613,7 +1609,6 @@ export default {
       hasDestroyBtn,
       hasFilterDialog,
       hasMenu,
-      moreMenuItems,
 
       isUpdateMode,
       formMode,
