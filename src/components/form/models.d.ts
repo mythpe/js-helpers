@@ -105,7 +105,7 @@ export interface MInputProps extends MColProps, Omit<QInputProps, 'rules' | 'mod
   email?: boolean | undefined;
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
-  modelValue: string | number | null | symbol | undefined;
+  modelValue?: string | number | null | symbol | undefined;
 }
 
 export interface MInputSlots extends QInputSlots {
@@ -310,7 +310,7 @@ export interface MAvatarViewerProps extends QAvatarProps, MColProps {
   /**
    * Model of the component; Must be FileList or Array if using 'multiple' prop; Either use this property (along with a listener for 'update:modelValue' event) OR use v-model directive
    */
-  modelValue: MAvatarViewerItem;
+  modelValue?: MAvatarViewerItem;
   /**
    * Comma separated list of unique file type specifiers. Maps to 'accept' attribute of native input type=file element
    */
@@ -319,10 +319,6 @@ export interface MAvatarViewerProps extends QAvatarProps, MColProps {
   video?: boolean;
   pdf?: boolean;
   excel?: boolean;
-  /**
-   * The value that will be used to modify the image
-   */
-  item?: MAvatarViewerItem;
   /**
    * List of errors contains prop name { [name]: ['error1','error2']}
    */

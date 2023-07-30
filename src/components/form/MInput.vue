@@ -62,7 +62,7 @@ import useInputProps from '../../composition/useInputProps'
 import { MInputProps } from './models'
 
 interface Props {
-  name: MInputProps['name'];
+  name?: MInputProps['name'];
   auto?: MInputProps['auto'];
   col?: MInputProps['col'];
   xs?: MInputProps['xs'];
@@ -77,11 +77,11 @@ interface Props {
   email?: MInputProps['email'];
   rules?: MInputProps['rules'];
   errors?: MInputProps['errors'];
-  modelValue: MInputProps['modelValue'];
+  modelValue?: MInputProps['modelValue'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  name: undefined,
+  name: () => '',
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -98,7 +98,6 @@ const props = withDefaults(defineProps<Props>(), {
   errors: undefined,
   modelValue: undefined
 })
-
 type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
 }

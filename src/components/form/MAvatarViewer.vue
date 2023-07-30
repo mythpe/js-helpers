@@ -23,13 +23,12 @@ interface Props {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  modelValue: MAvatarViewerItem;
+  modelValue?: MAvatarViewerItem;
   accept?: string;
   images?: boolean;
   video?: boolean;
   pdf?: boolean;
   excel?: boolean;
-  item?: MAvatarViewerItem;
   errors: Record<string, any[]>;
   size?: string;
   name?: string;
@@ -49,13 +48,12 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  modelValue: undefined,
+  modelValue: () => ({}),
   accept: undefined,
   images: !0,
   video: !1,
   pdf: !1,
   excel: !1,
-  item: undefined,
   errors: undefined,
   size: '150px',
   name: 'blobAvatar',
@@ -155,18 +153,20 @@ export default {
     :xs="xs"
   >
     <MColumn class="items-center">
-      <MCol
-        v-if="label"
-        col="auto"
-      >
-        <p class="text-h6 q-mb-sm">
-          {{ label }}
-          <span
-            v-if="!clearable"
-            class="text-negative"
-          >*</span>
-        </p>
-      </MCol>
+      <MFadeTransition>
+        <MCol
+          v-if="label"
+          col="auto"
+        >
+          <p class="text-h6 q-mb-sm">
+            {{ label }}
+            <span
+              v-if="!clearable"
+              class="text-negative"
+            >*</span>
+          </p>
+        </MCol>
+      </MFadeTransition>
       <MCol
         class="q-mb-sm"
         col="auto"
@@ -194,12 +194,14 @@ export default {
                 </div>
               </template>
             </q-img>
-            <div
-              v-if="avatarText && !hasSrc"
-              class="text-white text-h3"
-            >
-              {{ getAvatarText() }}
-            </div>
+            <MFadeTransition>
+              <div
+                v-if="avatarText && !hasSrc"
+                class="text-white text-h3"
+              >
+                {{ getAvatarText() }}
+              </div>
+            </MFadeTransition>
           </q-avatar>
           <!--<q-slide-transition>-->
           <!--<template v-if="!hideRemoveAvatar || (hideRemoveAvatar && props.modelValue)">-->
@@ -229,12 +231,14 @@ export default {
           <span v-else>{{ $t('choose') }}</span>
         </MBtn>
       </MCol>
-      <MCol
-        v-if="errors[name]"
-        col="12"
-      >
-        <span class="text-body2 text-negative">{{ typeof errors[name] === 'string' ? errors[name] : errors[name][0] }}</span>
-      </MCol>
+      <MFadeTransition>
+        <MCol
+          v-if="errors[name]"
+          col="12"
+        >
+          <span class="text-body2 text-negative">{{ typeof errors[name] === 'string' ? errors[name] : errors[name][0] }}</span>
+        </MCol>
+      </MFadeTransition>
       <MFile
         ref="fileInput"
         v-model="itemRef[name]"
