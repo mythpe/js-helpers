@@ -1577,11 +1577,9 @@ export default {
 
     // Watch on Form dialog
     watch(() => dialogs.item, (v) => {
-      console.log('dialogs.item ', v)
       dialogs.itemForm = v ? { ...v } : v
     })
     watch(() => dialogs.form, (v) => {
-      console.log('dialogs.form: ', v)
       if (!v) {
         dialogs.errors = {}
       }
