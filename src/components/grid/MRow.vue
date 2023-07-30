@@ -57,10 +57,10 @@ export default defineComponent({
 <template>
   <div
     :class="classes"
+    v-bind="{...($myth.options.row),...$attrs}"
     :col="undefined"
     :default-gutters="undefined"
     :gutters="undefined"
-    v-bind="{...($myth.options.row),...$attrs}"
   >
     <slot />
   </div>
