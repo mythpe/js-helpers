@@ -9,6 +9,7 @@ import _ from 'lodash'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import inflection from 'lodash-inflection'
+
 _.mixin(inflection)
 
 export * from './utils'

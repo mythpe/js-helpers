@@ -362,8 +362,8 @@
                               <div class="col-12">
                                 <MContainer class="q-pa-md">
                                   <slot
+                                    :filter="tableOptions.tempFilter"
                                     name="filter"
-                                    v-bind="{filter:tableOptions.tempFilter}"
                                   />
                                 </MContainer>
                               </div>
@@ -588,8 +588,9 @@
         <q-separator />
         <q-card-section class="scroll">
           <slot
+            :index="dialogs.index"
+            :item="dialogs.item"
             name="show"
-            v-bind="{item:dialogs.item,index:dialogs.index}"
           />
         </q-card-section>
         <q-separator />
@@ -625,7 +626,7 @@
           :initial-values="dialogs.item"
           @submit="defaultSubmitItem"
         >
-          <q-card-section>
+          <q-card-section ref="formTitle">
             <q-toolbar>
               <q-toolbar-title>
                 <q-btn
@@ -641,7 +642,7 @@
           </q-card-section>
           <q-separator />
           <q-card-section
-            :style="`max-height: ${$q.screen.height- ($myth.options.dt?.formDialogProps?.maximized ? 140 : 300)}px`"
+            :style="`max-height: ${$q.screen.height - 10 - ($refs.formActions?.$el?.offsetHeight||0) - ($refs.formTitle?.$el.offsetHeight||0)}px`"
             class="scroll"
           >
             <slot
@@ -655,6 +656,7 @@
           </q-card-section>
           <q-separator />
           <q-card-actions
+            ref="formActions"
             align="between"
             class="m--datatable-form-actions print-hide"
           >
@@ -714,14 +716,13 @@
 
 <script lang="ts">
 
+import { computed, defineComponent, nextTick, onMounted, PropType, reactive, ref, useSlots, watch } from 'vue'
 import { useQuasar } from 'quasar'
-import { computed, nextTick, onMounted, PropType, reactive, ref, useSlots, watch } from 'vue'
 import _ from 'lodash'
 import { useRouter } from 'vue-router'
 import {
   ApiServiceParams,
   FetchRowsArgs,
-  GenericMDtBtn,
   MDatatableDialogsOptions,
   MDatatableFilterForm,
   MDatatableMetaServer,
@@ -731,10 +732,7 @@ import {
   MDtApiServices,
   MDtExportOptions,
   MDtItem,
-  MDtItemIndex,
-  MDtRequestParamsCallbackProp,
-  MDtRequestParamsObjectProp,
-  MDtServiceNameCallbackProp
+  MDtItemIndex
 } from './models'
 import { useMyth } from '../../vue3'
 import { useI18n } from 'vue-i18n'
@@ -752,7 +750,7 @@ export const initMetaServer: MDatatableMetaServer = {
   total: null
 }
 
-export default {
+export default defineComponent({
   name: 'MDatatable',
   inheritAttrs: !1,
   props: {
@@ -770,7 +768,7 @@ export default {
       default: () => !1
     },
     headers: {
-      type: Array as PropType<MDatatableProps['headers']>,
+      type: Array as PropType<MDatatableProps['headers'] | any[]>,
       required: !0,
       default: () => ([])
     },
@@ -789,11 +787,12 @@ export default {
       default: () => ([])
     },
     serviceName: {
-      type: [String, Function as PropType<MDtServiceNameCallbackProp>],
-      default: () => undefined
+      type: [String, Function],
+      required: !0,
+      default: () => ''
     },
     requestParams: {
-      type: [Function as PropType<MDtRequestParamsCallbackProp>, Object as PropType<MDtRequestParamsObjectProp>],
+      type: [Function, Object],
       default: () => undefined
     },
     pdf: {
@@ -890,7 +889,7 @@ export default {
       default: () => undefined
     },
     title: {
-      type: String,
+      type: String as PropType<string | null | undefined>,
       default: () => undefined
     },
     noManageColumns: {
@@ -1030,6 +1029,7 @@ export default {
       const name = serviceName.value && typeof serviceName.value !== 'function' ? t(`choice.${myth.str.pascalCase(myth.str.pluralize(serviceName.value.split('/').pop()))}`, 1) : ''
       return t(`replace.${formMode.value}`, { name })
     })
+    const defaultItem = computed(() => props.defaultItem)
     /* Titles */
 
     /** Methods */
@@ -1086,7 +1086,7 @@ export default {
     }
     const getRequestWith = (type: 'withIndex' | 'withShow' | 'withUpdate' | 'withStore'): string | null => {
       let v: any = []
-      const params: Record<string | symbol | number, unknown> | string | (() => (string[] | string)) | undefined = props[type]
+      const params: unknown = props[type]
       if (params) {
         if (typeof params === 'string') {
           v = params.split(',')
@@ -1096,7 +1096,9 @@ export default {
           v = [...params]
         } else if (_.isObject(params) && typeof params !== 'function') {
           for (const k in params) {
-            v.push(`${k}=${params[k]}`)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            v.push(`${k}=` + params[k])
           }
         } else if (_.isFunction(params)) {
           const f = params()
@@ -1153,6 +1155,8 @@ export default {
           params.requestWith = requestWith
         }
         try {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           const { _data, _meta } = await getApiServices().index({ params })
           pagination.value = {
             page: parseInt(_meta?.current_page) || 1,
@@ -1280,6 +1284,8 @@ export default {
         if (!index) {
           index = getRows.value.findIndex(e => e.id === item.id)
         }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const { _data } = await getApiServices().show(item.id, { params })
         dialogs.item = _data
         dialogs.index = index
@@ -1316,13 +1322,18 @@ export default {
       loading.value = !0
       try {
         isUpdateMode.value = !0
-        const params = { requestWith: getRequestWith('withUpdate') }
+        const params: any = {}
+        if (getRequestWith('withUpdate')) {
+          params.requestWith = getRequestWith('withUpdate')
+        }
         // if (!params.requestWith) {
         //   delete params.requestWith
         // }
         if (!index) {
           index = getRows.value.findIndex(e => e.id === item.id)
         }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const { _data } = await getApiServices().show(item.id, { params })
         dialogs.item = _data
         dialogs.index = index
@@ -1340,12 +1351,10 @@ export default {
     }
     const openCreateDialog = (dtItem?: MDtItem) => {
       if (props.createRoute) {
-        router.push({
-          name: props.createRoute
-        })
+        router.push({ name: props.createRoute })
         return
       }
-      const item = { ...(props.defaultItem ?? {}), ...(dtItem ?? {}) }
+      const item = { ...(defaultItem.value || {}), ...(dtItem || {}) }
       isUpdateMode.value = !1
       dialogs.item = Object.create(item)
       dialogs.index = undefined
@@ -1386,7 +1395,8 @@ export default {
       }
     }
     const defaultSubmitItem = async (_form: Record<string, any>) => {
-      let form = { ..._form }
+      let form = { ..._form, ...(dialogs.itemForm || {}) }
+      console.log(form)
       if (loading.value) {
         return
       }
@@ -1401,6 +1411,8 @@ export default {
         if (typeof props.excludedKeys === 'function') {
           form = props.excludedKeys(form)
         } else {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           for (const k in props.excludedKeys) {
             delete form[props.excludedKeys[k]]
           }
@@ -1408,20 +1420,11 @@ export default {
       }
       const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id, form) : await api.store(form)
       try {
-        const {
-          _data,
-          _message,
-          _success
-        }: any = await method()
+        const { _data, _message, _success }: any = await method()
         _message && myth.alertSuccess(_message)
         if (_success) {
           if (isUpdateMode.value) {
-            // console.log(_data, this.dialogs.index)
             _data && updateDatatableItem(_data, dialogs.index)
-            // emit('itemUpdated', {
-            //   item: _data,
-            //   index: dialogs.index
-            // })
           } else {
             nextTick(() => refresh())
             // emit('itemCreated', { item: _data })
@@ -1429,16 +1432,12 @@ export default {
           nextTick(() => closeFormDialog())
         }
       } catch (e: any) {
-        const {
-          _message,
-          _errors
-        } = e || {}
-        _errors && (dialogs.errors = _errors)
+        const { _message, _errors } = e || {}
+        dialogs.errors = _errors || {}
         _message && myth.alertError(_message)
       } finally {
         loading.value = !1
       }
-      // console.log('defaultSubmitItem: ', form)
     }
     const hideAutoMessage = computed(() => props.hideAutoMessage)
     const onDeleteItem = (item: MDtItem, index: number) => {
@@ -1449,6 +1448,8 @@ export default {
       myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
         loading.value = !0
         try {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           const { _message, _success } = await getApiServices().destroy(item.id)
           if (!hideAutoMessage.value && _success && _message) {
             _message && myth.alertSuccess(_message)
@@ -1484,10 +1485,9 @@ export default {
       myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
         loading.value = !0
         try {
-          const {
-            _message,
-            _success
-          } = await getApiServices().destroyAll(tableOptions.selected.map((e: MDtItem) => e.id))
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          const { _message, _success } = await getApiServices().destroyAll(tableOptions.selected.map((e: MDtItem) => e.id))
           if (!hideAutoMessage.value && _success && _message) {
             _message && myth.alertSuccess(_message)
           }
@@ -1528,26 +1528,29 @@ export default {
       dialogs.index = index
       // contextmenu.value = !0
     }
-    const contextmenuItems = computed<GenericMDtBtn[]>(() => ([
+    const contextmenuItems = computed(() => ([
       {
         name: 'update',
         click: (item: MDtItem, index: number) => openUpdateDialog(item, index),
-        showIf: hasUpdateBtn.value
+        showIf: hasUpdateBtn.value,
+        order: 1
       },
       {
         name: 'show',
         click: (item: MDtItem, index: number) => openShowDialog(item, index),
-        showIf: hasShowBtn.value
+        showIf: hasShowBtn.value,
+        order: 1
       },
       {
         name: 'destroy',
         click: (item: MDtItem, index: number) => onDeleteItem(item, index),
-        showIf: hasDestroyBtn.value
+        showIf: hasDestroyBtn.value,
+        order: 1
       },
       ...(props.contextItems || [])
-    ].sort((a: GenericMDtBtn, b: GenericMDtBtn) => (a.order ?? 0) - (b.order ?? 0))))
+    ].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))))
     const endReach = computed<boolean>(() => props.endReach)
-    const rowsPerPageOptions = computed<any[]>(() => props.rowsPerPageOptions)
+    const rowsPerPageOptions = computed(() => props.rowsPerPageOptions)
     const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))
 
     onMounted(() => {
@@ -1655,7 +1658,7 @@ export default {
       visibleHeaders
     }
   }
-}
+})
 </script>
 
 <style lang="sass">

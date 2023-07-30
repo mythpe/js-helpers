@@ -228,7 +228,7 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   defaultItem?: Partial<MDtItem>;
   contextItems?: GenericMDtBtn[];
   hideAutoMessage?: boolean;
-  headers: string[] | Partial<QTableProps['columns'][]>;
+  headers: string[] | Partial<QTableProps['columns']>[] | any[];
   rows?: readonly any[] | undefined;
   serviceName: MDtServiceNameStringProp | MDtServiceNameCallbackProp;
   requestParams?: MDtRequestParamsObjectProp | MDtRequestParamsCallbackProp;
@@ -255,7 +255,7 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   rowsPerPageOptions?: (string | number)[];
   excludedKeys?: string[] | ((from: any) => any);
   grid?: boolean;
-  title?: string;
+  title?: string | null | undefined;
   noManageColumns?: boolean;
   visibleColumns?: string[];
   searchColumns?: string[];

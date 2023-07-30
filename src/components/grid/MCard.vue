@@ -11,12 +11,13 @@
 import { useMyth } from '../../vue3'
 import { computed, onMounted, reactive, useSlots } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
-  titleFromRoute?: boolean | undefined;
-  title?: string | (() => string) | undefined;
-  subtitle?: string | (() => string) | undefined;
-  backRoute?: boolean | undefined;
+  titleFromRoute?: boolean | null | undefined;
+  title?: string | (() => string) | null | undefined;
+  subtitle?: string | (() => string) | null | undefined;
+  backRoute?: boolean | null | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -28,15 +29,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const slots = useSlots()
 const route = useRoute()
-const {
-  str: { nl2br },
-  translate,
-  getPageTitle
-} = useMyth()
-const {
-  t,
-  te
-} = translate()
+const { str: { nl2br }, getPageTitle } = useMyth()
+const { t, te } = useI18n({ useScope: 'global' })
 
 const cardOptions = reactive<{
   title: string | null;
@@ -75,7 +69,7 @@ onMounted(() => {
   if (props.title) {
     cardOptions.title = getTitle()
   } else if (props.titleFromRoute) {
-    cardOptions.title = getPageTitle(2, route) ?? ''
+    cardOptions.title = getPageTitle(route) || ''
   }
 
   if (props.subtitle) {

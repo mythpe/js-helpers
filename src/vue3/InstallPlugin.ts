@@ -6,7 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
-import { App, computed, defineAsyncComponent, inject, reactive, ref } from 'vue'
+import { App, computed, defineAsyncComponent, inject, reactive } from 'vue'
 import {
   MythPluginOptionsType,
   ParseHeaderOptions,
@@ -23,8 +23,6 @@ import { Dates, Helpers, Str } from '../utils'
 import _ from 'lodash'
 import { copyToClipboard, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions } from 'quasar'
 import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
-
-export const pluginOptions = ref({})
 
 /**
  * Install Plugin
@@ -57,10 +55,10 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         return LocalStorage.remove(key)
       }
     },
-    getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string | null {
+    getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string {
       number = number || 2
       number = parseInt(number.toString())
-      const defaultValue = null
+      const defaultValue = ''
       // Not is route
       // No page title
       if (!route) {
@@ -237,8 +235,8 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
      * @param string
      * @param args
      */
-    parseAttribute (string: string | { text: string } | any, ...args: []): string | null {
-      const defaultValue = null
+    parseAttribute (string: string | { text: string } | any, ...args: []): string {
+      const defaultValue = ''
       if (!string) return string
 
       const { t, te } = baseI18n.value?.global
@@ -352,7 +350,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.config.globalProperties.openWindow = function (...args: any) {
     return window.open(...args)
   }
-  app.config.globalProperties.parseAttribute = function (string: string | { text: string } | any, ...args: []): string | undefined | any {
+  app.config.globalProperties.parseAttribute = function (string: string | { text: string } | any, ...args: []): string | null {
     return this.$myth.parseAttribute(string, ...args)
   }
   app.config.globalProperties.getPageTitle = function (number?: number | string, route?: RouteLocationNormalizedLoaded): string | null {
@@ -401,4 +399,5 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const useMyth = <T extends UseMythVue = UseMythVue> (): T => inject<T>(INJECT_KEY)
+
 export { installPlugin }

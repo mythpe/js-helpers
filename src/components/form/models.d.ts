@@ -228,7 +228,7 @@ export interface MAxiosProps extends Omit<MSelectProps, 'options' | 'modelValue'
   modelValue?: any | undefined;
   requestWith?: string | undefined;
   options?: any[];
-  service: ((config?: AxiosRequestConfig) => Promise<AxiosInstance>) | string;
+  service: ((config?: AxiosRequestConfig) => Promise<any>) | string;
   params?: Record<string, any> | undefined;
   exclude?: string | number | undefined;
 }

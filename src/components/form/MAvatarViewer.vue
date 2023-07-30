@@ -137,11 +137,13 @@ watch(props.modelValue, (v) => {
   }
 })
 </script>
+
 <script lang="ts">
 export default {
   inheritAttrs: !1
 }
 </script>
+
 <template>
   <MCol
     :auto="auto"

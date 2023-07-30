@@ -97,7 +97,7 @@ export type UrlType = string | number | boolean | undefined | null
 export type ParamsType = boolean | Record<string, any> | FormData | object
 
 export type ConfigType = Partial<AxiosRequestConfig> & Partial<{
-  params: Partial<ApiServiceParams>
+  params: Partial<ApiServiceParams> | Record<string | number | symbol, any>
 }>
 
 export type GetType = ((config?: ConfigType | boolean) => string) | Promise<AxiosInstance['get']>

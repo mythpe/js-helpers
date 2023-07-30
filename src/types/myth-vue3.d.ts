@@ -87,7 +87,6 @@ import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { ParseHeaderOptions, ParseHeadersHeaderAgr, ParseHeadersType, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
 import { Dates, Helpers, Str } from '../utils'
 
-type Generic = Record<any, any>;
 type ServiceType = () => Promise<AxiosResponse>
 
 export interface MythOptionsConfig extends Record<string | number | symbol, any> {
@@ -157,6 +156,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
 }
 
 export type MythApiAxiosType = Partial<AxiosInstance>
+
 export type MythApiServicesType = {
   [key: string]: Record<string, ServiceType> | any;
 }
@@ -184,9 +184,9 @@ export type UseMythVue = {
   str: typeof Str,
   dates: typeof Dates,
   helpers: typeof Helpers,
-  getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string | null;
+  getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string;
   parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[];
-  parseAttribute (string: string | { text: string } | any, ...args: []): string | null;
+  parseAttribute (string: string | { text: string } | any, ...args: []): string;
   copyText (text: string | any): Promise<void>;
   quasarNotifyOptions (opts: QNotifyCreateOptions | string): QNotifyCreateOptions;
   alertMessage (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage;
@@ -231,7 +231,9 @@ declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $myth: UseMythVue;
     openWindow: typeof window.open;
-    // parseAttribute: typeof MythVue.parseAttribute;
-    // getPageTitle: typeof MythVue.getPageTitle;
+
+    parseAttribute (string: string | { text: string } | any, ...args: []): string;
+
+    getPageTitle (number?: number | string, route?: RouteLocationNormalizedLoaded): string;
   }
 }
