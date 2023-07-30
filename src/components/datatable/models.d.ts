@@ -114,14 +114,14 @@ export type MDatatableOptions = {
 }
 
 export type MDatatableDialogsOptions = {
-  filter: Ref<boolean>,
-  show: Ref<boolean>,
-  form: Ref<boolean>,
-  isUpdate: Ref<boolean>,
-  item: Ref<MDtItem | null>,
-  itemForm: MDtItem | null,
-  index?: Ref<MDtItemIndex>,
-  errors: Record<string | number, string[] | string> | object,
+  filter: Ref<boolean>;
+  show: Ref<boolean>;
+  form: Ref<boolean>;
+  isUpdate: Ref<boolean>;
+  item: Ref<MDtItem | null>;
+  itemForm: MDtItem | null;
+  index?: Ref<MDtItemIndex>;
+  errors: Record<string | number | symbol, string[]>;
 }
 
 export interface MDtBtnProps extends MBtnProps {

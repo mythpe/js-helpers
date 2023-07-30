@@ -14,6 +14,7 @@ import { ColStyleType } from '../grid/models'
 
 import MFile from './MFile.vue'
 import { MAvatarViewerItem, MAvatarViewerProps } from './models'
+import { Field as VeeField } from 'vee-validate'
 
 interface Props {
   auto?: boolean;
@@ -24,6 +25,8 @@ interface Props {
   lg?: ColStyleType;
   xl?: ColStyleType;
   modelValue?: MAvatarViewerItem;
+  removeValue?: any;
+  urlValue?: any;
   accept?: string;
   images?: boolean;
   video?: boolean;
@@ -48,7 +51,9 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  modelValue: () => ({}),
+  modelValue: undefined,
+  removeValue: undefined,
+  urlValue: undefined,
   accept: undefined,
   images: !0,
   video: !1,
@@ -67,13 +72,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 type Events = {
   (e: 'click', evt?: Event): void;
-  (e: 'remove-avatar', evt?: Event): void;
-  (e: 'update:modelValue', value: any): void;
   (e: 'update:errors', value: any): void;
+  (e: 'update:modelValue', value: any): void;
+  (e: 'update:removeValue', value: any): void;
+  (e: 'update:urlValue', value: any): void;
 }
 const emit = defineEmits<Events>()
 const fileInput = ref<typeof MFile>()
 const accepts = useAcceptProp(props)
+const removeFieldRef = ref<InstanceType<typeof VeeField>>()
+const urlFieldRef = ref<InstanceType<typeof VeeField>>()
 
 const blobUrl = ref<string | null>(null)
 const isLoaded = ref(!1)
@@ -88,16 +96,31 @@ const toUrl = (data?: any) => {
   blobUrl.value = URL.createObjectURL(data)
   return blobUrl
 }
-const itemRef = ref(props.modelValue)
+const blobValue = ref<File|undefined>(undefined)
+const setBlobValue = (v?:File) => {
+  blobValue.value = v
+}
+// const blobValue = computed({
+//   get: () => props.modelValue,
+//   set: v => emit('update:modelValue', v)
+// })
+const urlValue = computed({
+  get: () => props.urlValue,
+  set: v => emit('update:urlValue', v)
+})
 const hasSrc = computed(() => {
-  return props.modelValue && (Boolean(props.modelValue[props.name]) || Boolean(props.modelValue[props.url]))
+  // return props.modelValue && (Boolean(props.modelValue[props.name]) || Boolean(props.modelValue[props.url]))
+  return Boolean(blobValue.value) || Boolean(urlValue.value)
 })
-
 const isFile = computed(() => {
-  if (!(props.modelValue[props.name] instanceof File)) return !1
-  return props.modelValue[props.name] instanceof File && props.modelValue[props.name].type.slice(0, 6) !== 'image/'
+  if (!(blobValue.value instanceof File)) {
+    return !1
+  }
+  // if (!(props.modelValue[props.name] instanceof File)) return !1
+  // return props.modelValue[props.name] instanceof File && props.modelValue[props.name].type.slice(0, 6) !== 'image/'
+  return blobValue.value instanceof File && blobValue.value?.type.slice(0, 6) !== 'image/'
 })
-const getAvatarText = () => props.avatarText ? itemRef.value[props.avatarText]?.slice(0, 1)?.toUpperCase() : undefined
+const getAvatarText = computed(() => props.avatarText ? props.avatarText.slice(0, 1).toUpperCase() : undefined)
 const setLoaded = () => {
   isLoaded.value = !0
 }
@@ -112,25 +135,34 @@ const onClick = (e?: Event) => {
   nextTick(() => emit('click', e))
 }
 const onClearInput = () => {
-  if (fileInput.value) {
-    fileInput.value?.removeAtIndex(0)
-  }
+  fileInput.value?.removeAtIndex(0)
+  removeFieldRef.value?.reset({ value: !0 })
+  urlFieldRef.value?.reset({ value: undefined })
+  // removeValue.value = !0
+  // urlValue.value = null
   // itemRef.value = Object.assign(itemRef, {
   //   [props.url]: null,
   //   [`${props.name}Removed`]: !0
   // })
-  itemRef.value[props.url] = null
-  itemRef.value[`${props.name}Removed`] = !0
+  // itemRef.value[props.url] = null
+  // itemRef.value[`${props.name}Removed`] = !0
 }
 
 onBeforeUnmount(() => {
   revoke()
-  itemRef.value[props.name] = null
-  itemRef[`${props.name}Removed`] = undefined
+  // blobValue.value = undefined
+  fileInput.value?.removeAtIndex(0)
+  removeFieldRef.value?.reset({ value: undefined })
+  // itemRef.value = Object.assign(itemRef, {
+  //   [props.name]: null,
+  //   [`${props.name}Removed`]: undefined
+  // })
+  // itemRef.value[props.name] = null
+  // itemRef[`${props.name}Removed`] = undefined
 })
-watch(props.modelValue, (v) => {
-  if (v[props.name] instanceof File) {
-    toUrl(v[props.name])
+watch(() => blobValue.value, (v) => {
+  if (v instanceof File) {
+    toUrl(v)
     emit('update:errors', {})
   }
 })
@@ -183,7 +215,7 @@ export default {
               v-if="hasSrc && !isFile"
               :fit="fit"
               :height="size"
-              :src="blobUrl??itemRef[url]"
+              :src="blobUrl || urlValue"
               ratio="1"
               @error="setLoaded"
               @load="setLoaded"
@@ -194,14 +226,11 @@ export default {
                 </div>
               </template>
             </q-img>
-            <MFadeTransition>
-              <div
-                v-if="avatarText && !hasSrc"
-                class="text-white text-h3"
-              >
-                {{ getAvatarText() }}
-              </div>
-            </MFadeTransition>
+            <div
+              v-if="getAvatarText && !hasSrc"
+              class="text-white text-h3"
+              v-text="getAvatarText"
+            />
           </q-avatar>
           <!--<q-slide-transition>-->
           <!--<template v-if="!hideRemoveAvatar || (hideRemoveAvatar && props.modelValue)">-->
@@ -223,7 +252,7 @@ export default {
       <MCol col="auto">
         <MBtn
           :color="!hasSrc ? 'positive' : 'secondary'"
-          :disable="!isLoaded && Boolean(itemRef[url])"
+          :disable="!isLoaded && Boolean(urlValue)"
           @click="onClick"
         >
           <span v-if="clearable && hasSrc">{{ $t('remove') }}</span>
@@ -241,11 +270,25 @@ export default {
       </MFadeTransition>
       <MFile
         ref="fileInput"
-        v-model="itemRef[name]"
+        :model-value="modelValue"
+        @update:model-value="setBlobValue"
         :accept="accepts.join(',')"
         :clearable="clearable"
         :errors="errors"
         :name="name"
+        class="hidden"
+      />
+      <VeeField
+        ref="removeFieldRef"
+        :name="`${name}Removed`"
+        type="checkbox"
+        :value="!0"
+        class="hidden"
+      />
+      <VeeField
+        ref="urlFieldRef"
+        :name="url"
+        type="textarea"
         class="hidden"
       />
     </MColumn>

@@ -350,10 +350,10 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.config.globalProperties.openWindow = function (...args: any) {
     return window.open(...args)
   }
-  app.config.globalProperties.parseAttribute = function (string: string | { text: string } | any, ...args: []): string | null {
+  app.config.globalProperties.parseAttribute = function (string: string | { text: string } | any, ...args: []): string {
     return this.$myth.parseAttribute(string, ...args)
   }
-  app.config.globalProperties.getPageTitle = function (number?: number | string, route?: RouteLocationNormalizedLoaded): string | null {
+  app.config.globalProperties.getPageTitle = function (number?: number | string, route?: RouteLocationNormalizedLoaded): string {
     return this.$myth.getPageTitle(route || this.$route, number)
   }
 

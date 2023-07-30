@@ -54,7 +54,7 @@
         :rows="getRows"
         :rows-per-page-options="getRowsPerPageOptions"
         :selection="hideSelection !== !0 ? (singleSelection ? 'single' : 'multiple') : 'none'"
-        :title="title"
+        :title="title||undefined"
         :visible-columns="visibleHeaders"
         card-container-class="m--datatable-container"
         table-class="m--datatable-container"
@@ -80,7 +80,7 @@
               </div>
             </q-page-scroller>-->
             <MContainer>
-              <div class="row q-col-gutter-sm items-center justify-between">
+              <MRow class="q-col-gutter-sm items-center justify-between">
                 <div
                   v-show="Boolean(title)"
                   :class="{'col-12':$q.screen.xs, 'col-auto': !$q.screen.xs,'self-start':!0}"
@@ -230,7 +230,7 @@
                               </q-item-section>
                             </q-item>
                           </template>
-                          <template v-if="hasFilterDialog">
+                          <!--<template v-if="hasFilterDialog">
                             <q-item
                               v-close-popup
                               clickable
@@ -251,7 +251,7 @@
                                 </span>
                               </q-item-section>
                             </q-item>
-                          </template>
+                          </template>-->
                           <template v-if="pdf">
                             <q-item
                               v-close-popup
@@ -407,10 +407,10 @@
                     </MDtBtn>
                   </div>
                 </MCol>
-              </div>
+              </MRow>
               <MFadeTransition>
                 <MRow
-                  v-if="noManageColumns !== !1"
+                  v-if="!noManageColumns"
                   class="items-center"
                 >
                   <q-list
@@ -622,8 +622,8 @@
       <q-card class="m--dialog-card">
         <MForm
           v-slot="form"
-          :initial-errors="dialogs.errors"
-          :initial-values="dialogs.item"
+          :errors="dialogs.errors"
+          :form="dialogs.item"
           @submit="defaultSubmitItem"
         >
           <q-card-section ref="formTitle">
@@ -716,7 +716,7 @@
 
 <script lang="ts">
 
-import { computed, defineComponent, nextTick, onMounted, PropType, reactive, ref, useSlots, watch } from 'vue'
+import { computed, nextTick, onMounted, PropType, reactive, ref, useSlots, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import _ from 'lodash'
 import { useRouter } from 'vue-router'
@@ -750,7 +750,7 @@ export const initMetaServer: MDatatableMetaServer = {
   total: null
 }
 
-export default defineComponent({
+export default {
   name: 'MDatatable',
   inheritAttrs: !1,
   props: {
@@ -927,7 +927,7 @@ export default defineComponent({
     const isUpdateDialog = ref(!1)
     const itemDialog = ref<MDtItem | null>(null)
     const itemIndexDialog = ref<MDtItemIndex>()
-    const errorsDialog = ref<Record<string | number | symbol, any>>({})
+    const errorsDialog = ref<any>({})
     const dialogs = reactive<MDatatableDialogsOptions>({
       filter: filterDialogModel,
       show: showDialogModel,
@@ -954,7 +954,8 @@ export default defineComponent({
     /** --- */
     const headersProp = computed(() => props.headers)
     const getHeaders = computed<any[]>(() => myth.parseHeaders(headersProp.value) || [])
-    const visibleHeaders = ref(myth.parseHeaders(props.visibleColumns || headersProp.value).map(e => e.name))
+    const visibleColumnsProp = computed(() => props.visibleColumns)
+    const visibleHeaders = ref(myth.parseHeaders(visibleColumnsProp.value || headersProp.value).map(e => e.name))
     /** --- */
 
     const selected = ref<MDtItem[]>([])
@@ -1395,8 +1396,9 @@ export default defineComponent({
       }
     }
     const defaultSubmitItem = async (_form: Record<string, any>) => {
-      let form = { ..._form, ...(dialogs.itemForm || {}) }
-      console.log(form)
+      // let form = { ..._form, ...(dialogs.itemForm || {}) }
+      let form = { ..._form }
+      // console.log(form)
       if (loading.value) {
         return
       }
@@ -1575,8 +1577,14 @@ export default defineComponent({
 
     // Watch on Form dialog
     watch(() => dialogs.item, (v) => {
-      // console.log(dialogs.item)
+      console.log('dialogs.item ', v)
       dialogs.itemForm = v ? { ...v } : v
+    })
+    watch(() => dialogs.form, (v) => {
+      console.log('dialogs.form: ', v)
+      if (!v) {
+        dialogs.errors = {}
+      }
     })
     const datatableItemsScope = computed(() => ({
       openShowDialog,
@@ -1658,7 +1666,7 @@ export default defineComponent({
       visibleHeaders
     }
   }
-})
+}
 </script>
 
 <style lang="sass">

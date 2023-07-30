@@ -58,7 +58,8 @@ watch(() => props.errors, (v) => {
       errors[errorsKey] = v[errorsKey][0]
     }
   }
-  resetForm({ errors })
+  setErrors(errors)
+  // resetForm({ errors })
   // nextTick(() => {
   //   const touched:Record<string, boolean> = {}
   //   for (const errorsKey in v) {
@@ -70,7 +71,9 @@ watch(() => props.errors, (v) => {
   // })
 })
 watch(() => props.form, (values) => {
+  // console.log(values)
   resetForm({ values })
+  // setValues(values)
 })
 
 const onSubmit = (values: Record<string, any>, ctx: SubmissionContext): void => emit('submit', values, ctx)

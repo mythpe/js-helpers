@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 import { useMyth } from '../../vue3'
 import { Field as VeeField } from 'vee-validate'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 
 import { ColStyleType } from '../grid/models'
@@ -65,11 +65,17 @@ const props = withDefaults(defineProps<Props>(), {
   toggleIndeterminate: !1,
   statusLabels: !1
 })
-const {
-  getRules
-} = useInputProps(props)
+const { getRules } = useInputProps(props)
 const { parseAttribute } = useMyth()
-const inputValue = ref(props.modelValue)
+type Events = {
+  (e: 'update:modelValue', value: any): void;
+}
+const emit = defineEmits<Events>()
+const inputValue = computed({
+  get: () => props.modelValue,
+  set: v => emit('update:modelValue', v)
+})
+
 const topLabel = computed<string | null>(() => parseAttribute(props.label === undefined ? props.name : props.label) ?? null)
 
 const getLabel = computed<string | undefined>(() => {
