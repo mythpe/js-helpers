@@ -6,7 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance, AxiosRequestConfig } from 'axios'
+import { AxiosRequestConfig } from 'axios'
 import {
   QAvatarProps,
   QAvatarSlots,
@@ -295,7 +295,7 @@ export interface MToggleSlots extends QToggleSlots {
 }
 
 export interface MFormSlots {
-  default: () => VNode[];
+  default: (scope: { form: VeeFieldFormScope }) => VNode[];
 }
 
 export interface MFormProps {

@@ -61,9 +61,13 @@ watch(() => props.options, (v) => {
 const $myth = useMyth()
 onMounted(async () => {
   const prepare = async () => {
-    if (!props.service) return
-    const method = typeof props.service === 'string' ? $myth.api.services[props.service].staticUtilities : props.service
-
+    if (!props.service) {
+      return
+    }
+    const method = typeof props.service === 'string' ? $myth.services[props.service].staticUtilities : props.service
+    if (!method) {
+      throw Error(`No service: ${props.service}`)
+    }
     loading.value = !0
     try {
       const { _data } = await method({ params: { ...(props.params ?? {}), requestWith: props.requestWith, exclude: props.exclude } })

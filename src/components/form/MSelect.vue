@@ -6,91 +6,6 @@
   - Github: https://github.com/mythpe
   -->
 
-<script lang="ts" setup>
-import { Field as VeeField } from 'vee-validate'
-import { defineProps, ref } from 'vue'
-import useInputProps from '../../composition/useInputProps'
-import { ColStyleType } from '../grid/models'
-
-interface Props {
-  auto?: boolean;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  behavior?: 'default' | 'menu' | 'dialog' | undefined;
-  borderless?: boolean | undefined;
-  dense?: boolean | undefined;
-  emitValue?: boolean | undefined;
-  filled?: boolean | undefined;
-  hideBottomSpace?: boolean | undefined;
-  inputDebounce?: number | string | undefined;
-  mapOptions?: boolean | undefined;
-  optionLabel?: ((option: string | any) => string) | string | undefined;
-  optionsDense?: boolean | undefined;
-  outlined?: boolean | undefined;
-  stackLabel?: boolean | undefined;
-  standout?: boolean | string | undefined;
-  useInput?: boolean | undefined;
-  name: string | undefined;
-  label?: string | undefined;
-  required?: boolean | undefined;
-  hideRequired?: boolean | undefined;
-  clearable?: boolean | undefined;
-  loading?: boolean | undefined;
-  rules?: string | string[] | undefined;
-  errors?: Record<string, string[]>;
-  modelValue: any;
-  options: any[];
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  auto: undefined,
-  col: undefined,
-  xs: undefined,
-  sm: undefined,
-  md: undefined,
-  lg: undefined,
-  xl: undefined,
-  behavior: undefined,
-  borderless: undefined,
-  dense: undefined,
-  emitValue: !0,
-  filled: undefined,
-  hideBottomSpace: !0,
-  inputDebounce: 600,
-  mapOptions: !0,
-  optionLabel: 'text',
-  optionsDense: undefined,
-  outlined: undefined,
-  stackLabel: undefined,
-  standout: undefined,
-  useInput: !1,
-  name: undefined,
-  label: undefined,
-  required: undefined,
-  hideRequired: undefined,
-  clearable: undefined,
-  loading: undefined,
-  rules: undefined,
-  errors: undefined,
-  modelValue: undefined,
-  options: () => ([])
-})
-const inputValue = ref(props.modelValue)
-
-const { getRules, getLabel } = useInputProps(props)
-
-</script>
-
-<script lang="ts">
-export default {
-  inheritAttrs: !1
-}
-</script>
-
 <template>
   <MCol
     :auto="auto"
@@ -163,3 +78,95 @@ export default {
     </VeeField>
   </MCol>
 </template>
+
+<script lang="ts" setup>
+import { Field as VeeField } from 'vee-validate'
+import { computed, defineProps } from 'vue'
+import useInputProps from '../../composition/useInputProps'
+import { ColStyleType } from '../grid/models'
+
+interface Props {
+  auto?: boolean;
+  col?: ColStyleType;
+  xs?: ColStyleType;
+  sm?: ColStyleType;
+  md?: ColStyleType;
+  lg?: ColStyleType;
+  xl?: ColStyleType;
+  behavior?: 'default' | 'menu' | 'dialog' | undefined;
+  borderless?: boolean | undefined;
+  dense?: boolean | undefined;
+  emitValue?: boolean | undefined;
+  filled?: boolean | undefined;
+  hideBottomSpace?: boolean | undefined;
+  inputDebounce?: number | string | undefined;
+  mapOptions?: boolean | undefined;
+  optionLabel?: ((option: string | any) => string) | string | undefined;
+  optionsDense?: boolean | undefined;
+  outlined?: boolean | undefined;
+  stackLabel?: boolean | undefined;
+  standout?: boolean | string | undefined;
+  useInput?: boolean | undefined;
+  name: string | undefined;
+  label?: string | undefined;
+  required?: boolean | undefined;
+  hideRequired?: boolean | undefined;
+  clearable?: boolean | undefined;
+  loading?: boolean | undefined;
+  rules?: string | string[] | undefined;
+  errors?: Record<string, string[]>;
+  modelValue: any;
+  options: any[];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  auto: undefined,
+  col: undefined,
+  xs: undefined,
+  sm: undefined,
+  md: undefined,
+  lg: undefined,
+  xl: undefined,
+  behavior: undefined,
+  borderless: undefined,
+  dense: undefined,
+  emitValue: !0,
+  filled: undefined,
+  hideBottomSpace: !0,
+  inputDebounce: 600,
+  mapOptions: !0,
+  optionLabel: 'text',
+  optionsDense: undefined,
+  outlined: undefined,
+  stackLabel: undefined,
+  standout: undefined,
+  useInput: !1,
+  name: undefined,
+  label: undefined,
+  required: undefined,
+  hideRequired: undefined,
+  clearable: undefined,
+  loading: undefined,
+  rules: undefined,
+  errors: undefined,
+  modelValue: undefined,
+  options: () => ([])
+})
+type Events = {
+  (e: 'update:modelValue', value: any): void;
+}
+const emit = defineEmits<Events>()
+const inputValue = computed({
+  get: () => props.modelValue,
+  set: v => emit('update:modelValue', v)
+})
+
+const { getRules, getLabel } = useInputProps(props)
+
+</script>
+
+<script lang="ts">
+export default {
+  inheritAttrs: !1
+}
+</script>
