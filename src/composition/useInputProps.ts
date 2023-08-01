@@ -12,7 +12,6 @@ import { useMyth } from '../vue3'
 export default function useInputProps (Props: any) {
   const props = computed(() => Props)
   const { parseAttribute } = useMyth()
-
   const getRules = computed<string | undefined>(() => {
     let rules = props.value?.rules || []
 

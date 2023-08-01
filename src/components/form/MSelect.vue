@@ -16,36 +16,28 @@
     :sm="sm"
     :xs="xs"
   >
-    <VeeField
+    <component
+      :is="useInput ? 'div' : VeeField"
       v-slot="fieldProps"
-      v-model="inputValue"
+      :model-value="inputValue"
       :name="name"
       :rules="getRules"
       v-bind="$attrs"
+      @update:model-value="updateFieldValue"
     >
       <q-select
         :behavior="$q.platform.is.ios === !0 ? 'dialog' : behavior"
-        :borderless="borderless"
-        :clearable="clearable"
-        :dense="dense"
-        :emit-value="emitValue"
-        :error="fieldProps.errors.length>0"
-        :error-message="fieldProps.errorMessage"
-        :filled="filled"
-        :hide-bottom-space="hideBottomSpace"
-        :input-debounce="inputDebounce"
+        v-bind="{...($myth.options.select||{}),...$attrs,...(fieldProps||{field:{}}).field}"
+        :error="(fieldProps||{errors:[]}).errors.length > 0 || Boolean(errorMessageField)"
+        :error-message="(fieldProps||{errorMessage:undefined}).errorMessage || errorMessageField"
         :label="getLabel"
-        :loading="loading"
-        :map-options="mapOptions"
-        :model-value="modelValue"
-        :option-label="optionLabel"
-        :options="options"
-        :options-dense="optionsDense"
-        :outlined="outlined"
-        :stack-label="stackLabel"
-        :standout="standout"
+        :model-value="inputValue"
+        :options="getOptions"
         :use-input="useInput"
-        v-bind="{...($myth.options.select||{}),...$attrs,...fieldProps.field}"
+        :emit-value="emitValue"
+        :map-options="mapOptions"
+        @filter="filterFn"
+        @update:model-value="updateModelValue"
       >
         <template #no-option>
           <slot name="no-option">
@@ -73,17 +65,31 @@
         </template>
       </q-select>
       <slot
-        v-bind="fieldProps"
+        v-bind="fieldProps||{}"
       />
+    </component>
+    <VeeField
+      v-model="inputValue"
+      ref="veeFieldRef"
+      :name="name"
+      :rules="getRules"
+      class="hidden"
+    >
+      <template #default="{errorMessage}">
+        <div class="hidden">
+          {{ (errorMessageField = errorMessage) }}
+        </div>
+      </template>
     </VeeField>
   </MCol>
 </template>
 
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
-import { computed, defineProps } from 'vue'
+import { computed, defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
+import { MSelectProps } from './models'
 
 interface Props {
   auto?: boolean;
@@ -94,29 +100,19 @@ interface Props {
   lg?: ColStyleType;
   xl?: ColStyleType;
   behavior?: 'default' | 'menu' | 'dialog' | undefined;
-  borderless?: boolean | undefined;
-  dense?: boolean | undefined;
-  emitValue?: boolean | undefined;
-  filled?: boolean | undefined;
-  hideBottomSpace?: boolean | undefined;
-  inputDebounce?: number | string | undefined;
-  mapOptions?: boolean | undefined;
-  optionLabel?: ((option: string | any) => string) | string | undefined;
-  optionsDense?: boolean | undefined;
-  outlined?: boolean | undefined;
-  stackLabel?: boolean | undefined;
-  standout?: boolean | string | undefined;
-  useInput?: boolean | undefined;
   name: string | undefined;
   label?: string | undefined;
   required?: boolean | undefined;
   hideRequired?: boolean | undefined;
-  clearable?: boolean | undefined;
-  loading?: boolean | undefined;
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
   modelValue: any;
   options: any[];
+  emitValue?: MSelectProps['emitValue'];
+  mapOptions?: MSelectProps['mapOptions'];
+  useInput?: MSelectProps['useInput'];
+  optionValue?: MSelectProps['optionValue'];
+  optionLabel?: MSelectProps['optionLabel'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -128,40 +124,66 @@ const props = withDefaults(defineProps<Props>(), {
   lg: undefined,
   xl: undefined,
   behavior: undefined,
-  borderless: undefined,
-  dense: undefined,
-  emitValue: !0,
-  filled: undefined,
-  hideBottomSpace: !0,
-  inputDebounce: 600,
-  mapOptions: !0,
-  optionLabel: 'text',
-  optionsDense: undefined,
-  outlined: undefined,
-  stackLabel: undefined,
-  standout: undefined,
-  useInput: !1,
   name: undefined,
   label: undefined,
   required: undefined,
   hideRequired: undefined,
-  clearable: undefined,
-  loading: undefined,
   rules: undefined,
   errors: undefined,
   modelValue: undefined,
-  options: () => ([])
+  options: () => ([]),
+  useInput: () => !0,
+  emitValue: () => !0,
+  mapOptions: () => !0,
+  optionValue: undefined,
+  optionLabel: undefined
 })
 type Events = {
   (e: 'update:modelValue', value: any): void;
 }
 const emit = defineEmits<Events>()
+const veeFieldRef = ref()
 const inputValue = computed({
   get: () => props.modelValue,
   set: v => emit('update:modelValue', v)
 })
-
+const errorMessageField = ref<string | undefined>(undefined)
 const { getRules, getLabel } = useInputProps(props)
+const originalOptions = computed<any>(() => props.options)
+const search = ref('')
+const getOptions = computed(() => {
+  if (search.value && search.value.length > 0) {
+    return originalOptions.value.filter((v: any) => v.label.toLowerCase().indexOf(search.value) > -1)
+  }
+
+  return originalOptions.value
+})
+const filterFn = (val: any, update: any) => {
+  if (!val) {
+    update()
+  }
+  setTimeout(() => {
+    update(
+      () => {
+        search.value = val
+      }
+    )
+  }, 200)
+}
+const updateFieldValue = (v?: any) => {
+  // console.log('Field: ', v)
+  inputValue.value = v
+}
+const updateModelValue = (v?: any) => {
+  inputValue.value = v
+}
+
+// const createValue = (val: any, done: any) => {
+//   if (val.length > 0) {
+//     console.log(val)
+//     // done(val, 'add-unique')
+//   }
+// }
 
 </script>
 

@@ -1559,9 +1559,6 @@ export default {
       refresh()
     })
 
-    watch(contextmenu, v => {
-      console.log(v)
-    })
     watch(loading, v => {
       if (v) {
         $q.loading.show()

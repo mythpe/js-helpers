@@ -45,6 +45,7 @@ const emit = defineEmits<Emits>()
 
 const loading = ref<boolean>(!1)
 const items = ref<any[]>([])
+const serviceProp = computed<MAxiosProps['service']>(() => props.service)
 const model = computed({
   get: () => props.modelValue,
   set: (v) => emit('update:modelValue', v)
@@ -56,17 +57,17 @@ onBeforeMount(() => {
 })
 
 watch(() => props.options, (v) => {
-  items.value = v ?? []
+  items.value = v || []
 })
 const $myth = useMyth()
 onMounted(async () => {
   const prepare = async () => {
-    if (!props.service) {
+    if (!serviceProp.value) {
       return
     }
-    const method = typeof props.service === 'string' ? $myth.services[props.service].staticUtilities : props.service
+    const method = typeof serviceProp.value === 'string' ? $myth.services[serviceProp.value].staticUtilities : serviceProp.value
     if (!method) {
-      throw Error(`No service: ${props.service}`)
+      throw Error(`No service: ${serviceProp.value}`)
     }
     loading.value = !0
     try {

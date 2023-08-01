@@ -192,29 +192,31 @@ export interface MTimeSlots extends QTimeSlots {
 
 export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
   behavior?: 'default' | 'menu' | 'dialog' | undefined;
-  borderless?: boolean | undefined;
-  dense?: boolean | undefined;
   emitValue?: boolean | undefined;
-  filled?: boolean | undefined;
-  hideBottomSpace?: boolean | undefined;
-  inputDebounce?: number | string | undefined;
   mapOptions?: boolean | undefined;
-  optionLabel?: ((option: string | any) => string) | string | undefined;
-  optionsDense?: boolean | undefined;
-  outlined?: boolean | undefined;
-  stackLabel?: boolean | undefined;
-  standout?: boolean | string | undefined;
   useInput?: boolean | undefined;
   name: string | undefined;
   label?: string | undefined;
   required?: boolean | undefined;
   hideRequired?: boolean | undefined;
-  clearable?: boolean | undefined;
-  loading?: boolean | undefined;
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
   modelValue: any;
   options: any[];
+  /**
+   * Property of option which holds the 'value'; If using a function then for best performance, reference it from your scope and do not define it inline
+   * Default value: value
+   * @param option The current option being processed
+   * @returns Value of the current option
+   */
+  optionValue?: ((option: string | any) => any) | string | undefined;
+  /**
+   * Property of option which holds the 'label'; If using a function then for best performance, reference it from your scope and do not define it inline
+   * Default value: label
+   * @param option The current option being processed
+   * @returns Label of the current option
+   */
+  optionLabel?: ((option: string | any) => string) | string | undefined;
 }
 
 export interface MSelectSlots extends QSelectSlots {
