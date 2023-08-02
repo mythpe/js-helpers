@@ -16,6 +16,7 @@
     :sm="sm"
     :xs="xs"
   >
+    {{ $attrs.readonly }}
     <component
       :is="useInput ? 'div' : VeeField"
       v-slot="fieldProps"
@@ -26,6 +27,7 @@
       @update:model-value="updateFieldValue"
     >
       <q-select
+        ref="selectRef"
         :behavior="$q.platform.is.ios === !0 ? 'dialog' : behavior"
         v-bind="{...($myth.options.select||{}),...$attrs,...(fieldProps||{field:{}}).field}"
         :error="(fieldProps||{errors:[]}).errors.length > 0 || Boolean(errorMessageField)"
@@ -36,14 +38,47 @@
         :use-input="useInput"
         :emit-value="emitValue"
         :map-options="mapOptions"
+        :loading="loading"
+        transition-show="flip-down"
+        transition-hide="flip-up"
         @filter="filterFn"
         @update:model-value="updateModelValue"
       >
         <template #no-option>
           <slot name="no-option">
             <q-item>
-              <q-item-section class="text-italic text-grey">
-                {{ $t('messages.no_items') }}
+              <q-item-section avatar>
+                <template v-if="autoSearch && searchInput?.length > 0">
+                  <q-icon
+                    name="o_warning"
+                    color="warning"
+                  />
+                </template>
+                <template v-else-if="autoSearch && !searchInput?.length">
+                  <q-icon name="o_search" />
+                </template>
+                <template v-else-if="loading">
+                  <q-spinner color="primary" />
+                </template>
+                <template v-else>
+                  <q-icon name="o_info" />
+                </template>
+              </q-item-section>
+              <q-item-section
+                class="text-italic text-grey"
+              >
+                <template v-if="autoSearch && searchInput?.length > 0">
+                  {{ $t('myth.select.noData') }}
+                </template>
+                <template v-else-if="autoSearch && !searchInput?.length">
+                  {{ $t('myth.select.typeToSearch') }}
+                </template>
+                <template v-else-if="loading">
+                  <q-spinner color="primary" />
+                </template>
+                <template v-else>
+                  {{ $t('myth.select.noData') }}
+                </template>
               </q-item-section>
             </q-item>
           </slot>
@@ -86,7 +121,7 @@
 
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
-import { computed, defineProps, ref } from 'vue'
+import { computed, defineProps, ref, watch } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MSelectProps } from './models'
@@ -113,6 +148,10 @@ interface Props {
   useInput?: MSelectProps['useInput'];
   optionValue?: MSelectProps['optionValue'];
   optionLabel?: MSelectProps['optionLabel'];
+  search?: MSelectProps['search'];
+  timeout?: MSelectProps['timeout'];
+  autoSearch?: MSelectProps['autoSearch'];
+  loading?: MSelectProps['loading'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -136,10 +175,15 @@ const props = withDefaults(defineProps<Props>(), {
   emitValue: () => !0,
   mapOptions: () => !0,
   optionValue: undefined,
-  optionLabel: undefined
+  optionLabel: undefined,
+  search: undefined,
+  timeout: () => 300,
+  autoSearch: undefined,
+  loading: undefined
 })
 type Events = {
   (e: 'update:modelValue', value: any): void;
+  (e: 'search', value: any): void;
 }
 const emit = defineEmits<Events>()
 const veeFieldRef = ref()
@@ -150,25 +194,32 @@ const inputValue = computed({
 const errorMessageField = ref<string | undefined>(undefined)
 const { getRules, getLabel } = useInputProps(props)
 const originalOptions = computed<any>(() => props.options)
-const search = ref('')
+const searchInput = ref('')
+// console.log(attrs)
 const getOptions = computed(() => {
-  if (search.value && search.value.length > 0) {
-    return originalOptions.value.filter((v: any) => v.label.toLowerCase().indexOf(search.value) > -1)
+  // console.log(originalOptions.value.length)
+  if (searchInput.value && searchInput.value.length > 0) {
+    return originalOptions.value.filter((v: any) => v.label.toLowerCase().indexOf(searchInput.value) !== -1)
   }
-
   return originalOptions.value
 })
+// const mounted = ref(!1)
 const filterFn = (val: any, update: any) => {
-  if (!val) {
+  if (!val && searchInput.value === val) {
     update()
+    //   // if (!mounted.value) {
+    //   //   mounted.value = !0
+    //   // } else {
+    //   //   attrs.onUpdateSearch && attrs.onSearch(val)
+    //   // }
   }
   setTimeout(() => {
     update(
       () => {
-        search.value = val
+        searchInput.value = val
       }
     )
-  }, 200)
+  }, props.timeout || 300)
 }
 const updateFieldValue = (v?: any) => {
   // console.log('Field: ', v)
@@ -189,7 +240,10 @@ const updateModelValue = (v?: any) => {
 //     // done(val, 'add-unique')
 //   }
 // }
-
+watch(() => searchInput.value, v => {
+  emit('search', v)
+  // console.log('watch: ', v)
+})
 </script>
 
 <script lang="ts">

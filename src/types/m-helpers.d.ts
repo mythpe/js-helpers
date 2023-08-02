@@ -92,9 +92,9 @@ export type ParseHeadersType = QTableProps['columns'] & ParsedHeader
 
 export type ParseHeadersHeaderAgr = ParseHeadersType[] | string[] | any[]
 
-export type UrlType = string | number | boolean | undefined | null
+export type UrlType = string | number;
 
-export type ParamsType = boolean | Record<string, any> | FormData | object
+export type ParamsType = Record<string, any> | FormData | object
 
 export type ConfigType = Partial<AxiosRequestConfig> & Partial<{
   params: Partial<ApiServiceParams> | Record<string | number | symbol, any>

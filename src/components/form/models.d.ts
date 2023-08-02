@@ -217,6 +217,9 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
    * @returns Label of the current option
    */
   optionLabel?: ((option: string | any) => string) | string | undefined;
+  search?: string | null | undefined;
+  timeout?: number;
+  autoSearch?: boolean;
 }
 
 export interface MSelectSlots extends QSelectSlots {

@@ -52,32 +52,35 @@ export const Helpers = {
   Stub (baseUrl: UrlType, axios: () => AxiosInstance) {
     const makeUrl = Helpers.StubUrl(baseUrl)
     const methods = {
-      index (config?: ConfigType | boolean) {
+      index (config?: ConfigType) {
         const u = makeUrl()
-        return typeof config === 'boolean' ? u : axios().get(u, config)
+        return axios().get(u, config)
+        // return typeof config === 'boolean' ? u : axios().get(u, config)
       },
       export (data?: ParamsType, config?: AxiosRequestConfig) {
         const u = makeUrl('Export')
-        return typeof data === 'boolean' ? u : axios().post(u, data, config)
+        return axios().post(u, data, config)
+        // return typeof data === 'boolean' ? u : axios().post(u, data, config)
       },
       store (data?: ParamsType, config?: AxiosRequestConfig) {
         const u = makeUrl()
-        if (typeof data === 'boolean') {
-          return u
-        }
+        // if (typeof data === 'boolean') {
+        //   return u
+        // }
         const formData = new FormData()
         data && Helpers.appendArray(formData, data)
         return axios().post(u, formData, config)
       },
       show (id: UrlType, config?: AxiosRequestConfig) {
         const u = makeUrl(id)
-        return typeof id === 'boolean' ? u : axios().get(u, config)
+        return axios().get(u, config)
+        // return typeof id === 'boolean' ? u : axios().get(u, config)
       },
       update (id: UrlType, data?: ParamsType, config?: AxiosRequestConfig) {
         const u = makeUrl(id)
-        if (typeof id === 'boolean') {
-          return u
-        }
+        // if (typeof id === 'boolean') {
+        //   return u
+        // }
         const formData = new FormData()
         formData.append('_method', 'put')
         data && Helpers.appendArray(formData, data)
@@ -85,55 +88,72 @@ export const Helpers = {
       },
       destroy (id: UrlType, config?: AxiosRequestConfig) {
         const u = makeUrl(id)
-        return typeof id === 'boolean' ? u : axios().delete(u, config)
+        return axios().delete(u, config)
+        // return typeof id === 'boolean' ? u : axios().delete(u, config)
       },
-      destroyAll (ids?: UrlType[] | boolean, config?: AxiosRequestConfig) {
+      destroyAll (ids?: UrlType[], config?: AxiosRequestConfig) {
         const u = makeUrl('DestroyAll')
-        return typeof ids === 'boolean' ? u : axios().post(u, { ids: (ids ?? {}) }, config)
+        axios().post(u, { ids: (ids || []) }, config)
+        // return typeof ids === 'boolean' ? u : axios().post(u, { ids: (ids ?? {}) }, config)
       },
-      utilities (config?: ConfigType | boolean) {
-        if (typeof config !== 'boolean') {
-          config = config || {}
-          config.params = {
-            ...(config.params ?? {}),
-            itemsPerPage: config.params?.itemsPerPage ?? -1
-          }
-        }
-        return methods.index(config)
-      },
-      staticUtilities (config?: ConfigType | boolean) {
-        const m = baseUrl ? baseUrl.toString().split('/').pop() : ''
-        const u = 'Static' + (m ? `/${m}` : '')
-        if (typeof config === 'boolean') {
-          return u
-        }
+      /**
+       * Get data by of authentication user
+       * @param config
+       */
+      utilities (config?: ConfigType) {
+        // if (typeof config !== 'boolean') {
         config = config || {}
         config.params = {
-          ...(config.params ?? {}),
-          itemsPerPage: config.params?.itemsPerPage ?? -1
+          page: 1,
+          itemsPerPage: -1,
+          ...(config.params || {})
+        }
+        // }
+        return methods.index(config)
+      },
+      /**
+       * Get static list all
+       * @param config
+       */
+      staticUtilities (config?: ConfigType) {
+        const m = baseUrl ? (baseUrl.toString().split('/').pop() || '') : ''
+        const u = 'Static' + (m ? `/${m}` : '')
+        // if (typeof config === 'boolean') {
+        //   return u
+        // }
+        config = config || {}
+        config.params = {
+          page: 1,
+          itemsPerPage: -1,
+          ...(config.params ?? {})
         }
         return axios().get(u, config)
       },
+      /**
+       * Static show model
+       * @param id
+       * @param config
+       */
       staticShow (id: UrlType, config?: AxiosRequestConfig) {
         const m = baseUrl ? baseUrl.toString().split('/').pop() : ''
         const u = 'Static' + (m ? `/${m}` : '') + `/${id}`
-        if (typeof id === 'boolean') {
-          return u
-        }
+        // if (typeof id === 'boolean') {
+        //   return u
+        // }
         return axios().get(u, config)
       },
-      uploadAttachments (id: UrlType, data: Record<string, any> | boolean, config?: AxiosRequestConfig) {
+      uploadAttachments (id: UrlType, data: Record<string, any>, config?: AxiosRequestConfig) {
         const _url = makeUrl(`${id}/Attachment/Upload`)
-        if (typeof data === 'boolean') {
-          return _url
-        }
+        // if (typeof data === 'boolean') {
+        //   return _url
+        // }
         return axios().post(_url, data, config)
       },
-      deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig | boolean) {
+      deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig) {
         const _url = makeUrl(`${id}/Attachment/${fileId}/Delete`)
-        if (typeof config === 'boolean') {
-          return _url
-        }
+        // if (typeof config === 'boolean') {
+        //   return _url
+        // }
         return axios().delete(_url, config)
       }
     }

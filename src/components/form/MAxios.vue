@@ -8,12 +8,15 @@
 
 <template>
   <MSelect
+    ref="mSelect"
     v-model="model"
     :loading="loading"
     :readonly="loading"
     :name="name"
     :options="items"
+    :auto-search="autoSearch"
     v-bind="$attrs"
+    @search="onSearchInput"
   >
     <template
       #selected-item
@@ -58,6 +61,7 @@ interface Props {
   service: MAxiosProps['service'];
   params?: MAxiosProps['params'];
   exclude?: MAxiosProps['exclude'];
+  autoSearch?: MAxiosProps['autoSearch'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -67,13 +71,14 @@ const props = withDefaults(defineProps<Props>(), {
   service: undefined,
   params: () => ({}),
   exclude: 1,
-  name: undefined
+  name: undefined,
+  autoSearch: () => !0
 })
 
 interface Emits {
   (e: 'update:modelValue', value: any): void;
 
-  (e: 'items', value: any[]): void
+  (e: 'update:items', value: any[]): void
 }
 
 const emit = defineEmits<Emits>()
@@ -85,40 +90,70 @@ const model = computed({
   get: () => props.modelValue,
   set: (v) => emit('update:modelValue', v)
 })
-// const model = ref<any>(props.modelValue)
+const $myth = useMyth()
+const autoProps = computed(() => props.autoSearch)
+const paramsProps = computed(() => props.params)
+const requestWithProps = computed(() => props.requestWith)
+const excludeProps = computed(() => props.exclude)
+const mSelect = ref<any>()
+const searchInput = ref<any>()
 
+const prepare = async () => {
+  if (!serviceProp.value || loading.value) {
+    return
+  }
+  const method = typeof serviceProp.value === 'string' ? $myth.services[serviceProp.value].staticUtilities : serviceProp.value
+  if (!method) {
+    throw Error(`No service: ${serviceProp.value}`)
+  }
+  loading.value = !0
+  method({
+    params: {
+      ...(paramsProps.value || {}),
+      requestWith: requestWithProps.value,
+      exclude: excludeProps.value || undefined,
+      search: searchInput.value
+    }
+  })
+    .then(({ _data }: any) => {
+      items.value = _data || []
+      emit('update:items', _data || [])
+    }).catch((e: any) => {
+    // console.log(e)
+    })
+    .finally(() => {
+      loading.value = !1
+      nextTick(() => {
+        if (autoProps.value) {
+          setTimeout(() => {
+            mSelect.value.$refs?.selectRef?.showPopup()
+          }, 90)
+        }
+      })
+    })
+}
+const onSearchInput = (v: any) => {
+  searchInput.value = v
+  if (!autoProps.value || loading.value) {
+    return
+  }
+
+  if (!v || v?.length < 2) {
+    items.value = []
+    emit('update:items', [])
+    return
+  }
+  prepare()
+  // console.log('search: ', v)
+}
 onBeforeMount(() => {
-  items.value = props.options ?? []
+  items.value = props.options || []
 })
-
 watch(() => props.options, (v) => {
   items.value = v || []
 })
-const $myth = useMyth()
-onMounted(async () => {
-  const prepare = async () => {
-    if (!serviceProp.value) {
-      return
-    }
-    const method = typeof serviceProp.value === 'string' ? $myth.services[serviceProp.value].staticUtilities : serviceProp.value
-    if (!method) {
-      throw Error(`No service: ${serviceProp.value}`)
-    }
-    loading.value = !0
-    try {
-      const { _data } = await method({ params: { ...(props.params ?? {}), requestWith: props.requestWith, exclude: props.exclude } })
-      items.value = _data || []
-      emit('items', _data || [])
-    } catch (e) {
-      // console.log(e)
-    } finally {
-      nextTick(() => {
-        loading.value = !1
-      })
-    }
-  }
-
-  await prepare()
+onMounted(() => {
+  !props.autoSearch && prepare()
 })
 </script>
 <script lang="ts">
