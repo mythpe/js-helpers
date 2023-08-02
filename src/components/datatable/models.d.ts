@@ -256,7 +256,7 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   excludedKeys?: string[] | ((from: any) => any);
   grid?: boolean;
   title?: string | null | undefined;
-  noManageColumns?: boolean;
+  manageColumns?: boolean;
   visibleColumns?: string[];
   searchColumns?: string[];
 }

@@ -7,7 +7,7 @@
   -->
 
 <script lang="ts" setup>
-import { computed, defineEmits } from 'vue'
+import { computed, defineEmits, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { ColStyleType } from '../grid/models'
 
 interface Props {
@@ -49,11 +49,23 @@ const isDate = computed(() => props.type === 'date')
 const mask = isDate.value ? '####-##-##' : '##:##'
 const format = isDate.value ? 'YYYY-MM-DD' : 'HH:mm'
 const icon = isDate.value ? 'event' : 'access_time'
+const dateRef = ref()
+const inputRef = ref()
+const onBeforeShow = () => {
+  dateRef.value = props.modelValue || undefined
+}
+const onBeforeHide = () => {
+  dateRef.value = undefined
+}
+const saveDialog = () => {
+  inputValue.value = dateRef.value
+  inputRef.value?.$refs?.veeField?.handleChange(dateRef.value)
+}
 </script>
 
 <script lang="ts">
 export default {
-  inheritAttrs: !0
+  inheritAttrs: !1
 }
 </script>
 
@@ -68,23 +80,28 @@ export default {
     :xs="xs"
   >
     <MInput
+      ref="inputRef"
       v-model="inputValue"
       :mask="mask"
       v-bind="$attrs"
     >
       <template #append>
-        <q-icon
-          :name="icon"
+        <q-btn
+          :icon="icon"
+          round
           class="cursor-pointer"
         >
           <q-popup-proxy
-            cover
             transition-hide="scale"
             transition-show="scale"
+            persistent
+            cover
+            @before-show="onBeforeShow()"
+            @before-hide="onBeforeHide()"
           >
             <q-date
               v-if="isDate"
-              v-model="inputValue"
+              v-model="dateRef"
               :mask="format"
               today-btn
               v-bind="{...($myth.options.date||{}),...$attrs}"
@@ -92,14 +109,21 @@ export default {
               <div class="row items-center justify-end">
                 <MBtn
                   v-close-popup
-                  :label="$t('done')"
+                  :label="$t('close')"
                   flat
+                  color="negative"
+                />
+                <MBtn
+                  v-close-popup
+                  :label="$t('save')"
+                  flat
+                  @click="saveDialog()"
                 />
               </div>
             </q-date>
             <q-time
               v-else
-              v-model="inputValue"
+              v-model="dateRef"
               :mask="format"
               now-btn
               v-bind="{...($myth.options.time||{}),...$attrs}"
@@ -107,13 +131,20 @@ export default {
               <div class="row items-center justify-end">
                 <MBtn
                   v-close-popup
-                  :label="$t('done')"
+                  :label="$t('close')"
                   flat
+                  color="negative"
+                />
+                <MBtn
+                  v-close-popup
+                  :label="$t('save')"
+                  flat
+                  @click="saveDialog()"
                 />
               </div>
             </q-time>
           </q-popup-proxy>
-        </q-icon>
+        </q-btn>
       </template>
     </MInput>
   </MCol>

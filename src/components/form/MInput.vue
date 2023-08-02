@@ -17,6 +17,7 @@
     :xs="xs"
   >
     <VeeField
+      ref="veeField"
       v-slot="fieldScope"
       v-model="inputValue"
       :name="name"
@@ -57,7 +58,7 @@
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
 
-import { computed, defineProps } from 'vue'
+import { computed, defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { MInputProps } from './models'
 
@@ -108,6 +109,8 @@ const inputValue = computed({
   set: value => emit('update:modelValue', value)
 })
 const { getRules, getLabel, getPlaceholder } = useInputProps(props)
+const veeField = ref()
+// defineExpose({veeField})
 </script>
 
 <script lang="ts">

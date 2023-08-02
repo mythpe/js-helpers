@@ -174,8 +174,13 @@ const updateFieldValue = (v?: any) => {
   // console.log('Field: ', v)
   inputValue.value = v
 }
+const useInput = computed(() => props.useInput)
 const updateModelValue = (v?: any) => {
+  // console.log('Model: ', v)
   inputValue.value = v
+  if (useInput.value) {
+    veeFieldRef.value.handleChange(v)
+  }
 }
 
 // const createValue = (val: any, done: any) => {

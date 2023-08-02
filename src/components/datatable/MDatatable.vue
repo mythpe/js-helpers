@@ -45,6 +45,7 @@
         v-model:fullscreen="tableOptions.fullscreen"
         v-model:pagination="pagination"
         v-model:selected="selected"
+        :flat="tableOptions.fullscreen"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
         :filter="tableOptions.search"
@@ -408,9 +409,10 @@
                   </div>
                 </MCol>
               </MRow>
+
               <MFadeTransition>
                 <MRow
-                  v-if="!noManageColumns"
+                  v-if="manageColumns"
                   class="items-center"
                 >
                   <q-list
@@ -476,6 +478,7 @@
                   </template>
                 </MRow>
               </MFadeTransition>
+
               <MFadeTransition>
                 <MRow
                   v-if="hasSelectedItem"
@@ -568,12 +571,11 @@
       <slot />
     </q-pull-to-refresh>
 
-    <!-- Show dialog -->
+    <!-- Show Dialog -->
     <q-dialog
       v-model="dialogs.show"
       allow-focus-outside
       maximized
-      no-backdrop-dismiss
       persistent
       transition-hide="slide-up"
       transition-show="slide-down"
@@ -608,7 +610,7 @@
       </q-card>
     </q-dialog>
 
-    <!-- Form dialog -->
+    <!-- Form Dialog -->
     <q-dialog
       v-model="dialogs.form"
       allow-focus-outside
@@ -621,6 +623,7 @@
     >
       <q-card class="m--dialog-card">
         <MForm
+          ref="formDialogRef"
           v-slot="form"
           :errors="dialogs.errors"
           :form="dialogs.item"
@@ -736,6 +739,7 @@ import {
 } from './models'
 import { useMyth } from '../../vue3'
 import { useI18n } from 'vue-i18n'
+import MForm from '../form/MForm.vue'
 
 export const initPaginationOptions: MDatatablePagination = {
   sortBy: undefined,
@@ -892,7 +896,7 @@ export default {
       type: String as PropType<string | null | undefined>,
       default: () => undefined
     },
-    noManageColumns: {
+    manageColumns: {
       type: Boolean,
       default: () => undefined
     }
@@ -1597,7 +1601,18 @@ export default {
       updateSelectedItems
     }))
 
+    /** 2023-02-08 */
+    const onBeforeHideFormDialog = (e, formRef: typeof MForm) => {
+      // console.log(e)
+      // const f = formRef?.getMeta()
+      // console.log(f?.touched, f?.dirty)
+    }
+    /** 2023-02-08 */
+
     return {
+      onBeforeHideFormDialog,
+      //
+
       contextmenuItems,
       contextmenu,
       onRowContextmenu,

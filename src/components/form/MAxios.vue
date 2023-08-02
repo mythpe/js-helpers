@@ -6,12 +6,47 @@
   - Github: https://github.com/mythpe
   -->
 
+<template>
+  <MSelect
+    v-model="model"
+    :loading="loading"
+    :readonly="loading"
+    :name="name"
+    :options="items"
+    v-bind="$attrs"
+  >
+    <template
+      #selected-item
+      v-if="loading"
+    >
+      <div>
+        <q-spinner />
+      </div>
+    </template>
+    <template
+      v-for="(_,slot) in $slots"
+      :key="slot"
+      #[slot]="inputSlot"
+    >
+      <slot
+        v-if="inputSlot"
+        :name="slot"
+        v-bind="inputSlot"
+      />
+      <slot
+        v-else
+        :name="slot"
+      />
+    </template>
+  </MSelect>
+</template>
+
 <script
   lang="ts"
   setup
 >
 
-import { computed, defineEmits, defineProps, onBeforeMount, onMounted, ref, watch } from 'vue'
+import { computed, defineEmits, defineProps, nextTick, onBeforeMount, onMounted, ref, watch } from 'vue'
 import { useMyth } from '../../vue3'
 import { MAxiosProps } from './models'
 
@@ -77,7 +112,9 @@ onMounted(async () => {
     } catch (e) {
       // console.log(e)
     } finally {
-      loading.value = !1
+      nextTick(() => {
+        loading.value = !1
+      })
     }
   }
 
@@ -89,29 +126,3 @@ export default {
   inheritAttrs: !1
 }
 </script>
-
-<template>
-  <MSelect
-    v-model="model"
-    :loading="loading"
-    :name="name"
-    :options="items"
-    v-bind="$attrs"
-  >
-    <template
-      v-for="(_,slot) in $slots"
-      :key="slot"
-      #[slot]="inputSlot"
-    >
-      <slot
-        v-if="inputSlot"
-        :name="slot"
-        v-bind="inputSlot"
-      />
-      <slot
-        v-else
-        :name="slot"
-      />
-    </template>
-  </MSelect>
-</template>
