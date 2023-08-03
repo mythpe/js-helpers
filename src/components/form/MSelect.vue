@@ -16,7 +16,6 @@
     :sm="sm"
     :xs="xs"
   >
-    {{ $attrs.readonly }}
     <component
       :is="useInput ? 'div' : VeeField"
       v-slot="fieldProps"
@@ -244,6 +243,7 @@ watch(() => searchInput.value, v => {
   emit('search', v)
   // console.log('watch: ', v)
 })
+defineExpose({ searchInput })
 </script>
 
 <script lang="ts">

@@ -6,7 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { DialogChainObject, QNotifyCreateOptions, QTableProps } from 'quasar'
 import { QNotifyUpdateOptions } from 'quasar/dist/types/api'
 import { ApiServiceParams } from '../components'
@@ -92,34 +92,52 @@ export type ParseHeadersType = QTableProps['columns'] & ParsedHeader
 
 export type ParseHeadersHeaderAgr = ParseHeadersType[] | string[] | any[]
 
-export type UrlType = string | number;
-
-export type ParamsType = Record<string, any> | FormData | object
-
-export type ConfigType = Partial<AxiosRequestConfig> & Partial<{
-  params: Partial<ApiServiceParams> | Record<string | number | symbol, any>
-}>
-
-export type GetType = ((config?: ConfigType | boolean) => string) | Promise<AxiosInstance['get']>
-
-export type PostType = (data?: ParamsType, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>
-
-export interface StubSchema {
-  index: GetType
-  export: PostType
-  store: PostType;
-  show: ((id: UrlType, config?: ConfigType) => string | AxiosInstance['get'] | Promise<AxiosInstance['get']>);
-  update: ((id: UrlType, data: ParamsType, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>);
-  destroy: ((id: UrlType, config?: ConfigType) => string | AxiosInstance['delete'] | Promise<AxiosInstance['delete']>);
-  destroyAll: ((ids: UrlType[] | boolean, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>);
-  utilities: GetType
-  staticUtilities: GetType;
-  staticShow: ((id: UrlType, config?: ConfigType) => string | AxiosInstance['get'] | Promise<AxiosInstance['get']>);
-  uploadAttachments: (id: UrlType, data: ParamsType, config?: ConfigType) => string | AxiosInstance['post'] | Promise<AxiosInstance['post']>;
-  deleteAttachment: (id: UrlType, fileId: string | number, config?: ConfigType | boolean) => string | AxiosInstance['delete'] | Promise<AxiosInstance['delete']>;
+// Axios
+type Generic = Record<string | number | symbol, any>;
+export type AxiosMetaResponse = Record<string, any>;
+export type AxiosDataResponse = Record<string, any>;
+export type AxiosErrorResponse = Record<string, any>;
+export type AxiosErrorsResponse = AxiosErrorResponse[];
+export type MainAxiosAppResponse = {
+  _data: AxiosDataResponse;
+  _message: string | null;
+  _meta: AxiosMetaResponse;
+  _success: boolean;
+  _errors: AxiosErrorsResponse;
 }
+export type AppApiResponse = AxiosResponse<AxiosDataResponse> & MainAxiosAppResponse
+export type UrlType = string | number;
+export type ParamsType = Record<string, any> | FormData | object
+export type ConfigType = Partial<AxiosRequestConfig<AppApiResponse>> & Partial<{
+  params: Partial<ApiServiceParams> & Generic
+}>
+export type StubSchema = {
+  index (config?: ConfigType): Promise<AppApiResponse>;
 
-export type MythApiServiceMethods = StubSchema
+  staticIndex (config?: ConfigType): Promise<AppApiResponse>;
+
+  export (data?: ParamsType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+
+  store (data?: ParamsType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+
+  show (id: UrlType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+
+  staticShow (id: UrlType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+
+  update (id: UrlType, data?: ParamsType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+
+  destroy (id: UrlType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+
+  destroyAll (ids?: UrlType[], config?: AxiosRequestConfig): Promise<AppApiResponse>;
+
+  getUploadAttachmentsUrl (id: UrlType): string;
+
+  uploadAttachments (id: UrlType, data: Record<string, any>, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+
+  deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+}
+export type ApiServices = { [key: string | symbol | number]: StubSchema }
+// Axios
 
 export type Vue3MAlertMessageOptions = QNotifyCreateOptions | string
 

@@ -6,7 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios'
+import { AxiosInstance } from 'axios'
 import {
   GlobalComponentConstructor,
   QBtnProps,
@@ -84,10 +84,8 @@ import {
 import { I18n } from 'vue-i18n'
 import { TransitionProps } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
-import { ParseHeaderOptions, ParseHeadersHeaderAgr, ParseHeadersType, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
+import { ApiServices, ParseHeaderOptions, ParseHeadersHeaderAgr, ParseHeadersType, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
 import { Dates, Helpers, Str } from '../utils'
-
-type ServiceType = () => Promise<AxiosResponse>
 
 export interface MythOptionsConfig extends Record<string | number | symbol, any> {
   google?: {
@@ -157,14 +155,10 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
 
 export type MythApiAxiosType = Partial<AxiosInstance>
 
-export type MythApiServicesType = {
-  [key: string]: Record<string, ServiceType> | any;
-}
-
 export interface MythApiConfig {
   baseUrl: string;
   axios: MythApiAxiosType;
-  services: MythApiServicesType
+  services: ApiServices
 }
 
 export type MythI18nType = I18n;
@@ -179,7 +173,7 @@ export type UseMythVue = {
   i18n: MythI18nType;
   baseUrl: string;
   axios: MythApiAxiosType;
-  services: MythApiServicesType;
+  services: ApiServices;
   options: MythOptionsConfig;
   str: typeof Str,
   dates: typeof Dates,

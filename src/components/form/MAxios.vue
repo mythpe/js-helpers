@@ -15,6 +15,7 @@
     :name="name"
     :options="items"
     :auto-search="autoSearch"
+    :multiple="multiple"
     v-bind="$attrs"
     @search="onSearchInput"
   >
@@ -25,6 +26,20 @@
       <div>
         <q-spinner />
       </div>
+    </template>
+    <template
+      #before-options
+      v-if="multiple"
+    >
+      <MContainer>
+        <MRow class="items-center">
+          <MBtn
+            :label="$t('done')"
+            flat
+            @click="onDoneOptions()"
+          />
+        </MRow>
+      </MContainer>
     </template>
     <template
       v-for="(_,slot) in $slots"
@@ -54,25 +69,29 @@ import { useMyth } from '../../vue3'
 import { MAxiosProps } from './models'
 
 interface Props {
+  multiple?: MAxiosProps['multiple'];
   name: MAxiosProps['name'];
   modelValue?: MAxiosProps['modelValue'];
   requestWith?: MAxiosProps['requestWith'];
   options?: MAxiosProps['options'];
   service: MAxiosProps['service'];
   params?: MAxiosProps['params'];
-  exclude?: MAxiosProps['exclude'];
+  guest?: MAxiosProps['guest'];
   autoSearch?: MAxiosProps['autoSearch'];
+  iniData?: MAxiosProps['iniData'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  multiple: undefined,
+  name: undefined,
   modelValue: undefined,
   requestWith: undefined,
   options: () => ([]),
   service: undefined,
   params: () => ({}),
-  exclude: 1,
-  name: undefined,
-  autoSearch: () => !0
+  guest: undefined,
+  autoSearch: undefined,
+  iniData: undefined
 })
 
 interface Emits {
@@ -94,15 +113,24 @@ const $myth = useMyth()
 const autoProps = computed(() => props.autoSearch)
 const paramsProps = computed(() => props.params)
 const requestWithProps = computed(() => props.requestWith)
-const excludeProps = computed(() => props.exclude)
+const guestProps = computed(() => props.guest !== undefined && props.guest !== !1)
 const mSelect = ref<any>()
 const searchInput = ref<any>()
-
+const onDoneOptions = () => {
+  // const r = ref(mSelect.value?.searchInput)
+  // r.value = ''
+  // console.log(mSelect.value)
+  // mSelect.value?.searchInput?.value = ''
+  mSelect.value.$refs?.selectRef?.updateInputValue('', !0)
+  mSelect.value.$refs?.selectRef?.hidePopup()
+}
 const prepare = async () => {
   if (!serviceProp.value || loading.value) {
     return
   }
-  const method = typeof serviceProp.value === 'string' ? $myth.services[serviceProp.value].staticUtilities : serviceProp.value
+  const method = typeof serviceProp.value === 'string' ? (
+    guestProps.value ? $myth.services[serviceProp.value].staticIndex : $myth.services[serviceProp.value].index
+  ) : serviceProp.value
   if (!method) {
     throw Error(`No service: ${serviceProp.value}`)
   }
@@ -111,8 +139,9 @@ const prepare = async () => {
     params: {
       ...(paramsProps.value || {}),
       requestWith: requestWithProps.value,
-      exclude: excludeProps.value || undefined,
-      search: searchInput.value
+      search: searchInput.value,
+      itemsPerPage: -1,
+      page: 1
     }
   })
     .then(({ _data }: any) => {
@@ -153,7 +182,7 @@ watch(() => props.options, (v) => {
   items.value = v || []
 })
 onMounted(() => {
-  !props.autoSearch && prepare()
+  (!props.iniData && !props.autoSearch) && prepare()
 })
 </script>
 <script lang="ts">

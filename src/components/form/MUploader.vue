@@ -113,50 +113,55 @@ const accepts = useAcceptProp(props)
 /* Events Callback */
 const factoryFn = (files: readonly File[]) => {
   return new Promise((resolve, reject) => {
-    // if (props.readonly) {
-    // reject({ message: t('messages.error') })
-    // return
-    // }
-    const common = $myth.api.axios.defaults.headers.common
-    const headers = []
-    for (const i in common) {
-      headers.push({
-        name: i,
-        value: common[i]
-      })
-    }
-    if (props.headers) {
-      for (const f in props.headers) {
+    try {
+      // if (props.readonly) {
+      // reject({ message: t('messages.error') })
+      // return
+      // }
+      const common = $myth.axios?.defaults?.headers.common || {}
+      const headers = []
+      for (const i in common) {
         headers.push({
-          name: f,
-          value: props.headers[f]
+          name: i,
+          value: common[i]
         })
       }
-    }
-    const formFields: any = []
-    if (props.formFields) {
-      for (const f in props.formFields) {
-        formFields.push({
-          name: f,
-          value: formFields[f]
-        })
+      if (props.headers) {
+        for (const f in props.headers) {
+          headers.push({
+            name: f,
+            value: props.headers[f]
+          })
+        }
       }
+      const formFields: any = []
+      if (props.formFields) {
+        for (const f in props.formFields) {
+          formFields.push({
+            name: f,
+            value: formFields[f]
+          })
+        }
+      }
+      if (props.collection) {
+        formFields.push({ name: 'collection', value: props.collection })
+      }
+      if (props.attachmentType) {
+        formFields.push({ name: 'attachment_type', value: props.attachmentType })
+      }
+      let url: string
+      url = typeof props.service !== 'object' ? $myth.services[props.service].getUploadAttachmentsUrl(props.modelId) : props.service.uploadAttachments(props.modelId, files)
+      url = `${$myth.baseUrl}/${url}`
+      resolve({
+        url,
+        method: 'POST',
+        headers,
+        formFields
+      })
+    } catch (e) {
+      reject(e)
+      console.log(e)
     }
-    if (props.collection) {
-      formFields.push({ name: 'collection', value: props.collection })
-    }
-    if (props.attachmentType) {
-      formFields.push({ name: 'attachment_type', value: props.attachmentType })
-    }
-    let url: string
-    url = typeof props.service === 'string' ? $myth.api.services[props.service].uploadAttachments(props.modelId, !0) : props.service.uploadAttachments(props.modelId, files)
-    url = `${$myth.api.baseUrl}/${url}`
-    resolve({
-      url,
-      method: 'POST',
-      headers,
-      formFields
-    })
   })
 }
 const onReject = (rejectedEntries: QRejectedEntry[]) => {
@@ -164,6 +169,7 @@ const onReject = (rejectedEntries: QRejectedEntry[]) => {
   nextTick(() => emit('rejected', rejectedEntries))
 }
 const onError = (info: MUploaderXhrInfo) => {
+  // console.log(info)
   const { xhr } = info
   try {
     if (xhr.responseText) {
@@ -205,7 +211,7 @@ const deleteMedia = (media: MUploaderMediaItem) => {
   const destroy = async () => {
     let r = !1
     try {
-      const method = async (file: MUploaderMediaItem) => typeof props.service === 'string' ? await $myth.api.services[props.service].deleteAttachment(props.modelId, file.id, { params: { collection: props.collection } }) : props.service.deleteAttachment(media)
+      const method = async (file: MUploaderMediaItem) => typeof props.service !== 'object' ? await $myth.services[props.service].deleteAttachment(props.modelId, file.id, { params: { collection: props.collection } }) : props.service.deleteAttachment(media)
       if (method) {
         const { _message, _success, _data }: any = await method(media)
         _message && alertSuccess(_message)

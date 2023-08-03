@@ -220,6 +220,10 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
   search?: string | null | undefined;
   timeout?: number;
   autoSearch?: boolean;
+  /**
+   * Fetch Data on mounted
+   */
+  iniData?: boolean;
 }
 
 export interface MSelectSlots extends QSelectSlots {
@@ -235,7 +239,7 @@ export interface MAxiosProps extends Omit<MSelectProps, 'options' | 'modelValue'
   options?: any[];
   service: ((config?: AxiosRequestConfig) => Promise<any>) | string;
   params?: Record<string, any> | undefined;
-  exclude?: string | number | undefined;
+  guest?: boolean | undefined;
 }
 
 export interface MAxiosSlots extends MSelectSlots {
@@ -385,6 +389,10 @@ export type MUploaderMediaItem = {
 }
 
 export type MUploaderServiceType = string | {
+  /**
+   * Get Attachments url
+   */
+  getUploadAttachmentsUrl(modelId: string | number): string;
   /** The url to which the files will be uploaded to */
   uploadAttachments: (modelId: string | number, files: readonly File[]) => string;
   /**

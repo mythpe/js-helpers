@@ -8,7 +8,7 @@
 
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import _ from 'lodash'
-import { ConfigType, DownloadFromResponse, ParamsType, UrlType } from '../types'
+import { ConfigType, DownloadFromResponse, ParamsType, StubSchema, UrlType } from '../types'
 
 export const Helpers = {
   appendArray (formData: FormData, values: File | Blob | Record<string, any> | any, name?: string | null | undefined) {
@@ -49,20 +49,29 @@ export const Helpers = {
     }
     return formData
   },
-  Stub (baseUrl: UrlType, axios: () => AxiosInstance) {
+  Stub (baseUrl: UrlType, axios: () => AxiosInstance): StubSchema {
     const makeUrl = Helpers.StubUrl(baseUrl)
-    const methods = {
-      index (config?: ConfigType) {
+    const methods: StubSchema = {
+      async index (config?: ConfigType) {
         const u = makeUrl()
         return axios().get(u, config)
         // return typeof config === 'boolean' ? u : axios().get(u, config)
       },
-      export (data?: ParamsType, config?: AxiosRequestConfig) {
-        const u = makeUrl('Export')
-        return axios().post(u, data, config)
-        // return typeof data === 'boolean' ? u : axios().post(u, data, config)
+      async staticIndex (config?: ConfigType) {
+        const u = `Static${baseUrl ? `/${baseUrl}` : ''}`
+        return axios().get(u, config)
+        // config = config || {}
+        // config.params = {
+        //   page: 1,
+        //   itemsPerPage: -1,
+        //   ...(config.params ?? {})
+        // }
+        // return axios().get(u, config)
       },
-      store (data?: ParamsType, config?: AxiosRequestConfig) {
+      async export (data?: ParamsType, config?: AxiosRequestConfig) {
+        return axios().post(makeUrl('Export'), data, config)
+      },
+      async store (data?: ParamsType, config?: AxiosRequestConfig) {
         const u = makeUrl()
         // if (typeof data === 'boolean') {
         //   return u
@@ -71,12 +80,20 @@ export const Helpers = {
         data && Helpers.appendArray(formData, data)
         return axios().post(u, formData, config)
       },
-      show (id: UrlType, config?: AxiosRequestConfig) {
+      async show (id: UrlType, config?: AxiosRequestConfig) {
         const u = makeUrl(id)
         return axios().get(u, config)
         // return typeof id === 'boolean' ? u : axios().get(u, config)
       },
-      update (id: UrlType, data?: ParamsType, config?: AxiosRequestConfig) {
+      async staticShow (id: UrlType, config?: AxiosRequestConfig) {
+        const m = baseUrl ? baseUrl.toString().split('/').pop() : ''
+        const u = 'Static' + (m ? `/${m}` : '') + `/${id}`
+        // if (typeof id === 'boolean') {
+        //   return u
+        // }
+        return axios().get(u, config)
+      },
+      async update (id: UrlType, data?: ParamsType, config?: AxiosRequestConfig) {
         const u = makeUrl(id)
         // if (typeof id === 'boolean') {
         //   return u
@@ -86,70 +103,26 @@ export const Helpers = {
         data && Helpers.appendArray(formData, data)
         return axios().post(u, formData, config)
       },
-      destroy (id: UrlType, config?: AxiosRequestConfig) {
+      async destroy (id: UrlType, config?: AxiosRequestConfig) {
         const u = makeUrl(id)
         return axios().delete(u, config)
         // return typeof id === 'boolean' ? u : axios().delete(u, config)
       },
-      destroyAll (ids?: UrlType[], config?: AxiosRequestConfig) {
+      async destroyAll (ids?: UrlType[], config?: AxiosRequestConfig) {
         const u = makeUrl('DestroyAll')
-        axios().post(u, { ids: (ids || []) }, config)
-        // return typeof ids === 'boolean' ? u : axios().post(u, { ids: (ids ?? {}) }, config)
+        return axios().post(u, { ids: (ids || []) }, config)
       },
-      /**
-       * Get data by of authentication user
-       * @param config
-       */
-      utilities (config?: ConfigType) {
-        // if (typeof config !== 'boolean') {
-        config = config || {}
-        config.params = {
-          page: 1,
-          itemsPerPage: -1,
-          ...(config.params || {})
-        }
-        // }
-        return methods.index(config)
+      getUploadAttachmentsUrl (id: UrlType) {
+        return makeUrl(`${id}/Attachment/Upload`)
       },
-      /**
-       * Get static list all
-       * @param config
-       */
-      staticUtilities (config?: ConfigType) {
-        const m = baseUrl ? (baseUrl.toString().split('/').pop() || '') : ''
-        const u = 'Static' + (m ? `/${m}` : '')
-        // if (typeof config === 'boolean') {
-        //   return u
-        // }
-        config = config || {}
-        config.params = {
-          page: 1,
-          itemsPerPage: -1,
-          ...(config.params ?? {})
-        }
-        return axios().get(u, config)
-      },
-      /**
-       * Static show model
-       * @param id
-       * @param config
-       */
-      staticShow (id: UrlType, config?: AxiosRequestConfig) {
-        const m = baseUrl ? baseUrl.toString().split('/').pop() : ''
-        const u = 'Static' + (m ? `/${m}` : '') + `/${id}`
-        // if (typeof id === 'boolean') {
-        //   return u
-        // }
-        return axios().get(u, config)
-      },
-      uploadAttachments (id: UrlType, data: Record<string, any>, config?: AxiosRequestConfig) {
+      async uploadAttachments (id: UrlType, data: Record<string, any>, config?: AxiosRequestConfig) {
         const _url = makeUrl(`${id}/Attachment/Upload`)
         // if (typeof data === 'boolean') {
         //   return _url
         // }
         return axios().post(_url, data, config)
       },
-      deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig) {
+      async deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig) {
         const _url = makeUrl(`${id}/Attachment/${fileId}/Delete`)
         // if (typeof config === 'boolean') {
         //   return _url
