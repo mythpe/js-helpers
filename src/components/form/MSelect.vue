@@ -151,6 +151,7 @@ interface Props {
   timeout?: MSelectProps['timeout'];
   autoSearch?: MSelectProps['autoSearch'];
   loading?: MSelectProps['loading'];
+  noFilter?: MSelectProps['noFilter'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -178,7 +179,8 @@ const props = withDefaults(defineProps<Props>(), {
   search: undefined,
   timeout: () => 300,
   autoSearch: undefined,
-  loading: undefined
+  loading: undefined,
+  noFilter: undefined
 })
 type Events = {
   (e: 'update:modelValue', value: any): void;
@@ -193,11 +195,11 @@ const inputValue = computed({
 const errorMessageField = ref<string | undefined>(undefined)
 const { getRules, getLabel } = useInputProps(props)
 const originalOptions = computed<any>(() => props.options)
+const noFilterProp = computed<any>(() => props.noFilter !== undefined && props.noFilter !== !1)
 const searchInput = ref('')
 // console.log(attrs)
 const getOptions = computed(() => {
-  // console.log(originalOptions.value.length)
-  if (searchInput.value && searchInput.value.length > 0) {
+  if (searchInput.value && searchInput.value.length > 0 && noFilterProp.value !== !0) {
     return originalOptions.value.filter((v: any) => v.label.toLowerCase().indexOf(searchInput.value) !== -1)
   }
   return originalOptions.value

@@ -54,7 +54,7 @@
         :loading="tableOptions.loading"
         :rows="getRows"
         :rows-per-page-options="getRowsPerPageOptions"
-        :selection="hideSelection !== !0 ? (singleSelection ? 'single' : 'multiple') : 'none'"
+        :selection="hideSelection !== !0 ? (multiSelection ? 'multiple' : 'single') : 'none'"
         :title="title||undefined"
         :visible-columns="visibleHeaders"
         card-container-class="m--datatable-container"
@@ -353,7 +353,10 @@
                         transition-show="fade"
                         v-bind="$myth.options.dt?.filterDialogProps"
                       >
-                        <q-card flat>
+                        <q-card
+                          flat
+                          :style="$q.screen.gt.sm?`width: ${Math.ceil($q.screen.width/2)}px` : undefined"
+                        >
                           <MContainer class="q-pa-md">
                             <div
                               class="text-body1 q-mb-md"
@@ -410,6 +413,7 @@
                 </MCol>
               </MRow>
 
+              <!-- Manage Columns -->
               <MFadeTransition>
                 <MRow
                   v-if="manageColumns"
@@ -445,9 +449,10 @@
                 </MRow>
               </MFadeTransition>
 
+              <!-- Filter Row -->
               <MFadeTransition>
                 <MRow
-                  v-if="Object.values(tableOptions.filter).filter(e => Boolean(e)).length > 0"
+                  v-if="Object.values(tableOptions.filter).filter(e => e !== undefined && e !== null).length > 0"
                   class="items-center"
                 >
                   <MCol col="auto">
@@ -458,7 +463,6 @@
                     :key="`filter-${filterKey}`"
                   >
                     <MCol
-                      v-if="Boolean(filterValue)"
                       col="auto"
                     >
                       <q-chip
@@ -471,14 +475,18 @@
                         @click="openFilterDialog"
                         @remove="onRemoveFilter(filterKey)"
                       >
-                        <span>{{ $t(`attributes.${filterKey}`) }}</span>
-                        <span v-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
+                        <span>{{ getHeaders.find(e => e.name === filterKey)?.label || $t(`attributes.${filterKey}`) }}</span>
+                        <span v-if="typeof filterValue === 'boolean'">:
+                          <template v-if="filterKey === 'active'">{{ parseAttribute(filterValue ? 'active' : 'inactive') }}</template>
+                          <template v-else>{{ $t(filterValue ? 'yes' : 'no') }}</template></span>
+                        <span v-else-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
                       </q-chip>
                     </MCol>
                   </template>
                 </MRow>
               </MFadeTransition>
 
+              <!-- Selection Row -->
               <MFadeTransition>
                 <MRow
                   v-if="hasSelectedItem"
@@ -514,7 +522,7 @@
                     />
                     <MDtBtn
                       v-if="hasDestroyBtn"
-                      :disable="!isSingleSelectedItem || tableOptions.loading"
+                      :disable="!hasSelectedItem || tableOptions.loading"
                       :loading="tableOptions.loading"
                       fab-mini
                       flat
@@ -552,7 +560,7 @@
           <div v-text="$t('replace.from_name', { from: pagination.rowsNumber, name: getRows.length })" />
         </template>
         <template
-          v-for="(slotVal,slotName) in $slots"
+          v-for="( slotVal,slotName) in $slots"
           :key="slotName"
           #[slotName]="inputSlot"
         >
@@ -626,7 +634,7 @@
           ref="formDialogRef"
           v-slot="form"
           :errors="dialogs.errors"
-          :form="dialogs.item"
+          :form="dialogs.itemForm"
           @submit="defaultSubmitItem"
         >
           <q-card-section ref="formTitle">
@@ -732,14 +740,13 @@ import {
   MDatatableOptions,
   MDatatablePagination,
   MDatatableProps,
-  MDtApiServices,
   MDtExportOptions,
   MDtItem,
-  MDtItemIndex
+  MDtItemIndex,
+  MDtMythApiServicesSchema
 } from './models'
 import { useMyth } from '../../vue3'
 import { useI18n } from 'vue-i18n'
-import MForm from '../form/MForm.vue'
 
 export const initPaginationOptions: MDatatablePagination = {
   sortBy: undefined,
@@ -875,16 +882,16 @@ export default {
       type: Boolean,
       default: () => !1
     },
-    singleSelection: {
+    multiSelection: {
       type: Boolean,
-      default: () => !0
+      default: () => !1
     },
     rowsPerPageOptions: {
       type: Array as PropType<MDatatableProps['rowsPerPageOptions']>,
       default: () => [50, 250, 500, 0]
     },
-    excludedKeys: {
-      type: [String, Function],
+    ignoreKeys: {
+      type: [Array as PropType<MDatatableProps['ignoreKeys']>, Function],
       default: () => undefined
     },
     // Style
@@ -1038,7 +1045,7 @@ export default {
     /* Titles */
 
     /** Methods */
-    const getApiServices = (): MDtApiServices => {
+    const getMythApiServicesSchema = (): MDtMythApiServicesSchema => {
       if (typeof serviceName.value === 'function') {
         return serviceName.value()
       }
@@ -1091,7 +1098,7 @@ export default {
     }
     const getRequestWith = (type: 'withIndex' | 'withShow' | 'withUpdate' | 'withStore'): string | null => {
       let v: any = []
-      const params: unknown = props[type]
+      const params: { [k: string]: string } & string | (() => string | object) = props[type]
       if (params) {
         if (typeof params === 'string') {
           v = params.split(',')
@@ -1100,10 +1107,10 @@ export default {
         if (_.isArray(params)) {
           v = [...params]
         } else if (_.isObject(params) && typeof params !== 'function') {
+          let e
           for (const k in params) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            v.push(`${k}=` + params[k])
+            e = params[k]
+            v.push(`${k}=${e}`)
           }
         } else if (_.isFunction(params)) {
           const f = params()
@@ -1130,6 +1137,7 @@ export default {
         params.search = filter
       }
       if (Object.keys(tableOptions.filter).length > 0) {
+        // console.log(JSON.stringify(tableOptions.filter))
         params.filter = tableOptions.filter
       }
       if (searchColumnsRef.value.length > 0) {
@@ -1160,13 +1168,11 @@ export default {
           params.requestWith = requestWith
         }
         try {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const { _data, _meta } = await getApiServices().index({ params })
+          const { _data, _meta } = await getMythApiServicesSchema().index({ params })
           pagination.value = {
-            page: parseInt(_meta?.current_page) || 1,
+            page: parseInt((_meta?.current_page || 1).toString()) || 1,
             rowsPerPage: parseInt(_meta?.per_page) || 0,
-            rowsNumber: parseInt(_meta?.total) || 0,
+            rowsNumber: parseInt((_meta?.total || 0).toString()) || 0,
             sortBy: opts?.pagination?.sortBy || undefined,
             descending: opts?.pagination?.descending || undefined
           }
@@ -1211,7 +1217,7 @@ export default {
           data.ids = tableOptions.selected.map((e: any) => e.id)
         }
         try {
-          const response = await getApiServices().export(data)
+          const response = await getMythApiServicesSchema().export(data)
           await myth.helpers.downloadFromResponse(response)
         } catch (e: any) {
           if (e?.code === 'window_blocked') {
@@ -1289,9 +1295,8 @@ export default {
         if (!index) {
           index = getRows.value.findIndex(e => e.id === item.id)
         }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const { _data } = await getApiServices().show(item.id, { params })
+
+        const { _data } = await getMythApiServicesSchema().show(item.id, { params })
         dialogs.item = _data
         dialogs.index = index
         dialogs.show = !0
@@ -1313,10 +1318,11 @@ export default {
     /** Show Dialog */
 
     /** Form Dialog */
+    const updateRouteProp = computed(() => props.updateRoute)
     const openUpdateDialog = async (item: MDtItem, index?: MDtItemIndex) => {
-      if (props.updateRoute) {
+      if (updateRouteProp.value) {
         router.push({
-          name: props.updateRoute,
+          name: updateRouteProp.value,
           params: { id: item.id }
         })
         return
@@ -1337,9 +1343,7 @@ export default {
         if (!index) {
           index = getRows.value.findIndex(e => e.id === item.id)
         }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const { _data } = await getApiServices().show(item.id, { params })
+        const { _data } = await getMythApiServicesSchema().show(item.id, { params })
         dialogs.item = _data
         dialogs.index = index
         dialogs.form = !0
@@ -1359,6 +1363,7 @@ export default {
         router.push({ name: props.createRoute })
         return
       }
+      console.log(defaultItem.value)
       const item = { ...(defaultItem.value || {}), ...(dtItem || {}) }
       isUpdateMode.value = !1
       dialogs.item = Object.create(item)
@@ -1399,6 +1404,7 @@ export default {
         getRows.value = getRows.value.filter((e) => parseInt(e.id?.toString()) !== parseInt(id.toString()))
       }
     }
+    const ignoreKeysProps = computed(() => props.ignoreKeys)
     const defaultSubmitItem = async (_form: Record<string, any>) => {
       // let form = { ..._form, ...(dialogs.itemForm || {}) }
       let form = { ..._form }
@@ -1407,24 +1413,39 @@ export default {
         return
       }
       loading.value = !0
-      const api = getApiServices()
+      const api = getMythApiServicesSchema()
       // console.log(form)
       form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withIndex')
       if (!form.requestWith) {
         delete form.requestWith
       }
-      if (props.excludedKeys) {
-        if (typeof props.excludedKeys === 'function') {
-          form = props.excludedKeys(form)
+      if (ignoreKeysProps.value) {
+        if (typeof ignoreKeysProps.value === 'function') {
+          form = ignoreKeysProps.value(form)
         } else {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          for (const k in props.excludedKeys) {
-            delete form[props.excludedKeys[k]]
+          for (const k in ignoreKeysProps.value) {
+            delete form[ignoreKeysProps.value[k]]
           }
         }
       }
-      const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id, form) : await api.store(form)
+      const ignoreKeys = [
+        '_to_string',
+        '_to_number_format',
+        '_to_date_format',
+        'toString',
+        'toNumberFormat',
+        'toDateFormat'
+      ]
+
+      for (const i in ignoreKeys) {
+        for (const k in form) {
+          if (k.slice(-ignoreKeys[i].length) === ignoreKeys[i]) {
+            delete form[k]
+          }
+        }
+      }
+
+      const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form) : await api.store(form)
       try {
         const { _data, _message, _success }: any = await method()
         _message && myth.alertSuccess(_message)
@@ -1454,9 +1475,7 @@ export default {
       myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
         loading.value = !0
         try {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const { _message, _success } = await getApiServices().destroy(item.id)
+          const { _message, _success } = await getMythApiServicesSchema().destroy(item.id)
           if (!hideAutoMessage.value && _success && _message) {
             _message && myth.alertSuccess(_message)
           }
@@ -1491,9 +1510,7 @@ export default {
       myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
         loading.value = !0
         try {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const { _message, _success } = await getApiServices().destroyAll(tableOptions.selected.map((e: MDtItem) => e.id))
+          const { _message, _success } = await getMythApiServicesSchema().destroyAll(tableOptions.selected.map((e: MDtItem) => e.id))
           if (!hideAutoMessage.value && _success && _message) {
             _message && myth.alertSuccess(_message)
           }
@@ -1601,18 +1618,7 @@ export default {
       updateSelectedItems
     }))
 
-    /** 2023-02-08 */
-    const onBeforeHideFormDialog = (e, formRef: typeof MForm) => {
-      // console.log(e)
-      // const f = formRef?.getMeta()
-      // console.log(f?.touched, f?.dirty)
-    }
-    /** 2023-02-08 */
-
     return {
-      onBeforeHideFormDialog,
-      //
-
       contextmenuItems,
       contextmenu,
       onRowContextmenu,
@@ -1639,7 +1645,7 @@ export default {
 
       datatableItemsScope,
 
-      getApiServices,
+      getMythApiServicesSchema,
       updateSelectedItems,
       onScroll,
       loadMore,

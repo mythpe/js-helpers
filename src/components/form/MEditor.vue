@@ -157,7 +157,7 @@ const props = withDefaults(defineProps<Props>(), {
   lg: undefined,
   xl: undefined,
   modelValue: undefined,
-  minHeight: '5rem',
+  minHeight: '10rem',
   name: undefined,
   label: undefined,
   errors: undefined,

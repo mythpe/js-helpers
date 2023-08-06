@@ -84,7 +84,7 @@ import {
 import { I18n } from 'vue-i18n'
 import { TransitionProps } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
-import { ApiServices, ParseHeaderOptions, ParseHeadersHeaderAgr, ParseHeadersType, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
+import { MythApiServicesSchema, ParseHeaderOptions, ParseHeadersHeaderAgr, ParseHeadersType, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
 import { Dates, Helpers, Str } from '../utils'
 
 export interface MythOptionsConfig extends Record<string | number | symbol, any> {
@@ -158,7 +158,7 @@ export type MythApiAxiosType = Partial<AxiosInstance>
 export interface MythApiConfig {
   baseUrl: string;
   axios: MythApiAxiosType;
-  services: ApiServices
+  services: MythApiServicesSchema
 }
 
 export type MythI18nType = I18n;
@@ -173,7 +173,7 @@ export type UseMythVue = {
   i18n: MythI18nType;
   baseUrl: string;
   axios: MythApiAxiosType;
-  services: ApiServices;
+  services: MythApiServicesSchema;
   options: MythOptionsConfig;
   str: typeof Str,
   dates: typeof Dates,

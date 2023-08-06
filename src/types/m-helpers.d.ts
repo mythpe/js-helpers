@@ -94,8 +94,20 @@ export type ParseHeadersHeaderAgr = ParseHeadersType[] | string[] | any[]
 
 // Axios
 type Generic = Record<string | number | symbol, any>;
-export type AxiosMetaResponse = Record<string, any>;
-export type AxiosDataResponse = Record<string, any>;
+export type AxiosMetaResponse = {
+  // server current page
+  current_page: number | null;
+  // server last page
+  last_page: number | null;
+  // server total items
+  total: number | null;
+  [key: string | number]: any;
+};
+type AxiosDataRow = {
+  id: string | number;
+  [key: string | number]: any;
+};
+export type AxiosDataResponse = AxiosDataRow & AxiosDataRow[];
 export type AxiosErrorResponse = Record<string, any>;
 export type AxiosErrorsResponse = AxiosErrorResponse[];
 export type MainAxiosAppResponse = {
@@ -132,11 +144,13 @@ export type StubSchema = {
 
   getUploadAttachmentsUrl (id: UrlType): string;
 
-  uploadAttachments (id: UrlType, data: Record<string, any>, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+  uploadAttachments (id: UrlType, data: Generic, config?: AxiosRequestConfig): Promise<AppApiResponse>;
 
   deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig): Promise<AppApiResponse>;
-}
-export type ApiServices = { [key: string | symbol | number]: StubSchema }
+
+} & Record<string, ((args?: UrlType | Generic | AxiosRequestConfig) => Promise<AppApiResponse>)>
+
+export type MythApiServicesSchema = { [key: string | symbol | number]: StubSchema }
 // Axios
 
 export type Vue3MAlertMessageOptions = QNotifyCreateOptions | string

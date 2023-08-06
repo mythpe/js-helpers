@@ -10,7 +10,7 @@ import { AxiosResponse } from 'axios'
 import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
 import { ComputedRef, Ref, UnwrapRef, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
-import { StubSchema } from '../../types'
+import { AxiosMetaResponse, StubSchema } from '../../types'
 
 export interface MDtItem extends GenericFormValues {
   id: string | number;
@@ -69,16 +69,9 @@ export interface ApiServiceParams {
   [key: string]: any;
 }
 
-export type MDtApiServices = StubSchema;
+export type MDtMythApiServicesSchema = StubSchema;
 
-export interface MDatatableMetaServer {
-  // server current page
-  current_page: number | null;
-  // server last page
-  last_page: number | null;
-  // server total items
-  total: number | null;
-}
+export type MDatatableMetaServer = AxiosMetaResponse
 
 export type MDatatableOptions = {
   // Table has action like : delete, update, etc...
@@ -239,9 +232,9 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   noMouse?: boolean;
   endReach?: boolean;
   hideSelection?: boolean;
-  singleSelection?: boolean;
+  multiSelection?: boolean;
   rowsPerPageOptions?: (string | number)[];
-  excludedKeys?: string[] | ((from: any) => any);
+  ignoreKeys?: string[] | ((from: any) => any);
   grid?: boolean;
   title?: string | null | undefined;
   manageColumns?: boolean;

@@ -13,7 +13,7 @@ import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
 import useAcceptProp from '../../composition/useAcceptProp'
 import { useMyth } from '../../vue3'
 import { ColStyleType } from '../grid/models'
-import { MUploaderMediaItem, MUploaderServiceType, MUploaderXhrInfo } from './models'
+import { MUploaderMediaItem, MUploaderProps, MUploaderXhrInfo } from './models'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -24,29 +24,28 @@ interface Props {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  disable?: boolean | undefined;
-  readonly?: boolean | undefined;
-  accept?: string | undefined;
-  images?: boolean | undefined;
-  video?: boolean | undefined;
-  pdf?: boolean | undefined;
-  excel?: boolean | undefined;
-  style?: string;
-  autoUpload?: boolean | undefined;
-  // maxFileSize?: number | string | undefined;
-  // maxTotalSize?: number | string | undefined;
-  // maxFiles?: number | string | undefined;
-  fieldName?: string | ((files: File) => string) | undefined;
-  collection?: string | undefined;
-  attachmentType?: string | undefined;
-  formFields?: Record<string, any> | undefined;
-  headers?: Record<string, any> | undefined;
-  label?: string | undefined;
-  modelValue: MUploaderMediaItem[];
-  errors?: string[] | undefined;
-  hideDeleteMedia?: boolean | undefined;
-  service: MUploaderServiceType;
-  modelId: string | number;
+  disable?: MUploaderProps['disable'];
+  readonly?: MUploaderProps['readonly'];
+  accept?: MUploaderProps['accept'];
+  images?: MUploaderProps['images'];
+  video?: MUploaderProps['video'];
+  pdf?: MUploaderProps['pdf'];
+  excel?: MUploaderProps['excel'];
+  style?: MUploaderProps['style'];
+  autoUpload?: MUploaderProps['autoUpload'];
+  fieldName?: MUploaderProps['fieldName'];
+  collection?: MUploaderProps['collection'];
+  attachmentType?: MUploaderProps['attachmentType'];
+  formFields?: MUploaderProps['formFields'];
+  headers?: MUploaderProps['headers'];
+  label?: MUploaderProps['label'];
+  modelValue: MUploaderProps['modelValue'];
+  errors?: MUploaderProps['errors'];
+  hideDeleteMedia?: MUploaderProps['hideDeleteMedia'];
+  service: MUploaderProps['service'];
+  modelId: MUploaderProps['modelId'];
+  loading?: MUploaderProps['loading'];
+  noUploadSpinner?: MUploaderProps['noUploadSpinner'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -66,9 +65,6 @@ const props = withDefaults(defineProps<Props>(), {
   excel: !1,
   style: () => 'width: 100%',
   autoUpload: !1,
-  // maxFileSize: 2,
-  // maxTotalSize: 2,
-  // maxFiles: undefined,
   fieldName: 'attachment',
   collection: undefined,
   attachmentType: undefined,
@@ -79,7 +75,9 @@ const props = withDefaults(defineProps<Props>(), {
   hideDeleteMedia: !1,
   errors: undefined,
   service: undefined,
-  modelId: undefined
+  modelId: undefined,
+  loading: undefined,
+  noUploadSpinner: () => !1
 })
 
 interface Events {
@@ -94,6 +92,8 @@ interface Events {
   (e: 'remove-file', File: File): void;
 
   (e: 'update:modelValue', value: MUploaderMediaItem[]): void;
+
+  (e: 'update:loading', value: boolean): void;
 }
 
 const emit = defineEmits<Events>()
@@ -109,9 +109,16 @@ const attachmentsRef = computed({
   set: v => emit('update:modelValue', v)
 })
 const accepts = useAcceptProp(props)
-
+// const uploadLoading = computed<boolean | undefined>({
+//   get: () => props.loading,
+//   set: v => emit('update:loading', Boolean(v))
+// })
+const quasarLoading = computed<boolean | undefined>({
+  get: () => $q.loading.isActive,
+  set: v => v ? $q.loading.show() : $q.loading.hide()
+})
 /* Events Callback */
-const factoryFn = (files: readonly File[]) => {
+const startUpload = async (files: readonly File[]) => {
   return new Promise((resolve, reject) => {
     try {
       // if (props.readonly) {
@@ -201,9 +208,6 @@ const onFinishUpload = ({ files, xhr }: MUploaderXhrInfo) => {
   }
 }
 const deleting = ref(!1)
-watch(deleting, (v) => {
-  (v ? $q.loading.show() : $q.loading.hide())
-})
 const deleteMedia = (media: MUploaderMediaItem) => {
   if (deleting.value || props.hideDeleteMedia) {
     return
@@ -243,12 +247,11 @@ const onClickDeleteAttachment = (file: File | MUploaderMediaItem) => {
   deleteMedia(file)
 }
 
-/**
- * Props
- */
-// const getMaxFileSize: number = (parseInt(props.maxFileSize?.toString()) ?? 1) * Math.pow(1024, 2)
-// const getMaxTotalSize: number = (parseInt(props.maxTotalSize?.toString()) ?? 1) * Math.pow(1024, 2)
-
+watch(deleting, (v) => (quasarLoading.value = v))
+const unUploaderWatch = watch(() => uploader.value?.isUploading, (v) => (quasarLoading.value = v))
+if ((props.noUploadSpinner !== !1) && unUploaderWatch) {
+  unUploaderWatch()
+}
 </script>
 
 <script lang="ts">
@@ -277,11 +280,12 @@ export default {
       :accept="accepts.join(',')"
       :auto-upload="autoUpload"
       :disable="disable"
-      :factory="factoryFn"
+      :factory="startUpload"
       :field-name="fieldName"
       :label="label"
       :readonly="readonly"
       :style="style"
+      batch
       v-bind="{...($myth.options.uploader?.props || {}),...$attrs}"
       @failed="onError"
       @rejected="onReject"

@@ -224,6 +224,10 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
    * Fetch Data on mounted
    */
   iniData?: boolean;
+  /**
+   * The options using ajax request to filter
+   */
+  noFilter?: boolean;
 }
 
 export interface MSelectSlots extends QSelectSlots {
@@ -317,10 +321,6 @@ export type MAvatarViewerItem = Record<string, string | File | any> | any
 
 export interface MAvatarViewerProps extends QAvatarProps, MColProps {
   /**
-   * Model of the component; Must be FileList or Array if using 'multiple' prop; Either use this property (along with a listener for 'update:modelValue' event) OR use v-model directive
-   */
-  modelValue?: MAvatarViewerItem;
-  /**
    * Comma separated list of unique file type specifiers. Maps to 'accept' attribute of native input type=file element
    */
   accept?: string;
@@ -328,22 +328,6 @@ export interface MAvatarViewerProps extends QAvatarProps, MColProps {
   video?: boolean;
   pdf?: boolean;
   excel?: boolean;
-  /**
-   * List of errors contains prop name { [name]: ['error1','error2']}
-   */
-  errors?: Record<string, any[]>;
-  /**
-   * Size in CSS units, including unit name or standard size name (xs|sm|md|lg|xl)
-   */
-  size?: string;
-  /**
-   * The name of the file for the image used and the field
-   */
-  name?: string;
-  /**
-   * Avatar url
-   */
-  url?: string;
   /**
    * Show text if no image
    */
@@ -362,9 +346,30 @@ export interface MAvatarViewerProps extends QAvatarProps, MColProps {
    */
   label?: string;
   /**
-   * Applies a small standard border-radius for a squared shape of the component
+   * List of errors contains prop name { [name]: ['error1','error2']}
    */
-  rounded?: boolean;
+  errors?: Record<string, string[]>;
+  /**
+   * Model of the component;
+   * Must be FileList or Array if using 'multiple' prop;
+   * Either use this property (along with a listener for 'update:modelValue' event) OR use v-model directive
+   */
+  modelValue?: MAvatarViewerItem;
+  /**
+   * The name of the file for the image used and the field.
+   * Example: name='avatar' { avatar: https://4myth.com, avatarBlob: Blob, avatarRemoved: !0 | !1 }
+   */
+  name?: string;
+  /**
+   * Avatar url.
+   * (along with a listener for 'update:url' event) OR use v-model directive
+   */
+  url?: string;
+  /**
+   * value if user remove the image
+   * (along with a listener for 'update:removed' event) OR use v-model directive
+   */
+  removed?: boolean;
 }
 
 export interface MAvatarViewerSlots extends QAvatarSlots {
@@ -472,7 +477,8 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
    * The ID of model will use in attachments
    */
   modelId: string | number;
-  removeBtnProps?: QBtnProps;
+  loading?: boolean | undefined;
+  readonly noUploadSpinner?: boolean | undefined;
 }
 
 export interface MUploaderSlots extends QUploaderSlots {

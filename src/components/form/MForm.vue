@@ -71,7 +71,6 @@ watch(() => props.errors, (v) => {
   // })
 })
 watch(() => props.form, (values) => {
-  // console.log(values)
   resetForm({ values })
   // setValues(values)
 })

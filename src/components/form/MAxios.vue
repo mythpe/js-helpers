@@ -16,6 +16,7 @@
     :options="items"
     :auto-search="autoSearch"
     :multiple="multiple"
+    :no-filter="autoSearch"
     v-bind="$attrs"
     @search="onSearchInput"
   >
@@ -90,8 +91,8 @@ const props = withDefaults(defineProps<Props>(), {
   service: undefined,
   params: () => ({}),
   guest: undefined,
-  autoSearch: undefined,
-  iniData: undefined
+  autoSearch: () => !0,
+  iniData: () => !1
 })
 
 interface Emits {
@@ -114,6 +115,7 @@ const autoProps = computed(() => props.autoSearch)
 const paramsProps = computed(() => props.params)
 const requestWithProps = computed(() => props.requestWith)
 const guestProps = computed(() => props.guest !== undefined && props.guest !== !1)
+const isMounted = ref(!1)
 const mSelect = ref<any>()
 const searchInput = ref<any>()
 const onDoneOptions = () => {
@@ -153,11 +155,13 @@ const prepare = async () => {
     .finally(() => {
       loading.value = !1
       nextTick(() => {
-        if (autoProps.value) {
+        if (autoProps.value && isMounted.value) {
           setTimeout(() => {
+            console.log(3)
             mSelect.value.$refs?.selectRef?.showPopup()
           }, 90)
         }
+        isMounted.value = !0
       })
     })
 }
@@ -166,8 +170,7 @@ const onSearchInput = (v: any) => {
   if (!autoProps.value || loading.value) {
     return
   }
-
-  if (!v || v?.length < 2) {
+  if ((!v || v?.length < 2) && !props.iniData) {
     items.value = []
     emit('update:items', [])
     return
@@ -175,6 +178,7 @@ const onSearchInput = (v: any) => {
   prepare()
   // console.log('search: ', v)
 }
+
 onBeforeMount(() => {
   items.value = props.options || []
 })
@@ -182,7 +186,7 @@ watch(() => props.options, (v) => {
   items.value = v || []
 })
 onMounted(() => {
-  (!props.iniData && !props.autoSearch) && prepare()
+  (props.iniData || !props.autoSearch) && prepare()
 })
 </script>
 <script lang="ts">
