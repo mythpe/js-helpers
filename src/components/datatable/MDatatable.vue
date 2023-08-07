@@ -211,7 +211,8 @@
                           style="min-width: 250px"
                           v-bind="$myth.options.dt?.buttons?.moreList"
                         >
-                          <template v-if="hasAddBtn">
+                          <!-- Add Btn -->
+                          <template v-if="hasAddBtn && (noAddBtnList ? !1 : $myth.options.dt?.addBtn?.noList !== !0)">
                             <q-item
                               v-close-popup
                               clickable
@@ -411,6 +412,19 @@
                     </MDtBtn>
                   </div>
                 </MCol>
+                <!-- Add Btn -->
+                <template v-if="hasAddBtn && (noAddBtnTop ? !1 : $myth.options.dt?.addBtn?.noTop !== !0)">
+                  <MCol col="12">
+                    <MDtBtn
+                      :flat="!1"
+                      push
+                      color="primary"
+                      icon="add"
+                      @click="openCreateDialog()"
+                      :label="getFormTitle"
+                    />
+                  </MCol>
+                </template>
               </MRow>
 
               <!-- Manage Columns -->
@@ -463,6 +477,7 @@
                     :key="`filter-${filterKey}`"
                   >
                     <MCol
+                      v-if="filterValue !== null && filterValue !== undefined"
                       col="auto"
                     >
                       <q-chip
@@ -634,7 +649,7 @@
           ref="formDialogRef"
           v-slot="form"
           :errors="dialogs.errors"
-          :form="dialogs.itemForm"
+          :form="dialogs.item"
           @submit="defaultSubmitItem"
         >
           <q-card-section ref="formTitle">
@@ -659,8 +674,7 @@
             <slot
               :form="form"
               :index="dialogs.index"
-              :item="dialogs.itemForm"
-              :item-ref="dialogs.item"
+              :item="dialogs.item"
               name="form"
               v-bind="datatableItemsScope"
             />
@@ -700,8 +714,9 @@
     </q-dialog>
 
     <MFadeTransition>
+      <!-- Add Btn -->
       <q-page-sticky
-        v-if="hasAddBtn && $myth.options.dt?.fabBtn?.hide !== !1"
+        v-if="hasAddBtn && (noAddBtnFab ? !1 : $myth.options.dt?.addBtn?.noFab !== !0)"
         :offset="$myth.options.dt?.fabBtn?.offset|| [25,25]"
         :position="$myth.options.dt?.fabBtn?.position || 'bottom-right'"
         v-bind="$myth.options.dt?.fabBtn?.pageStickyProps"
@@ -906,6 +921,18 @@ export default {
     manageColumns: {
       type: Boolean,
       default: () => undefined
+    },
+    noAddBtnTop: {
+      type: Boolean,
+      default: () => undefined
+    },
+    noAddBtnList: {
+      type: Boolean,
+      default: () => undefined
+    },
+    noAddBtnFab: {
+      type: Boolean,
+      default: () => undefined
     }
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -945,7 +972,6 @@ export default {
       form: formDialogModel,
       isUpdate: isUpdateDialog,
       item: itemDialog,
-      itemForm: null,
       index: itemIndexDialog,
       errors: errorsDialog
     })
@@ -955,7 +981,6 @@ export default {
       dialogs.form = !1
       dialogs.isUpdate = !1
       dialogs.item = null
-      dialogs.itemForm = null
       dialogs.index = undefined
       dialogs.errors = {}
     }
@@ -1363,8 +1388,8 @@ export default {
         router.push({ name: props.createRoute })
         return
       }
-      console.log(defaultItem.value)
       const item = { ...(defaultItem.value || {}), ...(dtItem || {}) }
+      // console.log(item)
       isUpdateMode.value = !1
       dialogs.item = Object.create(item)
       dialogs.index = undefined
@@ -1594,9 +1619,9 @@ export default {
     })
 
     // Watch on Form dialog
-    watch(() => dialogs.item, (v) => {
-      dialogs.itemForm = v ? { ...v } : v
-    })
+    // watch(() => dialogs.item, (v) => {
+    //   dialogs.itemForm = v ? { ...v } : v
+    // })
     watch(() => dialogs.form, (v) => {
       if (!v) {
         dialogs.errors = {}

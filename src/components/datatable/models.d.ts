@@ -100,7 +100,6 @@ export type MDatatableDialogsOptions = {
   form: Ref<boolean>;
   isUpdate: Ref<boolean>;
   item: Ref<MDtItem | null>;
-  itemForm: MDtItem | null;
   index?: Ref<MDtItemIndex>;
   errors: Record<string | number | symbol, string[]>;
 }
@@ -240,6 +239,18 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   manageColumns?: boolean;
   visibleColumns?: string[];
   searchColumns?: string[];
+  /**
+   * Show Add btn top of table,
+   */
+  noAddBtnTop?: boolean;
+  /**
+   * Show Add btn inside more list
+   */
+  noAddBtnList?: boolean;
+  /**
+   * Show Fab Add btn
+   */
+  noAddBtnFab?: boolean;
 }
 
 export interface MDtAvatarProps extends QAvatarProps {

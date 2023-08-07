@@ -105,10 +105,14 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     formDialogProps?: Partial<QDialogProps>;
     fabBtn?: {
       pageStickyProps?: Partial<QPageStickyProps>;
-      hide?: boolean;
       offset?: QPageStickyProps['offset'];
       position?: QPageStickyProps['position'];
       buttonProps?: Partial<QBtnProps>;
+    },
+    addBtn?: {
+      noTop?: boolean;
+      noList?: boolean;
+      noFab?: boolean;
     },
     contextmenu?: {
       menu?: Partial<QPopupProxyProps>;

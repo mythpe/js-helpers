@@ -92,7 +92,7 @@ const props = withDefaults(defineProps<Props>(), {
   params: () => ({}),
   guest: undefined,
   autoSearch: () => !0,
-  iniData: () => !1
+  iniData: () => !0
 })
 
 interface Emits {
