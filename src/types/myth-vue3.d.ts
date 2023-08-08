@@ -15,7 +15,7 @@ import {
   QDialogOptions,
   QDialogProps,
   QEditorProps,
-  QFileProps,
+  QFileProps, QImgProps, QImgSlots,
   QInputProps,
   QItemProps,
   QListProps,
@@ -64,7 +64,7 @@ import {
   MGoogleMapsProps,
   MGoogleMapsSlots,
   MInputProps,
-  MInputSlots,
+  MInputSlots, MListProps, MListSlots,
   MPickerProps,
   MPickerSlots,
   MRadioProps,
@@ -222,6 +222,8 @@ declare module '@vue/runtime-core' {
     MCol: GlobalComponentConstructor<MColProps, MColSlots>;
     MColumn: GlobalComponentConstructor<MColumnProps, MColumnSlots>;
     MContainer: GlobalComponentConstructor<MContainerProps, MContainerSlots>;
+    MList: GlobalComponentConstructor<MListProps, MListSlots>;
+    MNoResultImg: GlobalComponentConstructor<QImgProps, QImgSlots>;
     MRow: GlobalComponentConstructor<MRowProps, MRowSlots>;
     MFadeTransition: GlobalComponentConstructor<TransitionProps, MTransitionsSlots>;
   }

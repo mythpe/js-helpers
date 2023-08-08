@@ -103,8 +103,10 @@ export type AxiosMetaResponse = {
   total: number | null;
   [key: string | number]: any;
 };
-type AxiosDataRow = {
+export type AxiosDataRow = {
   id: string | number;
+  value: string | number;
+  label?: string;
   [key: string | number]: any;
 };
 export type AxiosDataResponse = AxiosDataRow & AxiosDataRow[];

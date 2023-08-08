@@ -6,8 +6,8 @@
  * Github: https://github.com/mythpe
  */
 
-export * from './lodash.d'
-export * from './m-geolocation.d'
-export * from './m-helpers.d'
-export * from './myth-vue3.d'
-export * from './../composition/models.d'
+export * from './useAcceptProp'
+export * from './useInputProps'
+export * from './useModels'
+
+export default {}

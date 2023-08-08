@@ -7,6 +7,8 @@
  */
 
 import { VNode } from 'vue'
+import { AxiosDataRow } from '../../types'
+import { AxiosRequestConfig } from 'axios/index'
 
 export type ColStyleType = 'auto' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | undefined
 
@@ -60,4 +62,22 @@ export type MColProps = {
 }
 export type MColSlots = {
   default: () => VNode[];
+}
+
+export type MListProps = {
+  name: string;
+  title?: string | undefined | null;
+  options?: Record<string, any>;
+  search?: string;
+  filter?: Record<string | number, any>;
+  axiosConfig?: AxiosRequestConfig;
+  backRoute?: boolean | null | undefined;
+}
+type MListScopes = { models: AxiosDataRow[], filter:MListProps['filter'], search:MListProps['search'] }
+export type MListSlots = {
+  default: (scope: { item: AxiosDataRow, index: number } & MListScopes) => VNode[];
+  top: (scope:MListScopes) => VNode[];
+  noResult: (scope:MListScopes) => VNode[];
+  noData: (scope:MListScopes) => VNode[];
+  loading: (scope:MListScopes) => VNode[];
 }

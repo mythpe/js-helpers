@@ -64,6 +64,91 @@
         @virtual-scroll="endReach ? onScroll : undefined"
         @row-contextmenu="onRowContextmenu"
       >
+        <template #item="props">
+          <slot
+            name="item"
+            v-bind="props"
+            :dt="datatableItemsScope"
+          >
+            <div
+              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+              :style="props.selected ? 'transform: scale(0.95);' : ''"
+            >
+              <q-card
+                :class="props.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''"
+              >
+                <q-card-section>
+                  <q-checkbox
+                    dense
+                    v-model="props.selected"
+                  />
+                </q-card-section>
+                <q-separator />
+                <MContainer>
+                  <template
+                    v-for="col in props.cols"
+                    :key="col.name"
+                  >
+                    <MRow
+                      class="justify-between q-col-gutter-x-sm "
+                    >
+                      <MCol auto>
+                        {{ col.label }}
+                      </MCol>
+                      <MCol
+                        auto
+                        class="overflow-hidden"
+                      >
+                        <template v-if="col.field.slice(-4) === '_url'">
+                          <MBtn
+                            :src="col.value"
+                            :label="$t('show')"
+                            @click="openImageDialog(col.value)"
+                          />
+                        </template>
+                        <template v-else>
+                          <div class="text-caption">
+                            {{ col.value }}
+                          </div>
+                        </template>
+                      </MCol>
+                    </MRow>
+                  </template>
+                </MContainer>
+                <!--<q-list dense>
+                  <q-item
+                    v-for="col in props.cols"
+                    :key="col.name"
+                  >
+                    <q-item-section>
+                      <q-item-label>{{ col.label }}</q-item-label>
+                    </q-item-section>
+                    <q-item-section
+                      side
+                      :thumbnail="col.field.slice(-4) === '_url'"
+                    >
+                      <q-item-label
+                        caption
+                      >
+                        <MDtBtn
+                          v-if="col.field.slice(-4) === '_url'"
+                          :src="col.value"
+                          :label="$t('show')"
+                          :href="col.value"
+                          target="_blank"
+                        />
+                        <template v-else>
+                          {{ col.value }}
+                        </template>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>-->
+              </q-card>
+            </div>
+          </slot>
+        </template>
+
         <template #top>
           <div class="col-12">
             <!--<q-page-scroller
@@ -600,8 +685,8 @@
       allow-focus-outside
       maximized
       persistent
-      transition-hide="slide-up"
-      transition-show="slide-down"
+      transition-show="slide-up"
+      transition-hide="slide-down"
       v-bind="$myth.options.dt?.showDialogProps"
     >
       <q-card class="m--dialog-card">
@@ -640,8 +725,8 @@
       maximized
       no-backdrop-dismiss
       persistent
-      transition-hide="slide-up"
-      transition-show="slide-down"
+      transition-show="slide-up"
+      transition-hide="slide-down"
       v-bind="$myth.options.dt?.formDialogProps"
     >
       <q-card class="m--dialog-card">
@@ -712,7 +797,46 @@
         </MForm>
       </q-card>
     </q-dialog>
-
+    <q-dialog
+      maximized
+      transition-show="slide-up"
+      transition-hide="slide-down"
+      v-model="imageDialog.value"
+    >
+      <q-card>
+        <div class="row full-height">
+          <MCol col="12">
+            <MRow class="q-pa-sm justify-between">
+              <MBtn
+                color="negative"
+                :label="$t('close')"
+                icon="close"
+                @click="closeImageDialog()"
+              />
+              <MBtn
+                icon="download"
+                :label="$t('download')"
+                :href="imageDialog.src"
+                target="_blank"
+              />
+            </MRow>
+            <q-separator />
+          </MCol>
+          <MCol
+            col="12"
+            class="text-center"
+          >
+            <q-img
+              class="self-center"
+              :width="`${$q.screen.width/1.03}px`"
+              v-if="imageDialog.src"
+              :src="imageDialog.src"
+              fit="contain"
+            />
+          </MCol>
+        </div>
+      </q-card>
+    </q-dialog>
     <MFadeTransition>
       <!-- Add Btn -->
       <q-page-sticky
@@ -1643,6 +1767,23 @@ export default {
       updateSelectedItems
     }))
 
+    const imageDialog = reactive<{ value: boolean, src?: string }>({
+      value: !1,
+      src: undefined
+    })
+    const openImageDialog = (src: string) => {
+      imageDialog.src = src
+      nextTick(() => {
+        imageDialog.value = !0
+      })
+    }
+    const closeImageDialog = () => {
+      imageDialog.value = !1
+      nextTick(() => {
+        imageDialog.src = undefined
+      })
+    }
+
     return {
       contextmenuItems,
       contextmenu,
@@ -1704,7 +1845,10 @@ export default {
       pagination,
       tableOptions,
       getRows,
-      visibleHeaders
+      visibleHeaders,
+      imageDialog,
+      openImageDialog,
+      closeImageDialog
     }
   }
 }
@@ -1774,4 +1918,6 @@ export default {
       min-width: 0
       max-width: 100%
 
+.grid-style-transition
+  transition: transform .28s, background-color .28s
 </style>

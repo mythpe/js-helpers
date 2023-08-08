@@ -390,6 +390,8 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.component('MCol', defineAsyncComponent(() => import('../components/grid/MCol.vue')))
   app.component('MColumn', defineAsyncComponent(() => import('../components/grid/MColumn.vue')))
   app.component('MContainer', defineAsyncComponent(() => import('../components/grid/MContainer.vue')))
+  app.component('MList', defineAsyncComponent(() => import('../components/grid/MList.vue')))
+  app.component('MNoResultImg', defineAsyncComponent(() => import('../components/grid/MNoResultImg.vue')))
   app.component('MRow', defineAsyncComponent(() => import('../components/grid/MRow.vue')))
 
   // Transition
