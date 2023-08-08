@@ -205,7 +205,7 @@ export type MDtRequestParamsCallbackProp = (params: ApiServiceParams) => Partial
 export type MDtRequestParamsObjectProp = Partial<GenericFormValues>
 
 export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPageOptions' | 'grid' | 'title' | 'visibleColumns'> {
-  defaultItem?: Partial<MDtItem>;
+  defaultItem?: Partial<MDtItem> & Record<string, any>;
   contextItems?: GenericMDtBtn[];
   hideAutoMessage?: boolean;
   headers: string[] | Partial<QTableProps['columns']>[] | any[];
