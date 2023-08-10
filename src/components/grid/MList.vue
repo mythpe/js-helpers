@@ -76,26 +76,32 @@
       @load="onLoad"
     >
       <MRow>
-        <template
+        <MCol
           v-for="(item, index) in models"
-          :key="index"
+          :key="`item-list-${index}`"
+          :auto="auto"
+          :col="col"
+          :xl="xl"
+          :lg="lg"
+          :md="md"
+          :sm="sm"
+          :xs="xs"
         >
-          <MCol
-            col="12"
-            md="4"
-            sm="6"
+          <slot
+            name="item"
+            :item="item"
+            :index="index"
+            :models="models"
+            :filter="filter"
+            :search="search"
           >
-            <slot
-              :item="item"
-              :index="index"
-              :models="models"
-              :filter="filter"
-              :search="search"
-            >
-              {{ item }}
-            </slot>
-          </MCol>
-        </template>
+            <q-item>
+              <q-item-section>
+                <q-item-label>{{ item.label }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </slot>
+        </MCol>
       </MRow>
       <template #loading>
         <slot
@@ -162,6 +168,13 @@ import MNoResultImg from './MNoResultImg.vue'
 import { MListProps } from './models'
 
 interface Props {
+  auto?: MListProps['auto'];
+  col?: MListProps['col'];
+  xs?: MListProps['xs'];
+  sm?: MListProps['sm'];
+  md?: MListProps['md'];
+  lg?: MListProps['lg'];
+  xl?: MListProps['xl'];
   name: MListProps['name'];
   title?: MListProps['title'];
   options?: MListProps['options'];
@@ -172,6 +185,13 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  auto: undefined,
+  col: () => '12',
+  xl: undefined,
+  lg: undefined,
+  md: () => '4',
+  sm: () => '6',
+  xs: undefined,
   name: undefined,
   title: undefined,
   backRoute: undefined,
@@ -202,6 +222,7 @@ const searchValue = computed({
 const getFilter = computed(() => props.filter)
 const getOptions = computed(() => props.options)
 const axiosConfigProps = computed<MListProps['axiosConfig']>(() => props.axiosConfig)
+const nameProp = computed(() => props.name)
 const {
   models,
   meta,
@@ -217,7 +238,7 @@ const {
   onSearch,
   onLoad,
   removeItem
-} = useModels<AxiosDataRow>(props.name, getOptions.value, searchModel, getFilter, axiosConfigProps.value)
+} = useModels<AxiosDataRow>(nameProp.value, getOptions.value, searchModel, getFilter, axiosConfigProps.value)
 
 watch(() => models.value, v => {
   emit('update:models', v)

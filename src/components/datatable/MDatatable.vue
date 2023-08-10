@@ -731,6 +731,8 @@
     >
       <q-card class="m--dialog-card">
         <MForm
+          class="full-height"
+          :form-props="{class: 'column full-height justify-between'}"
           ref="formDialogRef"
           v-slot="form"
           :errors="dialogs.errors"
@@ -738,10 +740,10 @@
           @submit="defaultSubmitItem"
         >
           <q-card-section ref="formTitle">
-            <q-toolbar>
+            <q-toolbar :class="{'q-pa-none': $q.screen.lt.md}">
               <q-toolbar-title>
                 <q-btn
-                  v-if="$myth.options.dt?.formDialogProps?.maximized"
+                  v-if="$q.screen.lt.md"
                   :icon="!$q.lang.rtl ?'arrow_back_ios' : 'arrow_forward_ios'"
                   fab-mini
                   flat
@@ -751,19 +753,23 @@
               </q-toolbar-title>
             </q-toolbar>
           </q-card-section>
+
           <q-separator />
           <q-card-section
-            :style="`max-height: ${$q.screen.height - 10 - ($refs.formActions?.$el?.offsetHeight||0) - ($refs.formTitle?.$el.offsetHeight||0)}px`"
+            :style="`height: ${($q.screen.height || 100) - 10 - ($refs.formActions?.$el?.offsetHeight || 0) - ($refs.formTitle?.$el?.offsetHeight || 0)}px`"
             class="scroll"
           >
-            <slot
-              :form="form"
-              :index="dialogs.index"
-              :item="dialogs.item"
-              name="form"
-              v-bind="datatableItemsScope"
-            />
+            <MFadeTransition>
+              <slot
+                :form="form"
+                :index="dialogs.index"
+                :item="dialogs.item"
+                name="form"
+                v-bind="datatableItemsScope"
+              />
+            </MFadeTransition>
           </q-card-section>
+
           <q-separator />
           <q-card-actions
             ref="formActions"
@@ -771,6 +777,7 @@
             class="m--datatable-form-actions print-hide"
           >
             <MBtn
+              v-if="$q.screen.gt.sm"
               :disable="tableOptions.loading"
               :label="$t('close')"
               color="negative"
@@ -778,13 +785,14 @@
               @click="closeFormDialog"
             />
             <slot
+              name="form-actions"
               :form="form"
               :index="dialogs.index"
               :item="dialogs.item"
-              name="form-actions"
               v-bind="datatableItemsScope"
             >
               <MBtn
+                :class="{'full-width': $q.screen.lt.sm}"
                 :disable="tableOptions.loading "
                 :label="$t(isUpdateMode ? 'save' : 'create')"
                 :loading="tableOptions.loading"
@@ -867,7 +875,7 @@
 <script lang="ts">
 
 import { computed, nextTick, onMounted, PropType, reactive, ref, useSlots, watch } from 'vue'
-import { useQuasar } from 'quasar'
+import { QCard, useQuasar } from 'quasar'
 import _ from 'lodash'
 import { useRouter } from 'vue-router'
 import {
@@ -902,6 +910,11 @@ export const initMetaServer: MDatatableMetaServer = {
 
 export default {
   name: 'MDatatable',
+  computed: {
+    QCard () {
+      return QCard
+    }
+  },
   inheritAttrs: !1,
   props: {
     defaultItem: {

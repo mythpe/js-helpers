@@ -8,7 +8,7 @@
 
 import { VNode } from 'vue'
 import { AxiosDataRow } from '../../types'
-import { AxiosRequestConfig } from 'axios/index'
+import { AxiosRequestConfig } from 'axios'
 
 export type ColStyleType = 'auto' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | undefined
 
@@ -64,7 +64,7 @@ export type MColSlots = {
   default: () => VNode[];
 }
 
-export type MListProps = {
+export type MListProps = MColProps & {
   name: string;
   title?: string | undefined | null;
   options?: Record<string, any>;
