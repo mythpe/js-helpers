@@ -7,19 +7,21 @@
   -->
 
 <script lang="ts" setup>
-import { computed, defineEmits, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { ColStyleType } from '../grid/models'
+import { computed, defineEmits, nextTick, ref } from 'vue'
+import { MPickerProps } from './models'
 
 interface Props {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  modelValue: any;
-  type: 'date' | 'time'
+  auto?: MPickerProps['auto'];
+  col?: MPickerProps['col'];
+  xs?: MPickerProps['xs'];
+  sm?: MPickerProps['sm'];
+  md?: MPickerProps['md'];
+  lg?: MPickerProps['lg'];
+  xl?: MPickerProps['xl'];
+  modelValue: MPickerProps['modelValue'];
+  type: MPickerProps['type'];
+  range?: MPickerProps['range'];
+  multiple?: MPickerProps['multiple'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -31,7 +33,9 @@ const props = withDefaults(defineProps<Props>(), {
   lg: undefined,
   xl: undefined,
   modelValue: undefined,
-  type: () => 'date'
+  type: () => 'date',
+  range: () => !1,
+  multiple: () => !1
 })
 
 interface Emits {
@@ -40,13 +44,22 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
+const isDate = computed(() => props.type === 'date')
+const isRange = computed(() => props.range !== !1 && props.range !== undefined)
+const isMultiple = computed(() => props.multiple !== !1 && props.multiple !== undefined)
+
 const inputValue = computed({
   get: () => props.modelValue,
   set: value => emit('update:modelValue', value)
 })
-const isDate = computed(() => props.type === 'date')
 
-const mask = isDate.value ? '####-##-##' : '##:##'
+const mask = computed(() => {
+  if (isRange.value || isMultiple.value) {
+    return undefined
+    // return isDate.value ? '####-##-## - ####-##-##' : '##:## - ##:##'
+  }
+  return isDate.value ? '####-##-##' : '##:##'
+})
 const format = isDate.value ? 'YYYY-MM-DD' : 'HH:mm'
 const icon = isDate.value ? 'event' : 'access_time'
 const dateRef = ref()
@@ -55,11 +68,21 @@ const onBeforeShow = () => {
   dateRef.value = props.modelValue || undefined
 }
 const onBeforeHide = () => {
-  dateRef.value = undefined
+  nextTick(() => (dateRef.value = undefined))
 }
 const saveDialog = () => {
-  inputValue.value = dateRef.value
-  inputRef.value?.$refs?.veeField?.handleChange(dateRef.value)
+  let newVal = dateRef.value
+  if (typeof newVal === 'object' && isDate.value) {
+    const values: any[] = Object.values(newVal)
+    for (const aKey in values) {
+      if (typeof values[aKey] === 'object') {
+        values[aKey] = Object.values(values[aKey])
+      }
+    }
+    newVal = values
+  }
+  inputValue.value = newVal
+  inputRef.value?.$refs?.veeField?.handleChange(newVal)
 }
 </script>
 
@@ -83,19 +106,20 @@ export default {
       ref="inputRef"
       v-model="inputValue"
       :mask="mask"
+      unmasked-value
       v-bind="$attrs"
     >
       <template #append>
         <q-btn
           :icon="icon"
-          round
           class="cursor-pointer"
+          round
         >
           <q-popup-proxy
+            cover
+            persistent
             transition-hide="scale"
             transition-show="scale"
-            persistent
-            cover
             @before-show="onBeforeShow()"
             @before-hide="onBeforeHide()"
           >
@@ -104,14 +128,16 @@ export default {
               v-model="dateRef"
               :mask="format"
               today-btn
+              :range="range"
+              :multiple="multiple"
               v-bind="{...($myth.options.date||{}),...$attrs}"
             >
               <div class="row items-center justify-end">
                 <MBtn
                   v-close-popup
                   :label="$t('close')"
-                  flat
                   color="negative"
+                  flat
                 />
                 <MBtn
                   v-close-popup
@@ -132,8 +158,8 @@ export default {
                 <MBtn
                   v-close-popup
                   :label="$t('close')"
-                  flat
                   color="negative"
+                  flat
                 />
                 <MBtn
                   v-close-popup

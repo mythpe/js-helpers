@@ -10,8 +10,8 @@
     :ratio="1"
     fit="contain"
     src="../../assets/icons/no-result.png"
-    width="50px"
     v-bind="$attrs"
+    width="50px"
   >
     <template
       v-for="(k,v) in _slots"

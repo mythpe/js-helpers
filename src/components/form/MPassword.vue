@@ -15,7 +15,13 @@ const inputType = ref<'text' | 'password'>('password')
 
 export default {
   name: 'MPassword',
-  inheritAttrs: !1
+  inheritAttrs: !1,
+  props: {
+    passwordIcon: {
+      type: Boolean,
+      default: () => !1
+    }
+  }
 }
 </script>
 
@@ -24,12 +30,15 @@ export default {
     :type="inputType"
     v-bind="$attrs"
   >
-    <template #prepend>
+    <template
+      #prepend
+      v-if="passwordIcon"
+    >
       <q-icon name="password" />
     </template>
     <template #append>
       <q-btn
-        :icon="inputType !== 'password' ? 'visibility_off' : 'visibility'"
+        :icon="inputType !== 'password' ? 'o_visibility_off' : 'o_visibility'"
         flat
         round
         @click="() => inputType = inputType === 'text' ? 'password' : 'text'"

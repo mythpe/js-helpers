@@ -75,7 +75,7 @@ const getCenter = computed<CoordsType>(() => {
     lng: coords.value.longitude
   }
 })
-const markersRef = ref(props.markers)
+const markersRef = computed(() => props.markers)
 // const getMarkers = computed<CoordsType[]>(() => {
 //   // if (props.markers === undefined && props.center) {
 //   //   return [props.center]

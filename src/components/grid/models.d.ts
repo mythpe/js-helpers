@@ -73,11 +73,11 @@ export type MListProps = MColProps & {
   axiosConfig?: AxiosRequestConfig;
   backRoute?: boolean | null | undefined;
 }
-type MListScopes = { models: AxiosDataRow[], filter:MListProps['filter'], search:MListProps['search'] }
+type MListScopes = { models: AxiosDataRow[], filter: MListProps['filter'], search: MListProps['search'] }
 export type MListSlots = {
   default: (scope: { item: AxiosDataRow, index: number } & MListScopes) => VNode[];
-  top: (scope:MListScopes) => VNode[];
-  noResult: (scope:MListScopes) => VNode[];
-  noData: (scope:MListScopes) => VNode[];
-  loading: (scope:MListScopes) => VNode[];
+  top: (scope: MListScopes) => VNode[];
+  noResult: (scope: MListScopes) => VNode[];
+  noData: (scope: MListScopes) => VNode[];
+  loading: (scope: MListScopes) => VNode[];
 }

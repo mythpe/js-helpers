@@ -238,8 +238,8 @@ export default {
       <MFadeTransition>
         <MCol
           v-if="errors && errors[name]"
-          col="12"
           class="q-mt-sm"
+          col="12"
         >
           <span class="text-body2 text-negative">{{ typeof errors[name] === 'string' ? errors[name] : errors[name][0] }}</span>
         </MCol>
@@ -257,16 +257,16 @@ export default {
         ref="veeFieldRemovedValue"
         v-model="removedValue"
         :name="`${name}_removed`"
-        type="checkbox"
         :value="!0"
         class="hidden"
+        type="checkbox"
       />
       <VeeField
         ref="veeFieldUrlValue"
         v-model="urlValue"
         :name="`${name}_url`"
-        type="textarea"
         class="hidden"
+        type="textarea"
       />
     </MColumn>
   </MCol>

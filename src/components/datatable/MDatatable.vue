@@ -45,10 +45,10 @@
         v-model:fullscreen="tableOptions.fullscreen"
         v-model:pagination="pagination"
         v-model:selected="selected"
-        :flat="tableOptions.fullscreen"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
         :filter="tableOptions.search"
+        :flat="tableOptions.fullscreen"
         :grid="grid === undefined ? $q.screen.lt.md : grid"
         :hide-pagination="endReach"
         :loading="tableOptions.loading"
@@ -66,21 +66,21 @@
       >
         <template #item="props">
           <slot
+            :dt="datatableItemsScope"
             name="item"
             v-bind="props"
-            :dt="datatableItemsScope"
           >
             <div
-              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
               :style="props.selected ? 'transform: scale(0.95);' : ''"
+              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
             >
               <q-card
                 :class="props.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''"
               >
                 <q-card-section>
                   <q-checkbox
-                    dense
                     v-model="props.selected"
+                    dense
                   />
                 </q-card-section>
                 <q-separator />
@@ -101,8 +101,8 @@
                       >
                         <template v-if="col.field.slice(-4) === '_url'">
                           <MBtn
-                            :src="col.value"
                             :label="$t('show')"
+                            :src="col.value"
                             @click="openImageDialog(col.value)"
                           />
                         </template>
@@ -440,8 +440,8 @@
                         v-bind="$myth.options.dt?.filterDialogProps"
                       >
                         <q-card
-                          flat
                           :style="$q.screen.gt.sm?`width: ${Math.ceil($q.screen.width/2)}px` : undefined"
+                          flat
                         >
                           <MContainer class="q-pa-md">
                             <div
@@ -502,11 +502,11 @@
                   <MCol col="12">
                     <MDtBtn
                       :flat="!1"
-                      push
+                      :label="getFormTitle"
                       color="primary"
                       icon="add"
+                      push
                       @click="openCreateDialog()"
-                      :label="getFormTitle"
                     />
                   </MCol>
                 </template>
@@ -685,8 +685,8 @@
       allow-focus-outside
       maximized
       persistent
-      transition-show="slide-up"
       transition-hide="slide-down"
+      transition-show="slide-up"
       v-bind="$myth.options.dt?.showDialogProps"
     >
       <q-card class="m--dialog-card">
@@ -725,18 +725,18 @@
       maximized
       no-backdrop-dismiss
       persistent
-      transition-show="slide-up"
       transition-hide="slide-down"
+      transition-show="slide-up"
       v-bind="$myth.options.dt?.formDialogProps"
     >
       <q-card class="m--dialog-card">
         <MForm
-          class="full-height"
-          :form-props="{class: 'column full-height justify-between'}"
           ref="formDialogRef"
           v-slot="form"
           :errors="dialogs.errors"
           :form="dialogs.item"
+          :form-props="{class: 'column full-height justify-between'}"
+          class="full-height"
           @submit="defaultSubmitItem"
         >
           <q-card-section ref="formTitle">
@@ -785,10 +785,10 @@
               @click="closeFormDialog"
             />
             <slot
-              name="form-actions"
               :form="form"
               :index="dialogs.index"
               :item="dialogs.item"
+              name="form-actions"
               v-bind="datatableItemsScope"
             >
               <MBtn
@@ -806,39 +806,39 @@
       </q-card>
     </q-dialog>
     <q-dialog
-      maximized
-      transition-show="slide-up"
-      transition-hide="slide-down"
       v-model="imageDialog.value"
+      maximized
+      transition-hide="slide-down"
+      transition-show="slide-up"
     >
       <q-card>
         <div class="row full-height">
           <MCol col="12">
             <MRow class="q-pa-sm justify-between">
               <MBtn
-                color="negative"
                 :label="$t('close')"
+                color="negative"
                 icon="close"
                 @click="closeImageDialog()"
               />
               <MBtn
-                icon="download"
-                :label="$t('download')"
                 :href="imageDialog.src"
+                :label="$t('download')"
+                icon="download"
                 target="_blank"
               />
             </MRow>
             <q-separator />
           </MCol>
           <MCol
-            col="12"
             class="text-center"
+            col="12"
           >
             <q-img
-              class="self-center"
-              :width="`${$q.screen.width/1.03}px`"
               v-if="imageDialog.src"
               :src="imageDialog.src"
+              :width="`${$q.screen.width/1.03}px`"
+              class="self-center"
               fit="contain"
             />
           </MCol>
@@ -875,7 +875,7 @@
 <script lang="ts">
 
 import { computed, nextTick, onMounted, PropType, reactive, ref, useSlots, watch } from 'vue'
-import { QCard, useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
 import _ from 'lodash'
 import { useRouter } from 'vue-router'
 import {
@@ -910,11 +910,6 @@ export const initMetaServer: MDatatableMetaServer = {
 
 export default {
   name: 'MDatatable',
-  computed: {
-    QCard () {
-      return QCard
-    }
-  },
   inheritAttrs: !1,
   props: {
     defaultItem: {

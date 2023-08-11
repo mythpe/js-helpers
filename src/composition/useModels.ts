@@ -15,7 +15,7 @@ const itemsPerPage = 50
 type Item = AxiosDataRow
 
 export function useModels<T extends Partial<Item> = Item> (name: string, options?: UseModelsOptions, search?: string | Ref<string>, filter?: Record<string, any>, config?: AxiosRequestConfig | undefined) {
-  const opts = reactive<UseModelsOptions|Record<string, any>>(options || {})
+  const opts = reactive<UseModelsOptions | Record<string, any>>(options || {})
   const params = reactive({ search, filter })
   const axiosConfig = reactive<AxiosRequestConfig>(config || {})
   const models = ref<(Item | T)[]>([])

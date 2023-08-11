@@ -27,23 +27,23 @@
         v-model="searchValue"
         autocomplete="none"
         autofocus
-        dense
-        clearable
-        outlined
-
         clear-icon="clear"
+        clearable
         col="12"
+
         debounce="600"
+        dense
         md="6"
         name="search"
+        outlined
         placeholder="myth.datatable.searchInput"
         v-bind="$myth.options.dt?.searchInput"
       >
         <template #prepend>
           <q-icon
             v-if="!searchValue"
-            name="search"
             color="primary"
+            name="search"
           >
             <q-tooltip>
               {{ $t('myth.datatable.searchInput') }}
@@ -51,8 +51,8 @@
           </q-icon>
           <q-icon
             v-else
-            color="primary"
             class="cursor-pointer"
+            color="primary"
             name="clear"
             @click="searchValue = ''"
           >
@@ -64,10 +64,10 @@
       </MInput>
     </MRow>
     <slot
-      name="top"
-      :models="models"
       :filter="filter"
+      :models="models"
       :search="search"
+      name="top"
     />
     <q-infinite-scroll
       :disable="!canLoadMore"
@@ -81,19 +81,19 @@
           :key="`item-list-${index}`"
           :auto="auto"
           :col="col"
-          :xl="xl"
           :lg="lg"
           :md="md"
           :sm="sm"
+          :xl="xl"
           :xs="xs"
         >
           <slot
-            name="item"
-            :item="item"
-            :index="index"
-            :models="models"
             :filter="filter"
+            :index="index"
+            :item="item"
+            :models="models"
             :search="search"
+            name="item"
           >
             <q-item>
               <q-item-section>
@@ -105,10 +105,10 @@
       </MRow>
       <template #loading>
         <slot
-          name="loading"
-          :models="models"
           :filter="filter"
+          :models="models"
           :search="search"
+          name="loading"
         >
           <MRow class="q-my-md justify-center">
             <q-spinner-dots
@@ -129,10 +129,10 @@
       >
         <div class="text-h6 text-center q-gutter-md">
           <slot
-            name="noResult"
-            :models="models"
             :filter="filter"
+            :models="models"
             :search="search"
+            name="noResult"
           >
             <div v-text="parseAttribute('myth.select.noResult')" />
             <MNoResultImg />
@@ -144,10 +144,10 @@
         col="12"
       >
         <slot
-          name="noData"
-          :models="models"
           :filter="filter"
+          :models="models"
           :search="search"
+          name="noData"
         >
           <div class="text-h6 text-center q-gutter-md">
             <div v-text="$t('myth.select.noData')" />

@@ -156,7 +156,7 @@ export interface MFileSlots extends QFileSlots {
   default: () => VNode[];
 }
 
-export interface MPickerProps extends Omit<MInputProps, 'onUpdate:modelValue'> {
+export interface MPickerProps extends Omit<MInputProps, 'onUpdate:modelValue' | 'modelValue' | 'type'>, Omit<QDateProps, 'onUpdate:modelValue' | 'options'>, QTimeProps {
   modelValue: any;
   type: 'date' | 'time'
 }
@@ -168,8 +168,8 @@ export interface MPickerSlots extends MInputSlots {
   default: () => VNode[];
 }
 
-export interface MDateProps extends MPickerProps, QDateProps {
-  modelValue: any
+export interface MDateProps extends MPickerProps {
+  modelValue: any;
 }
 
 export interface MDateSlots extends QDateSlots {
@@ -179,7 +179,7 @@ export interface MDateSlots extends QDateSlots {
   default: () => VNode[];
 }
 
-export interface MTimeProps extends MPickerProps, QTimeProps {
+export interface MTimeProps extends MPickerProps {
   modelValue: any
 }
 
@@ -397,7 +397,7 @@ export type MUploaderServiceType = string | {
   /**
    * Get Attachments url
    */
-  getUploadAttachmentsUrl(modelId: string | number): string;
+  getUploadAttachmentsUrl (modelId: string | number): string;
   /** The url to which the files will be uploaded to */
   uploadAttachments: (modelId: string | number, files: readonly File[]) => string;
   /**

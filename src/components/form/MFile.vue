@@ -124,7 +124,6 @@ defineExpose({
     >
       <q-file
         ref="fileInput"
-        :model-value="fieldScope.value"
         :accept="accepts.join(',')"
         :borderless="borderless"
         :clearable="clearable"
@@ -135,15 +134,16 @@ defineExpose({
         :hide-bottom-space="hideBottomSpace"
         :label="getLabel"
         :loading="loading"
+        :model-value="fieldScope.value"
         :outlined="outlined"
         :placeholder="getPlaceholder"
         :stack-label="stackLabel"
         :standout="standout"
         v-bind="{...($myth.options.input||{}),...$attrs}"
+        @blur="fieldScope.handleBlur"
+        @change="fieldScope.handleChange"
         @clear="fieldScope.handleBlur"
         @update:model-value="fieldScope.handleChange"
-        @change="fieldScope.handleChange"
-        @blur="fieldScope.handleBlur"
       >
         <template
           v-for="(_,slot) in $slots"

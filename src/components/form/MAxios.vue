@@ -10,27 +10,27 @@
   <MSelect
     ref="mSelect"
     v-model="model"
-    :loading="loading"
-    :readonly="loading"
-    :name="name"
-    :options="items"
     :auto-search="autoSearch"
+    :loading="loading"
     :multiple="multiple"
+    :name="name"
     :no-filter="autoSearch"
+    :options="items"
+    :readonly="loading"
     v-bind="$attrs"
     @search="onSearchInput"
   >
     <template
-      #selected-item
       v-if="loading"
+      #selected-item
     >
       <div>
         <q-spinner />
       </div>
     </template>
     <template
-      #before-options
       v-if="multiple"
+      #before-options
     >
       <MContainer>
         <MRow class="items-center">

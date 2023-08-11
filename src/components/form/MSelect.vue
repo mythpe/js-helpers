@@ -28,18 +28,18 @@
       <q-select
         ref="selectRef"
         :behavior="$q.platform.is.ios === !0 ? 'dialog' : behavior"
-        v-bind="{...($myth.options.select||{}),...$attrs,...(fieldProps||{field:{}}).field}"
+        :emit-value="emitValue"
         :error="(fieldProps||{errors:[]}).errors.length > 0 || Boolean(errorMessageField)"
         :error-message="(fieldProps||{errorMessage:undefined}).errorMessage || errorMessageField"
         :label="getLabel"
+        :loading="loading"
+        :map-options="mapOptions"
         :model-value="inputValue"
         :options="getOptions"
         :use-input="useInput"
-        :emit-value="emitValue"
-        :map-options="mapOptions"
-        :loading="loading"
-        transition-show="flip-down"
         transition-hide="flip-up"
+        transition-show="flip-down"
+        v-bind="{...($myth.options.select||{}),...$attrs,...(fieldProps||{field:{}}).field}"
         @filter="filterFn"
         @update:model-value="updateModelValue"
       >
@@ -49,8 +49,8 @@
               <q-item-section avatar>
                 <template v-if="autoSearch && searchInput?.length > 0">
                   <q-icon
-                    name="o_warning"
                     color="warning"
+                    name="o_warning"
                   />
                 </template>
                 <template v-else-if="autoSearch && !searchInput?.length">
@@ -103,8 +103,8 @@
       />
     </component>
     <VeeField
-      v-model="inputValue"
       ref="veeFieldRef"
+      v-model="inputValue"
       :name="name"
       :rules="getRules"
       class="hidden"
