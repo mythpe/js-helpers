@@ -17,7 +17,7 @@
       @before-hide="resetDialogs()"
     >
       <q-list
-        v-show="dialogs.item"
+        v-if="dialogs.item"
         v-bind="$myth.options.dt?.contextmenu?.list"
       >
         <template
@@ -25,9 +25,9 @@
           :key="i"
         >
           <MDtBtn
-            v-if="contextmenuItem.showIf !== !1"
+            v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
             :[contextmenuItem.name]="!0"
-            :label="$t(contextmenuItem.name)"
+            :label="$t(contextmenuItem.label || contextmenuItem.name)"
             list-item
             v-bind="{...($myth.options.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
             @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
@@ -634,7 +634,7 @@
                     />
                     <template v-for="(contextBtn,i) in contextItems">
                       <MBtn
-                        v-if="contextBtn.showIf !== !1 && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
+                        v-if="(typeof contextBtn.showIf === 'function' ? contextBtn.showIf(tableOptions.selected[0],0) : contextBtn.showIf) && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
                         :key="`top-s-${i.toString()}`"
                         v-bind="{...(contextBtn.attr||{}),...($myth.options.dt?.topSelection?.btn||{})}"
                         @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
@@ -1708,6 +1708,7 @@ export default {
       dialogs.index = index
       // contextmenu.value = !0
     }
+    const contextmenuItemsProp = computed(() => props.contextItems)
     const contextmenuItems = computed(() => ([
       {
         name: 'update',
@@ -1727,7 +1728,7 @@ export default {
         showIf: hasDestroyBtn.value,
         order: 1
       },
-      ...(props.contextItems || [])
+      ...(contextmenuItemsProp.value || [])
     ].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))))
     const endReach = computed<boolean>(() => props.endReach)
     const rowsPerPageOptions = computed(() => props.rowsPerPageOptions)

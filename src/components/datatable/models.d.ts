@@ -148,9 +148,10 @@ export type MDatatableScope = {
 
 export type GenericMDtBtn = Record<string, any> & {
   name: string;
+  label?: string;
   click?: (item: UnwrapRef<MDatatableDialogsOptions['item']>, index: UnwrapRef<MDatatableDialogsOptions['index']>) => void;
   multiClick?: (items: MDtItem[]) => void;
-  showIf?: boolean;
+  showIf?: boolean | ((item: UnwrapRef<MDatatableDialogsOptions['item']>, index: UnwrapRef<MDatatableDialogsOptions['index']>) => boolean);
   order?: number;
   attr?: Partial<MDtBtnProps> & Partial<{ icon?: string; textColor?: string; color?: string; }>;
 }
