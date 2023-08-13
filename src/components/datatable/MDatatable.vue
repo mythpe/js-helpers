@@ -794,7 +794,7 @@
               <MBtn
                 :class="{'full-width': $q.screen.lt.sm}"
                 :disable="tableOptions.loading "
-                :label="$t(isUpdateMode ? 'save' : 'create')"
+                :label="$t(isUpdateMode ? 'save' : 'store')"
                 :loading="tableOptions.loading"
                 color="positive"
                 type="submit"
@@ -1005,7 +1005,7 @@ export default {
       type: Boolean,
       default: () => undefined
     },
-    createRoute: {
+    storeRoute: {
       type: String,
       default: () => undefined
     },
@@ -1162,7 +1162,7 @@ export default {
       if (props.hideAddBtn) {
         return !1
       }
-      return Boolean(slots.form) || Boolean(props.createRoute)
+      return Boolean(slots.form) || Boolean(props.storeRoute)
     })
     const hasUpdateBtn = computed<boolean>(() => {
       if (props.hideUpdateBtn) {
@@ -1181,7 +1181,7 @@ export default {
     const hasMenu = computed<boolean>(() => (Boolean(props.pdf) || Boolean(props.excel) || hasFilterDialog.value || hasAddBtn.value))
 
     const isUpdateMode = ref<boolean>(!1)
-    const formMode = computed<'update' | 'create'>(() => isUpdateMode.value ? 'update' : 'create')
+    const formMode = computed<'update' | 'store'>(() => isUpdateMode.value ? 'update' : 'store')
     const isSingleSelectedItem = computed<boolean>(() => tableOptions.selected.length === 1)
     const firstSelectedItem = computed<MDtItem>(() => tableOptions.selected[0])
     const hasSelectedItem = computed<boolean>(() => tableOptions.selected.length > 0)
@@ -1490,7 +1490,7 @@ export default {
       loading.value = !0
       try {
         isUpdateMode.value = !0
-        const params: any = {}
+        const params: any = { fdt: 's' }
         if (getRequestWith('withUpdate')) {
           params.requestWith = getRequestWith('withUpdate')
         }
@@ -1516,8 +1516,8 @@ export default {
       }
     }
     const openCreateDialog = (dtItem?: MDtItem) => {
-      if (props.createRoute) {
-        router.push({ name: props.createRoute })
+      if (props.storeRoute) {
+        router.push({ name: props.storeRoute })
         return
       }
       const item = { ...(defaultItem.value || {}), ...(dtItem || {}) }
@@ -1601,8 +1601,8 @@ export default {
           }
         }
       }
-
-      const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form) : await api.store(form)
+      const _conf : any = { params: { fdt: isUpdateMode.value ? 'u' : 'c' } }
+      const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form, _conf) : await api.store(form, _conf)
       try {
         const { _data, _message, _success }: any = await method()
         _message && myth.alertSuccess(_message)

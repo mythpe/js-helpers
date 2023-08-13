@@ -57,8 +57,8 @@ export interface ApiServiceParams {
   headerItems?: Record<number, any>[];
   ids?: number[];
   indexType: 'index' | 'pdf' | 'excel';
-  // For Datatable, index,export-pdf|excel,update,store,delete
-  fdt: 'i' | 'e' | 'u' | 's' | 'd';
+  // For Datatable, index,export-pdf|excel,update,create,show,delete
+  fdt: 'i' | 'e' | 'u' | 'c' | 's' | 'd';
   requestWith?: string;
   itemsPerPage: number;
   page: number;
@@ -226,7 +226,7 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   hideUpdateBtn?: boolean;
   hideShowBtn?: boolean;
   hideDestroyBtn?: boolean;
-  createRoute?: string;
+  storeRoute?: string;
   updateRoute?: string;
   showRoute?: string;
   noMouse?: boolean;
