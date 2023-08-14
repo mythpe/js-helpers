@@ -110,18 +110,19 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
             const pop: string = k.split('.').pop() || ''
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            str = t(k, number, { [pop]: number })
+            str = te(k) ? t(k, number, { [pop]: number }) : null
           } else {
             const parents: string[] = routeName.split('.')
             if (parents.length > 1) {
               // console.log(parents[parents.length - 2])
+              const e = `choice.${Str.pascalCase(_.pluralize(parents[parents.length - 2]))}`
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
-              str = t(k, { name: t(`choice.${Str.pascalCase(_.pluralize(parents[parents.length - 2]))}`, '1') })
+              str = te(e) ? t(k, { name: t(e, '1') }) : null
             } else {
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
-              str = t(k, { name: '' })
+              str = te(k) ? t(k, { name: '' }) : null
             }
           }
           return str || defaultValue
