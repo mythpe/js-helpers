@@ -735,8 +735,8 @@
           v-slot="form"
           :errors="dialogs.errors"
           :form="dialogs.item"
-          :form-props="{class: 'column full-height justify-between'}"
-          class="full-height"
+          :form-props="{class: 'column full-height justify-between no-wrap'}"
+          class="full-height no-wrap"
           @submit="defaultSubmitItem"
         >
           <q-card-section ref="formTitle">
