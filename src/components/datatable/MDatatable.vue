@@ -9,31 +9,36 @@
 <template>
   <div class="m--datatable-component">
     <q-popup-proxy
-      :v-model="contextmenu"
+      breakpoint="769px"
+      v-model="contextmenu"
       context-menu
-      max-width="300px"
       touch-position
       v-bind="$myth.options.dt?.contextmenu?.menu"
       @before-hide="resetDialogs()"
     >
-      <q-list
-        v-if="dialogs.item"
-        v-bind="$myth.options.dt?.contextmenu?.list"
+      <q-card
+        style="max-width: 300px"
+        flat
       >
-        <template
-          v-for="(contextmenuItem,i) in contextmenuItems"
-          :key="i"
+        <q-list
+          v-if="dialogs.item"
+          v-bind="$myth.options.dt?.contextmenu?.list"
         >
-          <MDtBtn
-            v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
-            :[contextmenuItem.name]="!0"
-            :label="$t(contextmenuItem.label || contextmenuItem.name)"
-            list-item
-            v-bind="{...($myth.options.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
-            @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
-          />
-        </template>
-      </q-list>
+          <template
+            v-for="(contextmenuItem,i) in contextmenuItems"
+            :key="i"
+          >
+            <MDtBtn
+              v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
+              :[contextmenuItem.name]="!0"
+              :label="$t(contextmenuItem.label || contextmenuItem.name)"
+              list-item
+              v-bind="{...($myth.options.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
+              @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
+            />
+          </template>
+        </q-list>
+      </q-card>
     </q-popup-proxy>
     <q-pull-to-refresh
       :no-mouse="noMouse"
@@ -49,7 +54,7 @@
         :columns="getHeaders"
         :filter="tableOptions.search"
         :flat="tableOptions.fullscreen"
-        :grid="grid === undefined ? $q.screen.lt.md : grid"
+        :grid="isGrid"
         :hide-pagination="endReach"
         :loading="tableOptions.loading"
         :rows="getRows"
@@ -77,14 +82,22 @@
               <q-card
                 :class="props.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''"
               >
-                <q-card-section>
-                  <q-checkbox
-                    v-model="props.selected"
-                    dense
-                  />
-                </q-card-section>
-                <q-separator />
+                <template v-if="showSelection">
+                  <q-card-section>
+                    <q-checkbox
+                      v-model="props.selected"
+                      dense
+                    />
+                  </q-card-section>
+                  <q-separator />
+                </template>
                 <MContainer>
+                  <MRow v-if="!props.cols.find(e => e.name === 'control')">
+                    <MDtBtn
+                      icon="more_vert"
+                      @click="onRowContextmenu($event,props.row,props.rowIndex)"
+                    />
+                  </MRow>
                   <template
                     v-for="col in props.cols"
                     :key="col.name"
@@ -115,35 +128,6 @@
                     </MRow>
                   </template>
                 </MContainer>
-                <!--<q-list dense>
-                  <q-item
-                    v-for="col in props.cols"
-                    :key="col.name"
-                  >
-                    <q-item-section>
-                      <q-item-label>{{ col.label }}</q-item-label>
-                    </q-item-section>
-                    <q-item-section
-                      side
-                      :thumbnail="col.field.slice(-4) === '_url'"
-                    >
-                      <q-item-label
-                        caption
-                      >
-                        <MDtBtn
-                          v-if="col.field.slice(-4) === '_url'"
-                          :src="col.value"
-                          :label="$t('show')"
-                          :href="col.value"
-                          target="_blank"
-                        />
-                        <template v-else>
-                          {{ col.value }}
-                        </template>
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>-->
               </q-card>
             </div>
           </slot>
@@ -1199,6 +1183,12 @@ export default {
       return t(`replace.${formMode.value}`, { name })
     })
     const defaultItem = computed(() => props.defaultItem)
+    const isGrid = computed(() => {
+      if (props.grid !== undefined) {
+        return props.grid
+      }
+      return $q.screen.lt.md
+    })
     /* Titles */
 
     /** Methods */
@@ -1706,7 +1696,11 @@ export default {
       // e.preventDefault()
       dialogs.item = row
       dialogs.index = index
-      // contextmenu.value = !0
+      nextTick(() => {
+        if (isGrid.value) {
+          contextmenu.value = !0
+        }
+      })
     }
     const contextmenuItemsProp = computed(() => props.contextItems)
     const contextmenuItems = computed(() => ([
@@ -1857,7 +1851,9 @@ export default {
       visibleHeaders,
       imageDialog,
       openImageDialog,
-      closeImageDialog
+      closeImageDialog,
+
+      isGrid
     }
   }
 }
