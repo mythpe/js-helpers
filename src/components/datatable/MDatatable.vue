@@ -54,7 +54,7 @@
         :loading="tableOptions.loading"
         :rows="getRows"
         :rows-per-page-options="getRowsPerPageOptions"
-        :selection="hideSelection !== !0 ? (multiSelection ? 'multiple' : 'single') : 'none'"
+        :selection="showSelection ? (multiSelection ? 'multiple' : 'single') : 'none'"
         :title="title||undefined"
         :visible-columns="visibleHeaders"
         card-container-class="m--datatable-container"
@@ -1025,7 +1025,7 @@ export default {
       type: Boolean,
       default: () => !1
     },
-    hideSelection: {
+    showSelection: {
       type: Boolean,
       default: () => !1
     },
