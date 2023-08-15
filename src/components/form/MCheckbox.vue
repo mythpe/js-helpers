@@ -54,7 +54,7 @@
 
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
-import { computed, defineEmits, defineProps, ref } from 'vue'
+import { computed, defineEmits, defineProps } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 
