@@ -158,7 +158,8 @@ export interface MFileSlots extends QFileSlots {
 
 export interface MPickerProps extends Omit<MInputProps, 'onUpdate:modelValue' | 'modelValue' | 'type'>, Omit<QDateProps, 'onUpdate:modelValue' | 'options'>, QTimeProps {
   modelValue: any;
-  type: 'date' | 'time'
+  type?: 'date' | 'time';
+  btnProps?: MBtnProps
 }
 
 export interface MPickerSlots extends MInputSlots {

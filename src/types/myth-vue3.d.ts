@@ -146,6 +146,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
   file?: Partial<QFileProps>;
   date?: Partial<QDateProps>;
   time?: Partial<QTimeProps>;
+  pickerBtn?: Partial<MBtnProps>;
   select?: Partial<QSelectProps>;
   checkbox?: Partial<QCheckboxProps>;
   editor?: Partial<QEditorProps>;

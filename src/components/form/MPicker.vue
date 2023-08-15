@@ -19,9 +19,10 @@ interface Props {
   lg?: MPickerProps['lg'];
   xl?: MPickerProps['xl'];
   modelValue: MPickerProps['modelValue'];
-  type: MPickerProps['type'];
+  type?: MPickerProps['type'];
   range?: MPickerProps['range'];
   multiple?: MPickerProps['multiple'];
+  btnProps?: MPickerProps['btnProps'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -35,7 +36,8 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   type: () => 'date',
   range: () => !1,
-  multiple: () => !1
+  multiple: () => !1,
+  btnProps: undefined
 })
 
 interface Emits {
@@ -112,8 +114,9 @@ export default {
       <template #append>
         <q-btn
           :icon="icon"
-          class="cursor-pointer"
           round
+          flat
+          v-bind="{...btnProps,...$myth.options?.pickerBtn}"
         >
           <q-popup-proxy
             cover
