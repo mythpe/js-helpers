@@ -23,6 +23,8 @@ interface Props {
   range?: MPickerProps['range'];
   multiple?: MPickerProps['multiple'];
   btnProps?: MPickerProps['btnProps'];
+  readonly?: MPickerProps['readonly'];
+  disable?: MPickerProps['disable'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -37,7 +39,9 @@ const props = withDefaults(defineProps<Props>(), {
   type: () => 'date',
   range: () => !1,
   multiple: () => !1,
-  btnProps: undefined
+  btnProps: undefined,
+  readonly: undefined,
+  disable: undefined
 })
 
 interface Emits {
@@ -108,11 +112,14 @@ export default {
       ref="inputRef"
       v-model="inputValue"
       :mask="mask"
+      :disable="disable"
+      :readonly="readonly"
       unmasked-value
       v-bind="$attrs"
     >
       <template #append>
         <q-btn
+          v-if="!disable&&!readonly"
           :icon="icon"
           round
           flat
