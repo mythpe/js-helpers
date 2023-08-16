@@ -14,6 +14,13 @@
   }
 }
 
+.m--form {
+
+  div.m--row + div.m--row {
+    margin-top: 1rem;
+  }
+}
+
 .rtl {
   direction: ltr !important
 }
