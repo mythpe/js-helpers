@@ -88,7 +88,7 @@ const saveDialog = () => {
     newVal = values
   }
   inputValue.value = newVal
-  inputRef.value?.$refs?.veeField?.handleChange(newVal)
+  inputRef.value?.$refs?.veeFieldRef?.handleChange(newVal)
 }
 </script>
 
