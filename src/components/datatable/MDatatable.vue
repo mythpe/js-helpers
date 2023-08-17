@@ -778,7 +778,7 @@
               <MBtn
                 :class="{'full-width': $q.screen.lt.sm}"
                 :disable="tableOptions.loading "
-                :label="$t('myth.datatable.buttons' + (isUpdateMode ? 'save' : 'store'))"
+                :label="$t('myth.titles.' + (isUpdateMode ? 'save' : 'store'))"
                 :loading="tableOptions.loading"
                 color="positive"
                 type="submit"
