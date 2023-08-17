@@ -9,7 +9,7 @@
 import { computed, onMounted, reactive, Ref, ref, watch } from 'vue'
 import { AxiosRequestConfig } from 'axios'
 import { useMyth } from '../vue3'
-import { AppApiResponse, AxiosDataRow, AxiosMetaResponse, UseModelsOptions } from '../types'
+import { AxiosDataRow, AxiosMetaResponse, UseModelsOptions } from '../types'
 
 const itemsPerPage = 50
 type Item = AxiosDataRow & object

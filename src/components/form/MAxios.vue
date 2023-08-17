@@ -17,6 +17,7 @@
     :no-filter="autoSearch"
     :options="items"
     :readonly="loading"
+    :disable="loading"
     v-bind="$attrs"
     @search="onSearchInput"
   >

@@ -30,6 +30,7 @@
         :label="getLabel"
         :model-value="inputValue"
         :placeholder="getPlaceholder"
+        @update:model-value="fieldScope.handleChange"
         v-bind="{...($myth.options.input||{}),...$attrs,...fieldScope.field}"
       >
         <template

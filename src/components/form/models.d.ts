@@ -429,8 +429,6 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
   pdf?: boolean;
   /** Support for uploading excel  */
   excel?: boolean;
-  /** Uploader style */
-  style?: string;
   /**
    * Upload files immediately when added
    */
@@ -451,6 +449,10 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
    */
   attachmentType?: string;
   /**
+   * return attachments after upload; default current collection name;
+   */
+  returnType?: 'all' | 'current' | undefined;
+  /**
    * Object with additional fields definitions (used by Form to be uploaded);
    */
   formFields?: Record<string, any>;
@@ -464,8 +466,6 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
   label?: string;
   /** The Attachments list */
   modelValue: MUploaderMediaItem[];
-  /** Input errors */
-  errors?: string[];
   /**
    *  Hide delete media items from uploader, no delete media For API
    */
@@ -478,8 +478,18 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
    * The ID of model will use in attachments
    */
   modelId: string | number;
-  loading?: boolean | undefined;
-  readonly noUploadSpinner?: boolean | undefined;
+  uploading?: boolean | undefined;
+  readonly useQuasarLoading?: boolean | undefined;
+  defaultFileIcon?: string | undefined;
+  deleteMediaIcon?: string | undefined;
+  uploadFilesIcon?: string | undefined;
+  pickFilesIcon?: string | undefined;
+  removeUploadedIcon?: string | undefined;
+  removeQueuedIcon?: string | undefined;
+  abortUploadIcon?: string | undefined;
+  downloadFileIcon?: string | undefined;
+  errorsIcon?: string | undefined;
+  iconsSize?: string | undefined;
 }
 
 export interface MUploaderSlots extends QUploaderSlots {

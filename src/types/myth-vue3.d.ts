@@ -156,6 +156,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     props?: Partial<QUploaderProps>;
     downloadBtnProps?: Partial<MBtnProps>;
     removeBtnProps?: Partial<QBtnProps>;
+    iconsSize?: MUploaderProps['iconsSize'];
   };
   container?: Partial<MContainerProps>;
   row?: Partial<MRowProps>;
