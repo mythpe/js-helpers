@@ -114,7 +114,6 @@ export default {
       :mask="mask"
       :disable="disable"
       :readonly="readonly"
-      unmasked-value
       v-bind="$attrs"
     >
       <template #append>
