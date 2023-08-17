@@ -114,7 +114,7 @@
                       >
                         <template v-if="col.field.slice(-4) === '_url'">
                           <MBtn
-                            :label="$t('show')"
+                            :label="$t('myth.titles.show')"
                             :src="col.value"
                             @click="openImageDialog(col.value)"
                           />
@@ -268,7 +268,7 @@
                     >
                       <div class="column items-center">
                         <q-icon name="o_more_vert" />
-                        <div v-text="$t('more')" />
+                        <div v-text="$t('myth.titles.more')" />
                       </div>
                       <q-tooltip v-if="!tableOptions.loading">
                         {{ $t('myth.datatable.hints.more') }}
@@ -318,7 +318,7 @@
                               </q-item-section>
                               <q-item-section>
                                 <span>
-                                  {{ $t('filter') }}
+                                  {{ $t('myth.titles.filter') }}
                                 </span>
                               </q-item-section>
                             </q-item>
@@ -340,7 +340,7 @@
                               </q-item-section>
                               <q-item-section>
                                 <span>
-                                  {{ $t('export_pdf') }}
+                                  {{ $t('myth.titles.exportPdf') }}
                                   <q-badge
                                     v-if="tableOptions.selected.length > 1"
                                     :label="tableOptions.selected.length"
@@ -368,7 +368,7 @@
                               </q-item-section>
                               <q-item-section>
                                 <span>
-                                  {{ $t('export_excel') }}
+                                  {{ $t('myth.titles.exportExcel') }}
                                   <q-badge
                                     v-if="tableOptions.selected.length>1"
                                     :label="tableOptions.selected.length"
@@ -406,7 +406,7 @@
                     >
                       <div class="column items-center">
                         <q-icon name="o_filter_alt" />
-                        <div v-text="$t('filter')" />
+                        <div v-text="$t('myth.titles.filter')" />
                       </div>
 
                       <!-- Filter dialog -->
@@ -473,7 +473,7 @@
                     >
                       <div class="column items-center">
                         <q-icon name="o_refresh" />
-                        <div v-text="$t('refresh')" />
+                        <div v-text="$t('myth.titles.refresh')" />
                       </div>
                       <q-tooltip v-if="!tableOptions.loading">
                         {{ $t('myth.datatable.hints.refresh') }}
@@ -693,7 +693,7 @@
           class="print-hide"
         >
           <MBtn
-            :label="$t('close')"
+            :label="$t('myth.titles.close')"
             color="negative"
             v-bind="$myth.options.dt?.dialogButtonsProps"
             @click="closeShowDialog"
@@ -763,7 +763,7 @@
             <MBtn
               v-if="$q.screen.gt.sm"
               :disable="tableOptions.loading"
-              :label="$t('close')"
+              :label="$t('myth.titles.close')"
               color="negative"
               v-bind="$myth.options.dt?.dialogButtonsProps"
               @click="closeFormDialog"
@@ -778,7 +778,7 @@
               <MBtn
                 :class="{'full-width': $q.screen.lt.sm}"
                 :disable="tableOptions.loading "
-                :label="$t(isUpdateMode ? 'save' : 'store')"
+                :label="$t('myth.datatable.buttons' + (isUpdateMode ? 'save' : 'store'))"
                 :loading="tableOptions.loading"
                 color="positive"
                 type="submit"
@@ -800,14 +800,14 @@
           <MCol col="12">
             <MRow class="q-pa-sm justify-between">
               <MBtn
-                :label="$t('close')"
+                :label="$t('myth.titles.close')"
                 color="negative"
                 icon="close"
                 @click="closeImageDialog()"
               />
               <MBtn
                 :href="imageDialog.src"
-                :label="$t('download')"
+                :label="$t('myth.titles.download')"
                 icon="download"
                 target="_blank"
               />
