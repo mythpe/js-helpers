@@ -9,5 +9,6 @@
 export * from './useAcceptProp'
 export * from './useInputProps'
 export * from './useModels'
+export * from './models.d'
 
 export default {}
