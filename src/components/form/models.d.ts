@@ -443,11 +443,11 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
   /**
    * Collection send to API
    */
-  collection?: string;
+  collection?: string | number | symbol;
   /**
    * Field Attachment Type
    */
-  attachmentType?: string;
+  attachmentType?: string | number | symbol;
   /**
    * return attachments after upload; default current collection name;
    */
