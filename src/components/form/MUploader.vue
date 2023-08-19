@@ -486,9 +486,12 @@ const deleteMedia = (media: MUploaderMediaItem) => {
   const destroy = async () => {
     let r = !1
     try {
-      const config: any = { params: { collection: undefined } }
-      if (collectionProp.value) {
-        config.params.collection = collectionProp.value
+      const config: any = { params: { collection: collectionProp.value, return: returnTypeProp.value } }
+      if (!config.params.collection) {
+        delete config.params.collection
+      }
+      if (!config.params.return) {
+        delete config.params.return
       }
       const method = async (file: MUploaderMediaItem) => typeof serviceProp.value !== 'object' ? await $myth.services[serviceProp.value].deleteAttachment(modelIdProp.value, file.id, config) : serviceProp.value.deleteAttachment(media, config)
       if (method) {

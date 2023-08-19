@@ -152,7 +152,7 @@ export type StubSchema = {
 
   // [index: string]: (args?: ConfigType) => Promise<AppApiResponse> & string;
 } & {
-  [k: string]: (...args: any) => Promise<AppApiResponse>;
+  [k: string]: (...args: any) => Promise<AppApiResponse> | string;
 }
 
 export type MythApiServicesSchema = { [key: string | symbol | number]: StubSchema }
