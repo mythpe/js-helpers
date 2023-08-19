@@ -397,6 +397,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
 
   // Transition
   app.component('MFadeTransition', defineAsyncComponent(() => import('../components/transition/MFadeTransition.vue')))
+  app.component('MFadeXTransition', defineAsyncComponent(() => import('../components/transition/MFadeXTransition.vue')))
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

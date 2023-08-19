@@ -37,6 +37,7 @@ import MList from './grid/MList.vue'
 import MNoResultImg from './grid/MNoResultImg.vue'
 import MRow from './grid/MRow.vue'
 import MFadeTransition from './transition/MFadeTransition.vue'
+import MFadeXTransition from './transition/MFadeXTransition.vue'
 
 export {
   MDatatable,
@@ -68,7 +69,8 @@ export {
   MList,
   MNoResultImg,
   MRow,
-  MFadeTransition
+  MFadeTransition,
+  MFadeXTransition
 }
 
 export * from './datatable/models.d'

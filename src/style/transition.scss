@@ -17,6 +17,17 @@
   transition: all .3s ease;
 }
 
+.myth-transition__fade-x-enter-from,
+.myth-transition__fade-x-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.myth-transition__fade-x-enter-active,
+.myth-transition__fade-x-leave-active {
+  transition: all .3s ease;
+}
+
 // .myth-transition__fade-enter-to,
 // .myth-transition__fade-leave-from {
 // transform: translateY(0);

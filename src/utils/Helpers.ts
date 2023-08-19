@@ -51,6 +51,8 @@ export const Helpers = {
   },
   Stub (baseUrl: UrlType, axios: () => AxiosInstance): StubSchema {
     const makeUrl = Helpers.StubUrl(baseUrl)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const methods: StubSchema = {
       async index (config?: ConfigType) {
         const u = makeUrl()

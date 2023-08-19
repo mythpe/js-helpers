@@ -232,6 +232,7 @@ declare module '@vue/runtime-core' {
     MNoResultImg: GlobalComponentConstructor<QImgProps, QImgSlots>;
     MRow: GlobalComponentConstructor<MRowProps, MRowSlots>;
     MFadeTransition: GlobalComponentConstructor<TransitionProps, MTransitionsSlots>;
+    MFadeXTransition: GlobalComponentConstructor<TransitionProps, MTransitionsSlots>;
   }
 
   interface ComponentCustomProperties {
