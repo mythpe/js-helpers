@@ -405,7 +405,7 @@ export type MUploaderServiceType = string | {
    * Method axios to delete files
    * @param files
    */
-  deleteAttachment: (media: MUploaderMediaItem) => Promise<any>;
+  deleteAttachment: (media: MUploaderMediaItem, config?: AxiosRequestConfig) => Promise<any>;
 }
 
 export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'headers' | 'url'>, MColProps {
