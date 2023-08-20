@@ -9,19 +9,13 @@
 import { computed, onMounted, reactive, Ref, ref, watch } from 'vue'
 import { AxiosRequestConfig } from 'axios'
 import { useMyth } from '../vue3'
-import { AxiosDataRow, AxiosMetaResponse, UseModelsOptions } from '../types'
+import { AppApiResponse, AxiosDataRow, AxiosMetaResponse, UseModelsOptions as Options } from '../types'
 
 const itemsPerPage = 50
 type Item = AxiosDataRow & object
 
-export function useModels<T extends Partial<Item> = Item> (
-  name: string,
-  options?: UseModelsOptions,
-  search?: string | Ref<string>,
-  filter?: Record<string, any>,
-  config?: AxiosRequestConfig | undefined
-) {
-  const opts = reactive<UseModelsOptions | Record<string, any>>(options || {})
+export function useModels<T extends Partial<Item> = Item> (name: string, options?: Options, search?: string | Ref<string>, filter?: Record<string, any>, config?: AxiosRequestConfig | undefined) {
+  const opts = reactive<Options | Record<string, any>>(options || {})
   const params = reactive({ search, filter })
   const axiosConfig = reactive<AxiosRequestConfig>(config || {})
   const models = ref<(Item | T)[]>([])
@@ -150,28 +144,37 @@ export function useModels<T extends Partial<Item> = Item> (
   }
 }
 
-export function useModel<T extends Partial<Item> = Item> (name: string, id: string | number, opts?: UseModelsOptions, config?: AxiosRequestConfig | undefined) {
+export function useModel<T extends Partial<Item> = Item> (name: string, id: string | number, opts?: Options, config?: AxiosRequestConfig | undefined) {
   const model = ref<T & any>({})
   const fetching = ref(!1)
+  const fetched = ref(!1)
   const fetch = () => {
-    return new Promise<void>(resolve => {
+    return new Promise<AppApiResponse | any>((resolve, reject) => {
       if (fetching.value) {
-        resolve()
+        resolve({})
         return
       }
       fetching.value = !0
       const axiosConfig = reactive<AxiosRequestConfig>(config || {})
       const api = useMyth()
       return api.services[name][!opts?.isPanel ? 'staticShow' : 'show'](id, axiosConfig)
-        .then(({ _data }) => {
+        .then((r) => {
+          const { _data } = r
           model.value = _data
+          resolve(r)
+          return r
+        })
+        .catch(e => {
+          reject(e)
         })
         .finally(() => {
+          if (!fetched.value) {
+            fetched.value = !0
+          }
           fetching.value = !1
-          resolve()
         })
     })
   }
   !opts?.lazy && onMounted(() => fetch())
-  return { model, fetching, fetch }
+  return { model, fetching, fetch, fetched }
 }
