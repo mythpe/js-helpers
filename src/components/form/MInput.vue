@@ -16,7 +16,25 @@
     :sm="sm"
     :xs="xs"
   >
+    <template v-if="viewMode">
+      <q-field
+        :label="getLabel"
+        :placeholder="getPlaceholder"
+        stack-label
+        v-bind="{...($myth.options.input||{}),...$attrs}"
+      >
+        <template #control>
+          <div
+            class="self-center full-width no-outline"
+            tabindex="0"
+          >
+            {{ viewModeValue || inputValue }}
+          </div>
+        </template>
+      </q-field>
+    </template>
     <VeeField
+      v-else
       ref="veeFieldRef"
       v-slot="fieldScope"
       v-model="inputValue"
@@ -30,8 +48,8 @@
         :label="getLabel"
         :model-value="inputValue"
         :placeholder="getPlaceholder"
-        @update:model-value="fieldScope.handleChange"
         v-bind="{...($myth.options.input||{}),...$attrs,...fieldScope.field}"
+        @update:model-value="fieldScope.handleChange"
       >
         <template
           v-for="(_,slot) in $slots"
@@ -79,6 +97,8 @@ interface Props {
   rules?: MInputProps['rules'];
   errors?: MInputProps['errors'];
   modelValue?: MInputProps['modelValue'];
+  viewMode?: MInputProps['viewMode'];
+  viewModeValue?: MInputProps['viewModeValue'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -97,7 +117,9 @@ const props = withDefaults(defineProps<Props>(), {
   email: undefined,
   rules: undefined,
   errors: undefined,
-  modelValue: undefined
+  modelValue: undefined,
+  viewMode: () => !1,
+  viewModeValue: undefined
 })
 type EmitsTypes = {
   (e: 'update:modelValue', value: any): void

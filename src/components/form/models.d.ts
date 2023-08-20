@@ -106,6 +106,11 @@ export interface MInputProps extends MColProps, Omit<QInputProps, 'rules' | 'mod
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
   modelValue?: string | number | null | symbol | undefined;
+  /**
+   * Set input to vie mode use q-field
+   */
+  viewMode?: boolean | undefined;
+  viewModeValue?: any | undefined;
 }
 
 export interface MInputSlots extends QInputSlots {
@@ -229,6 +234,11 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
    * The options using ajax request to filter
    */
   noFilter?: boolean;
+  /**
+   * Set input to vie mode use q-field
+   */
+  viewMode?: boolean | undefined;
+  viewModeValue?: any | undefined;
 }
 
 export interface MSelectSlots extends QSelectSlots {

@@ -16,8 +16,26 @@
     :sm="sm"
     :xs="xs"
   >
+    <template v-if="viewMode">
+      <q-field
+        :label="getLabel"
+        :placeholder="getPlaceholder"
+        stack-label
+        v-bind="{...($myth.options.select||{}),...$attrs}"
+      >
+        <template #control>
+          <div
+            class="self-center full-width no-outline"
+            tabindex="0"
+          >
+            {{ viewModeValue || inputValue }}
+          </div>
+        </template>
+      </q-field>
+    </template>
     <component
       :is="useInput ? 'div' : VeeField"
+      v-else
       v-slot="fieldProps"
       :model-value="inputValue"
       :name="name"
@@ -123,7 +141,7 @@ import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref, watch } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
-import { MSelectProps } from './models'
+import { MAxiosProps, MSelectProps } from './models'
 
 interface Props {
   auto?: boolean;
@@ -152,6 +170,8 @@ interface Props {
   autoSearch?: MSelectProps['autoSearch'];
   loading?: MSelectProps['loading'];
   noFilter?: MSelectProps['noFilter'];
+  viewMode?: MSelectProps['viewMode'];
+  viewModeValue?: MSelectProps['viewModeValue'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -180,7 +200,9 @@ const props = withDefaults(defineProps<Props>(), {
   timeout: () => 300,
   autoSearch: undefined,
   loading: undefined,
-  noFilter: undefined
+  noFilter: undefined,
+  viewMode: () => !1,
+  viewModeValue: undefined
 })
 type Events = {
   (e: 'update:modelValue', value: any): void;
@@ -193,7 +215,7 @@ const inputValue = computed({
   set: v => emit('update:modelValue', v)
 })
 const errorMessageField = ref<string | undefined>(undefined)
-const { getRules, getLabel } = useInputProps(props)
+const { getRules, getLabel, getPlaceholder } = useInputProps(props)
 const originalOptions = computed<any>(() => props.options)
 const noFilterProp = computed<any>(() => props.noFilter !== undefined && props.noFilter !== !1)
 const searchInput = ref('')

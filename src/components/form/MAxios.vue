@@ -18,6 +18,8 @@
     :options="items"
     :readonly="loading"
     :disable="loading"
+    :view-mode="viewMode"
+    :view-mode-value="viewModeValue"
     v-bind="$attrs"
     @search="onSearchInput"
   >
@@ -81,6 +83,8 @@ interface Props {
   guest?: MAxiosProps['guest'];
   autoSearch?: MAxiosProps['autoSearch'];
   iniData?: MAxiosProps['iniData'];
+  viewMode?: MAxiosProps['viewMode'];
+  viewModeValue?: MAxiosProps['viewModeValue'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -93,7 +97,9 @@ const props = withDefaults(defineProps<Props>(), {
   params: () => ({}),
   guest: undefined,
   autoSearch: () => !0,
-  iniData: () => !0
+  iniData: () => !0,
+  viewMode: () => !1,
+  viewModeValue: undefined
 })
 
 interface Emits {
@@ -179,14 +185,20 @@ const onSearchInput = (v: any) => {
   prepare()
   // console.log('search: ', v)
 }
-
+const viewModeProp = computed(() => props.viewMode)
 onBeforeMount(() => {
+  if (viewModeProp.value) {
+    return
+  }
   items.value = props.options || []
 })
 watch(() => props.options, (v) => {
   items.value = v || []
 })
 onMounted(() => {
+  if (viewModeProp.value) {
+    return
+  }
   (props.iniData || !props.autoSearch) && prepare()
 })
 </script>
