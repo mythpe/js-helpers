@@ -674,13 +674,16 @@
       v-bind="$myth.options.dt?.showDialogProps"
     >
       <q-card class="m--dialog-card">
-        <q-card-section>
+        <q-card-section ref="showTitleRef">
           <q-toolbar>
             <q-toolbar-title>{{ getShowTitle }}</q-toolbar-title>
           </q-toolbar>
         </q-card-section>
         <q-separator />
-        <q-card-section class="scroll">
+        <q-card-section
+          class="scroll"
+          :style="`height: ${($q.screen.height || 100) - 10 - ($refs.showActionsRef?.$el?.offsetHeight || 0) - ($refs.showTitleRef?.$el?.offsetHeight || 0)}px`"
+        >
           <slot
             :index="dialogs.index"
             :item="dialogs.item"
@@ -689,6 +692,7 @@
         </q-card-section>
         <q-separator />
         <q-card-actions
+          ref="showActionsRef"
           align="right"
           class="print-hide"
         >
@@ -1591,7 +1595,7 @@ export default {
           }
         }
       }
-      const _conf : any = { params: { fdt: isUpdateMode.value ? 'u' : 'c' } }
+      const _conf: any = { params: { fdt: isUpdateMode.value ? 'u' : 'c' } }
       const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form, _conf) : await api.store(form, _conf)
       try {
         const { _data, _message, _success }: any = await method()
