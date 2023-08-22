@@ -601,7 +601,7 @@
                       round
                       tooltip="show"
                       v-bind="$myth.options.dt?.topSelection?.btn"
-                      @click="openShowDialog(tableOptions.selected[0])"
+                      @click="openShowDialogNoIndex(tableOptions.selected[0])"
                     />
                     <MDtBtn
                       v-if="hasDestroyBtn"
@@ -1082,7 +1082,7 @@ export default {
     const showDialogModel = ref(!1)
     const formDialogModel = ref(!1)
     const isUpdateDialog = ref(!1)
-    const itemDialog = ref<MDtItem | null>(null)
+    const itemDialog = ref<MDtItem | undefined>(undefined)
     const itemIndexDialog = ref<MDtItemIndex>()
     const errorsDialog = ref<any>({})
     const dialogs = reactive<MDatatableDialogsOptions>({
@@ -1099,7 +1099,7 @@ export default {
       dialogs.show = !1
       dialogs.form = !1
       dialogs.isUpdate = !1
-      dialogs.item = null
+      dialogs.item = undefined
       dialogs.index = undefined
       dialogs.errors = {}
     }
@@ -1424,7 +1424,11 @@ export default {
     /** Filter Dialog */
 
     /** Show Dialog */
-    const openShowDialog = async (item: MDtItem, index?: MDtItemIndex) => {
+    const openShowDialogNoIndex = async (item: MDtItem) => {
+      const index = getRows.value.findIndex(e => e.id === item.id)
+      return await openShowDialog(item, index)
+    }
+    const openShowDialog = async (item: MDtItem, index: MDtItemIndex) => {
       if (props.showRoute) {
         router.push({
           name: props.showRoute,
@@ -1437,21 +1441,16 @@ export default {
       }
       loading.value = !0
       try {
-        const params: { requestWith?: string | null } = { requestWith: getRequestWith('withShow') }
-        if (!params.requestWith) {
-          delete params.requestWith
-        }
-        if (!index) {
-          index = getRows.value.findIndex(e => e.id === item.id)
+        const params: any = { fdt: 's' }
+        if (getRequestWith('withShow')) {
+          params.requestWith = getRequestWith('withShow')
         }
 
         const { _data } = await getMythApiServicesSchema().show(item.id, { params })
         dialogs.item = _data
         dialogs.index = index
         dialogs.show = !0
-        if (index || index === 0) {
-          getRows.value[index] = _data
-        }
+        getRows.value[index] = _data
       } catch (e: any) {
         const message = e?._message || e?.message
         message && myth.alertError(message)
@@ -1461,7 +1460,7 @@ export default {
     }
     const closeShowDialog = () => {
       dialogs.show = !1
-      dialogs.item = null
+      dialogs.item = undefined
       dialogs.index = undefined
     }
     /** Show Dialog */
@@ -1521,7 +1520,7 @@ export default {
       dialogs.form = !1
       nextTick(() => {
         isUpdateMode.value = !1
-        dialogs.item = null
+        dialogs.item = undefined
         dialogs.index = undefined
       })
     }
@@ -1695,32 +1694,33 @@ export default {
      */
     const contextmenu = ref(!1)
     const onRowContextmenu = (e: MouseEvent, row: MDtItem, index: number) => {
-      // e.preventDefault()
       dialogs.item = row
       dialogs.index = index
       nextTick(() => {
-        if (isGrid.value) {
-          contextmenu.value = !0
-        }
+        setTimeout(() => {
+          if (isGrid.value) {
+            contextmenu.value = !0
+          }
+        }, 90)
       })
     }
     const contextmenuItemsProp = computed(() => props.contextItems)
     const contextmenuItems = computed(() => ([
       {
-        name: 'update',
-        click: (item: MDtItem, index: number) => openUpdateDialog(item, index),
-        showIf: hasUpdateBtn.value,
-        order: 1
-      },
-      {
         name: 'show',
-        click: (item: MDtItem, index: number) => openShowDialog(item, index),
+        click: (item: MDtItem, index: MDtItemIndex) => openShowDialog(item, index),
         showIf: hasShowBtn.value,
         order: 1
       },
       {
+        name: 'update',
+        click: (item: MDtItem, index: MDtItemIndex) => openUpdateDialog(item, index),
+        showIf: hasUpdateBtn.value,
+        order: 1
+      },
+      {
         name: 'destroy',
-        click: (item: MDtItem, index: number) => onDeleteItem(item, index),
+        click: (item: MDtItem, index: MDtItemIndex) => onDeleteItem(item, index),
         showIf: hasDestroyBtn.value,
         order: 1
       },
@@ -1758,6 +1758,7 @@ export default {
     })
     const datatableItemsScope = computed(() => ({
       openShowDialog,
+      openShowDialogNoIndex,
       closeShowDialog,
       openUpdateDialog,
       openCreateDialog,
@@ -1790,8 +1791,8 @@ export default {
     }
 
     return {
-      contextmenuItems,
       contextmenu,
+      contextmenuItems,
       onRowContextmenu,
       getRowsPerPageOptions,
       dialogs,
@@ -1830,6 +1831,7 @@ export default {
       saveFilterDialog,
       closeFilterDialog,
       openShowDialog,
+      openShowDialogNoIndex,
       closeShowDialog,
       openUpdateDialog,
       openCreateDialog,

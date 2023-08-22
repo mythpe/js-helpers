@@ -16,8 +16,8 @@ export interface MDtItem extends GenericFormValues {
   id: string | number;
 }
 
-export type MDtItemIndex = number | undefined
-export type MDtExportOptions = 'pdf' | 'excel'
+export type MDtItemIndex = number;
+export type MDtExportOptions = 'pdf' | 'excel';
 
 export interface MDatatablePagination {
   /**
@@ -99,7 +99,7 @@ export type MDatatableDialogsOptions = {
   show: Ref<boolean>;
   form: Ref<boolean>;
   isUpdate: Ref<boolean>;
-  item: Ref<MDtItem | null>;
+  item: Ref<MDtItem | undefined>;
   index?: Ref<MDtItemIndex>;
   errors: Record<string | number | symbol, string[]>;
 }
