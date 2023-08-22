@@ -589,7 +589,7 @@
                       round
                       tooltip="update"
                       v-bind="$myth.options.dt?.topSelection?.btn"
-                      @click="openUpdateDialog(tableOptions.selected[0])"
+                      @click="openUpdateDialogNoIndex(tableOptions.selected[0])"
                     />
                     <MDtBtn
                       v-if="hasShowBtn"
@@ -1083,7 +1083,7 @@ export default {
     const formDialogModel = ref(!1)
     const isUpdateDialog = ref(!1)
     const itemDialog = ref<MDtItem | undefined>(undefined)
-    const itemIndexDialog = ref<MDtItemIndex>()
+    const itemIndexDialog = ref<MDtItemIndex | undefined>()
     const errorsDialog = ref<any>({})
     const dialogs = reactive<MDatatableDialogsOptions>({
       filter: filterDialogModel,
@@ -1467,7 +1467,11 @@ export default {
 
     /** Form Dialog */
     const updateRouteProp = computed(() => props.updateRoute)
-    const openUpdateDialog = async (item: MDtItem, index?: MDtItemIndex) => {
+    const openUpdateDialogNoIndex = async (item: MDtItem) => {
+      const index = getRows.value.findIndex(e => e.id === item.id)
+      return await openUpdateDialog(item, index)
+    }
+    const openUpdateDialog = async (item: MDtItem, index: MDtItemIndex) => {
       if (updateRouteProp.value) {
         router.push({
           name: updateRouteProp.value,
@@ -1484,10 +1488,6 @@ export default {
         const params: any = { fdt: 'u' }
         if (getRequestWith('withUpdate')) {
           params.requestWith = getRequestWith('withUpdate')
-        }
-
-        if (!index) {
-          index = getRows.value.findIndex(e => e.id === item.id)
         }
         const { _data } = await getMythApiServicesSchema().show(item.id, { params })
         dialogs.item = _data
@@ -1761,6 +1761,7 @@ export default {
       openShowDialogNoIndex,
       closeShowDialog,
       openUpdateDialog,
+      openUpdateDialogNoIndex,
       openCreateDialog,
       closeFormDialog,
       onDeleteItem,
@@ -1834,6 +1835,7 @@ export default {
       openShowDialogNoIndex,
       closeShowDialog,
       openUpdateDialog,
+      openUpdateDialogNoIndex,
       openCreateDialog,
       closeFormDialog,
       updateDatatableItem,

@@ -100,7 +100,7 @@ export type MDatatableDialogsOptions = {
   form: Ref<boolean>;
   isUpdate: Ref<boolean>;
   item: Ref<MDtItem | undefined>;
-  index?: Ref<MDtItemIndex>;
+  index: Ref<MDtItemIndex | undefined>;
   errors: Record<string | number | symbol, string[]>;
 }
 
