@@ -157,47 +157,25 @@ export type GenericMDtBtn = Record<string, any> & {
 }
 
 export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-cell-${string}`> {
-  'top-right': ((scope: {
-    tableOptions: MDatatableOptions,
-    paginationOptions: MDatatablePagination
-  }) => VNode[]);
+  'top-right': ((scope: { tableOptions: MDatatableOptions, paginationOptions: MDatatablePagination }) => VNode[]);
 
-  tools: ((scope: {
-    dt: MDatatableScope,
-  }) => VNode[]);
+  tools: ((scope: { dt: MDatatableScope, }) => VNode[]);
 
-  selection: ((scope: {
-    dt: MDatatableScope,
-  }) => VNode[]);
+  selection: ((scope: { dt: MDatatableScope, }) => VNode[]);
 
-  filter: ((scope: {
-    filter: MDatatableFilterForm,
-  }) => VNode[]);
+  filter: ((scope: { filter: MDatatableFilterForm, }) => VNode[]);
 
-  show: ((scope: {
-    item: MDtItem,
-    index: MDtItemIndex,
-  }) => VNode[]);
+  show: ((scope: { item: MDtItem, index: MDtItemIndex, }) => VNode[]);
 
-  form: ((scope: MDatatableScope & {
-    item: MDtItem,
-    index: MDtItemIndex,
-    form: VeeFieldFormScope,
-  }) => VNode[]);
+  form: ((scope: MDatatableScope & { item: MDtItem, index: MDtItemIndex, form: VeeFieldFormScope, }) => VNode[]);
 
-  'form-actions': ((scope: MDatatableScope & {
-    item: MDtItem,
-    index: MDtItemIndex,
-    form: VeeFieldFormScope,
-  }) => VNode[]);
+  'form-actions': ((scope: MDatatableScope & { item: MDtItem, index: MDtItemIndex, form: VeeFieldFormScope, }) => VNode[]);
 
   /**
    * Slot to define how a specific column cell looks like; replace '[name]' with column name (from columns definition object)
    * @param scope
    */
-  [key: `body-cell-${string}`]: ((scope: Parameters<QTableSlots['body-cell']>[0] & {
-    dt: MDatatableScope,
-  }) => VNode[]);
+  [key: `body-cell-${string}`]: ((scope: Parameters<QTableSlots['body-cell']>[0] & { dt: MDatatableScope, }) => VNode[]);
 }
 
 export type MDtServiceNameCallbackProp = (() => Record<string, (() => Promise<AxiosResponse>)>)

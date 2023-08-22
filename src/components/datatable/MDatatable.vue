@@ -9,16 +9,16 @@
 <template>
   <div class="m--datatable-component">
     <q-popup-proxy
-      breakpoint="769px"
       v-model="contextmenu"
+      breakpoint="769px"
       context-menu
       touch-position
       v-bind="$myth.options.dt?.contextmenu?.menu"
       @before-hide="resetDialogs()"
     >
       <q-card
-        style="max-width: 300px"
         flat
+        style="max-width: 300px"
       >
         <q-list
           v-if="dialogs.item"
@@ -146,7 +146,6 @@
                 style="min-height: 76px;"
                 class="bg-black"
               >
-                asfsd
               </div>
             </q-page-scroller>-->
             <MContainer>
@@ -644,7 +643,7 @@
           <div v-text="$t('replace.from_name', { from: pagination.rowsNumber, name: getRows.length })" />
         </template>
         <template
-          v-for="( slotVal,slotName) in $slots"
+          v-for="(slotVal,slotName) in $slots"
           :key="slotName"
           #[slotName]="inputSlot"
         >
@@ -681,8 +680,8 @@
         </q-card-section>
         <q-separator />
         <q-card-section
-          class="scroll"
           :style="`height: ${($q.screen.height || 100) - 10 - ($refs.showActionsRef?.$el?.offsetHeight || 0) - ($refs.showTitleRef?.$el?.offsetHeight || 0)}px`"
+          class="scroll"
         >
           <slot
             :index="dialogs.index"
@@ -1241,7 +1240,6 @@ export default {
         if (done) {
           done()
         }
-        // emit('refresh')
       })
     }
     const refresh = (done?: () => void) => {
@@ -1451,7 +1449,7 @@ export default {
         dialogs.item = _data
         dialogs.index = index
         dialogs.show = !0
-        if (index !== undefined) {
+        if (index || index === 0) {
           getRows.value[index] = _data
         }
       } catch (e: any) {
@@ -1484,13 +1482,11 @@ export default {
       loading.value = !0
       try {
         isUpdateMode.value = !0
-        const params: any = { fdt: 's' }
+        const params: any = { fdt: 'u' }
         if (getRequestWith('withUpdate')) {
           params.requestWith = getRequestWith('withUpdate')
         }
-        // if (!params.requestWith) {
-        //   delete params.requestWith
-        // }
+
         if (!index) {
           index = getRows.value.findIndex(e => e.id === item.id)
         }
@@ -1498,7 +1494,7 @@ export default {
         dialogs.item = _data
         dialogs.index = index
         dialogs.form = !0
-        if (index !== undefined) {
+        if (index || index === 0) {
           getRows.value[index] = _data
         }
       } catch (e: any) {
@@ -1565,11 +1561,12 @@ export default {
       }
       loading.value = !0
       const api = getMythApiServicesSchema()
-      // console.log(form)
-      form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withIndex')
+      form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withStore')
       if (!form.requestWith) {
         delete form.requestWith
       }
+      const fdt = isUpdateMode.value ? 'u' : 'c'
+      form.fdt = fdt
       if (ignoreKeysProps.value) {
         if (typeof ignoreKeysProps.value === 'function') {
           form = ignoreKeysProps.value(form)
@@ -1579,6 +1576,7 @@ export default {
           }
         }
       }
+
       const ignoreKeys = [
         '_to_string',
         '_to_number_format',
@@ -1595,7 +1593,7 @@ export default {
           }
         }
       }
-      const _conf: any = { params: { fdt: isUpdateMode.value ? 'u' : 'c' } }
+      const _conf: any = { params: { fdt } }
       const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form, _conf) : await api.store(form, _conf)
       try {
         const { _data, _message, _success }: any = await method()
