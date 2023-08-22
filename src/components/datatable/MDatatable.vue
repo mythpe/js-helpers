@@ -1225,13 +1225,14 @@ export default {
       })
     }
     const refreshNoUpdate = async (done?: () => void) => {
+      if (contextmenu.value) {
+        contextmenu.value = !1
+      }
       meta.value = { ...initMetaServer }
       pagination.value.page = 1
       pagination.value.rowsNumber = 0
       getRows.value = []
-      // if (dialogs.value.filter) {
-      //   dialogs.value.filter = !1
-      // }
+
       nextTick(() => {
         fetchDatatableItems({
           pagination: pagination.value,
