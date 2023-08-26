@@ -236,7 +236,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
      * @param string
      * @param args
      */
-    parseAttribute (string: string | { text: string } | any, ...args: []): string {
+    parseAttribute (string: string | { text: string } | any, ...args: any): string {
       const defaultValue = ''
       if (!string) return string
 
@@ -351,7 +351,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.config.globalProperties.openWindow = function (...args: any) {
     return window.open(...args)
   }
-  app.config.globalProperties.parseAttribute = function (string: string | { text: string } | any, ...args: []): string {
+  app.config.globalProperties.parseAttribute = function (string: string | { text: string } | any, ...args: any): string {
     return this.$myth.parseAttribute(string, ...args)
   }
   app.config.globalProperties.getPageTitle = function (number?: number | string, route?: RouteLocationNormalizedLoaded): string {

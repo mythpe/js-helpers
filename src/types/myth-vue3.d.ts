@@ -190,7 +190,7 @@ export type UseMythVue = {
   helpers: typeof Helpers,
   getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string;
   parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[];
-  parseAttribute (string: string | { text: string } | any, ...args: []): string;
+  parseAttribute (string: string | { text: string } | any, ...args: any): string;
   copyText (text: string | any): Promise<void>;
   quasarNotifyOptions (opts: QNotifyCreateOptions | string): QNotifyCreateOptions;
   alertMessage (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage;
@@ -239,7 +239,7 @@ declare module '@vue/runtime-core' {
     $myth: UseMythVue;
     openWindow: typeof window.open;
 
-    parseAttribute (string: string | { text: string } | any, ...args: []): string;
+    parseAttribute: UseMythVue['parseAttribute']
 
     getPageTitle (number?: number | string, route?: RouteLocationNormalizedLoaded): string;
   }
