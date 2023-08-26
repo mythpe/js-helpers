@@ -5,8 +5,32 @@
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
+
+<template>
+  <MPicker
+    v-model="inputValue"
+    v-bind="$attrs"
+    type="date"
+  >
+    <template
+      v-for="(k,v) in _slots"
+      #[v]="scope"
+    >
+      <template v-if="Boolean(scope)">
+        <slot
+          :name="v"
+          v-bind="scope"
+        />
+      </template>
+      <template v-else>
+        <slot :name="v" />
+      </template>
+    </template>
+  </MPicker>
+</template>
+
 <script lang="ts" setup>
-import { computed, defineEmits } from 'vue'
+import { computed, defineEmits, useSlots } from 'vue'
 
 interface Props {
   modelValue: any
@@ -25,13 +49,13 @@ const inputValue = computed({
   get: () => props.modelValue,
   set: v => emit('update:modelValue', v)
 })
-// const inputValue = ref(props.modelValue)
 
+const _slots = useSlots()
 </script>
-<template>
-  <MPicker
-    v-model="inputValue"
-    type="date"
-    v-bind="$attrs"
-  />
-</template>
+
+<script lang="ts">
+export default {
+  name: 'MDate',
+  inheritAttrs: !1
+}
+</script>

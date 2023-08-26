@@ -15,7 +15,6 @@ import {
   QCheckboxProps,
   QCheckboxSlots,
   QDateProps,
-  QDateSlots,
   QEditorProps,
   QEditorSlots,
   QFileProps,
@@ -28,7 +27,6 @@ import {
   QSelectProps,
   QSelectSlots,
   QTimeProps,
-  QTimeSlots,
   QToggleProps,
   QToggleSlots,
   QUploaderProps,
@@ -178,7 +176,7 @@ export interface MDateProps extends MPickerProps {
   modelValue: any;
 }
 
-export interface MDateSlots extends QDateSlots {
+export interface MDateSlots extends MPickerSlots {
   /**
    * Field main content
    */
@@ -189,7 +187,7 @@ export interface MTimeProps extends MPickerProps {
   modelValue: any
 }
 
-export interface MTimeSlots extends QTimeSlots {
+export interface MTimeSlots extends MPickerSlots {
   /**
    * Field main content
    */

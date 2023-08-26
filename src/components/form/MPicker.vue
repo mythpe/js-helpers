@@ -36,6 +36,20 @@
       :readonly="readonly"
       v-bind="$attrs"
     >
+      <template
+        v-for="(k,v) in _slots"
+        #[v]="scope"
+      >
+        <template v-if="Boolean(scope)">
+          <slot
+            :name="v"
+            v-bind="scope"
+          />
+        </template>
+        <template v-else>
+          <slot :name="v" />
+        </template>
+      </template>
       <template #append>
         <q-btn
           v-if="!disable&&!readonly"
@@ -106,7 +120,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, nextTick, ref } from 'vue'
+import { computed, defineEmits, nextTick, ref, useSlots } from 'vue'
 import { MPickerProps } from './models'
 
 interface Props {
@@ -152,6 +166,7 @@ interface Emits {
 }
 
 const emit = defineEmits<Emits>()
+const _slots = useSlots()
 
 const isDate = computed(() => props.type === 'date')
 const isRange = computed(() => props.range !== !1 && props.range !== undefined)
@@ -197,6 +212,7 @@ const saveDialog = () => {
 
 <script lang="ts">
 export default {
+  name: 'MPicker',
   inheritAttrs: !1
 }
 </script>
