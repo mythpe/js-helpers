@@ -190,7 +190,7 @@ export type UseMythVue = {
   helpers: typeof Helpers,
   getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string;
   parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[];
-  parseAttribute (string: string | { text: string } | any, ...args: any): string;
+  parseAttribute (string: string | { text: string } | any, ...args: any[]): string;
   copyText (text: string | any): Promise<void>;
   quasarNotifyOptions (opts: QNotifyCreateOptions | string): QNotifyCreateOptions;
   alertMessage (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage;
