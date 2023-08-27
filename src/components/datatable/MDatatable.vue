@@ -692,7 +692,7 @@
         <q-separator />
         <q-card-actions
           ref="showActionsRef"
-          align="right"
+          align="left"
           class="print-hide"
         >
           <MBtn
@@ -792,6 +792,8 @@
         </MForm>
       </q-card>
     </q-dialog>
+
+    <!-- Image Dialog -->
     <q-dialog
       v-model="imageDialog.value"
       maximized
