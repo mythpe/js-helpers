@@ -10,7 +10,7 @@
   <div class="m--datatable-component">
     <q-popup-proxy
       v-model="contextmenu"
-      breakpoint="769px"
+      :breakpoint="769"
       context-menu
       touch-position
       v-bind="$myth.options.dt?.contextmenu?.menu"
