@@ -10,7 +10,7 @@
   <div class="m--datatable-component">
     <q-popup-proxy
       v-model="contextmenu"
-      :breakpoint="769"
+      breakpoint="769px"
       context-menu
       touch-position
       v-bind="$myth.options.dt?.contextmenu?.menu"
@@ -1120,7 +1120,7 @@ export default {
     const pagination = ref<MDatatablePagination>({ ...initPaginationOptions })
     const search = ref<string | null>(null)
     const searchColumnsProp = computed(() => props.searchColumns)
-    const searchColumnsRef = ref<string[]>(myth.parseHeaders(searchColumnsProp.value || headersProp.value).map(e => e.name))
+    const searchColumnsRef = ref<string[]>(myth.parseHeaders(searchColumnsProp.value || headersProp.value).filter(e => e?.field !== 'control').map(e => e.name))
     const searchPlaceholder = computed<string>(() => {
       if (searchColumnsRef.value.length > 0) {
         return t('myth.datatable.searchInputPlaceholder', { v: getHeaders.value.filter(e => e?.field !== 'control' && searchColumnsRef.value.indexOf(e.name) !== -1).map(e => e.label).join(', ') })
