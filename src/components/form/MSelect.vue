@@ -198,9 +198,9 @@ const props = withDefaults(defineProps<Props>(), {
   optionLabel: undefined,
   search: undefined,
   timeout: () => 300,
-  autoSearch: undefined,
-  loading: undefined,
-  noFilter: undefined,
+  autoSearch: () => !1,
+  loading: () => !1,
+  noFilter: () => !1,
   viewMode: () => !1,
   viewModeValue: undefined
 })
@@ -217,12 +217,11 @@ const inputValue = computed({
 const errorMessageField = ref<string | undefined>(undefined)
 const { getRules, getLabel, getPlaceholder } = useInputProps(props)
 const originalOptions = computed<any>(() => props.options)
-const noFilterProp = computed<any>(() => props.noFilter !== undefined && props.noFilter !== !1)
+const noFilterProp = computed<any>(() => props.noFilter !== !1)
 const searchInput = ref('')
-// console.log(attrs)
 const getOptions = computed(() => {
   if (searchInput.value && searchInput.value.length > 0 && noFilterProp.value !== !0) {
-    return originalOptions.value.filter((v: any) => v.label.toLowerCase().indexOf(searchInput.value) !== -1)
+    return originalOptions.value.filter((v: any) => v.label.toLowerCase().indexOf(searchInput.value) > -1)
   }
   return originalOptions.value
 })
@@ -230,29 +229,21 @@ const getOptions = computed(() => {
 const filterFn = (val: any, update: any) => {
   if (!val && searchInput.value === val) {
     update()
-    //   // if (!mounted.value) {
-    //   //   mounted.value = !0
-    //   // } else {
-    //   //   attrs.onUpdateSearch && attrs.onSearch(val)
-    //   // }
+    return
   }
-  setTimeout(() => {
-    update(
-      () => {
-        searchInput.value = val
-      }
-    )
-  }, props.timeout || 300)
+  update(() => {
+    searchInput.value = val
+  })
+  // setTimeout(() => {
+  // }, props.timeout || 60)
 }
 const updateFieldValue = (v?: any) => {
-  // console.log('Field: ', v)
   inputValue.value = v
 }
-const useInput = computed(() => props.useInput)
+const useInputProp = computed(() => props.useInput)
 const updateModelValue = (v?: any) => {
-  // console.log('Model: ', v)
   inputValue.value = v
-  if (useInput.value) {
+  if (useInputProp.value) {
     veeFieldRef.value.handleChange(v)
   }
 }
@@ -265,7 +256,6 @@ const updateModelValue = (v?: any) => {
 // }
 watch(() => searchInput.value, v => {
   emit('search', v)
-  // console.log('watch: ', v)
 })
 defineExpose({ searchInput })
 </script>

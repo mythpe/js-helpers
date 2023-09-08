@@ -223,7 +223,7 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
   optionLabel?: ((option: string | any) => string) | string | undefined;
   search?: string | null | undefined;
   timeout?: number;
-  autoSearch?: boolean;
+  autoSearch?: boolean | undefined;
   /**
    * Fetch Data on mounted
    */
@@ -231,7 +231,7 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
   /**
    * The options using ajax request to filter
    */
-  noFilter?: boolean;
+  noFilter?: boolean | undefined;
   /**
    * Set input to vie mode use q-field
    */

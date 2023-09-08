@@ -8,10 +8,9 @@
 
 <template>
   <MSelect
-    ref="mSelect"
+    ref="mSelectRef"
     v-model="model"
     :auto-search="autoSearch"
-    :disable="loading"
     :loading="loading"
     :multiple="multiple"
     :name="name"
@@ -88,14 +87,14 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  multiple: undefined,
+  multiple: () => !1,
   name: undefined,
   modelValue: undefined,
   requestWith: undefined,
   options: () => ([]),
   service: undefined,
   params: () => ({}),
-  guest: undefined,
+  guest: () => !1,
   autoSearch: () => !0,
   iniData: () => !0,
   viewMode: () => !1,
@@ -121,69 +120,59 @@ const $myth = useMyth()
 const autoProps = computed(() => props.autoSearch)
 const paramsProps = computed(() => props.params)
 const requestWithProps = computed(() => props.requestWith)
-const guestProps = computed(() => props.guest !== undefined && props.guest !== !1)
-const isMounted = ref(!1)
-const mSelect = ref<any>()
+const guestProps = computed(() => props.guest !== !1)
+const mSelectRef = ref<any>()
 const searchInput = ref<any>()
 const onDoneOptions = () => {
-  // const r = ref(mSelect.value?.searchInput)
-  // r.value = ''
-  // console.log(mSelect.value)
-  // mSelect.value?.searchInput?.value = ''
-  mSelect.value.$refs?.selectRef?.updateInputValue('', !0)
-  mSelect.value.$refs?.selectRef?.hidePopup()
+  mSelectRef.value.$refs?.selectRef?.updateInputValue('', !0)
+  mSelectRef.value.$refs?.selectRef?.hidePopup()
 }
 const prepare = async () => {
   if (!serviceProp.value || loading.value) {
     return
   }
-  const method = typeof serviceProp.value === 'string' ? (
-    guestProps.value ? $myth.services[serviceProp.value].staticIndex : $myth.services[serviceProp.value].index
-  ) : serviceProp.value
+  const method = typeof serviceProp.value === 'string' ? (guestProps.value ? $myth.services[serviceProp.value].staticIndex : $myth.services[serviceProp.value].index) : serviceProp.value
+
   if (!method) {
     throw Error(`No service: ${serviceProp.value}`)
   }
+  // console.log(method)
+  const params = {
+    ...(paramsProps.value || {}),
+    requestWith: requestWithProps.value,
+    search: searchInput.value,
+    itemsPerPage: -1,
+    page: 1
+  }
   loading.value = !0
-  method({
-    params: {
-      ...(paramsProps.value || {}),
-      requestWith: requestWithProps.value,
-      search: searchInput.value,
-      itemsPerPage: -1,
-      page: 1
-    }
-  })
+  method({ params })
     .then(({ _data }: any) => {
       items.value = _data || []
       emit('update:items', _data || [])
-    }).catch((e: any) => {
-    // console.log(e)
+    })
+    .catch((e: any) => {
+      console.log(e)
     })
     .finally(() => {
       loading.value = !1
-      nextTick(() => {
-        if (autoProps.value && isMounted.value) {
-          setTimeout(() => {
-            console.log(3)
-            mSelect.value.$refs?.selectRef?.showPopup()
-          }, 90)
-        }
-        isMounted.value = !0
-      })
     })
 }
 const onSearchInput = (v: any) => {
+  if (loading.value) {
+    return
+  }
   searchInput.value = v
-  if (!autoProps.value || loading.value) {
-    return
-  }
-  if ((!v || v?.length < 2) && !props.iniData) {
-    items.value = []
-    emit('update:items', [])
-    return
-  }
-  prepare()
-  // console.log('search: ', v)
+  nextTick(() => {
+    if (!autoProps.value || loading.value) {
+      return
+    }
+    if ((!v || v?.length < 2) && !props.iniData) {
+      items.value = []
+      emit('update:items', [])
+      return
+    }
+    prepare()
+  })
 }
 const viewModeProp = computed(() => props.viewMode)
 onBeforeMount(() => {
