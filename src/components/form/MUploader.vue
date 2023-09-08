@@ -127,8 +127,8 @@
                 <MRow class="full-height justify-center items-center">
                   <MCol class="text-h6">
                     <q-icon
-                      name="error_outline"
                       left
+                      name="error_outline"
                     />
                     <span v-text="$t('myth.select.noData')" />
                   </MCol>
@@ -169,16 +169,16 @@
                     {{ file.name }}
                   </q-item-label>
                   <q-item-label
-                    class="full-width ellipsis"
                     v-if="file.attachment_type"
                     :lines="1"
+                    class="full-width ellipsis"
                   >
                     {{ file.attachment_type }}
                   </q-item-label>
                   <q-item-label
-                    class="full-width ellipsis"
                     v-if="file.description"
                     :lines="1"
+                    class="full-width ellipsis"
                   >
                     {{ file.description }}
                   </q-item-label>
@@ -201,13 +201,13 @@
                       :href="file.url"
                       :icon="downloadFileIcon"
                       :label="$t('myth.titles.download')"
-                      target="_blank"
                       size="sm"
+                      target="_blank"
                       v-bind="$myth.options.uploader?.downloadBtnProps"
                     />
                     <slot
-                      name="item"
                       :item="file"
+                      name="item"
                     />
                   </q-item-label>
 

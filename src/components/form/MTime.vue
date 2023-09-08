@@ -9,8 +9,8 @@
 <template>
   <MPicker
     v-model="inputValue"
-    v-bind="$attrs"
     type="time"
+    v-bind="$attrs"
   >
     <template
       v-for="(k,v) in _slots"

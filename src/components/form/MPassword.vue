@@ -27,12 +27,12 @@ export default {
 
 <template>
   <MInput
-    v-bind="$attrs"
     :type="inputType"
+    v-bind="$attrs"
   >
     <template
-      #prepend
       v-if="passwordIcon"
+      #prepend
     >
       <q-icon name="password" />
     </template>

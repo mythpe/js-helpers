@@ -83,6 +83,7 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   val: undefined
 })
+
 interface Emits {
   (e: 'update:modelValue', value: any): void
 }
