@@ -107,20 +107,8 @@
         />
       </template>
 
-      <template
-        v-if="$slots.list"
-        #list="scope"
-      >
-        <slot
-          name="list"
-          v-bind="scope"
-        />
-      </template>
-      <template
-        v-else
-        #list="scope"
-      >
-        <MFadeTransition>
+      <template #list="scope">
+        <MFadeXTransition>
           <template v-if="!scope.files.length && !attachmentsRef.length">
             <div class="absolute-full">
               <div class="full-width full-height  overflow-hidden">
@@ -136,9 +124,31 @@
               </div>
             </div>
           </template>
-        </MFadeTransition>
-        <MFadeTransition>
-          <q-list separator>
+          <template v-else-if="$slots.list">
+            <slot
+              :items="attachmentsRef"
+              name="list"
+              v-bind="scope"
+            />
+          </template>
+          <template v-if="$slots['item-list']">
+            <MRow class="q-col-gutter-sm">
+              <template
+                v-for="(file,i) in [...scope.files,...attachmentsRef]"
+                :key="`item-${i}`"
+              >
+                <slot
+                  :index="i"
+                  :item="file"
+                  name="item-list"
+                />
+              </template>
+            </MRow>
+          </template>
+          <q-list
+            v-else
+            separator
+          >
             <template
               v-for="(file,i) in [...scope.files,...attachmentsRef]"
               :key="`item-${i}`"
@@ -239,7 +249,7 @@
               </q-item>
             </template>
           </q-list>
-        </MFadeTransition>
+        </MFadeXTransition>
       </template>
     </q-uploader>
   </MCol>
@@ -391,10 +401,12 @@ const startUpload = async (files: readonly File[]) => {
       const headers = []
       errors.value = []
       for (const i in common) {
-        headers.push({
-          name: i,
-          value: common[i]
-        })
+        if (common[i]) {
+          headers.push({
+            name: i,
+            value: common[i]
+          })
+        }
       }
       if (headersProp.value) {
         for (const f in headersProp.value) {
@@ -442,7 +454,6 @@ const onReject = (rejectedEntries: QRejectedEntry[]) => {
   nextTick(() => emit('rejected', rejectedEntries))
 }
 const onError = (info: MUploaderXhrInfo) => {
-  // console.log(info)
   const { xhr } = info
   try {
     if (xhr.responseText) {

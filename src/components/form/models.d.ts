@@ -399,7 +399,11 @@ export type MUploaderMediaItem = {
   download_url: string;
   icon: string;
   description: string;
+  attachment_type: string;
+  attachment_type_id: number;
+  attachment_type_id_to_string: string;
   user_id: number | null;
+  user_id_to_string: string;
 }
 
 export type MUploaderServiceType = string | {
@@ -505,6 +509,14 @@ export interface MUploaderSlots extends QUploaderSlots {
    * Field main content
    */
   default: () => VNode[];
+  /**
+   * list of item will be display
+   */
+  // list: (scope: { item: MUploaderMediaItem, index: number }) => VNode[];
+  /**
+   * list of item will be display
+   */
+  'item-list': (scope: { item: MUploaderMediaItem, index: number }) => VNode[];
 }
 
 export type MUploaderXhrInfo = { files: readonly any[]; xhr: any; }
