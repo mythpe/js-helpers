@@ -465,7 +465,7 @@ const props = withDefaults(defineProps<Props>(), {
   abortUploadIcon: () => 'o_clear',
   downloadFileIcon: () => 'o_download',
   errorsIcon: () => 'o_error_outline',
-  batch: () => !0,
+  batch: () => !1,
   iconsSize: () => '30px',
   displayMode: () => 'card'
 })
