@@ -222,7 +222,7 @@
                             <div class="row items-center">
                               <div class="col-12">
                                 <template
-                                  v-for="h in getHeaders"
+                                  v-for="h in getHeaders.filter( e => e.field !== 'control')"
                                   :key="h.name"
                                 >
                                   <q-checkbox
