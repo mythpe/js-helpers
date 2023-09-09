@@ -340,9 +340,9 @@
                 </q-item-section>
                 <q-item-section
                   v-if="!hideDeleteMedia || (hideDeleteMedia && !Boolean(file.id))"
+                  class="justify-between"
                   side
                   top
-                  class="justify-between"
                 >
                   <q-btn
                     :disable="deleting"
@@ -361,8 +361,8 @@
                   <q-icon
                     :name="file.type === 'pdf' ? 'fa-regular fa-file-pdf' : (file.type === 'excel' ? 'fa-regular fa-file-excel' : (file.type === 'image' ? 'o_image' :defaultFileIcon))"
                     :size="iconsSizeProp"
-                    color="primary"
                     class="q-mb-sm"
+                    color="primary"
                   />
                 </q-item-section>
               </q-item>
@@ -531,19 +531,23 @@ const startUpload = async (files: readonly File[]) => {
       }
       if (headersProp.value) {
         for (const f in headersProp.value) {
-          headers.push({
-            name: f,
-            value: headersProp.value[f]
-          })
+          if (headersProp.value[f]) {
+            headers.push({
+              name: f,
+              value: headersProp.value[f]
+            })
+          }
         }
       }
       const formFields: any = []
       if (formFieldsProp.value) {
         for (const f in formFieldsProp.value) {
-          formFields.push({
-            name: f,
-            value: formFieldsProp.value[f]
-          })
+          if (formFieldsProp.value[f]) {
+            formFields.push({
+              name: f,
+              value: formFieldsProp.value[f]
+            })
+          }
         }
       }
       if (collectionProp.value) {
