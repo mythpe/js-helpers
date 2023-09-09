@@ -103,7 +103,7 @@
         </MRow>
         <slot
           name="header"
-          v-bind="scope"
+          v-bind="scope as QUploader"
         />
       </template>
 
@@ -131,20 +131,21 @@
               v-bind="scope"
             />
           </template>
-          <template v-if="$slots['item-list']">
-            <MRow class="q-col-gutter-sm">
-              <template
-                v-for="(file,i) in [...scope.files,...attachmentsRef]"
-                :key="`item-${i}`"
-              >
-                <slot
-                  :index="i"
-                  :item="file"
-                  name="item-list"
-                />
-              </template>
-            </MRow>
-          </template>
+          <MRow
+            v-else-if="$slots['item-list']"
+            class="q-col-gutter-sm"
+          >
+            <template
+              v-for="(file,i) in [...scope.files,...attachmentsRef]"
+              :key="`item-${i}`"
+            >
+              <slot
+                :index="i"
+                :item="file as MUploaderMediaItem"
+                name="item-list"
+              />
+            </template>
+          </MRow>
           <q-list
             v-else
             separator

@@ -142,6 +142,11 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     dialogButtonsProps?: Partial<MBtnProps>;
   };
   button?: Partial<QBtnProps>;
+  loadingButtons?: {
+    elm?: undefined | 'audio' | 'ball' | 'bars' | 'box' | 'clock' | 'comment' | 'cube' | 'dots' | 'facebook' | 'gears' | 'grid' | 'hearts' | 'hourglass' | 'infinity' | 'ios' | 'orbit' | 'oval' | 'pie' | 'puff' | 'radio' | 'rings' | 'tail'
+    color?: string | undefined;
+    size?: string | undefined;
+  };
   input?: Partial<QInputProps>;
   file?: Partial<QFileProps>;
   date?: Partial<QDateProps>;

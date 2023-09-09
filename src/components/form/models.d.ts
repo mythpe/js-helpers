@@ -390,6 +390,7 @@ export interface MAvatarViewerSlots extends QAvatarSlots {
 
 export type MUploaderMediaItem = {
   id: number;
+  value: number;
   name: string;
   file_name: string;
   type: string;
