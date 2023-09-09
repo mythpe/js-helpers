@@ -55,8 +55,6 @@
         :model-value="inputValue"
         :options="getOptions"
         :use-input="useInput"
-        transition-hide="flip-up"
-        transition-show="flip-down"
         v-bind="{...($myth.options.select||{}),...$attrs,...(fieldProps||{field:{}}).field}"
         @filter="filterFn"
         @update:model-value="updateModelValue"
