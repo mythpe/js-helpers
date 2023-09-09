@@ -503,6 +503,7 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
   downloadFileIcon?: string | undefined;
   errorsIcon?: string | undefined;
   iconsSize?: string | undefined;
+  displayMode?: 'list' | 'card' | undefined;
 }
 
 export interface MUploaderSlots extends QUploaderSlots {

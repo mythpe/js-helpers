@@ -147,7 +147,7 @@
             </template>
           </MRow>
           <q-list
-            v-else
+            v-else-if="displayMode === 'list'"
             separator
           >
             <template
@@ -250,6 +250,124 @@
               </q-item>
             </template>
           </q-list>
+          <MRow
+            v-else-if="displayMode === 'card'"
+            class="q-gutter-sm"
+          >
+            <template
+              v-for="(file,i) in [...scope.files,...attachmentsRef]"
+              :key="`item-${i}`"
+            >
+              <q-item
+                class="rounded-borders shadow-1"
+                dense
+                style="max-width: 250px"
+              >
+                <!--<q-item-section-->
+                <!--  avatar-->
+                <!--  class="items-center"-->
+                <!--&gt;-->
+                <!--  <q-icon-->
+                <!--    v-if="file.icon"-->
+                <!--    :name="file.icon"-->
+                <!--    :size="iconsSizeProp"-->
+                <!--    color="primary"-->
+                <!--  />-->
+                <!--  <q-img-->
+                <!--    v-else-if="Boolean(file.__img) || (file.url && file.type === 'image')"-->
+                <!--    :ratio="1"-->
+                <!--    :src="file.__img ? file.__img.src : file.url"-->
+                <!--    fit="contain"-->
+                <!--  />-->
+                <!--  <q-icon-->
+                <!--    v-else-->
+                <!--    :name="file.type === 'pdf' ? 'fa-regular fa-file-pdf' : (file.type === 'excel' ? 'fa-regular fa-file-excel' : (file.type === 'image' ? 'o_image' :defaultFileIcon))"-->
+                <!--    :size="iconsSizeProp"-->
+                <!--    color="primary"-->
+                <!--  />-->
+                <!--</q-item-section>-->
+                <q-item-section>
+                  <q-item-label :lines="1">
+                    {{ file.name }}
+                  </q-item-label>
+                  <q-item-label
+                    v-if="file.attachment_type"
+                    :lines="1"
+                    class="full-width ellipsis"
+                  >
+                    {{ file.attachment_type }}
+                  </q-item-label>
+                  <q-item-label
+                    v-if="file.description"
+                    :lines="1"
+                    class="full-width ellipsis"
+                  >
+                    {{ file.description }}
+                  </q-item-label>
+
+                  <q-item-label
+                    :class="{'text-positive' : (file.__status === 'uploaded' || Boolean(file.id)),'text-orange' : file.__status === 'uploading','text-amber-10' : file.__status === 'idle' || file.__status === 'failed'}"
+                    caption
+                  >
+                    <q-icon
+                      v-if="file.__status"
+                      :name="file.__status === 'uploaded' ? 'o_check' : ( file.__status === 'uploading' ? 'o_cloud_sync' : (file.__status === 'idle' ? 'o_hourglass_empty' : (file.__status === 'failed' ? 'o_error_outline' : undefined)))"
+                      size="22px"
+                    />
+                    <span
+                      v-if="file.__status"
+                      class="text-body2 q-pl-xs"
+                    >{{ $te(`myth.uploader.statuses.${file.__status}`) ? $t(`myth.uploader.statuses.${file.__status}`) : file.__status }}</span>
+                    <MBtn
+                      v-if="Boolean(file.id)"
+                      :href="file.url"
+                      :icon="downloadFileIcon"
+                      :label="$t('myth.titles.download')"
+                      size="sm"
+                      target="_blank"
+                      v-bind="$myth.options.uploader?.downloadBtnProps"
+                    />
+                    <slot
+                      :item="file"
+                      name="item"
+                    />
+                  </q-item-label>
+
+                  <q-item-label caption>
+                    <span v-if="file.size_to_string">{{ file.size_to_string }} | {{ file.type }}</span>
+                    <span v-else>{{ file.__sizeLabel }} / {{ file.__progressLabel }}</span>
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section
+                  v-if="!hideDeleteMedia || (hideDeleteMedia && !Boolean(file.id))"
+                  side
+                  top
+                  class="justify-between"
+                >
+                  <q-btn
+                    :disable="deleting"
+                    :icon="deleteMediaIcon"
+                    color="negative"
+                    dense
+                    flat
+                    round
+                    size="12px"
+                    type="a"
+                    v-bind="$myth.options.uploader?.removeBtnProps"
+                    @click="onClickDeleteAttachment(file)"
+                  >
+                    <q-tooltip>{{ $t('myth.uploader.deleteMedia') }}</q-tooltip>
+                  </q-btn>
+                  <q-icon
+                    :name="file.type === 'pdf' ? 'fa-regular fa-file-pdf' : (file.type === 'excel' ? 'fa-regular fa-file-excel' : (file.type === 'image' ? 'o_image' :defaultFileIcon))"
+                    :size="iconsSizeProp"
+                    color="primary"
+                    class="q-mb-sm"
+                  />
+                </q-item-section>
+              </q-item>
+            </template>
+          </MRow>
         </MFadeXTransition>
       </template>
     </q-uploader>
@@ -306,6 +424,7 @@ interface Props {
   downloadFileIcon?: MUploaderProps['downloadFileIcon'];
   errorsIcon?: MUploaderProps['errorsIcon'];
   iconsSize?: MUploaderProps['iconsSize'];
+  displayMode?: MUploaderProps['displayMode'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -338,7 +457,7 @@ const props = withDefaults(defineProps<Props>(), {
   uploading: undefined,
   useQuasarLoading: () => !1,
   defaultFileIcon: () => 'o_file_present',
-  deleteMediaIcon: () => 'o_delete',
+  deleteMediaIcon: () => 'o_clear',
   uploadFilesIcon: () => 'o_cloud_upload',
   pickFilesIcon: () => 'o_upload_file',
   removeUploadedIcon: () => 'o_done_all',
@@ -347,7 +466,8 @@ const props = withDefaults(defineProps<Props>(), {
   downloadFileIcon: () => 'o_download',
   errorsIcon: () => 'o_error_outline',
   batch: () => !0,
-  iconsSize: () => '28px'
+  iconsSize: () => '30px',
+  displayMode: () => 'card'
 })
 
 interface Events {
