@@ -32,10 +32,10 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   const helpers = {
     storage: {
       /**
-       * Set item in storage
-       * @param key Entry key
-       * @param value Entry value
-       */
+    * Set item in storage
+    * @param key Entry key
+    * @param value Entry value
+    */
       set: (key: string, value: | Date | RegExp | number | boolean | ((...params: readonly any[]) => any) | any | readonly any[] | string | null) => {
         LocalStorage.set(key, value)
       },
@@ -73,18 +73,18 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       const pluralize = Str.pascalCase(_.pluralize(lastRouteName))
       const singular = Str.pascalCase(_.singularize(lastRouteName))
       const keys = _.filter(_.uniq([
-        `routes.${routeName}`,
-        `routes.${routePath}`,
-        `${lastRouteName}Page.title`,
-        `${_.camelCase(lastRouteName)}Page.title`,
-        `choice.${pluralize}`,
-        `choice.${singular}`,
-        `replace.${lastRouteName}_details`,
-        `replace.${lastRouteName}`,
-        pluralize,
-        _.snakeCase(pluralize),
-        singular,
-        _.snakeCase(singular)
+    `routes.${routeName}`,
+    `routes.${routePath}`,
+    `${lastRouteName}Page.title`,
+    `${_.camelCase(lastRouteName)}Page.title`,
+    `choice.${pluralize}`,
+    `choice.${singular}`,
+    `replace.${lastRouteName}_details`,
+    `replace.${lastRouteName}`,
+    pluralize,
+    _.snakeCase(pluralize),
+    singular,
+    _.snakeCase(singular)
       ]))
 
       const { t, te } = baseI18n.value?.global
@@ -122,10 +122,10 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       return defaultValue
     },
     /**
-     * Custom transformer
-     * @param headers
-     * @param options
-     */
+   * Custom transformer
+   * @param headers
+   * @param options
+   */
     parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[] {
       const defaultOptions: Partial<ParseHeaderOptions> = {
         controlKey: 'control',
@@ -222,11 +222,11 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       return result
     },
     /**
-     * Customized helper to get attribute name
-     *
-     * @param string
-     * @param args
-     */
+   * Customized helper to get attribute name
+   *
+   * @param string
+   * @param args
+   */
     parseAttribute (string: string | { text: string } | any, ...args: any): string {
       const defaultValue = ''
       if (!string) return string
@@ -269,14 +269,15 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       return string
     },
     /**
-     * Copy text
-     * @param text
-     */
+   * Copy text
+   * @param text
+   */
     async copyText (text: string | any): Promise<void> {
       return copyToClipboard(text)
     },
     quasarNotifyOptions (opts: QNotifyCreateOptions | string): QNotifyCreateOptions {
       return {
+        ...(mythOptions.value.notify || {}),
         message: typeof opts === 'string' ? opts : opts.message,
         ...(typeof opts !== 'string' ? opts : {})
       }

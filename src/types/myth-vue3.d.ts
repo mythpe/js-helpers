@@ -96,6 +96,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     apiKey: string;
     mapsOptions?: Record<string | number | symbol, any>;
   };
+  notify?: Partial<QNotifyCreateOptions>;
   dialog?: {
     props?: Partial<QDialogOptions>;
     buttons?: Partial<QBtnProps>;
