@@ -176,27 +176,29 @@
                   />
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label class="full-width ellipsis">
+                  <q-item-label :lines="1">
                     {{ file.name }}
                   </q-item-label>
+
                   <q-item-label
                     v-if="file.attachment_type"
                     :lines="1"
-                    class="full-width ellipsis"
                   >
                     {{ file.attachment_type }}
                   </q-item-label>
+
                   <q-item-label
                     v-if="file.description"
                     :lines="1"
-                    class="full-width ellipsis"
                   >
                     {{ file.description }}
                   </q-item-label>
+
                   <slot
                     :item="file"
                     name="item"
                   />
+
                   <q-item-label
                     :class="{'print-hide': !0,'text-positive' : (file.__status === 'uploaded' || Boolean(file.id)),'text-orange' : file.__status === 'uploading','text-amber-10' : file.__status === 'idle' || file.__status === 'failed'}"
                     caption
@@ -229,6 +231,7 @@
                     <span v-else>{{ file.__sizeLabel }} / {{ file.__progressLabel }}</span>
                   </q-item-label>
                 </q-item-section>
+
                 <q-item-section
                   v-if="!hideDeleteMedia || (hideDeleteMedia && !Boolean(file.id))"
                   class="print-hide"
