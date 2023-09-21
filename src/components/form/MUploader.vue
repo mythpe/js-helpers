@@ -195,7 +195,7 @@
                   </q-item-label>
 
                   <q-item-label
-                    :class="{'text-positive' : (file.__status === 'uploaded' || Boolean(file.id)),'text-orange' : file.__status === 'uploading','text-amber-10' : file.__status === 'idle' || file.__status === 'failed'}"
+                    :class="{'print-hide': !0,'text-positive' : (file.__status === 'uploaded' || Boolean(file.id)),'text-orange' : file.__status === 'uploading','text-amber-10' : file.__status === 'idle' || file.__status === 'failed'}"
                     caption
                   >
                     <q-icon
@@ -222,13 +222,17 @@
                     />
                   </q-item-label>
 
-                  <q-item-label caption>
+                  <q-item-label
+                    caption
+                    class="print-hide"
+                  >
                     <span v-if="file.size_to_string">{{ file.size_to_string }} | {{ file.type }}</span>
                     <span v-else>{{ file.__sizeLabel }} / {{ file.__progressLabel }}</span>
                   </q-item-label>
                 </q-item-section>
                 <q-item-section
                   v-if="!hideDeleteMedia || (hideDeleteMedia && !Boolean(file.id))"
+                  class="print-hide"
                   side
                   top
                 >
