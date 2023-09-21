@@ -18,14 +18,14 @@
   >
     <MFadeTransition>
       <div
-        v-if="errors.length"
+        v-if="Object.values(errors).length > 0"
         class="row items-center q-pa-sm bg-negative text-white q-mb-xs rounded-borders"
       >
         <q-icon
           :name="errorsIcon"
           left
         />
-        {{ errors[0] }}
+        {{ Object.values(errors)[0] }}
       </div>
     </MFadeTransition>
     <q-uploader
@@ -513,7 +513,7 @@ const hideDeleteMediaProp = computed(() => props.hideDeleteMedia)
 const useQuasarLoadingProp = computed(() => props.useQuasarLoading)
 const iconsSizeProp = computed(() => $myth.options.uploader?.iconsSize || props.iconsSize)
 const fieldNameProp = computed(() => props.fieldName)
-const errors = ref([])
+const errors = ref<any>([])
 /* Events Callback */
 const startUpload = async (files: readonly File[]) => {
   return new Promise((resolve, reject) => {
@@ -584,8 +584,12 @@ const onError = (info: MUploaderXhrInfo) => {
     if (xhr.responseText) {
       const response = JSON.parse(xhr.responseText)
       response?.message && alertError(response.message)
-      if (response.errors && fieldNameProp.value && typeof fieldNameProp.value !== 'function') {
-        errors.value = response.errors[fieldNameProp.value]
+      if (response.errors) {
+        if (typeof fieldNameProp.value !== 'function' && response.errors[fieldNameProp.value]) {
+          errors.value = response.errors[fieldNameProp.value]
+        } else {
+          errors.value = Object.values(response.errors)[0]
+        }
       }
     }
   } catch (e: any) {
