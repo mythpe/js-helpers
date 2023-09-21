@@ -193,7 +193,10 @@
                   >
                     {{ file.description }}
                   </q-item-label>
-
+                  <slot
+                    :item="file"
+                    name="item"
+                  />
                   <q-item-label
                     :class="{'print-hide': !0,'text-positive' : (file.__status === 'uploaded' || Boolean(file.id)),'text-orange' : file.__status === 'uploading','text-amber-10' : file.__status === 'idle' || file.__status === 'failed'}"
                     caption
@@ -215,10 +218,6 @@
                       size="sm"
                       target="_blank"
                       v-bind="$myth.options.uploader?.downloadBtnProps"
-                    />
-                    <slot
-                      :item="file"
-                      name="item"
                     />
                   </q-item-label>
 
