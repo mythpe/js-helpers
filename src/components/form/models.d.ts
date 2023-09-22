@@ -504,6 +504,7 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
   errorsIcon?: string | undefined;
   iconsSize?: string | undefined;
   displayMode?: 'list' | 'card' | undefined;
+  shadow?: string | undefined;
 }
 
 export interface MUploaderSlots extends QUploaderSlots {

@@ -146,16 +146,26 @@
               />
             </template>
           </MRow>
-          <q-list
-            v-else-if="displayMode === 'list'"
-            separator
+          <component
+            :is="displayMode === 'card' ? 'div': QList"
+            v-else-if="displayMode === 'list' || displayMode === 'card'"
+            :class="{'row': displayMode === 'card','q-gutter-sm': displayMode === 'card'}"
+            :separator="displayMode === 'list' ? !0 : undefined"
           >
             <template
               v-for="(file,i) in [...scope.files,...attachmentsRef]"
               :key="`item-${i}`"
             >
-              <q-item>
-                <q-item-section avatar>
+              <q-item
+                :class="displayMode === 'card' ? `rounded-borders ${shadow || ''}` : undefined"
+                :dense="displayMode === 'card'"
+                :style="displayMode === 'card' ? 'max-width: 300px; min-width: 200px;' : undefined"
+              >
+                <q-item-section
+                  v-if="displayMode === 'list'"
+                  avatar
+                  top
+                >
                   <q-icon
                     v-if="file.icon"
                     :name="file.icon"
@@ -175,8 +185,11 @@
                     color="primary"
                   />
                 </q-item-section>
-                <q-item-section>
-                  <q-item-label :lines="1">
+                <q-item-section :class="displayMode === 'card' ? 'q-mt-sm' : undefined">
+                  <q-item-label
+                    v-if="file.name && !file.id"
+                    :lines="1"
+                  >
                     {{ file.name }}
                   </q-item-label>
 
@@ -193,12 +206,10 @@
                   >
                     {{ file.description }}
                   </q-item-label>
-
                   <slot
                     :item="file"
                     name="item"
                   />
-
                   <q-item-label
                     :class="{'print-hide': !0,'text-positive' : (file.__status === 'uploaded' || Boolean(file.id)),'text-orange' : file.__status === 'uploading','text-amber-10' : file.__status === 'idle' || file.__status === 'failed'}"
                     caption
@@ -212,168 +223,70 @@
                       v-if="file.__status"
                       class="text-body2 q-pl-xs"
                     >{{ $te(`myth.uploader.statuses.${file.__status}`) ? $t(`myth.uploader.statuses.${file.__status}`) : file.__status }}</span>
-                    <MBtn
-                      v-if="Boolean(file.id)"
-                      :href="file.url"
-                      :icon="downloadFileIcon"
-                      :label="$t('myth.titles.download')"
-                      size="sm"
-                      target="_blank"
-                      v-bind="$myth.options.uploader?.downloadBtnProps"
-                    />
                   </q-item-label>
-
                   <q-item-label
+                    v-if="file.size_to_string || file.__sizeLabel"
                     caption
                     class="print-hide"
                   >
                     <span v-if="file.size_to_string">{{ file.size_to_string }} | {{ file.type }}</span>
-                    <span v-else>{{ file.__sizeLabel }} / {{ file.__progressLabel }}</span>
-                  </q-item-label>
-                </q-item-section>
-
-                <q-item-section
-                  v-if="!hideDeleteMedia || (hideDeleteMedia && !Boolean(file.id))"
-                  class="print-hide"
-                  side
-                  top
-                >
-                  <q-btn
-                    :disable="deleting"
-                    :icon="deleteMediaIcon"
-                    color="negative"
-                    dense
-                    flat
-                    round
-                    size="12px"
-                    type="a"
-                    v-bind="$myth.options.uploader?.removeBtnProps"
-                    @click="onClickDeleteAttachment(file)"
-                  >
-                    <q-tooltip>{{ $t('myth.uploader.deleteMedia') }}</q-tooltip>
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-list>
-          <MRow
-            v-else-if="displayMode === 'card'"
-            class="q-gutter-sm"
-          >
-            <template
-              v-for="(file,i) in [...scope.files,...attachmentsRef]"
-              :key="`item-${i}`"
-            >
-              <q-item
-                class="rounded-borders shadow-1"
-                dense
-                style="max-width: 250px"
-              >
-                <!--<q-item-section-->
-                <!--  avatar-->
-                <!--  class="items-center"-->
-                <!--&gt;-->
-                <!--  <q-icon-->
-                <!--    v-if="file.icon"-->
-                <!--    :name="file.icon"-->
-                <!--    :size="iconsSizeProp"-->
-                <!--    color="primary"-->
-                <!--  />-->
-                <!--  <q-img-->
-                <!--    v-else-if="Boolean(file.__img) || (file.url && file.type === 'image')"-->
-                <!--    :ratio="1"-->
-                <!--    :src="file.__img ? file.__img.src : file.url"-->
-                <!--    fit="contain"-->
-                <!--  />-->
-                <!--  <q-icon-->
-                <!--    v-else-->
-                <!--    :name="file.type === 'pdf' ? 'fa-regular fa-file-pdf' : (file.type === 'excel' ? 'fa-regular fa-file-excel' : (file.type === 'image' ? 'o_image' :defaultFileIcon))"-->
-                <!--    :size="iconsSizeProp"-->
-                <!--    color="primary"-->
-                <!--  />-->
-                <!--</q-item-section>-->
-                <q-item-section>
-                  <q-item-label :lines="1">
-                    {{ file.name }}
+                    <span v-else-if="file.__sizeLabel">{{ file.__sizeLabel }} / {{ file.__progressLabel }}</span>
                   </q-item-label>
                   <q-item-label
-                    v-if="file.attachment_type"
-                    :lines="1"
-                    class="full-width ellipsis"
+                    v-if="(Boolean(file.id) && file.url) || (!hideDeleteMedia || (hideDeleteMedia && !Boolean(file.id)))"
+                    class="print-hide"
                   >
-                    {{ file.attachment_type }}
-                  </q-item-label>
-                  <q-item-label
-                    v-if="file.description"
-                    :lines="1"
-                    class="full-width ellipsis"
-                  >
-                    {{ file.description }}
-                  </q-item-label>
-
-                  <q-item-label
-                    :class="{'text-positive' : (file.__status === 'uploaded' || Boolean(file.id)),'text-orange' : file.__status === 'uploading','text-amber-10' : file.__status === 'idle' || file.__status === 'failed'}"
-                    caption
-                  >
-                    <q-icon
-                      v-if="file.__status"
-                      :name="file.__status === 'uploaded' ? 'o_check' : ( file.__status === 'uploading' ? 'o_cloud_sync' : (file.__status === 'idle' ? 'o_hourglass_empty' : (file.__status === 'failed' ? 'o_error_outline' : undefined)))"
-                      size="22px"
-                    />
-                    <span
-                      v-if="file.__status"
-                      class="text-body2 q-pl-xs"
-                    >{{ $te(`myth.uploader.statuses.${file.__status}`) ? $t(`myth.uploader.statuses.${file.__status}`) : file.__status }}</span>
                     <MBtn
-                      v-if="Boolean(file.id)"
+                      v-if="Boolean(file.id) && file.url"
                       :href="file.url"
                       :icon="downloadFileIcon"
                       :label="$t('myth.titles.download')"
-                      size="sm"
+                      dense
+                      flat
                       target="_blank"
+                      type="a"
                       v-bind="$myth.options.uploader?.downloadBtnProps"
                     />
-                    <slot
-                      :item="file"
-                      name="item"
-                    />
-                  </q-item-label>
-
-                  <q-item-label caption>
-                    <span v-if="file.size_to_string">{{ file.size_to_string }} | {{ file.type }}</span>
-                    <span v-else>{{ file.__sizeLabel }} / {{ file.__progressLabel }}</span>
+                    <MBtn
+                      v-if="(!hideDeleteMedia || (hideDeleteMedia && !Boolean(file.id))) && displayMode === 'list'"
+                      :disable="deleting || scope.isBusy || scope.isUploading"
+                      :icon="deleteMediaIcon"
+                      :label="$t(file.id ? 'myth.uploader.deleteMedia' : 'myth.uploader.removeMedia')"
+                      color="negative"
+                      dense
+                      flat
+                      type="a"
+                      v-bind="$myth.options.uploader?.removeBtnProps"
+                      @click="onClickDeleteAttachment(file)"
+                    >
+                      <q-tooltip>{{ $t(file.id ? 'myth.uploader.deleteMedia' : 'myth.uploader.removeMedia') }}</q-tooltip>
+                    </MBtn>
                   </q-item-label>
                 </q-item-section>
                 <q-item-section
-                  v-if="!hideDeleteMedia || (hideDeleteMedia && !Boolean(file.id))"
-                  class="justify-between"
+                  v-if="(!hideDeleteMedia || (hideDeleteMedia && !Boolean(file.id))) && displayMode === 'card'"
                   side
                   top
                 >
-                  <q-btn
-                    :disable="deleting"
-                    :icon="deleteMediaIcon"
-                    color="negative"
-                    dense
-                    flat
-                    round
-                    size="12px"
-                    type="a"
-                    v-bind="$myth.options.uploader?.removeBtnProps"
-                    @click="onClickDeleteAttachment(file)"
-                  >
-                    <q-tooltip>{{ $t('myth.uploader.deleteMedia') }}</q-tooltip>
-                  </q-btn>
-                  <q-icon
-                    :name="file.type === 'pdf' ? 'fa-regular fa-file-pdf' : (file.type === 'excel' ? 'fa-regular fa-file-excel' : (file.type === 'image' ? 'o_image' :defaultFileIcon))"
-                    :size="iconsSizeProp"
-                    class="q-mb-sm"
-                    color="primary"
-                  />
+                  <q-item-label>
+                    <q-btn
+                      :disable="deleting || scope.isBusy || scope.isUploading"
+                      :icon="deleteMediaIcon"
+                      color="negative"
+                      dense
+                      flat
+                      round
+                      type="a"
+                      v-bind="$myth.options.uploader?.removeBtnProps"
+                      @click="onClickDeleteAttachment(file)"
+                    >
+                      <q-tooltip>{{ $t(file.id ? 'myth.uploader.deleteMedia' : 'myth.uploader.removeMedia') }}</q-tooltip>
+                    </q-btn>
+                  </q-item-label>
                 </q-item-section>
               </q-item>
             </template>
-          </MRow>
+          </component>
         </MFadeXTransition>
       </template>
     </q-uploader>
@@ -381,7 +294,7 @@
 </template>
 
 <script lang="ts" setup>
-import { QUploader, useQuasar } from 'quasar'
+import { QList, QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
 import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
 import useAcceptProp from '../../composition/useAcceptProp'
@@ -431,6 +344,7 @@ interface Props {
   errorsIcon?: MUploaderProps['errorsIcon'];
   iconsSize?: MUploaderProps['iconsSize'];
   displayMode?: MUploaderProps['displayMode'];
+  shadow?: MUploaderProps['shadow'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -473,7 +387,8 @@ const props = withDefaults(defineProps<Props>(), {
   errorsIcon: () => 'o_error_outline',
   batch: () => !1,
   iconsSize: () => '30px',
-  displayMode: () => 'card'
+  displayMode: () => 'card',
+  shadow: () => 'shadow-5'
 })
 
 interface Events {
@@ -667,10 +582,12 @@ const deleteUploaderFile = (file: File) => {
 }
 const onClickDeleteAttachment = (file: File | MUploaderMediaItem) => {
   if (file instanceof File) {
-    deleteUploaderFile(file)
-    return
+    $myth.confirmMessage().onOk(() => {
+      deleteUploaderFile(file)
+    })
+  } else {
+    deleteMedia(file)
   }
-  deleteMedia(file)
 }
 
 watch(deleting, (v) => (quasarLoading.value = v))
@@ -684,6 +601,7 @@ watch(() => uploader.value?.isUploading, (v) => {
 
 <script lang="ts">
 export default {
+  name: 'MUploader',
   inheritAttrs: !1
 }
 </script>
