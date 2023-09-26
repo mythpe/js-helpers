@@ -10,4 +10,5 @@ export type UseModelsOptions = {
   lazy?: boolean;
   isPanel?: boolean;
   method?: string;
+  timeout?: number | undefined;
 }

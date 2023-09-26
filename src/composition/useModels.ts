@@ -171,7 +171,9 @@ export function useModel<T extends Partial<Item> = Item> (name: string, id: stri
           if (!fetched.value) {
             fetched.value = !0
           }
-          fetching.value = !1
+          setTimeout(() => {
+            fetching.value = !1
+          }, opts?.timeout !== undefined ? opts?.timeout : 100)
         })
     })
   }

@@ -67,9 +67,7 @@
           />
         </template>
       </q-input>
-      <slot
-        v-bind="fieldScope"
-      />
+      <slot v-bind="fieldScope" />
     </VeeField>
   </MCol>
 </template>

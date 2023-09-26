@@ -8,17 +8,12 @@
 
 .m--container {
   padding: 8px;
-
-  div.m--row + div.m--row {
-    margin-top: 1rem;
-  }
 }
 
-.m--form {
-
-  div.m--row + div.m--row {
-    margin-top: 1rem;
-  }
+.m--row + .m--row,
+.m--form + .m--row,
+.m--row + .m--form {
+  margin-top: 1rem;
 }
 
 .rtl {
