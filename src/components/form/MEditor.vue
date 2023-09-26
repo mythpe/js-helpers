@@ -53,7 +53,7 @@ interface Props {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  modelValue: string;
+  modelValue?: string | undefined;
   minHeight?: string | undefined;
   name?: string | undefined;
   label?: string | undefined;
