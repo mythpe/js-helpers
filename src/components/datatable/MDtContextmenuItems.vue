@@ -32,7 +32,7 @@
 >
 
 import { MDatatableDialogsOptions, MDatatableProps } from './models'
-import { computed, UnwrapRef } from 'vue'
+import { UnwrapRef } from 'vue'
 
 interface Props {
   items: MDatatableProps['contextItems'],
@@ -41,7 +41,7 @@ interface Props {
   displayMode?: 'icon' | 'item'
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   items: () => ([]),
   item: undefined,
   index: undefined,

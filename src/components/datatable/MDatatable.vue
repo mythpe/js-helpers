@@ -112,8 +112,8 @@
                       >
                         <template v-if="col.field.slice(-4) === '_url'">
                           <MDtBtn
-                            icon="ion-ios-eye"
                             :src="col.value"
+                            icon="ion-ios-eye"
                             @click="openImageDialog(col.value)"
                           />
                         </template>
@@ -816,8 +816,8 @@
           >
             <q-img
               v-if="imageDialog.src"
-              :src="imageDialog.src"
               :height="`${$q.screen.height - 70}px`"
+              :src="imageDialog.src"
               class="self-center"
               fit="contain"
             />
