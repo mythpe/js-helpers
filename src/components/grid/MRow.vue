@@ -60,7 +60,7 @@ export default defineComponent({
     :col="undefined"
     :default-gutters="undefined"
     :gutters="undefined"
-    v-bind="{...($myth.options.row),...$attrs}"
+    v-bind="{...($myth.options.row),...($attrs || {})}"
   >
     <slot />
   </div>

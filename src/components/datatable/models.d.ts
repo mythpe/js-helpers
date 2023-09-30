@@ -108,7 +108,7 @@ export interface MDtBtnProps extends MBtnProps {
   show?: boolean;
   update?: boolean;
   destroy?: boolean;
-  tooltip?: string;
+  tooltip?: string | undefined;
   color?: string;
   icon?: string;
   listItem?: boolean;
@@ -116,7 +116,7 @@ export interface MDtBtnProps extends MBtnProps {
   flat?: boolean;
   round?: boolean;
   dense?: boolean;
-  label?: string;
+  label?: string | undefined;
 }
 
 export interface MDtBtnSlots extends MBtnSlots {
@@ -149,6 +149,7 @@ export type MDatatableScope = {
 export type GenericMDtBtn = Record<string, any> & {
   name: string;
   label?: string;
+  tooltip?: string;
   click?: (item: UnwrapRef<MDatatableDialogsOptions['item']>, index: UnwrapRef<MDatatableDialogsOptions['index']>) => void;
   multiClick?: (items: MDtItem[]) => void;
   showIf?: boolean | ((item: UnwrapRef<MDatatableDialogsOptions['item']>, index: UnwrapRef<MDatatableDialogsOptions['index']>) => boolean);
@@ -230,6 +231,14 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
    * Show Fab Add btn
    */
   noAddBtnFab?: boolean;
+  /**
+   * make datatable fullscreen mode
+   */
+  noFullscreen?: boolean;
+  /**
+   * Auto actions body headers 'control'
+   */
+  noBodyControl?: boolean;
 }
 
 export interface MDtAvatarProps extends QAvatarProps {

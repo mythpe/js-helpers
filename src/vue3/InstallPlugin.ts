@@ -12,7 +12,7 @@ import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { INJECT_KEY } from './Const'
 import { Dates, Helpers, Str } from '../utils'
 import _ from 'lodash'
-import { copyToClipboard, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions } from 'quasar'
+import { copyToClipboard, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
 
 /**
@@ -32,10 +32,10 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   const helpers = {
     storage: {
       /**
-    * Set item in storage
-    * @param key Entry key
-    * @param value Entry value
-    */
+       * Set item in storage
+       * @param key Entry key
+       * @param value Entry value
+       */
       set: (key: string, value: | Date | RegExp | number | boolean | ((...params: readonly any[]) => any) | any | readonly any[] | string | null) => {
         LocalStorage.set(key, value)
       },
@@ -73,18 +73,18 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       const pluralize = Str.pascalCase(_.pluralize(lastRouteName))
       const singular = Str.pascalCase(_.singularize(lastRouteName))
       const keys = _.filter(_.uniq([
-    `routes.${routeName}`,
-    `routes.${routePath}`,
-    `${lastRouteName}Page.title`,
-    `${_.camelCase(lastRouteName)}Page.title`,
-    `choice.${pluralize}`,
-    `choice.${singular}`,
-    `replace.${lastRouteName}_details`,
-    `replace.${lastRouteName}`,
-    pluralize,
-    _.snakeCase(pluralize),
-    singular,
-    _.snakeCase(singular)
+        `routes.${routeName}`,
+        `routes.${routePath}`,
+        `${lastRouteName}Page.title`,
+        `${_.camelCase(lastRouteName)}Page.title`,
+        `choice.${pluralize}`,
+        `choice.${singular}`,
+        `replace.${lastRouteName}_details`,
+        `replace.${lastRouteName}`,
+        pluralize,
+        _.snakeCase(pluralize),
+        singular,
+        _.snakeCase(singular)
       ]))
 
       const { t, te } = baseI18n.value?.global
@@ -122,10 +122,10 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       return defaultValue
     },
     /**
-   * Custom transformer
-   * @param headers
-   * @param options
-   */
+     * Custom transformer
+     * @param headers
+     * @param options
+     */
     parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[] {
       const defaultOptions: Partial<ParseHeaderOptions> = {
         controlKey: 'control',
@@ -222,11 +222,11 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       return result
     },
     /**
-   * Customized helper to get attribute name
-   *
-   * @param string
-   * @param args
-   */
+     * Customized helper to get attribute name
+     *
+     * @param string
+     * @param args
+     */
     parseAttribute (string: string | { text: string } | any, ...args: any): string {
       const defaultValue = ''
       if (!string) return string
@@ -269,9 +269,9 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       return string
     },
     /**
-   * Copy text
-   * @param text
-   */
+     * Copy text
+     * @param text
+     */
     async copyText (text: string | any): Promise<void> {
       return copyToClipboard(text)
     },
@@ -293,19 +293,19 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       title = title || t('messages.are_you_sure') || ''
       message = message || ''
       opts = opts || {}
-      const btnsProps = {
+      const buttonsProps = {
         ...(options?.button || {}),
-        ...(options?.dialog?.buttons || {})
+        ...(options?.confirmDialog?.buttons || {})
       }
-      const okProps = options?.dialog?.okProps || {}
-      const cancelProps = options?.dialog?.cancelProps || {}
-      const dialogProps = options?.dialog?.props || {}
+      const okProps = options?.confirmDialog?.okProps || {}
+      const cancelProps = options?.confirmDialog?.cancelProps || {}
+      const dialogProps = options?.confirmDialog?.props || {}
       return Dialog.create({
         title,
         message,
         focus: 'none',
         cancel: {
-          ...btnsProps,
+          ...buttonsProps,
           ...cancelProps,
           color: cancelProps.color || 'positive'
         },
@@ -313,7 +313,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           label: t('yes'),
-          ...btnsProps,
+          ...buttonsProps,
           ...okProps,
           color: okProps.color || 'negative'
         },
@@ -323,6 +323,10 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       })
     }
   }
+
+  const isSmall = computed(() => Screen.lt.md)
+  const popupBreakpoint = computed(() => isSmall.value ? 800 : 450)
+
   const r = reactive<UseMythVue>({
     i18n: baseI18n.value,
     baseUrl: apiBaseUrl.value,
@@ -332,6 +336,28 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
     str: Str,
     dates: Dates,
     helpers: Helpers,
+    tools: {
+      isSmall,
+      popupBreakpoint,
+      transitions: {
+        slideLeftFade: {
+          hide: computed(() => isSmall.value ? 'slide-left' : 'fade'),
+          show: computed(() => isSmall.value ? 'slide-right' : 'fade')
+        },
+        slideRightFade: {
+          hide: computed(() => isSmall.value ? 'slide-right' : 'fade'),
+          show: computed(() => isSmall.value ? 'slide-left' : 'fade')
+        },
+        slideDownFade: {
+          hide: computed(() => isSmall.value ? 'slide-down' : 'fade'),
+          show: computed(() => isSmall.value ? 'slide-up' : 'fade')
+        },
+        slideUpFade: {
+          hide: computed(() => isSmall.value ? 'slide-up' : 'fade'),
+          show: computed(() => isSmall.value ? 'slide-down' : 'fade')
+        }
+      }
+    },
     ...helpers
   })
 
@@ -386,6 +412,11 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.component('MList', defineAsyncComponent(() => import('../components/grid/MList.vue')))
   app.component('MNoResultImg', defineAsyncComponent(() => import('../components/grid/MNoResultImg.vue')))
   app.component('MRow', defineAsyncComponent(() => import('../components/grid/MRow.vue')))
+
+  // Modal
+  app.component('MDialog', defineAsyncComponent(() => import('../components/modal/MDialog.vue')))
+  app.component('MModalMenu', defineAsyncComponent(() => import('../components/modal/MModalMenu.vue')))
+  app.component('MTooltip', defineAsyncComponent(() => import('../components/modal/MTooltip.vue')))
 
   // Transition
   app.component('MFadeTransition', defineAsyncComponent(() => import('../components/transition/MFadeTransition.vue')))

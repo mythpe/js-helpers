@@ -21,7 +21,7 @@
         :label="getLabel"
         :placeholder="getPlaceholder"
         stack-label
-        v-bind="{...($myth.options.input||{}),...$attrs}"
+        v-bind="{...($myth.options.input||{}),...($attrs || {})}"
       >
         <template #control>
           <div
@@ -48,7 +48,7 @@
         :label="getLabel"
         :model-value="inputValue"
         :placeholder="getPlaceholder"
-        v-bind="{...($myth.options.input||{}),...$attrs,...fieldScope.field}"
+        v-bind="{...($myth.options.input||{}),...($attrs || {}),...fieldScope.field}"
         @update:model-value="fieldScope.handleChange"
       >
         <template

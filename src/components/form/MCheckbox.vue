@@ -30,7 +30,7 @@
         :model-value="modelValue"
         :placeholder="getPlaceholder"
         :val="val"
-        v-bind="{...($myth.options.checkbox),...$attrs,...fieldProps.field}"
+        v-bind="{...($myth.options.checkbox),...($attrs || {}),...fieldProps.field}"
       >
         <template
           v-for="(_,slot) in $slots"

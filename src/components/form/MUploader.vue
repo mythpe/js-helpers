@@ -39,7 +39,7 @@
       :label="label"
       :readonly="readonly"
       style="width: 100%;max-height: 450px;"
-      v-bind="{...($myth.options.uploader?.props || {}),...$attrs}"
+      v-bind="{...($myth.options.uploader?.props || {}),...($attrs || {})}"
       @failed="onError"
       @rejected="onReject"
       @uploaded="onFinishUpload"

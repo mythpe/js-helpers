@@ -10,6 +10,7 @@ import { AxiosInstance } from 'axios'
 import {
   GlobalComponentConstructor,
   QBtnProps,
+  QCardProps,
   QCheckboxProps,
   QDateProps,
   QDialogOptions,
@@ -29,6 +30,7 @@ import {
   QSelectProps,
   QTimeProps,
   QToggleProps,
+  QTooltipProps,
   QUploaderProps
 } from 'quasar'
 import {
@@ -53,6 +55,8 @@ import {
   MDatatableSlots,
   MDateProps,
   MDateSlots,
+  MDialogProps,
+  MDialogSlots,
   MDtAvatarProps,
   MDtAvatarSlots,
   MDtBtnProps,
@@ -69,6 +73,8 @@ import {
   MInputSlots,
   MListProps,
   MListSlots,
+  MModalMenuProps,
+  MModalMenuSlots,
   MPickerProps,
   MPickerSlots,
   MRadioProps,
@@ -81,12 +87,14 @@ import {
   MTimeSlots,
   MToggleProps,
   MToggleSlots,
+  MTooltipProps,
+  MTooltipSlots,
   MTransitionsSlots,
   MUploaderProps,
   MUploaderSlots
 } from '../components'
 import { I18n } from 'vue-i18n'
-import { TransitionProps } from 'vue'
+import { ComputedRef, TransitionProps } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { MythApiServicesSchema, ParseHeaderOptions, ParseHeadersHeaderAgr, ParseHeadersType, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
 import { Dates, Helpers, Str } from '../utils'
@@ -97,7 +105,8 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     mapsOptions?: Record<string | number | symbol, any>;
   };
   notify?: Partial<QNotifyCreateOptions>;
-  dialog?: {
+  dialog?: Partial<QDialogOptions>;
+  confirmDialog?: {
     props?: Partial<QDialogOptions>;
     buttons?: Partial<QBtnProps>;
     okProps?: Partial<QBtnProps>;
@@ -128,6 +137,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
       filter?: Partial<MDtBtnProps>;
       refresh?: Partial<MDtBtnProps>;
       more?: Partial<MDtBtnProps>;
+      fullscreen?: Partial<MDtBtnProps>;
       moreMenu?: Partial<QMenuProps>;
       moreList?: Partial<QListProps>;
       moreItem?: Partial<QItemProps>;
@@ -136,9 +146,10 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
       btn?: Partial<MDtBtnProps>;
     },
     searchInput?: {
-      props: Partial<QInputProps>;
-      menuProps: Partial<QMenuProps>;
-      menuBtn: Partial<QBtnProps>;
+      props?: Partial<QInputProps>;
+      optionsIcon?: string;
+      menuProps?: Partial<QMenuProps>;
+      menuBtn?: Partial<QBtnProps>;
     };
     dialogButtonsProps?: Partial<MBtnProps>;
   };
@@ -167,6 +178,12 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
   container?: Partial<MContainerProps>;
   row?: Partial<MRowProps>;
   col?: Partial<MColProps>;
+  modalMenu?: {
+    props?: Partial<MModalMenuProps>;
+    card?: Partial<QCardProps>;
+    closeBtn?: Partial<QItemProps>;
+  };
+  tooltip?: Partial<QTooltipProps>;
 }
 
 export type MythApiAxiosType = Partial<AxiosInstance>
@@ -194,6 +211,28 @@ export type UseMythVue = {
   str: typeof Str,
   dates: typeof Dates,
   helpers: typeof Helpers,
+  tools: {
+    isSmall: ComputedRef<boolean>;
+    popupBreakpoint: ComputedRef<number>;
+    transitions: {
+      slideLeftFade: {
+        hide: ComputedRef<string>;
+        show: ComputedRef<string>;
+      },
+      slideRightFade: {
+        hide: ComputedRef<string>;
+        show: ComputedRef<string>;
+      },
+      slideDownFade: {
+        hide: ComputedRef<string>;
+        show: ComputedRef<string>;
+      },
+      slideUpFade: {
+        hide: ComputedRef<string>;
+        show: ComputedRef<string>;
+      },
+    }
+  },
   getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string;
   parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[];
   parseAttribute (string: string | { text: string } | any, ...args: any[]): string;
@@ -239,6 +278,9 @@ declare module '@vue/runtime-core' {
     MRow: GlobalComponentConstructor<MRowProps, MRowSlots>;
     MFadeTransition: GlobalComponentConstructor<TransitionProps, MTransitionsSlots>;
     MFadeXTransition: GlobalComponentConstructor<TransitionProps, MTransitionsSlots>;
+    MModalMenu: GlobalComponentConstructor<MModalMenuProps, MModalMenuSlots>;
+    MTooltip: GlobalComponentConstructor<MTooltipProps, MTooltipSlots>;
+    MDialog: GlobalComponentConstructor<MDialogProps, MDialogSlots>;
   }
 
   interface ComponentCustomProperties {

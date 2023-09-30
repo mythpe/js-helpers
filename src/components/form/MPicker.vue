@@ -73,7 +73,7 @@
               :multiple="multiple"
               :range="range"
               today-btn
-              v-bind="{...($myth.options.date||{}),...$attrs}"
+              v-bind="{...($myth.options.date||{}),...($attrs || {})}"
             >
               <div class="row items-center justify-end">
                 <MBtn
@@ -95,7 +95,7 @@
               v-model="dateRef"
               :mask="format"
               now-btn
-              v-bind="{...($myth.options.time||{}),...$attrs}"
+              v-bind="{...($myth.options.time||{}),...($attrs || {})}"
             >
               <div class="row items-center justify-end">
                 <MBtn

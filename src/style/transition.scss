@@ -46,3 +46,22 @@
 //   opacity: 1;
 //   transform: translateY(0);
 // }
+
+
+.m__transition__fade-move, /* apply transition to moving elements */
+.m__transition__fade-enter-active,
+.m__transition__fade-leave-active {
+  transition: all 0.5s ease;
+}
+
+.m__transition__fade-enter-from,
+.m__transition__fade-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.m__transition__fade-leave-active {
+  position: absolute;
+}

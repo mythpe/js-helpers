@@ -6,6 +6,54 @@
   - Github: https://github.com/mythpe
   -->
 
+<template>
+  <q-item
+    v-if="listItem"
+    v-close-popup
+    clickable
+    dense
+    v-bind="$attrs"
+    @click="$emit('click',$event)"
+  >
+    <q-item-section
+      side
+      avatar
+    >
+      <q-icon
+        :color="getColor"
+        :name="getIcon"
+      />
+    </q-item-section>
+    <q-item-section>
+      <q-item-label>
+        <slot>
+          {{ label || $attrs.label }}
+        </slot>
+      </q-item-label>
+    </q-item-section>
+  </q-item>
+  <q-btn
+    v-else
+    :color="getColor"
+    :dense="dense"
+    :fab-min="fabMini"
+    :flat="flat"
+    :icon="getIcon"
+    :label="label"
+    :round="round"
+    v-bind="$attrs"
+    @click="$emit('click',$event)"
+  >
+    <q-tooltip
+      v-if="hasTooltip"
+      class="gt-sm"
+    >
+      {{ getTooltip }}
+    </q-tooltip>
+    <slot />
+  </q-btn>
+</template>
+
 <script
   lang="ts"
   setup
@@ -15,18 +63,18 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
-  show?: boolean;
-  update?: boolean;
-  destroy?: boolean;
-  tooltip?: string;
-  color?: string;
-  icon?: string;
+  show?: boolean | undefined;
+  update?: boolean | undefined;
+  destroy?: boolean | undefined;
+  tooltip?: string | null | undefined;
+  color?: string | undefined;
+  icon?: string | undefined;
   listItem?: boolean;
-  fabMini?: boolean;
-  flat?: boolean;
-  round?: boolean;
-  dense?: boolean;
-  label?: string;
+  fabMini?: boolean | undefined;
+  flat?: boolean | undefined;
+  round?: boolean | undefined;
+  dense?: boolean | undefined;
+  label?: string | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -37,10 +85,10 @@ const props = withDefaults(defineProps<Props>(), {
   icon: undefined,
   tooltip: undefined,
   listItem: !1,
-  fabMini: undefined,
-  flat: !0,
-  round: undefined,
-  dense: undefined,
+  fabMini: () => !0,
+  flat: () => !0,
+  round: () => !0,
+  dense: () => !0,
   label: undefined
 })
 type Events = {
@@ -66,11 +114,11 @@ const getTooltip = computed(() => {
 })
 const getIcon = computed(() => {
   if (props.show) {
-    return 'o_visibility'
+    return 'ion-ios-eye'
   } else if (props.update) {
-    return 'o_edit'
+    return 'ion-ios-create'
   } else if (props.destroy) {
-    return 'o_delete'
+    return 'ion-ios-trash'
   }
   return props.icon
 })
@@ -80,50 +128,8 @@ const getColor = computed<string | undefined>(() => {
   } else if (props.update) {
     return undefined
   } else if (props.destroy) {
-    return 'negative'
+    return undefined
   }
   return props.color
 })
 </script>
-
-<template>
-  <q-item
-    v-if="listItem"
-    v-close-popup
-    clickable
-    v-bind="$attrs"
-    @click="$emit('click',$event)"
-  >
-    <q-item-section avatar>
-      <q-icon
-        :color="getColor"
-        :name="getIcon"
-      />
-    </q-item-section>
-    <q-item-section>
-      <q-item-label>
-        <slot>
-          {{ label || $attrs.label }}
-        </slot>
-      </q-item-label>
-    </q-item-section>
-  </q-item>
-  <q-btn
-    v-else
-    :color="getColor"
-    :dense="dense"
-    :fab-mini="fabMini"
-    :flat="flat"
-    :icon="getIcon"
-    :label="label"
-    :round="round"
-    no-caps
-    v-bind="$attrs"
-    @click="$emit('click',$event)"
-  >
-    <q-tooltip v-if="hasTooltip">
-      {{ getTooltip }}
-    </q-tooltip>
-    <slot />
-  </q-btn>
-</template>

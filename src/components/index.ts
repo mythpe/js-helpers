@@ -38,6 +38,8 @@ import MNoResultImg from './grid/MNoResultImg.vue'
 import MRow from './grid/MRow.vue'
 import MFadeTransition from './transition/MFadeTransition.vue'
 import MFadeXTransition from './transition/MFadeXTransition.vue'
+import MModalMenu from './modal/MModalMenu.vue'
+// import MModalMenu from './modal/MModalMenu.vue'
 
 export {
   MDatatable,
@@ -70,7 +72,8 @@ export {
   MNoResultImg,
   MRow,
   MFadeTransition,
-  MFadeXTransition
+  MFadeXTransition,
+  MModalMenu
 }
 
 export * from './datatable/models.d'
@@ -78,5 +81,6 @@ export * from './form/models.d'
 export * from './google/models.d'
 export * from './grid/models.d'
 export * from './transition/models.d'
+export * from './modal/models.d'
 
 export default {}

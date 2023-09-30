@@ -6,6 +6,28 @@
   - Github: https://github.com/mythpe
   -->
 
+<template>
+  <MInput
+    :type="inputType"
+    v-bind="$attrs"
+  >
+    <template
+      v-if="passwordIcon"
+      #prepend
+    >
+      <q-icon name="password" />
+    </template>
+    <template #after>
+      <q-btn
+        :icon="'ion-ios-eye' + (inputType !== 'password' ? '-off' : '')"
+        flat
+        round
+        @click="() => inputType = inputType === 'text' ? 'password' : 'text'"
+      />
+    </template>
+  </MInput>
+</template>
+
 <script lang="ts" setup>
 import { ref } from 'vue'
 
@@ -24,25 +46,3 @@ export default {
   }
 }
 </script>
-
-<template>
-  <MInput
-    :type="inputType"
-    v-bind="$attrs"
-  >
-    <template
-      v-if="passwordIcon"
-      #prepend
-    >
-      <q-icon name="password" />
-    </template>
-    <template #append>
-      <q-btn
-        :icon="inputType !== 'password' ? 'o_visibility_off' : 'o_visibility'"
-        flat
-        round
-        @click="() => inputType = inputType === 'text' ? 'password' : 'text'"
-      />
-    </template>
-  </MInput>
-</template>
