@@ -8,7 +8,7 @@
 
 import { AxiosResponse } from 'axios'
 import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
-import { ComputedRef, Ref, UnwrapRef, VNode } from 'vue'
+import { ComputedRef, Ref, UnwrapNestedRefs, UnwrapRef, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
 import { AxiosMetaResponse, StubSchema } from '../../types'
 
@@ -130,20 +130,27 @@ export interface MDtBtnSlots extends MBtnSlots {
   loading: () => VNode[];
 }
 
+type UnwrapNestedTableOptionsType = UnwrapNestedRefs<MDatatableOptions>;
 export type MDatatableScope = {
   openShowDialog: (item: MDtItem, index?: MDtItemIndex) => void;
+  openShowDialogNoIndex: (item: MDtItem) => void;
   closeShowDialog: () => void;
   openUpdateDialog: (item: MDtItem, index?: MDtItemIndex) => void;
+  openUpdateDialogNoIndex: (item: MDtItem) => void;
   openCreateDialog: (item?: MDtItem) => void;
   closeFormDialog: () => void;
   onDeleteItem: (item: MDtItem, index: number) => void;
   refresh: (done?: () => void) => void;
   refreshNoUpdate: (done?: () => void) => void;
-  tableOptions: Ref<MDatatableOptions>;
+  tableOptions: UnwrapNestedTableOptionsType;
   isSingleSelectedItem: ComputedRef<boolean>;
   firstSelectedItem: ComputedRef<MDtItem>;
   updateDatatableItem: (item: MDtItem, index?: MDtItemIndex) => void;
   updateSelectedItems: ((selected: MDtItem[]) => void);
+  imageDialog: UnwrapNestedRefs<{ value: boolean, src?: string }>;
+  openImageDialog: (src: string) => void;
+  closeImageDialog: () => void;
+
 }
 
 export type GenericMDtBtn = Record<string, any> & {
@@ -158,7 +165,7 @@ export type GenericMDtBtn = Record<string, any> & {
 }
 
 export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-cell-${string}`> {
-  'top-right': ((scope: { tableOptions: MDatatableOptions, paginationOptions: MDatatablePagination }) => VNode[]);
+  'top-right': ((scope: { tableOptions: UnwrapNestedTableOptionsType, paginationOptions: MDatatablePagination }) => VNode[]);
 
   tools: ((scope: { dt: MDatatableScope, }) => VNode[]);
 

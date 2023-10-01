@@ -1736,10 +1736,26 @@ export default {
     const rowsPerPageOptions = computed(() => props.rowsPerPageOptions)
     const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))
 
+    const imageDialog = reactive<{ value: boolean, src?: string }>({
+      value: !1,
+      src: undefined
+    })
+    const openImageDialog = (src: string) => {
+      imageDialog.src = src
+      nextTick(() => {
+        imageDialog.value = !0
+      })
+    }
+    const closeImageDialog = () => {
+      imageDialog.value = !1
+      nextTick(() => {
+        imageDialog.src = undefined
+      })
+    }
+
     onMounted(() => {
       refresh()
     })
-
     watch(loading, v => {
       if (v) {
         $q.loading.show()
@@ -1777,25 +1793,11 @@ export default {
       isSingleSelectedItem,
       firstSelectedItem,
       updateDatatableItem,
-      updateSelectedItems
+      updateSelectedItems,
+      imageDialog,
+      openImageDialog,
+      closeImageDialog
     }))
-
-    const imageDialog = reactive<{ value: boolean, src?: string }>({
-      value: !1,
-      src: undefined
-    })
-    const openImageDialog = (src: string) => {
-      imageDialog.src = src
-      nextTick(() => {
-        imageDialog.value = !0
-      })
-    }
-    const closeImageDialog = () => {
-      imageDialog.value = !1
-      nextTick(() => {
-        imageDialog.src = undefined
-      })
-    }
 
     return {
       contextmenu,
