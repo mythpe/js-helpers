@@ -6,6 +6,71 @@
   - Github: https://github.com/mythpe
   -->
 
+<template>
+  <MCol
+    :auto="auto"
+    :class="$attrs.class"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :sm="sm"
+    :xs="xs"
+  >
+    <VeeField
+      v-slot="fieldScope"
+      v-model="inputValue"
+      :name="name"
+      :rules="getRules"
+      v-bind="$attrs"
+    >
+      <q-file
+        ref="fileInput"
+        :accept="accepts.join(',')"
+        :borderless="borderless"
+        :clearable="clearable"
+        :dense="dense"
+        :error="fieldScope.errors.length > 0"
+        :error-message="fieldScope.errorMessage"
+        :filled="filled"
+        :hide-bottom-space="hideBottomSpace"
+        :label="getLabel"
+        :loading="loading"
+        :model-value="fieldScope.value"
+        :outlined="outlined"
+        :placeholder="getPlaceholder"
+        :stack-label="stackLabel"
+        :standout="standout"
+        v-bind="{...($myth.options.input||{}),...($attrs || {})}"
+        @blur="fieldScope.handleBlur"
+        @change="fieldScope.handleChange"
+        @clear="fieldScope.handleBlur"
+        @update:model-value="fieldScope.handleChange"
+      >
+        <template #prepend>
+          <slot name="prepend">
+            <q-icon name="ion-ios-attach" />
+          </slot>
+        </template>
+        <template
+          v-for="(_,slot) in $slots"
+          :key="slot"
+          #[slot]="inputSlot"
+        >
+          <slot
+            v-if="inputSlot"
+            :name="slot"
+            v-bind="inputSlot"
+          />
+          <slot
+            v-else
+            :name="slot"
+          />
+        </template>
+      </q-file>
+    </VeeField>
+  </MCol>
+</template>
+
 <script lang="ts" setup>
 
 import { QFile } from 'quasar'
@@ -58,7 +123,7 @@ const props = withDefaults(defineProps<Props>(), {
   lg: undefined,
   xl: undefined,
   accept: undefined,
-  images: !0,
+  images: !1,
   video: !1,
   pdf: !1,
   excel: !1,
@@ -104,63 +169,3 @@ defineExpose({
 })
 
 </script>
-
-<template>
-  <MCol
-    :auto="auto"
-    :class="$attrs.class"
-    :col="col"
-    :lg="lg"
-    :md="md"
-    :sm="sm"
-    :xs="xs"
-  >
-    <VeeField
-      v-slot="fieldScope"
-      v-model="inputValue"
-      :name="name"
-      :rules="getRules"
-      v-bind="$attrs"
-    >
-      <q-file
-        ref="fileInput"
-        :accept="accepts.join(',')"
-        :borderless="borderless"
-        :clearable="clearable"
-        :dense="dense"
-        :error="fieldScope.errors.length > 0"
-        :error-message="fieldScope.errorMessage"
-        :filled="filled"
-        :hide-bottom-space="hideBottomSpace"
-        :label="getLabel"
-        :loading="loading"
-        :model-value="fieldScope.value"
-        :outlined="outlined"
-        :placeholder="getPlaceholder"
-        :stack-label="stackLabel"
-        :standout="standout"
-        v-bind="{...($myth.options.input||{}),...($attrs || {})}"
-        @blur="fieldScope.handleBlur"
-        @change="fieldScope.handleChange"
-        @clear="fieldScope.handleBlur"
-        @update:model-value="fieldScope.handleChange"
-      >
-        <template
-          v-for="(_,slot) in $slots"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            v-if="inputSlot"
-            :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else
-            :name="slot"
-          />
-        </template>
-      </q-file>
-    </VeeField>
-  </MCol>
-</template>
