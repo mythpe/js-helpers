@@ -10,14 +10,14 @@
   <q-item
     v-if="listItem"
     v-close-popup
+    :dense="dense"
     clickable
-    dense
     v-bind="$attrs"
     @click="$emit('click',$event)"
   >
     <q-item-section
-      side
       avatar
+      side
     >
       <q-icon
         :color="getColor"
@@ -88,7 +88,7 @@ const props = withDefaults(defineProps<Props>(), {
   fabMini: () => !0,
   flat: () => !0,
   round: () => !0,
-  dense: () => !0,
+  dense: () => !1,
   label: undefined
 })
 type Events = {

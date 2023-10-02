@@ -28,6 +28,7 @@
           <MDtBtn
             v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
             :[contextmenuItem.name]="!0"
+            :dense="dense"
             :label="$t(contextmenuItem.label || contextmenuItem.name)"
             list-item
             v-bind="{...($myth.options.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
@@ -46,20 +47,21 @@
         v-model:fullscreen="tableOptions.fullscreen"
         v-model:pagination="pagination"
         v-model:selected="selected"
+        :bordered="bordered"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
+        :dense="dense"
         :filter="tableOptions.search"
+        :flat="flat"
         :grid="isGrid"
         :hide-pagination="endReach"
         :loading="tableOptions.loading"
         :rows="getRows"
         :rows-per-page-options="getRowsPerPageOptions"
-        :selection="showSelection ? (multiSelection ? 'multiple' : 'single') : 'none'"
+        :selection="getShowSelection ? (multiSelection ? 'multiple' : 'single') : 'none'"
         :title="title||undefined"
         :visible-columns="visibleHeaders"
-        bordered
         card-container-class="m--datatable-container"
-        flat
         table-class="m--datatable-container"
         v-bind="$myth.options.dt?.props"
         @request="fetchDatatableItems"
@@ -79,11 +81,11 @@
               <q-card
                 :class="props.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''"
               >
-                <template v-if="showSelection || props.colsMap.control !== undefined">
+                <template v-if="getShowSelection || props.colsMap[controlKey] !== undefined">
                   <q-card-section>
                     <MRow class="items-center justify-between">
                       <q-checkbox
-                        v-if="showSelection"
+                        v-if="getShowSelection"
                         v-model="props.selected"
                         dense
                       />
@@ -225,7 +227,7 @@
                           <MRow class="items-center">
                             <MCol col="12">
                               <template
-                                v-for="h in getHeaders.filter( e => e.field !== 'control')"
+                                v-for="h in getHeaders.filter( e => e.field !== controlKey)"
                                 :key="h.name"
                               >
                                 <q-checkbox
@@ -618,10 +620,11 @@
 
         <template
           v-if="!noBodyControl"
-          #body-cell-control="props"
+          #[`body-cell-${controlKey}`]="props"
         >
           <slot
-            name="body-cell-control"
+            :dt="datatableItemsScope"
+            :name="`body-cell-${controlKey}`"
             v-bind="props"
           >
             <q-td :props="props">
@@ -897,6 +900,10 @@ export default {
   components: { MFadeTransition, MDtBtn, MDtContextmenuItems },
   inheritAttrs: !1,
   props: {
+    controlKey: {
+      type: String,
+      default: () => 'control'
+    },
     defaultItem: {
       // type: Object as PropType<Partial<(MDtItem & Record<string | number | symbol, unknown>)>>,
       type: Object as PropType<Partial<MDatatableProps['defaultItem']>>,
@@ -1014,6 +1021,10 @@ export default {
       type: Boolean,
       default: () => !1
     },
+    hideSelection: {
+      type: Boolean,
+      default: () => !1
+    },
     multiSelection: {
       type: Boolean,
       default: () => !1
@@ -1027,6 +1038,18 @@ export default {
       default: () => undefined
     },
     // Style
+    flat: {
+      type: Boolean,
+      default: () => !0
+    },
+    bordered: {
+      type: Boolean,
+      default: () => !0
+    },
+    dense: {
+      type: Boolean,
+      default: () => !0
+    },
     grid: {
       type: Boolean,
       default: () => undefined
@@ -1868,6 +1891,14 @@ export default {
       closeImageDialog,
 
       isGrid
+    }
+  },
+  computed: {
+    getShowSelection (): boolean | undefined {
+      if (this.hideSelection) {
+        return !1
+      }
+      return this.showSelection
     }
   }
 }
