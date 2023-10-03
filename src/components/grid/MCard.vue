@@ -6,130 +6,74 @@
   - Github: https://github.com/mythpe
   -->
 
+<template>
+  <q-card
+    class="m--card"
+    v-bind="$attrs"
+  >
+    <slot
+      v-if="!loading"
+      name="card-title"
+    />
+    <template v-if="title !== undefined || $slots['after-title'] || $slots['title']">
+      <q-toolbar :class="`${color ? `bg-${color}` : '' } text-white app--card__toolbar ${(center ? 'text-center' : '')}`">
+        <q-toolbar-title class="app--card__title">
+          <template v-if="loading">
+            <q-skeleton
+              width="200px"
+            />
+          </template>
+          <template v-else>
+            {{ parseAttribute(title) }}
+          </template>
+          <slot
+            v-if="!loading"
+            :loading="loading"
+            name="title"
+          />
+        </q-toolbar-title>
+        <slot
+          v-if="!loading"
+          name="after-title"
+        />
+      </q-toolbar>
+      <q-separator />
+    </template>
+    <q-card-section :class="`${padding !== undefined ? ( !padding ? 'q-pa-none' : padding?.length > 0 ? padding : '' ) : ''} `">
+      <MContainer>
+        <slot :name="loading ? 'loading' : 'default'" />
+      </MContainer>
+    </q-card-section>
+  </q-card>
+</template>
+
 <script lang="ts" setup>
 
-import { useMyth } from '../../vue3'
-import { computed, onMounted, reactive, useSlots } from 'vue'
-import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+import { MCardProps } from './models'
 
 interface Props {
-  titleFromRoute?: boolean | null | undefined;
-  title?: string | (() => string) | null | undefined;
-  subtitle?: string | (() => string) | null | undefined;
-  backRoute?: boolean | null | undefined;
+  readonly loading?: MCardProps['loading'];
+  readonly title?: MCardProps['title'];
+  readonly center?: MCardProps['center'];
+  readonly color?: MCardProps['color'];
+  readonly padding?: MCardProps['padding'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  titleFromRoute: undefined,
+withDefaults(defineProps<Props>(), {
+  loading: () => !1,
   title: undefined,
-  subtitle: undefined,
-  backRoute: undefined
-})
-
-const slots = useSlots()
-const route = useRoute()
-const { str: { nl2br }, getPageTitle } = useMyth()
-const { t, te } = useI18n({ useScope: 'global' })
-
-const cardOptions = reactive<{
-  title: string | null;
-  subtitle: string | null;
-}>({
-  title: null,
-  subtitle: null
-})
-const hasTopSection = computed(() => Boolean(props.title) || Boolean(props.subtitle) || Boolean(slots.title) || props.titleFromRoute)
-const getTitle = () => {
-  if (props.title) {
-    if (typeof props.title === 'function') {
-      return props.title()
-    }
-    if (te(props.title)) {
-      return t(props.title)
-    }
-    return props.title
-  }
-  return null
-}
-const getSubtitle = () => {
-  if (props.subtitle) {
-    if (typeof props.subtitle === 'function') {
-      return props.subtitle()
-    }
-    if (te(props.subtitle)) {
-      return nl2br(t(props.subtitle))
-    }
-    return nl2br(props.subtitle)
-  }
-  return null
-}
-
-onMounted(() => {
-  if (props.title) {
-    cardOptions.title = getTitle()
-  } else if (props.titleFromRoute) {
-    cardOptions.title = getPageTitle(route) || ''
-  }
-
-  if (props.subtitle) {
-    cardOptions.subtitle = getSubtitle()
-  }
+  center: () => !1,
+  color: () => 'primary',
+  padding: () => !1
 })
 </script>
 
 <script lang="ts">
 export default {
+  name: 'MCard',
   inheritAttrs: !1
 }
 </script>
-
-<template>
-  <q-card
-    class="m--card"
-    flat
-    v-bind="$attrs"
-  >
-    <q-card-section v-if="hasTopSection || backRoute">
-      <div class="row">
-        <MBtn
-          v-if="backRoute"
-          :icon="`arrow_${$q.lang.rtl ? 'forward' : 'back'}`"
-          class="q-mr-sm print-hide"
-          @click="$router.back()"
-        >
-          <span class="q-ml-sm">{{ $t('back') }}</span>
-        </MBtn>
-        <div
-          v-if="Boolean(cardOptions.title)"
-          class="text-h5"
-        >
-          {{ cardOptions.title }}
-        </div>
-      </div>
-      <div
-        v-if="Boolean(cardOptions.subtitle)"
-        class="text-subtitle2"
-        v-html="cardOptions.subtitle"
-      />
-      <template v-if="Boolean($slots.title)">
-        <slot name="title" />
-      </template>
-    </q-card-section>
-    <q-card-section>
-      <slot />
-    </q-card-section>
-    <MContainer
-      v-if="Boolean($slots.actions)"
-      class="print-hide"
-    >
-      <q-separator spaced />
-      <div class="row">
-        <slot name="actions" />
-      </div>
-    </MContainer>
-  </q-card>
-</template>
 
 <style>
 .m--card {

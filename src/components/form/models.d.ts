@@ -555,4 +555,16 @@ export interface MRadioSlots extends QRadioSlots {
   default: () => VNode[];
 }
 
+export interface MOtpProps extends Omit<QInputProps, 'modelValue'> {
+  modelValue?: string | number;
+  inputLength?: string | number;
+  time?: string | number;
+  showTime?: boolean;
+  showSendAgain?: boolean;
+}
+
+export interface MOtpSlots extends QInputSlots {
+  default: () => VNode[];
+}
+
 export {}

@@ -23,15 +23,22 @@ export type MContainerSlots = {
 }
 
 export interface MCardProps {
-  titleFromRoute?: boolean | undefined;
-  title?: string | (() => string) | undefined;
-  subtitle?: string | (() => string) | undefined;
-  backRoute?: boolean | undefined;
+  // titleFromRoute?: boolean | undefined;
+  // title?: string | (() => string) | undefined;
+  // subtitle?: string | (() => string) | undefined;
+  // backRoute?: boolean | undefined;
+  readonly loading?: boolean | undefined;
+  readonly title?: string | null | undefined;
+  readonly center?: boolean | undefined;
+  readonly color?: string | undefined;
+  readonly padding?: string | boolean;
 }
 
 export interface MCardSlots {
+  'card-title': () => VNode[];
   title: () => VNode[];
-  actions: () => VNode[];
+  'after-title': () => VNode[];
+  loading: () => VNode[];
   default: () => VNode[];
 }
 
@@ -80,4 +87,16 @@ export type MListSlots = {
   noResult: (scope: MListScopes) => VNode[];
   noData: (scope: MListScopes) => VNode[];
   loading: (scope: MListScopes) => VNode[];
+}
+
+export type MDraggableProps = {
+  modelValue: any;
+  itemTag?: any;
+  itemKey?: any;
+  group?: string;
+  handle?: string;
+  ghostClass?: string;
+}
+export type MDraggableSlots = {
+  default: () => VNode[];
 }

@@ -233,11 +233,9 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
 
       const { t, te } = baseI18n.value?.global
       const key = string && typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
-
       if (!key) {
         return defaultValue
       }
-
       let transKey: string
       if (te) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -265,8 +263,10 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
           return t(key, ...args)
         }
       }
-
       return string
+    },
+    __ (string: string | { text: string } | any, ...args: any) {
+      return this.parseAttribute(string, ...args)
     },
     /**
      * Copy text
@@ -372,6 +372,9 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.config.globalProperties.parseAttribute = function (string: string | { text: string } | any, ...args: any): string {
     return this.$myth.parseAttribute(string, ...args)
   }
+  app.config.globalProperties.__ = function (string: string | { text: string } | any, ...args: any): string {
+    return this.$myth.parseAttribute(string, ...args)
+  }
   app.config.globalProperties.getPageTitle = function (number?: number | string, route?: RouteLocationNormalizedLoaded): string {
     return this.$myth.getPageTitle(route || this.$route, number)
   }
@@ -394,6 +397,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.component('MForm', defineAsyncComponent(() => import('../components/form/MForm.vue')))
   app.component('MInput', defineAsyncComponent(() => import('../components/form/MInput.vue')))
   app.component('MMobile', defineAsyncComponent(() => import('../components/form/MMobile.vue')))
+  app.component('MOtp', defineAsyncComponent(() => import('../components/form/MOtp.vue')))
   app.component('MPassword', defineAsyncComponent(() => import('../components/form/MPassword.vue')))
   app.component('MPicker', defineAsyncComponent(() => import('../components/form/MPicker.vue')))
   app.component('MSelect', defineAsyncComponent(() => import('../components/form/MSelect.vue')))
@@ -409,6 +413,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.component('MCol', defineAsyncComponent(() => import('../components/grid/MCol.vue')))
   app.component('MColumn', defineAsyncComponent(() => import('../components/grid/MColumn.vue')))
   app.component('MContainer', defineAsyncComponent(() => import('../components/grid/MContainer.vue')))
+  app.component('MDraggable', defineAsyncComponent(() => import('../components/grid/MDraggable.vue')))
   app.component('MList', defineAsyncComponent(() => import('../components/grid/MList.vue')))
   app.component('MNoResultImg', defineAsyncComponent(() => import('../components/grid/MNoResultImg.vue')))
   app.component('MRow', defineAsyncComponent(() => import('../components/grid/MRow.vue')))

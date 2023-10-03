@@ -57,6 +57,8 @@ import {
   MDateSlots,
   MDialogProps,
   MDialogSlots,
+  MDraggableProps,
+  MDraggableSlots,
   MDtAvatarProps,
   MDtAvatarSlots,
   MDtBtnProps,
@@ -75,6 +77,8 @@ import {
   MListSlots,
   MModalMenuProps,
   MModalMenuSlots,
+  MOtpProps,
+  MOtpSlots,
   MPickerProps,
   MPickerSlots,
   MRadioProps,
@@ -263,6 +267,7 @@ declare module '@vue/runtime-core' {
     MForm: GlobalComponentConstructor<MFormProps, MFormSlots>;
     MInput: GlobalComponentConstructor<MInputProps, MInputSlots>;
     MMobile: GlobalComponentConstructor<MInputProps, MInputSlots>;
+    MOtp: GlobalComponentConstructor<MOtpProps, MOtpSlots>;
     MPassword: GlobalComponentConstructor<MInputProps, MInputSlots>;
     MPicker: GlobalComponentConstructor<MPickerProps, MPickerSlots>;
     MSelect: GlobalComponentConstructor<MSelectProps, MSelectSlots>;
@@ -273,6 +278,7 @@ declare module '@vue/runtime-core' {
     MCol: GlobalComponentConstructor<MColProps, MColSlots>;
     MColumn: GlobalComponentConstructor<MColumnProps, MColumnSlots>;
     MContainer: GlobalComponentConstructor<MContainerProps, MContainerSlots>;
+    MDraggable: GlobalComponentConstructor<MDraggableProps, MDraggableSlots>;
     MList: GlobalComponentConstructor<MListProps, MListSlots>;
     MNoResultImg: GlobalComponentConstructor<QImgProps, QImgSlots>;
     MRow: GlobalComponentConstructor<MRowProps, MRowSlots>;
@@ -288,6 +294,7 @@ declare module '@vue/runtime-core' {
     openWindow: typeof window.open;
 
     parseAttribute: UseMythVue['parseAttribute']
+    __: UseMythVue['parseAttribute']
 
     getPageTitle (number?: number | string, route?: RouteLocationNormalizedLoaded): string;
   }
