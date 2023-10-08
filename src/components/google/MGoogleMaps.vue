@@ -6,6 +6,132 @@
   - Github: https://github.com/mythpe
   -->
 
+<template>
+  <MCol
+    :auto="auto"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :sm="sm"
+    :xs="xs"
+  >
+    <MRow
+      class="m--google-maps"
+    >
+      <MCol col="12">
+        <p class="text-body1 q-ma-none">
+          {{ label }}
+        </p>
+        <q-slide-transition>
+          <p
+            v-if="errors?.latitude?.length >0 || errors?.longitude?.length > 0"
+            class="text-body2 q-ma-none text-negative"
+          >
+            {{ errors.latitude[0] }}
+          </p>
+        </q-slide-transition>
+      </MCol>
+      <MCol col="12">
+        <GoogleMap
+          ref="mapRef"
+          :api-key="$myth.options.google.apiKey"
+          :center="getCenter"
+          :language="language"
+          :style="style"
+          :zoom="zoom"
+          v-bind="$attrs"
+          @click="onClickMap"
+        >
+          <Marker
+            v-if="computedCenterMarker"
+            :options="computedCenterMarker"
+          />
+          <Marker
+            v-for="(marker,i) in markersRef"
+            :key="`marker-${i}`"
+            :options="marker"
+            @dragendf="onDragend"
+          />
+        </GoogleMap>
+      </MCol>
+    </MRow>
+    <MRow class="hidden">
+      <q-card
+        ref="searchCard"
+        class="m--gm-searchbar-card"
+      >
+        <q-input
+          v-model="search"
+          :label="$t('search')"
+          :loading="loading"
+          clearable
+          debounce="600"
+          dense
+          outlined
+          @update:model-value="onSearch"
+        >
+          <template #append>
+            <q-icon name="o_search" />
+          </template>
+        </q-input>
+        <div
+          class="m--gm-search-result"
+        >
+          <q-card
+            class="scroll"
+            square
+          >
+            <q-list
+              bordered
+              dense
+              separator
+              style="max-height: 250px;"
+            >
+              <q-item
+                v-for="(r,i) in searchResults"
+                :key="`search-item-${i}`"
+                clickable
+                @click="onSelectSearch(r)"
+              >
+                <q-item-section no-wrap>
+                  <q-item-label lines="1">
+                    <!--<q-img-->
+                    <!--  v-if="r.icon"-->
+                    <!--  :src="r.icon"-->
+                    <!--  sizes="10px"-->
+                    <!--  height="20px"-->
+                    <!--  width="20px"-->
+                    <!--  ratio="1"-->
+                    <!--/>-->
+                    {{ r.name }}
+                  </q-item-label>
+                  <q-item-label lines="1">
+                    {{ r.formatted_address }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item v-if="searchResults && searchResults.length === 0 && !loading && search">
+                <q-item-section>
+                  {{ $t('messages.no_items') }}
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card>
+        </div>
+      </q-card>
+      <MBtn
+        ref="currentLocationRef"
+        class="q-mb-md"
+        color="white"
+        icon="o_my_location"
+        round
+        text-color="black"
+        @click="findCurrentLocation"
+      />
+    </MRow>
+  </MCol>
+</template>
+
 <script lang="ts" setup>
 import { useQuasar } from 'quasar'
 import { computed, ref, watch } from 'vue'
@@ -31,6 +157,7 @@ interface Props {
   label?: string;
   errors?: Record<string, any>;
   region?: string;
+  language?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -48,7 +175,8 @@ const props = withDefaults(defineProps<Props>(), {
   centerMarker: !0,
   label: undefined,
   errors: () => ({}),
-  region: 'sa'
+  region: undefined,
+  language: undefined
 })
 
 interface Events {
@@ -251,135 +379,10 @@ const computedCenterMarker = computed(() => {
 <script lang="ts">
 
 export default {
+  name: 'MGoogleMaps',
   inheritAttrs: !1
 }
 </script>
-
-<template>
-  <MCol
-    :auto="auto"
-    :col="col"
-    :lg="lg"
-    :md="md"
-    :sm="sm"
-    :xs="xs"
-  >
-    <MRow
-      class="m--google-maps"
-    >
-      <MCol col="12">
-        <p class="text-body1 q-ma-none">
-          {{ label }}
-        </p>
-        <q-slide-transition>
-          <p
-            v-if="errors?.latitude?.length>0 || errors?.longitude?.length>0"
-            class="text-body2 q-ma-none text-negative"
-          >
-            {{ errors.latitude[0] }}
-          </p>
-        </q-slide-transition>
-      </MCol>
-      <MCol col="12">
-        <GoogleMap
-          ref="mapRef"
-          :api-key="$myth.options.google.apiKey"
-          :center="getCenter"
-          :language="appLocale"
-          :style="style"
-          :zoom="zoom"
-          v-bind="$attrs"
-          @click="onClickMap"
-        >
-          <Marker
-            v-if="computedCenterMarker"
-            :options="computedCenterMarker"
-          />
-          <Marker
-            v-for="(marker,i) in markersRef"
-            :key="`marker-${i}`"
-            :options="marker"
-            @dragendf="onDragend"
-          />
-        </GoogleMap>
-      </MCol>
-    </MRow>
-    <MRow class="hidden">
-      <q-card
-        ref="searchCard"
-        class="m--gm-searchbar-card"
-      >
-        <q-input
-          v-model="search"
-          :label="$t('search')"
-          :loading="loading"
-          clearable
-          debounce="600"
-          dense
-          outlined
-          @update:model-value="onSearch"
-        >
-          <template #append>
-            <q-icon name="o_search" />
-          </template>
-        </q-input>
-        <div
-          class="m--gm-search-result"
-        >
-          <q-card
-            class="scroll"
-            square
-          >
-            <q-list
-              bordered
-              dense
-              separator
-              style="max-height: 250px;"
-            >
-              <q-item
-                v-for="(r,i) in searchResults"
-                :key="`search-item-${i}`"
-                clickable
-                @click="onSelectSearch(r)"
-              >
-                <q-item-section no-wrap>
-                  <q-item-label lines="1">
-                    <!--<q-img-->
-                    <!--  v-if="r.icon"-->
-                    <!--  :src="r.icon"-->
-                    <!--  sizes="10px"-->
-                    <!--  height="20px"-->
-                    <!--  width="20px"-->
-                    <!--  ratio="1"-->
-                    <!--/>-->
-                    {{ r.name }}
-                  </q-item-label>
-                  <q-item-label lines="1">
-                    {{ r.formatted_address }}
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-              <q-item v-if="searchResults && searchResults.length === 0 && !loading && search">
-                <q-item-section>
-                  {{ $t('messages.no_items') }}
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card>
-        </div>
-      </q-card>
-      <MBtn
-        ref="currentLocationRef"
-        class="q-mb-md"
-        color="white"
-        icon="o_my_location"
-        round
-        text-color="black"
-        @click="findCurrentLocation"
-      />
-    </MRow>
-  </MCol>
-</template>
 
 <style lang="scss">
 .m--google-maps {
