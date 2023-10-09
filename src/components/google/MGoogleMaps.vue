@@ -37,7 +37,7 @@
           :api-key="$myth.options.google.apiKey"
           :center="getCenter"
           :language="language"
-          :style="style"
+          :style="{width, height}"
           :zoom="zoom"
           v-bind="$attrs"
           @click="onClickMap"
@@ -149,7 +149,9 @@ interface Props {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  style?: string;
+  // style?: string;
+  width?: string;
+  height?: string;
   center?: CoordsType;
   zoom?: number;
   markers?: CoordsType[];
@@ -168,7 +170,9 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  style: 'width: 100%; height: 350px',
+  // style: () => 'width: 100%; height: 350px',
+  width: () => '100%',
+  height: () => '350px',
   center: undefined,
   markers: () => ([]),
   zoom: 17,
