@@ -34,7 +34,7 @@
       <MCol col="12">
         <GoogleMap
           ref="mapRef"
-          :api-key="$myth.options.google.apiKey"
+          :api-key="$myth.options.google?.apiKey"
           :center="getCenter"
           :language="language"
           :style="{width, height}"
@@ -175,7 +175,7 @@ const props = withDefaults(defineProps<Props>(), {
   height: () => '350px',
   center: undefined,
   markers: () => ([]),
-  zoom: 17,
+  zoom: () => 13.6,
   centerMarker: !0,
   label: undefined,
   errors: () => ({}),

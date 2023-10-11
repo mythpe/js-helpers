@@ -307,15 +307,18 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         cancel: {
           ...buttonsProps,
           ...cancelProps,
-          color: cancelProps.color || 'positive'
-        },
-        ok: {
+          color: cancelProps.color || 'positive',
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          label: t('yes'),
+          label: t(cancelProps?.label || 'no')
+        },
+        ok: {
           ...buttonsProps,
           ...okProps,
-          color: okProps.color || 'negative'
+          color: okProps.color || 'negative',
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          label: t(okProps?.label || 'yes')
         },
         persistent: !0,
         ...dialogProps,

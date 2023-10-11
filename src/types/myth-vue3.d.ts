@@ -106,6 +106,7 @@ import { Dates, Helpers, Str } from '../utils'
 export interface MythOptionsConfig extends Record<string | number | symbol, any> {
   google?: {
     apiKey: string;
+    // eslint-disable-next-line no-undef
     mapsOptions?: google.maps.MapOptions;
   };
   notify?: Partial<QNotifyCreateOptions>;
