@@ -106,7 +106,7 @@ import { Dates, Helpers, Str } from '../utils'
 export interface MythOptionsConfig extends Record<string | number | symbol, any> {
   google?: {
     apiKey: string;
-    mapsOptions?: Record<string | number | symbol, any>;
+    mapsOptions?: google.maps.MapOptions;
   };
   notify?: Partial<QNotifyCreateOptions>;
   dialog?: Partial<QDialogOptions>;
