@@ -26,8 +26,8 @@
         v-for="i in length"
         :key="i"
         :ref="el => updateFieldRef(el, i - 1)"
-        v-model.number="fieldValues[i - 1]"
-        :autofocus="i === 1"
+        v-model="fieldValues[i - 1]"
+        :autofocus="autofocus && i === 1"
         input-class="text-center"
         maxlength="1"
         outlined
@@ -66,7 +66,7 @@
 
 <script lang="ts" setup>
 
-import { computed, defineProps, onBeforeUnmount, onBeforeUpdate, ref, watch } from 'vue'
+import { computed, defineProps, onBeforeUnmount, onBeforeUpdate, ref, watch, watchEffect } from 'vue'
 import { date } from 'quasar'
 import { MOtpProps } from './models'
 
@@ -77,6 +77,7 @@ export interface Props {
   hideTime?: MOtpProps['hideTime'];
   hideSendAgain?: MOtpProps['hideSendAgain'];
   topLabel?: MOtpProps['topLabel'];
+  autofocus?: MOtpProps['autofocus'];
 }
 
 interface Emits {
@@ -93,17 +94,21 @@ const props = withDefaults(defineProps<Props>(), {
   time: () => 120,
   hideTime: () => !1,
   hideSendAgain: () => !1,
-  topLabel: undefined
+  topLabel: undefined,
+  autofocus: () => !1
 })
 
 const emit = defineEmits<Emits>()
 
 const length = computed<number>(() => parseInt(props.inputLength?.toString() || '0'))
 const fields = ref<any>([])
-const fieldValues = ref<number[]>([])
+const fieldValues = ref<(number | string | symbol)[]>([])
+watchEffect(() => {
+  fieldValues.value = (props.modelValue || '').toString().split('').slice(0, length.value)
+})
 
 const composite = computed(() => {
-  const nonNullFields = fieldValues.value.filter((value) => value)
+  const nonNullFields = fieldValues.value.filter(v => (v || v?.toString() !== '0'))
   if (length.value !== nonNullFields.length) {
     return ''
   }
@@ -146,13 +151,15 @@ const blur = (index: number) => {
 const onUpdate = (value: string | number, index: number) => {
   if (value) {
     focus(index + 1)
+    if (index === (length.value - 1)) {
+      blur(index)
+    }
   }
 }
 
 const onKeyUp = (evt: KeyboardEvent, index: number) => {
   const key = evt.key
-
-  if (['Tab', 'Shift', 'Meta', 'Control', 'Alt'].includes(key)) {
+  if (['Tab', 'Shift', 'Meta', 'Control', 'Alt', 'Enter', ' '].includes(key)) {
     return
   }
 
@@ -165,6 +172,14 @@ const onKeyUp = (evt: KeyboardEvent, index: number) => {
     focus(index - 1)
   } else if (key === 'ArrowRight') {
     focus(index + 1)
+  }
+
+  // The input is fill & replace the value
+  if (key.length === 1) {
+    onUpdate(key, index)
+    const t = [...fieldValues.value]
+    t[index] = key
+    fieldValues.value = t
   }
 }
 const onPaste = (evt: ClipboardEvent, index: number) => {
