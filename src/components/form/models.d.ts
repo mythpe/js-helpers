@@ -559,8 +559,8 @@ export interface MOtpProps extends Omit<QInputProps, 'modelValue'> {
   modelValue?: string | number;
   inputLength?: string | number;
   time?: string | number;
-  showTime?: boolean;
-  showSendAgain?: boolean;
+  hideTime?: boolean;
+  hideSendAgain?: boolean;
 }
 
 export interface MOtpSlots extends QInputSlots {

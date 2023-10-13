@@ -31,7 +31,7 @@
     </div>
     <MFadeTransition>
       <div
-        v-if="showTime"
+        v-if="!hideTime"
         class="q-mt-sm"
       >
         <span>{{ $t('myth.otp.expire_line') }}:&nbsp;</span>
@@ -40,7 +40,7 @@
     </MFadeTransition>
     <MFadeTransition>
       <div
-        v-if="showSendAgain"
+        v-if="!hideSendAgain"
         class="q-mt-sm"
       >
         <span>{{ $t('myth.otp.send_again_title') }}&nbsp;</span>
@@ -63,8 +63,8 @@ export interface Props {
   modelValue?: MOtpProps['modelValue'];
   inputLength?: MOtpProps['inputLength'];
   time?: MOtpProps['time'];
-  showTime?: MOtpProps['showTime'];
-  showSendAgain?: MOtpProps['showSendAgain'];
+  hideTime?: MOtpProps['hideTime'];
+  hideSendAgain?: MOtpProps['hideSendAgain'];
 }
 
 interface Emits {
@@ -79,8 +79,8 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   inputLength: () => 6,
   time: () => 120,
-  showTime: () => !0,
-  showSendAgain: () => !0
+  hideTime: () => !1,
+  hideSendAgain: () => !1
 })
 
 const emit = defineEmits<Emits>()
@@ -170,7 +170,7 @@ const seconds = ref<number>(0)
 const temp = ref<number>(0)
 watch(() => seconds.value, v => (temp.value = v))
 const startTiming = () => {
-  if (!props.showTime) {
+  if (props.hideTime) {
     return
   }
 
@@ -183,7 +183,7 @@ const startTiming = () => {
 }
 const getTime = computed<string | null>(() => {
   const nullValue = null
-  if (!props.showTime) {
+  if (props.hideTime) {
     return nullValue
   }
   if (seconds.value < 1) {
@@ -201,7 +201,7 @@ const clear = () => {
   interval && clearInterval(interval)
 }
 const start = () => {
-  if (!props.showTime) {
+  if (props.hideTime) {
     return
   }
   clear()
