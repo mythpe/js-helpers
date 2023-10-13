@@ -561,10 +561,14 @@ export interface MOtpProps extends Omit<QInputProps, 'modelValue'> {
   time?: string | number;
   hideTime?: boolean;
   hideSendAgain?: boolean;
+  topLabel?: string | null | undefined;
 }
 
 export interface MOtpSlots extends QInputSlots {
   default: () => VNode[];
+  'before-all': () => VNode[];
+  'after-all': () => VNode[];
+  'after-input': () => VNode[];
 }
 
 export {}

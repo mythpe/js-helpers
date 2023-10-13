@@ -189,6 +189,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     closeBtn?: Partial<QItemProps>;
   };
   tooltip?: Partial<QTooltipProps>;
+  otp?: Partial<QInputProps>;
 }
 
 export type MythApiAxiosType = Partial<AxiosInstance>

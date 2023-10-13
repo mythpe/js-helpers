@@ -248,6 +248,10 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
    * Auto actions body headers 'control'
    */
   noBodyControl?: boolean;
+  /**
+   * Use this instead of form values
+   */
+  formModel?: Record<string, any>;
 }
 
 export interface MDtAvatarProps extends QAvatarProps {

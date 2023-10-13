@@ -1081,6 +1081,11 @@ export default {
     noBodyControl: {
       type: Boolean,
       default: () => !1
+    },
+    formModel: {
+      type: Object,
+      required: !1,
+      default: undefined
     }
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -1582,7 +1587,7 @@ export default {
     const ignoreKeysProps = computed(() => props.ignoreKeys)
     const defaultSubmitItem = async (_form: Record<string, any>) => {
       // let form = { ..._form, ...(dialogs.itemForm || {}) }
-      let form = { ..._form }
+      let form = { ...(props.formModel ? props.formModel : _form) }
       // console.log(form)
       if (loading.value) {
         return

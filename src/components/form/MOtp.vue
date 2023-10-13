@@ -12,6 +12,15 @@
     auto
     class="text-center"
   >
+    <slot name="before-all" />
+    <MRow
+      v-if="topLabel"
+      class="justify-start"
+    >
+      <div class="text-body1">
+        {{ $myth.parseAttribute(topLabel) }}
+      </div>
+    </MRow>
     <div :class="`row ${$q.lang.rtl ? 'reverse' : ''} q-gutter-x-sm justify-center`">
       <q-input
         v-for="i in length"
@@ -23,12 +32,13 @@
         maxlength="1"
         outlined
         style="width: 6ch"
-        v-bind="$attrs"
+        v-bind="{...($myth.options.otp || {}),...($attrs||{})}"
         @keyup="onKeyUp($event, i - 1)"
         @paste.prevent="onPaste($event,i - 1)"
         @update:model-value="onUpdate($event, i - 1)"
       />
     </div>
+    <slot name="after-input" />
     <MFadeTransition>
       <div
         v-if="!hideTime"
@@ -50,6 +60,7 @@
         >{{ $t('myth.otp.send_again_btn') }}</span>
       </div>
     </MFadeTransition>
+    <slot name="after-all" />
   </MCol>
 </template>
 
@@ -65,6 +76,7 @@ export interface Props {
   time?: MOtpProps['time'];
   hideTime?: MOtpProps['hideTime'];
   hideSendAgain?: MOtpProps['hideSendAgain'];
+  topLabel?: MOtpProps['topLabel'];
 }
 
 interface Emits {
@@ -80,7 +92,8 @@ const props = withDefaults(defineProps<Props>(), {
   inputLength: () => 6,
   time: () => 120,
   hideTime: () => !1,
-  hideSendAgain: () => !1
+  hideSendAgain: () => !1,
+  topLabel: undefined
 })
 
 const emit = defineEmits<Emits>()
