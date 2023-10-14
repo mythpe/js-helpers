@@ -161,8 +161,6 @@ interface Props {
   emitValue?: MSelectProps['emitValue'];
   mapOptions?: MSelectProps['mapOptions'];
   useInput?: MSelectProps['useInput'];
-  optionValue?: MSelectProps['optionValue'];
-  optionLabel?: MSelectProps['optionLabel'];
   search?: MSelectProps['search'];
   timeout?: MSelectProps['timeout'];
   autoSearch?: MSelectProps['autoSearch'];
@@ -192,8 +190,6 @@ const props = withDefaults(defineProps<Props>(), {
   useInput: () => !0,
   emitValue: () => !0,
   mapOptions: () => !0,
-  optionValue: undefined,
-  optionLabel: undefined,
   search: undefined,
   timeout: () => 300,
   autoSearch: () => !1,
