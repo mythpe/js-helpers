@@ -241,7 +241,7 @@ export type UseMythVue = {
   },
   getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string;
   parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[];
-  parseAttribute (string: string | { text: string } | any, ...args: any[]): string;
+  __ (string: string | { text: string } | any, ...args: any[]): string;
   copyText (text: string | any): Promise<void>;
   quasarNotifyOptions (opts: QNotifyCreateOptions | string): QNotifyCreateOptions;
   alertMessage (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage;
@@ -294,9 +294,7 @@ declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $myth: UseMythVue;
     openWindow: typeof window.open;
-
-    parseAttribute: UseMythVue['parseAttribute']
-    __: UseMythVue['parseAttribute']
+    __: UseMythVue['__']
 
     getPageTitle (number?: number | string, route?: RouteLocationNormalizedLoaded): string;
   }

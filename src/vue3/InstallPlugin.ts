@@ -188,6 +188,10 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             item.label = t(k)
+          } else if (te((k = `choice.${_.pluralize(Str.pascalCase(item.label))}`))) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            item.label = t(k, 2)
           } else if (te((k = item.label))) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -228,7 +232,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
      * @param string
      * @param args
      */
-    parseAttribute (string: string | { text: string } | any, ...args: any): string {
+    __ (string: string | { text: string } | any, ...args: any): string {
       const defaultValue = ''
       if (!string) return string
 
@@ -265,9 +269,6 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         }
       }
       return string
-    },
-    __ (string: string | { text: string } | any, ...args: any) {
-      return this.parseAttribute(string, ...args)
     },
     /**
      * Copy text
@@ -373,11 +374,8 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.config.globalProperties.openWindow = function (...args: any) {
     return window.open(...args)
   }
-  app.config.globalProperties.parseAttribute = function (string: string | { text: string } | any, ...args: any): string {
-    return this.$myth.parseAttribute(string, ...args)
-  }
   app.config.globalProperties.__ = function (string: string | { text: string } | any, ...args: any): string {
-    return this.$myth.parseAttribute(string, ...args)
+    return this.$myth.__(string, ...args)
   }
   app.config.globalProperties.getPageTitle = function (number?: number | string, route?: RouteLocationNormalizedLoaded): string {
     return this.$myth.getPageTitle(route || this.$route, number)
