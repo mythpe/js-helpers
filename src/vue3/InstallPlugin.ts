@@ -161,7 +161,8 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
           field: elm
         } : { ...elm }
         item.name = item.name || ''
-        item.label = item.label || ''
+        item.label = item.label || item.name
+        item.field = item.field || item.name
 
         item = {
           ...item,
@@ -198,13 +199,13 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
           opts.align = item.align
         }
 
-        if (name === control && controlStyle) {
-          item.style = (item.style ?? '') + ` ${controlStyle}`
+        if (name === control && controlStyle && !item.style) {
+          item.style = controlStyle + item.style ? ` ${item.style}` : ''
         }
         if (name === control) {
           opts.sortable = !1
           if (!item.align) {
-            opts.align = 'right'
+            opts.align = 'left'
           }
           opts.classes = opts.classes || ''
           if (typeof opts.classes === 'function') {
