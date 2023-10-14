@@ -9,6 +9,7 @@
 import { VNode } from 'vue'
 import { AxiosDataRow } from '../../types'
 import { AxiosRequestConfig } from 'axios'
+import { QCardProps } from 'quasar'
 
 export type ColStyleType = 'auto' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | undefined
 
@@ -22,7 +23,7 @@ export type MContainerSlots = {
   default: () => VNode[];
 }
 
-export interface MCardProps {
+export interface MCardProps extends QCardProps {
   // titleFromRoute?: boolean | undefined;
   // title?: string | (() => string) | undefined;
   // subtitle?: string | (() => string) | undefined;

@@ -24,7 +24,7 @@
             />
           </template>
           <template v-else>
-            {{ parseAttribute(title) }}
+            {{ __(title) }}
           </template>
           <slot
             v-if="!loading"

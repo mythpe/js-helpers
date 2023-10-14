@@ -23,10 +23,11 @@
   transform: translateX(-20px);
 }
 
-.myth-transition__fade-x-enter-active{
+.myth-transition__fade-x-enter-active {
   transition: all .3s ease;
 
 }
+
 .myth-transition__fade-x-leave-active {
   transition: all .1s ease;
 }

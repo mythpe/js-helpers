@@ -18,7 +18,7 @@
       class="justify-start"
     >
       <div class="text-body1">
-        {{ $myth.parseAttribute(topLabel) }}
+        {{ $myth.__(topLabel) }}
       </div>
     </MRow>
     <div :class="`row ${$q.lang.rtl ? 'reverse' : ''} q-gutter-x-sm justify-center`">

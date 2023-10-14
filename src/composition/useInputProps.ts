@@ -11,7 +11,7 @@ import { useMyth } from '../vue3'
 
 export default function useInputProps (Props: any) {
   const props = computed(() => Props)
-  const { parseAttribute } = useMyth()
+  const { __ } = useMyth()
   const getRules = computed<string | undefined>(() => {
     let rules = props.value?.rules || []
 
@@ -32,7 +32,7 @@ export default function useInputProps (Props: any) {
   const getLabel = computed<string | undefined>(() => {
     const k = props.value.label === undefined && props.value.placeholder === undefined ? props.value.name : props.value.label
     if (k) {
-      let label = parseAttribute(k) || k
+      let label = __(k) || k
       if (label && hasRequired.value && !props.value.hideRequired) {
         label = `${label} *`
       }
@@ -42,11 +42,11 @@ export default function useInputProps (Props: any) {
   })
   const getPlaceholder = computed<string | undefined | null>(() => {
     if (props.value.hidePlaceholder) {
-      return props.value.placeholder !== undefined ? parseAttribute(props.value.placeholder) : undefined
+      return props.value.placeholder !== undefined ? __(props.value.placeholder) : undefined
     }
     const k = props.value.placeholder === undefined ? props.value.name : props.value.placeholder
     if (k) {
-      return parseAttribute(k)
+      return __(k)
     }
     return undefined
   })

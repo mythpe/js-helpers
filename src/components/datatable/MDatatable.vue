@@ -204,7 +204,7 @@
                   </template>
                   <template #after>
                     <q-btn
-                      :aria-label="parseAttribute('menu')"
+                      :aria-label="__('menu')"
                       :icon="$myth.options.dt?.searchInput?.optionsIcon || 'ion-ios-options'"
                       dense
                       flat
@@ -304,7 +304,7 @@
                     >
                       <MDtBtn
                         v-if="(typeof contextBtn.showIf === 'function' ? contextBtn.showIf(tableOptions.selected[0],0) : contextBtn.showIf) && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
-                        :tooltip="parseAttribute(contextBtn.tooltip || contextBtn.name)"
+                        :tooltip="__(contextBtn.tooltip || contextBtn.name)"
                         v-bind="{...($myth.options.dt?.topSelection?.btn||{}),...(contextBtn.attr||{})}"
                         @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
                       />
@@ -585,7 +585,7 @@
                       >
                         <span>{{ getHeaders.find(e => e.name === filterKey)?.label || $t(`attributes.${filterKey}`) }}</span>
                         <span v-if="typeof filterValue === 'boolean'">:
-                          <template v-if="filterKey === 'active'">{{ parseAttribute(filterValue ? 'active' : 'inactive') }}</template>
+                          <template v-if="filterKey === 'active'">{{ __(filterValue ? 'active' : 'inactive') }}</template>
                           <template v-else>{{ $t(filterValue ? 'yes' : 'no') }}</template></span>
                         <span v-else-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
                       </q-chip>
@@ -615,7 +615,7 @@
           #bottom
         >
           <q-space />
-          <div v-text="parseAttribute('replace.from_name', { from: pagination.rowsNumber, name: getRows.length })" />
+          <div v-text="__('replace.from_name', { from: pagination.rowsNumber, name: getRows.length })" />
         </template>
 
         <template

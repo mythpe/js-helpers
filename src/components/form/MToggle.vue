@@ -66,7 +66,7 @@ const props = withDefaults(defineProps<Props>(), {
   statusLabels: !1
 })
 const { getRules } = useInputProps(props)
-const { parseAttribute } = useMyth()
+const { __ } = useMyth()
 type Events = {
   (e: 'update:modelValue', value: any): void;
 }
@@ -76,17 +76,17 @@ const inputValue = computed({
   set: v => emit('update:modelValue', v)
 })
 
-const topLabel = computed<string | null>(() => parseAttribute(props.label === undefined ? props.name : props.label) ?? null)
+const topLabel = computed<string | null>(() => __(props.label === undefined ? props.name : props.label) ?? null)
 
 const getLabel = computed<string | undefined>(() => {
   const v = props.modelValue
   if (v === props.trueValue) {
-    return parseAttribute(props.statusLabels ? 'active' : props.activeLabel) || undefined
+    return __(props.statusLabels ? 'active' : props.activeLabel) || undefined
   }
   if (v === props.falseValue) {
-    return parseAttribute(props.statusLabels ? 'inactive' : props.inactiveLabel) || undefined
+    return __(props.statusLabels ? 'inactive' : props.inactiveLabel) || undefined
   }
-  return parseAttribute('none') || undefined
+  return __('none') || undefined
 })
 
 </script>

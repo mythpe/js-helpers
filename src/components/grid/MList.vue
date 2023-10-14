@@ -134,7 +134,7 @@
             :search="search"
             name="noResult"
           >
-            <div v-text="parseAttribute('myth.select.noResult')" />
+            <div v-text="__('myth.select.noResult')" />
             <MNoResultImg />
           </slot>
         </div>
