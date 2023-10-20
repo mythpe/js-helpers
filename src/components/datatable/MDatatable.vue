@@ -19,6 +19,7 @@
       <q-list
         v-if="dialogs.item"
         :separator="!$myth.tools.isSmall"
+        style="min-width: 280px;"
         v-bind="$myth.options.dt?.contextmenu?.list"
       >
         <template
