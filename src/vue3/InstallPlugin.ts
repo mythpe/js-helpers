@@ -209,7 +209,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         if (name === control) {
           opts.sortable = !1
           if (!item.align) {
-            opts.align = 'left'
+            opts.align = 'right'
           }
           opts.classes = opts.classes || ''
           if (typeof opts.classes === 'function') {
@@ -302,25 +302,32 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       const okProps = options?.confirmDialog?.okProps || {}
       const cancelProps = options?.confirmDialog?.cancelProps || {}
       const dialogProps = options?.confirmDialog?.props || {}
+      dialogProps.transitionShow = dialogProps.transitionShow || 'jump-down'
+      dialogProps.transitionHide = dialogProps.transitionHide || 'jump-up'
+      dialogProps.class = ('m--confirm ') + (dialogProps.class || '')
       return Dialog.create({
         title,
         message,
         focus: 'none',
         cancel: {
-          ...buttonsProps,
-          ...cancelProps,
           color: cancelProps.color || 'positive',
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          label: t(cancelProps?.label || 'no')
+          label: t(cancelProps?.label || 'no'),
+          ...buttonsProps,
+          flat: !0,
+          unelevated: !0,
+          ...cancelProps
         },
         ok: {
-          ...buttonsProps,
-          ...okProps,
           color: okProps.color || 'negative',
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          label: t(okProps?.label || 'yes')
+          label: t(okProps?.label || 'yes'),
+          ...buttonsProps,
+          flat: !0,
+          unelevated: !0,
+          ...okProps
         },
         persistent: !0,
         ...dialogProps,

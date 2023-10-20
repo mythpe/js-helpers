@@ -858,7 +858,7 @@
 
 <script lang="ts">
 
-import { computed, nextTick, onMounted, PropType, reactive, ref, useSlots, watch } from 'vue'
+import { computed, nextTick, onMounted, PropType, reactive, ref, toRef, useSlots, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import _ from 'lodash'
 import { useRouter } from 'vue-router'
@@ -1459,15 +1459,17 @@ export default {
     /** Filter Dialog */
     const openDialogTimeout = 100
     /** Show Dialog */
-    const openShowDialogNoIndex = async (item: MDtItem) => {
-      const index = getRows.value.findIndex(e => e.id === item.id)
-      return await openShowDialog(item, index)
+    const openShowDialogNoIndex = async (i: MDtItem) => {
+      const item = toRef(i)
+      const index = getRows.value.findIndex(e => e.id === item.value.id)
+      return await openShowDialog(item.value, index)
     }
-    const openShowDialog = async (item: MDtItem, index: MDtItemIndex) => {
+    const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
+      const item = toRef(i)
       if (props.showRoute) {
         router.push({
           name: props.showRoute,
-          params: { id: item.id }
+          params: { id: item.value.id }
         })
         return
       }
@@ -1480,7 +1482,7 @@ export default {
         params.requestWith = getRequestWith('withShow')
       }
 
-      getMythApiServicesSchema().show(item.id, { params })
+      getMythApiServicesSchema().show(item.value.id, { params })
         .then(({ _data }) => {
           dialogs.item = _data
           dialogs.index = index
@@ -1502,15 +1504,17 @@ export default {
 
     /** Form Dialog */
     const updateRouteProp = computed(() => props.updateRoute)
-    const openUpdateDialogNoIndex = (item: MDtItem) => {
-      const index = getRows.value.findIndex(e => e.id === item.id)
-      return openUpdateDialog(item, index)
+    const openUpdateDialogNoIndex = (i: MDtItem) => {
+      const item = toRef(i)
+      const index = getRows.value.findIndex(e => e.id === item.value.id)
+      return openUpdateDialog(item.value, index)
     }
-    const openUpdateDialog = (item: MDtItem, index: MDtItemIndex) => {
+    const openUpdateDialog = (i: MDtItem, index: MDtItemIndex) => {
+      const item = toRef(i)
       if (updateRouteProp.value) {
         router.push({
           name: updateRouteProp.value,
-          params: { id: item.id }
+          params: { id: item.value.id }
         })
         return
       }
@@ -1523,7 +1527,7 @@ export default {
       if (getRequestWith('withUpdate')) {
         params.requestWith = getRequestWith('withUpdate')
       }
-      getMythApiServicesSchema().show(item.id, { params })
+      getMythApiServicesSchema().show(item.value.id, { params })
         .then(({ _data }) => {
           dialogs.item = _data
           dialogs.index = index
@@ -1560,13 +1564,14 @@ export default {
     }
     /** Form Dialog */
 
-    const updateDatatableItem = (item: MDtItem, index?: MDtItemIndex) => {
-      if (item && index) {
-        getRows.value[index] = item
+    const updateDatatableItem = (i: MDtItem, index?: MDtItemIndex) => {
+      const item = toRef(i)
+      if (item.value && index) {
+        getRows.value[index] = item.value
       }
-      if (item && !index) {
-        const findIndex = getRows.value.findIndex(e => parseInt(e.id?.toString()) === parseInt(item.id.toString()))
-        getRows.value[findIndex] = item
+      if (item.value && !index) {
+        const findIndex = getRows.value.findIndex(e => parseInt(e.id?.toString()) === parseInt(item.value.id.toString()))
+        getRows.value[findIndex] = item.value
         // const r = [...getRows.value]
         // r[parseInt(findIndex.toString())] = item
         // getRows.value = []
@@ -1575,9 +1580,10 @@ export default {
         // })
       }
     }
-    const removeDtItem = (e: MDtItem | number) => {
-      const byIndex = typeof e !== 'object'
-      const id: string | number = byIndex ? e : e.id
+    const removeDtItem = (i: MDtItem | number) => {
+      const item = toRef(i)
+      const byIndex = typeof item.value !== 'object'
+      const id: string | number = byIndex ? item.value : item.value.id
       if (byIndex) {
         getRows.value = getRows.value.filter((e, i) => i !== id)
       } else {
@@ -1649,15 +1655,16 @@ export default {
       }
     }
     const hideAutoMessage = computed(() => props.hideAutoMessage)
-    const onDeleteItem = (item: MDtItem, index: number) => {
-      if (loading.value || !item?.id) {
+    const onDeleteItem = (i: MDtItem, index: number) => {
+      const item = toRef(i)
+      if (loading.value || !item.value?.id) {
         return
       }
       tableOptions.hasAction = !0
       myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
         loading.value = !0
         try {
-          const { _message, _success } = await getMythApiServicesSchema().destroy(item.id)
+          const { _message, _success } = await getMythApiServicesSchema().destroy(item.value.id)
           if (!hideAutoMessage.value && _success && _message) {
             _message && myth.alertSuccess(_message)
           }

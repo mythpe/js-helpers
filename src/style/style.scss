@@ -32,3 +32,10 @@
 .text-decoration-underline {
   text-decoration: underline;
 }
+
+
+.m--confirm.actions-between {
+  .q-card__actions {
+    justify-content: space-between !important;
+  }
+}
