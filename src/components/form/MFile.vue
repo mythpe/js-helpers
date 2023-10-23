@@ -48,7 +48,11 @@
       >
         <template #prepend>
           <slot name="prepend">
-            <q-icon name="ion-ios-attach" />
+            <q-icon
+              class="cursor-pointer"
+              name="ion-ios-attach"
+              @click="$refs.fileInput?.pickFiles()"
+            />
           </slot>
         </template>
         <template
