@@ -144,10 +144,18 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
   }
 }
 
-export function useModel<T extends Partial<Item> = Item> (name: string, id: string | number, opts?: Options, config?: AxiosRequestConfig | undefined) {
+export function useModel<T extends Partial<Item> = Item> (name: string, id: any, opts?: Options, config?: AxiosRequestConfig | undefined) {
+  const api = useMyth()
   const model = ref<T & any>({})
   const fetching = ref(!1)
   const fetched = ref(!1)
+  const args = reactive({
+    id,
+    model,
+    name,
+    opts,
+    config
+  })
   const fetch = () => {
     return new Promise<AppApiResponse | any>((resolve, reject) => {
       if (fetching.value) {
@@ -155,9 +163,7 @@ export function useModel<T extends Partial<Item> = Item> (name: string, id: stri
         return
       }
       fetching.value = !0
-      const axiosConfig = reactive<AxiosRequestConfig>(config || {})
-      const api = useMyth()
-      return api.services[name][!opts?.isPanel ? 'staticShow' : 'show'](id, axiosConfig)
+      return api.services[args.name][!args.opts?.isPanel ? 'staticShow' : 'show'](args.id, args.config)
         .then((r) => {
           const { _data } = r
           model.value = _data
@@ -173,10 +179,10 @@ export function useModel<T extends Partial<Item> = Item> (name: string, id: stri
           }
           setTimeout(() => {
             fetching.value = !1
-          }, opts?.timeout !== undefined ? opts?.timeout : 100)
+          }, args.opts?.timeout !== undefined ? args.opts?.timeout : 100)
         })
     })
   }
-  !opts?.lazy && onMounted(() => fetch())
+  !args.opts?.lazy && onMounted(() => fetch())
   return { model, fetching, fetch, fetched }
 }
