@@ -1041,15 +1041,15 @@ export default {
     // Style
     flat: {
       type: Boolean,
-      default: () => !0
+      default: () => !1
     },
     bordered: {
       type: Boolean,
-      default: () => !0
+      default: () => !1
     },
     dense: {
       type: Boolean,
-      default: () => !0
+      default: () => !1
     },
     grid: {
       type: Boolean,
