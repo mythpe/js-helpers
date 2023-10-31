@@ -15,10 +15,11 @@
     <slot name="before-all" />
     <MRow
       v-if="topLabel"
-      class="justify-start"
+      class="justify-start q-mb-md text-body1"
+      v-bind="topLabelProps"
     >
-      <div class="text-body1">
-        {{ $myth.__(topLabel) }}
+      <div>
+        {{ __(topLabel) }}
       </div>
     </MRow>
     <div :class="`row ${$q.lang.rtl ? 'reverse' : ''} q-gutter-x-sm justify-center`">
@@ -28,15 +29,25 @@
         :ref="el => updateFieldRef(el, i - 1)"
         v-model="fieldValues[i - 1]"
         :autofocus="autofocus && i === 1"
+        :error="otpErrors.length > 0"
+        hide-bottom-space
         input-class="text-center"
         maxlength="1"
+        no-error-icon
         outlined
         style="width: 6ch"
         v-bind="{...($myth.options.otp || {}),...($attrs||{})}"
+        @keydown="onKeyDown($event, i - 1)"
         @keyup="onKeyUp($event, i - 1)"
         @paste.prevent="onPaste($event,i - 1)"
         @update:model-value="onUpdate($event, i - 1)"
       />
+    </div>
+    <div
+      v-if="otpErrors.length > 0"
+      class="q-my-md text-negative"
+    >
+      {{ otpErrors[0] }}
     </div>
     <slot name="after-input" />
     <MFadeTransition>
@@ -66,18 +77,22 @@
 
 <script lang="ts" setup>
 
-import { computed, defineProps, onBeforeUnmount, onBeforeUpdate, ref, watch, watchEffect } from 'vue'
+import { computed, defineProps, nextTick, onBeforeUnmount, onBeforeUpdate, ref, watch, watchEffect } from 'vue'
 import { date } from 'quasar'
 import { MOtpProps } from './models'
+import { isNaN } from 'lodash'
 
 export interface Props {
   modelValue?: MOtpProps['modelValue'];
   inputLength?: MOtpProps['inputLength'];
+  numeric?: MOtpProps['numeric'];
   time?: MOtpProps['time'];
   hideTime?: MOtpProps['hideTime'];
   hideSendAgain?: MOtpProps['hideSendAgain'];
   topLabel?: MOtpProps['topLabel'];
+  topLabelProps?: MOtpProps['topLabelProps'];
   autofocus?: MOtpProps['autofocus'];
+  errors?: MOtpProps['errors'];
 }
 
 interface Emits {
@@ -91,15 +106,18 @@ interface Emits {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   inputLength: () => 6,
+  numeric: () => !0,
   time: () => 120,
   hideTime: () => !1,
   hideSendAgain: () => !1,
   topLabel: undefined,
-  autofocus: () => !1
+  topLabelProps: undefined,
+  autofocus: () => !1,
+  errors: () => ([])
 })
 
 const emit = defineEmits<Emits>()
-
+const otpErrors = computed(() => props.errors ? props.errors : [])
 const length = computed<number>(() => parseInt(props.inputLength?.toString() || '0'))
 const fields = ref<any>([])
 const fieldValues = ref<(number | string | symbol)[]>([])
@@ -117,7 +135,13 @@ const composite = computed(() => {
 
 watch(composite, () => {
   if (composite.value) {
-    emit('update:modelValue', composite.value)
+    if (props.numeric !== !1) {
+      if (!isNaN(composite.value) && composite.value?.toString()?.length?.toString() === props.inputLength.toString()) {
+        emit('update:modelValue', composite.value)
+      }
+    } else {
+      emit('update:modelValue', composite.value)
+    }
   }
 })
 
@@ -150,6 +174,14 @@ const blur = (index: number) => {
 
 const onUpdate = (value: string | number, index: number) => {
   if (value) {
+    if (props.numeric !== !1 && isNaN(value)) {
+      nextTick(() => {
+        setTimeout(() => {
+          focus(index)
+        }, 100)
+      })
+      return
+    }
     focus(index + 1)
     if (index === (length.value - 1)) {
       blur(index)
@@ -157,6 +189,11 @@ const onUpdate = (value: string | number, index: number) => {
   }
 }
 
+const onKeyDown = (evt: KeyboardEvent, index: number) => {
+  if (props.numeric !== !1 && evt.key && evt.key.toString() !== '0' && !parseInt(evt.key) && evt.key?.length === 1) {
+    evt.preventDefault()
+  }
+}
 const onKeyUp = (evt: KeyboardEvent, index: number) => {
   const key = evt.key
   if (['Tab', 'Shift', 'Meta', 'Control', 'Alt', 'Enter', ' '].includes(key)) {
@@ -175,16 +212,16 @@ const onKeyUp = (evt: KeyboardEvent, index: number) => {
   }
 
   // The input is fill & replace the value
-  if (key.length === 1) {
-    onUpdate(key, index)
-    const t = [...fieldValues.value]
-    t[index] = key
-    fieldValues.value = t
-  }
+  // if (key.length === 1) {
+  //   onUpdate(key, index)
+  //   const t = [...fieldValues.value]
+  //   t[index] = key
+  //   fieldValues.value = t
+  // }
 }
 const onPaste = (evt: ClipboardEvent, index: number) => {
   const value: any = evt.clipboardData?.getData('text')?.toString() || ''
-  if (isNaN(value)) {
+  if (props.numeric !== !1 && isNaN(value)) {
     evt.preventDefault()
     return
   }

@@ -559,10 +559,13 @@ export interface MRadioSlots extends QRadioSlots {
 export interface MOtpProps extends Omit<QInputProps, 'modelValue'> {
   modelValue?: string | number;
   inputLength?: string | number;
+  numeric?: boolean;
   time?: string | number;
   hideTime?: boolean;
   hideSendAgain?: boolean;
   topLabel?: string | null | undefined;
+  topLabelProps?: any | undefined;
+  errors?: string[];
 }
 
 export interface MOtpSlots extends QInputSlots {
