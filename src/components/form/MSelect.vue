@@ -56,6 +56,7 @@
         :option-label="optionLabel"
         :option-value="optionValue"
         :options="getOptions"
+        :stack-label="stackLabel"
         :use-input="useInput"
         v-bind="{...($myth.options.select||{}),...($attrs || {}),...(fieldProps||{field:{}}).field}"
         @filter="filterFn"
@@ -152,14 +153,15 @@ interface Props {
   lg?: ColStyleType;
   xl?: ColStyleType;
   behavior?: 'default' | 'menu' | 'dialog' | undefined;
-  name: string | undefined;
-  label?: string | undefined;
-  required?: boolean | undefined;
-  hideRequired?: boolean | undefined;
-  rules?: string | string[] | undefined;
-  errors?: Record<string, string[]>;
-  modelValue: any;
-  options: any[];
+  name: MSelectProps['name'];
+  label?: MSelectProps['label'];
+  stackLabel?: MSelectProps['stackLabel'];
+  required?: MSelectProps['required'];
+  hideRequired?: MSelectProps['hideRequired'];
+  rules?: MSelectProps['rules'];
+  errors?: MSelectProps['errors'];
+  modelValue: MSelectProps['modelValue'];
+  options: MSelectProps['options'];
   optionLabel?: MSelectProps['optionLabel'];
   optionValue?: MSelectProps['optionValue'];
   emitValue?: MSelectProps['emitValue'];
@@ -185,6 +187,7 @@ const props = withDefaults(defineProps<Props>(), {
   behavior: undefined,
   name: undefined,
   label: undefined,
+  stackLabel: undefined,
   required: undefined,
   hideRequired: undefined,
   rules: undefined,
@@ -275,6 +278,7 @@ defineExpose({ searchInput })
 
 <script lang="ts">
 export default {
+  name: 'MSelect',
   inheritAttrs: !1
 }
 </script>
