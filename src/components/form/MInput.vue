@@ -48,6 +48,7 @@
         :label="getLabel"
         :model-value="inputValue"
         :placeholder="getPlaceholder"
+        :stack-label="stackLabel"
         v-bind="{...($myth.options.input||{}),...($attrs || {}),...fieldScope.field}"
         @update:model-value="fieldScope.handleChange"
       >
@@ -87,11 +88,14 @@ interface Props {
   md?: MInputProps['md'];
   lg?: MInputProps['lg'];
   xl?: MInputProps['xl'];
+  label?: MInputProps['label'];
+  stackLabel?: MInputProps['stackLabel'];
   placeholder?: MInputProps['placeholder'];
   hidePlaceholder?: MInputProps['hidePlaceholder'];
   required?: MInputProps['required'];
   hideRequired?: MInputProps['hideRequired'];
   email?: MInputProps['email'];
+  mobile?: MInputProps['mobile'];
   rules?: MInputProps['rules'];
   errors?: MInputProps['errors'];
   modelValue?: MInputProps['modelValue'];
@@ -108,11 +112,14 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
+  label: undefined,
+  stackLabel: undefined,
   placeholder: undefined,
   hidePlaceholder: undefined,
   required: undefined,
   hideRequired: undefined,
   email: undefined,
+  mobile: undefined,
   rules: undefined,
   errors: undefined,
   modelValue: undefined,
@@ -123,7 +130,6 @@ type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
 }
 const emit = defineEmits<EmitsTypes>()
-/* Emit instead of use ref */
 const inputValue = computed({
   get: () => props.modelValue,
   set: value => emit('update:modelValue', value)
