@@ -53,6 +53,8 @@
         :loading="loading"
         :map-options="mapOptions"
         :model-value="inputValue"
+        :option-label="optionLabel"
+        :option-value="optionValue"
         :options="getOptions"
         :use-input="useInput"
         v-bind="{...($myth.options.select||{}),...($attrs || {}),...(fieldProps||{field:{}}).field}"
@@ -158,6 +160,8 @@ interface Props {
   errors?: Record<string, string[]>;
   modelValue: any;
   options: any[];
+  optionLabel?: MSelectProps['optionLabel'];
+  optionValue?: MSelectProps['optionValue'];
   emitValue?: MSelectProps['emitValue'];
   mapOptions?: MSelectProps['mapOptions'];
   useInput?: MSelectProps['useInput'];
@@ -187,6 +191,8 @@ const props = withDefaults(defineProps<Props>(), {
   errors: undefined,
   modelValue: undefined,
   options: () => ([]),
+  optionLabel: () => 'label',
+  optionValue: () => 'value',
   useInput: () => !0,
   emitValue: () => !0,
   mapOptions: () => !0,
@@ -215,7 +221,20 @@ const noFilterProp = computed<any>(() => props.noFilter !== !1)
 const searchInput = ref('')
 const getOptions = computed(() => {
   if (searchInput.value && searchInput.value.length > 0 && noFilterProp.value !== !0) {
-    return originalOptions.value.filter((v: any) => v.label.toLowerCase().indexOf(searchInput.value) > -1)
+    return originalOptions.value.filter((v: any) => {
+      if (typeof v === 'string' || typeof v === 'number') {
+        return v.toString().toLowerCase().indexOf(searchInput.value) > -1
+      }
+      let labelKey = 'label'
+      if (props.optionLabel) {
+        labelKey = typeof props.optionLabel === 'function' ? props.optionLabel(v) : props.optionLabel
+      }
+      let valueKey = 'value'
+      if (props.optionValue) {
+        valueKey = typeof props.optionValue === 'function' ? props.optionValue(v) : props.optionValue
+      }
+      return v[labelKey]?.toString().toLowerCase().indexOf(searchInput.value) > -1 || v[valueKey]?.toString().toLowerCase().indexOf(searchInput.value) > -1
+    })
   }
   return originalOptions.value
 })
@@ -226,7 +245,7 @@ const filterFn = (val: any, update: any) => {
     return
   }
   update(() => {
-    searchInput.value = val
+    searchInput.value = val.toString()
   })
   // setTimeout(() => {
   // }, props.timeout || 60)
