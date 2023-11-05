@@ -32,7 +32,7 @@ export default function useInputProps (Props: Args) {
       const defLen = 10
       const len = (props.value.mobile === !0 || props.value.mobile?.length === 0) ? defLen : (props.value.mobile.split(':')[1] || defLen)
       rules.push(`digits:${len}`)
-      rules.push('mobile')
+      // rules.push('mobile')
     }
 
     return rules.join('|') || undefined
