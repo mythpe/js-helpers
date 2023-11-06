@@ -73,8 +73,8 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       const pluralize = Str.pascalCase(_.pluralize(lastRouteName))
       const singular = Str.pascalCase(_.singularize(lastRouteName))
       const keys = _.filter(_.uniq([
-        `routes.${routeName}`,
-        `routes.${routePath}`,
+        // `routes.${routeName}`,
+        // `routes.${routePath}`,
         `${lastRouteName}Page.title`,
         `${_.camelCase(lastRouteName)}Page.title`,
         `choice.${pluralize}`,
@@ -90,6 +90,19 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       const { t, te } = baseI18n.value?.global
       let str = null
       let k: string
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (te((k = `routes.${routeName}`)) && _.isString((str = t(k)))) {
+        return str
+      }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (te((k = `routes.${routePath}`)) && _.isString((str = t(k)))) {
+        return str
+      }
+
       for (const f in keys) {
         if (!(k = keys[f])) {
           continue
