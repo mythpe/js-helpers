@@ -17,7 +17,6 @@
     maximized
     no-backdrop-dismiss
     no-shake
-    persistent
     v-bind="{...($myth.options.modalMenu?.props),...($attrs || {})}"
   >
     <q-card v-bind="$myth.options.modalMenu?.card">

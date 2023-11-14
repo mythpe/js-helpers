@@ -171,13 +171,10 @@
                   :debounce="searchDebounce"
                   :placeholder="searchPlaceholder"
                   autocomplete="none"
-                  autofocus
                   class="self-start"
                   col="12"
-                  dense
-                  dplaceholder="myth.datatable.searchInput"
                   lg="6"
-                  md="6"
+                  md="8"
                   name="search"
                   outlined
                   sm="9"
@@ -244,7 +241,7 @@
                             v-close-popup
                             :class="{'full-width': $q.screen.lt.md}"
                             :label="$t('myth.titles.done')"
-                            :size="$q.screen.lt.md ? 'sm' : 'lg'"
+                            :size="$q.screen.lt.md ? 'lg' : 'md'"
                             flat
                             no-caps
                             style="min-width: 68px"
@@ -431,6 +428,7 @@
                   >
                     <MModalMenu
                       no-close-btn
+                      persistent
                       position="top"
                       v-bind="$myth.options.dt?.filterDialogProps"
                     >
@@ -598,6 +596,7 @@
               <!-- Selection Row -->
               <MFadeTransition>
                 <MRow
+                  v-if="Boolean($slots.selection)"
                   class="items-center q-gutter-xs"
                   style="min-height: 38px"
                 >
