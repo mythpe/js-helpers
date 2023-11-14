@@ -31,20 +31,6 @@
       </div>
     </template>
     <template
-      v-if="multiple"
-      #before-options
-    >
-      <MContainer>
-        <MRow class="items-center">
-          <MBtn
-            :label="$t('done')"
-            flat
-            @click="onDoneOptions()"
-          />
-        </MRow>
-      </MContainer>
-    </template>
-    <template
       v-for="(_,slot) in $slots"
       :key="slot"
       #[slot]="inputSlot"
@@ -123,10 +109,6 @@ const requestWithProps = computed(() => props.requestWith)
 const guestProps = computed(() => props.guest !== !1)
 const mSelectRef = ref<any>()
 const searchInput = ref<any>()
-const onDoneOptions = () => {
-  mSelectRef.value.$refs?.selectRef?.updateInputValue('', !0)
-  mSelectRef.value.$refs?.selectRef?.hidePopup()
-}
 const prepare = async () => {
   if (!serviceProp.value || loading.value) {
     return

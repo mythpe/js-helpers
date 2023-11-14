@@ -212,13 +212,11 @@
                       round
                       v-bind="$myth.options.dt?.searchInput?.menuBtn"
                     >
-                      <!--anchor="bottom end"-->
-                      <!--self="top end"-->
                       <MModalMenu
                         no-close-btn
                         v-bind="$myth.options.dt?.searchInput?.menuProps"
                       >
-                        <q-toolbar class="bg-grey text-white">
+                        <q-toolbar>
                           <q-toolbar-title>
                             {{ $t('myth.datatable.searchColumns') }}
                           </q-toolbar-title>
@@ -246,9 +244,9 @@
                             v-close-popup
                             :class="{'full-width': $q.screen.lt.md}"
                             :label="$t('myth.titles.done')"
+                            :size="$q.screen.lt.md ? 'sm' : 'lg'"
                             flat
                             no-caps
-                            size="md"
                             style="min-width: 68px"
                             unelevated
                             @click="tableOptions.search ? refresh() : undefined"

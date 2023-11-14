@@ -102,6 +102,20 @@
           </slot>
         </template>
         <template
+          v-if="multiple"
+          #before-options
+        >
+          <MContainer>
+            <MRow class="items-center">
+              <MBtn
+                :label="$t('done')"
+                flat
+                @click="onDoneOptions()"
+              />
+            </MRow>
+          </MContainer>
+        </template>
+        <template
           v-for="(_,slot) in $slots"
           :key="slot"
           #[slot]="inputSlot"
@@ -174,6 +188,7 @@ interface Props {
   noFilter?: MSelectProps['noFilter'];
   viewMode?: MSelectProps['viewMode'];
   viewModeValue?: MSelectProps['viewModeValue'];
+  multiple?: MSelectProps['multiple'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -205,7 +220,8 @@ const props = withDefaults(defineProps<Props>(), {
   loading: () => !1,
   noFilter: () => !1,
   viewMode: () => !1,
-  viewModeValue: undefined
+  viewModeValue: undefined,
+  multiple: undefined
 })
 type Events = {
   (e: 'update:modelValue', value: any): void;
@@ -213,6 +229,7 @@ type Events = {
 }
 const emit = defineEmits<Events>()
 const veeFieldRef = ref()
+const selectRef = ref()
 const inputValue = computed({
   get: () => props.modelValue,
   set: v => emit('update:modelValue', v)
@@ -241,7 +258,6 @@ const getOptions = computed(() => {
   }
   return originalOptions.value
 })
-// const mounted = ref(!1)
 const filterFn = (val: any, update: any) => {
   if (!val && searchInput.value === val) {
     update()
@@ -263,7 +279,10 @@ const updateModelValue = (v?: any) => {
     veeFieldRef.value.handleChange(v)
   }
 }
-
+const onDoneOptions = () => {
+  selectRef.value?.updateInputValue('', !0)
+  selectRef.value?.hidePopup()
+}
 // const createValue = (val: any, done: any) => {
 //   if (val.length > 0) {
 //     console.log(val)

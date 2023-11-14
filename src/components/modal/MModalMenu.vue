@@ -13,7 +13,7 @@
     :transition-hide="position === 'top' ? $myth.tools.transitions.slideUpFade.hide : $myth.tools.transitions.slideDownFade.hide"
     :transition-show="position === 'top' ? $myth.tools.transitions.slideUpFade.show : $myth.tools.transitions.slideDownFade.show"
     allow-focus-outside
-    class="m--modal_menu"
+    class="m--modal_menu shadow-24"
     maximized
     no-backdrop-dismiss
     no-shake
