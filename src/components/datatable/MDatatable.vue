@@ -589,6 +589,8 @@
                           <template v-if="filterKey === 'active'">{{ __(filterValue ? 'active' : 'inactive') }}</template>
                           <template v-else>{{ $t(filterValue ? 'yes' : 'no') }}</template></span>
                         <span v-else-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
+                        <span v-else-if="typeof filterValue === 'object' && filterValue.label">: {{ filterValue.label }}</span>
+                        <span v-else-if="typeof filterValue === 'object' && filterValue.length">: {{ filterValue.map(e => e.label).join(', ') }}</span>
                       </q-chip>
                     </MCol>
                   </template>
