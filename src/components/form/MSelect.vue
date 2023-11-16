@@ -34,11 +34,11 @@
       </q-field>
     </template>
     <component
-      :is="useInput ? 'div' : VeeField"
+      :is="useInput ? 'label' : VeeField"
       v-else
       v-slot="fieldProps"
       :model-value="inputValue"
-      :name="name"
+      :name="useInput ? undefined : name"
       :rules="getRules"
       v-bind="$attrs"
       @update:model-value="updateFieldValue"
@@ -166,7 +166,7 @@ interface Props {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  behavior?: 'default' | 'menu' | 'dialog' | undefined;
+  behavior?: MSelectProps['behavior'];
   name: MSelectProps['name'];
   label?: MSelectProps['label'];
   stackLabel?: MSelectProps['stackLabel'];
