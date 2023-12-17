@@ -53,6 +53,7 @@
         :loading="loading"
         :map-options="mapOptions"
         :model-value="inputValue"
+        :multiple="multiple"
         :option-label="optionLabel"
         :option-value="optionValue"
         :options="getOptions"
