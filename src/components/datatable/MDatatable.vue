@@ -17,7 +17,7 @@
       @before-hide="resetDialogs()"
     >
       <q-list
-        v-if="dialogs.item"
+        v-if="itemDialog"
         :separator="!$myth.tools.isSmall"
         style="min-width: 280px;"
         v-bind="$myth.options.dt?.contextmenu?.list"
@@ -27,13 +27,13 @@
           :key="i"
         >
           <MDtBtn
-            v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
+            v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(itemDialog,itemIndexDialog) : contextmenuItem.showIf"
             :[contextmenuItem.name]="!0"
             :dense="dense"
             :label="$t(contextmenuItem.label || contextmenuItem.name)"
             list-item
             v-bind="{...($myth.options.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
-            @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
+            @click="contextmenuItem.click ? contextmenuItem.click(itemDialog,itemIndexDialog) : undefined"
           />
         </template>
       </q-list>
@@ -685,8 +685,8 @@
         >
           <MFadeTransition>
             <slot
-              :index="dialogs.index"
-              :item="dialogs.item"
+              :index="itemIndexDialog"
+              :item="itemDialog"
               name="show"
             />
           </MFadeTransition>
@@ -716,7 +716,7 @@
         ref="formDialogRef"
         v-slot="form"
         :errors="dialogs.errors"
-        :form="dialogs.item"
+        :form="itemDialog"
         :form-props="{class: 'column full-height justify-between no-wrap'}"
         class="full-height no-wrap"
         @submit="defaultSubmitItem"
@@ -745,8 +745,8 @@
             <MFadeTransition>
               <slot
                 :form="form"
-                :index="dialogs.index"
-                :item="dialogs.item"
+                :index="itemIndexDialog"
+                :item="itemDialog"
                 name="form"
                 v-bind="datatableItemsScope"
               />
@@ -769,8 +769,8 @@
             />
             <slot
               :form="form"
-              :index="dialogs.index"
-              :item="dialogs.item"
+              :index="itemIndexDialog"
+              :item="itemDialog"
               name="form-actions"
               v-bind="datatableItemsScope"
             >
@@ -1548,11 +1548,13 @@ export default {
         return
       }
       const item = { ...(defaultItem.value || {}), ...(dtItem || {}) }
-      // console.log(item)
       isUpdateMode.value = !1
-      dialogs.item = Object.create(item)
-      dialogs.index = undefined
-      setTimeout(() => (dialogs.form = !0), openDialogTimeout)
+      itemDialog.value = { ...item }
+      itemIndexDialog.value = undefined
+      console.log(item)
+      nextTick(() => {
+        setTimeout(() => (dialogs.form = !0), openDialogTimeout)
+      })
     }
     const closeFormDialog = () => {
       dialogs.form = !1
@@ -1840,6 +1842,8 @@ export default {
       onRowContextmenu,
       getRowsPerPageOptions,
       dialogs,
+      itemDialog,
+      itemIndexDialog,
       resetDialogs,
 
       searchPlaceholder,
