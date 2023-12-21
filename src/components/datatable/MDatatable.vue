@@ -1098,7 +1098,7 @@ export default {
     const serviceName = computed(() => props.serviceName)
     const { t } = useI18n({ useScope: 'global' })
     // Prevent user from back
-    router.beforeResolve(() => {
+    /* router.beforeResolve(() => {
       if (dialogs.filter) {
         closeFilterDialog()
         return !1
@@ -1110,7 +1110,7 @@ export default {
         return !1
       }
       return !hasAction.value
-    })
+    }) */
     const getRows = ref<MDtItem[]>([])
     const filterDialogModel = ref(!1)
     const showDialogModel = ref(!1)
