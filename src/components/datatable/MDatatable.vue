@@ -1551,7 +1551,7 @@ export default {
       isUpdateMode.value = !1
       itemDialog.value = { ...item }
       itemIndexDialog.value = undefined
-      console.log(item)
+      // console.log(item)
       nextTick(() => {
         setTimeout(() => (dialogs.form = !0), openDialogTimeout)
       })

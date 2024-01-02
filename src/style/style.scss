@@ -39,3 +39,44 @@
     justify-content: space-between !important;
   }
 }
+
+$alignsX: ('top', 'bottom') !default;
+$alignsY: ('left', 'right') !default;
+$radius-class-name: 'border-rounded' !default;
+$radius-value: $generic-border-radius !default;
+
+$bordered-class-name: 'bordered' !default;
+$bordered-size: 1px !default;
+$bordered-style: $bordered-size solid $primary !default;
+.#{$radius-class-name} {
+  border-radius: $radius-value;
+}
+
+.#{$bordered-class-name} {
+  border: $bordered-style;
+}
+
+@each $x in $alignsX {
+  .bordered-#{$x} {
+    border-#{$x}: $bordered-style;
+  }
+  .#{$radius-class-name}-#{$x} {
+    border-#{$x}-left-radius: $radius-value;
+    border-#{$x}-right-radius: $radius-value;
+  }
+
+  @each $y in $alignsY {
+    .#{$radius-class-name}-#{$x}-#{$y} {
+      border-#{$x}-#{$y}-radius: $radius-value;
+    }
+
+    .#{$radius-class-name}-#{$y} {
+      border-bottom-#{$y}-radius: $radius-value;
+      border-top-#{$y}-radius: $radius-value;
+    }
+
+    .bordered-#{$y} {
+      border-#{$y}: $bordered-style;
+    }
+  }
+}
