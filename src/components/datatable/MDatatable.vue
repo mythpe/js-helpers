@@ -637,6 +637,32 @@
           </slot>
         </template>
 
+        <template #body-cell-avatar_url="props">
+          <q-td :props="props">
+            <MDtBtn
+              v-if="props.row.avatar_url"
+              :src="props.row.avatar_url"
+              icon="ion-ios-eye"
+              @click="openImageDialog(props.row.avatar_url)"
+            >
+              <q-tooltip>{{ __('myth.titles.show') }}</q-tooltip>
+            </MDtBtn>
+          </q-td>
+        </template>
+
+        <template #body-cell-avatar="props">
+          <q-td :props="props">
+            <MDtBtn
+              v-if="props.row.avatar"
+              :src="props.row.avatar"
+              icon="ion-ios-eye"
+              @click="openImageDialog(props.row.avatar)"
+            >
+              <q-tooltip>{{ __('myth.titles.show') }}</q-tooltip>
+            </MDtBtn>
+          </q-td>
+        </template>
+
         <template
           v-for="(slotVal,slotName) in $slots"
           :key="slotName"
