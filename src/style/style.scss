@@ -10,6 +10,18 @@
   padding: 8px;
 }
 
+.flex-break {
+  flex: 1 0 100% !important
+}
+
+.row .flex-break {
+  height: 0 !important
+}
+
+.column .flex-break {
+  width: 0 !important
+}
+
 .m--row + .m--row,
 .m--form + .m--row,
 .m--row + .m--form {
