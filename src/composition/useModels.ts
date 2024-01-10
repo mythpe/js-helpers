@@ -183,6 +183,8 @@ export function useModel<T extends Partial<Item> = Item> (name: string, id: any,
         })
     })
   }
-  !args.opts?.lazy && onMounted(() => fetch())
+  !args.opts?.lazy && onMounted(() => {
+    args.id && fetch()
+  })
   return { model, fetching, fetch, fetched }
 }
