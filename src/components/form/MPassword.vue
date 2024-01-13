@@ -17,7 +17,7 @@
     >
       <q-icon name="password" />
     </template>
-    <template #after>
+    <template #append>
       <q-btn
         :icon="'ion-ios-eye' + (inputType !== 'password' ? '-off' : '')"
         flat
