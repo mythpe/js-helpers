@@ -149,13 +149,7 @@ export function useModel<T extends Partial<Item> = Item> (name: string, id: any,
   const model = ref<T & any>({})
   const fetching = ref(!1)
   const fetched = ref(!1)
-  const args = reactive({
-    id,
-    model,
-    name,
-    opts,
-    config
-  })
+  const args = reactive({ id, model, name, opts, config })
   const fetch = () => {
     return new Promise<AppApiResponse | any>((resolve, reject) => {
       if (fetching.value) {
@@ -163,7 +157,8 @@ export function useModel<T extends Partial<Item> = Item> (name: string, id: any,
         return
       }
       fetching.value = !0
-      return api.services[args.name][!args.opts?.isPanel ? 'staticShow' : 'show'](args.id, args.config)
+      const m = opts?.method ? api.services[args.name][opts.method] : api.services[args.name][!args.opts?.isPanel ? 'staticShow' : 'show']
+      return m(args.id, args.config)
         .then((r) => {
           const { _data } = r
           model.value = _data
