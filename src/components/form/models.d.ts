@@ -255,6 +255,7 @@ export interface MAxiosProps extends Omit<MSelectProps, 'options' | 'modelValue'
   service: ((config?: AxiosRequestConfig) => Promise<any>) | string;
   params?: Record<string, any> | undefined;
   guest?: boolean | undefined;
+  attributeName?: string;
 }
 
 export interface MAxiosSlots extends MSelectSlots {

@@ -15,6 +15,7 @@
     :multiple="multiple"
     :name="name"
     :no-filter="autoSearch"
+    :option-label="getOptionLabel"
     :options="items"
     :readonly="loading"
     :view-mode="viewMode"
@@ -56,6 +57,7 @@
 import { computed, defineEmits, defineProps, nextTick, onBeforeMount, onMounted, ref, watch } from 'vue'
 import { useMyth } from '../../vue3'
 import { MAxiosProps } from './models'
+import { useQuasar } from 'quasar'
 
 interface Props {
   multiple?: MAxiosProps['multiple'];
@@ -70,6 +72,8 @@ interface Props {
   iniData?: MAxiosProps['iniData'];
   viewMode?: MAxiosProps['viewMode'];
   viewModeValue?: MAxiosProps['viewModeValue'];
+  optionLabel?: MAxiosProps['optionLabel'];
+  attributeName?: MAxiosProps['attributeName'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -84,7 +88,9 @@ const props = withDefaults(defineProps<Props>(), {
   autoSearch: () => !0,
   iniData: () => !0,
   viewMode: () => !1,
-  viewModeValue: undefined
+  viewModeValue: undefined,
+  optionLabel: undefined,
+  attributeName: () => 'name'
 })
 
 interface Emits {
@@ -94,10 +100,17 @@ interface Emits {
 }
 
 const emit = defineEmits<Emits>()
-
+const q = useQuasar()
 const loading = ref<boolean>(!1)
 const items = ref<any[]>([])
 const serviceProp = computed<MAxiosProps['service']>(() => props.service)
+const getOptionLabel = computed<MAxiosProps['optionLabel']>(() => {
+  if (!props.optionLabel) {
+    const qLocale = q.lang.isoName.slice(0, 2)?.toLowerCase() || 'ar'
+    return qLocale ? `${props.attributeName}_${qLocale}` : props.optionLabel
+  }
+  return props.optionLabel
+})
 const model = computed({
   get: () => props.modelValue,
   set: (v) => emit('update:modelValue', v)
@@ -124,7 +137,8 @@ const prepare = async () => {
     requestWith: requestWithProps.value,
     search: searchInput.value,
     itemsPerPage: -1,
-    page: 1
+    page: 1,
+    mar: 1
   }
   loading.value = !0
   method({ params })
