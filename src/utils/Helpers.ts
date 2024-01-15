@@ -88,8 +88,9 @@ export const Helpers = {
         // return typeof id === 'boolean' ? u : axios().get(u, config)
       },
       async staticShow (id: UrlType, config?: AxiosRequestConfig) {
-        const m = baseUrl ? baseUrl.toString().split('/').pop() : ''
-        const u = 'Static' + (m ? `/${m}` : '') + `/${id}`
+        // const m = baseUrl ? baseUrl.toString().split('/').pop() : ''
+        // const u = 'Static' + (m ? `/${m}` : '') + `/${id}`
+        const u = `Static${baseUrl ? `/${baseUrl}` : ''}` + `/${id}`
         // if (typeof id === 'boolean') {
         //   return u
         // }
