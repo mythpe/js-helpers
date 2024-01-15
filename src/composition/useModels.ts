@@ -6,16 +6,16 @@
  * Github: https://github.com/mythpe
  */
 
-import { computed, onMounted, reactive, Ref, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, Ref, ref, watch } from 'vue'
 import { AxiosRequestConfig } from 'axios'
 import { useMyth } from '../vue3'
-import { AppApiResponse, AxiosDataRow, AxiosMetaResponse, UseModelsOptions as Options } from '../types'
+import { AppApiResponse, AxiosDataRow, AxiosMetaResponse, UseModelsOptions as Options, UseModelsOptionsArg } from '../types'
 
 const itemsPerPage = 50
 type Item = AxiosDataRow & object
 
 export function useModels<T extends Partial<Item> = Item> (name: string, options?: Options, search?: string | Ref<string>, filter?: Record<string, any>, config?: AxiosRequestConfig | undefined) {
-  const opts = reactive<Options | Record<string, any>>(options || {})
+  const opts = reactive<UseModelsOptionsArg | Record<string, any>>(options || {})
   const params = reactive({ search, filter })
   const axiosConfig = reactive<AxiosRequestConfig>(config || {})
   const models = ref<(Item | T)[]>([])
@@ -97,6 +97,15 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
   }
   const beginningFetch = (config: AxiosRequestConfig = {}) => {
     reset()
+    if (opts.qInfiniteScroll) {
+      return new Promise(resolve => {
+        opts.qInfiniteScroll.reset()
+        nextTick(() => {
+          opts.qInfiniteScroll.trigger()
+        })
+        resolve({})
+      })
+    }
     return nextPage(config)
   }
   try {
@@ -157,7 +166,7 @@ export function useModel<T extends Partial<Item> = Item> (name: string, id: any,
         return
       }
       fetching.value = !0
-      const m = opts?.method ? api.services[args.name][opts.method] : api.services[args.name][!args.opts?.isPanel ? 'staticShow' : 'show']
+      const m = args.opts?.method ? api.services[args.name][args.opts.method] : api.services[args.name][!args.opts?.isPanel ? 'staticShow' : 'show']
       return m(args.id, args.config)
         .then((r) => {
           const { _data } = r

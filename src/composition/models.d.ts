@@ -6,9 +6,14 @@
  * Github: https://github.com/mythpe
  */
 
-export type UseModelsOptions = {
+import { QInfiniteScroll } from 'quasar'
+import { Ref, UnwrapNestedRefs } from 'vue'
+
+export type UseModelsOptionsArg = {
   lazy?: boolean;
   isPanel?: boolean;
   method?: string;
   timeout?: number | undefined;
+  qInfiniteScroll?: Ref<QInfiniteScroll | undefined>;
 }
+export type UseModelsOptions = UnwrapNestedRefs<UseModelsOptionsArg> | Ref<UseModelsOptionsArg> | UseModelsOptionsArg
