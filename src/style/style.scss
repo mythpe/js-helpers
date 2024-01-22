@@ -5,6 +5,11 @@
  * Website: https://www.4myth.com
  * Github: https://github.com/mythpe
  */
+.touch {
+  .m--dt-btn-tooltip {
+    display: none !important;
+  }
+}
 
 .m--container {
   padding: 8px;

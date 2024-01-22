@@ -27,7 +27,7 @@
     <q-item-section>
       <q-item-label>
         <slot>
-          {{ label || $attrs.label }}
+          {{ __(label || $attrs.label) }}
         </slot>
       </q-item-label>
     </q-item-section>
@@ -46,7 +46,7 @@
   >
     <q-tooltip
       v-if="hasTooltip"
-      class="gt-sm"
+      class="m--dt-btn-tooltip"
     >
       {{ getTooltip }}
     </q-tooltip>
