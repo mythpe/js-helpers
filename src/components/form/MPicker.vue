@@ -78,13 +78,13 @@
               <div class="row items-center justify-end">
                 <MBtn
                   v-close-popup
-                  :label="$t('close')"
+                  :label="__('close')"
                   color="negative"
                   flat
                 />
                 <MBtn
                   v-close-popup
-                  :label="$t('save')"
+                  :label="__('save')"
                   flat
                   @click="saveDialog()"
                 />
@@ -100,13 +100,13 @@
               <div class="row items-center justify-end">
                 <MBtn
                   v-close-popup
-                  :label="$t('close')"
+                  :label="__('close')"
                   color="negative"
                   flat
                 />
                 <MBtn
                   v-close-popup
-                  :label="$t('save')"
+                  :label="__('save')"
                   flat
                   @click="saveDialog()"
                 />

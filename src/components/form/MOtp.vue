@@ -55,7 +55,7 @@
         v-if="!hideTime"
         class="q-mt-sm"
       >
-        <span>{{ $t('myth.otp.expire_line') }}:&nbsp;</span>
+        <span>{{ __('myth.otp.expire_line') }}:&nbsp;</span>
         <span>{{ getTime }}</span>
       </div>
     </MFadeTransition>
@@ -64,11 +64,11 @@
         v-if="!hideSendAgain"
         class="q-mt-sm"
       >
-        <span>{{ $t('myth.otp.send_again_title') }}&nbsp;</span>
+        <span>{{ __('myth.otp.send_again_title') }}&nbsp;</span>
         <span
           :class="{'text-decoration-underline':!0, disabled,'cursor-pointer': !disabled}"
           @click="onSend()"
-        >{{ $t('myth.otp.send_again_btn') }}</span>
+        >{{ __('myth.otp.send_again_btn') }}</span>
       </div>
     </MFadeTransition>
     <slot name="after-all" />

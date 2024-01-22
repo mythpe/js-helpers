@@ -171,13 +171,9 @@
                   :debounce="searchDebounce"
                   :placeholder="searchPlaceholder"
                   autocomplete="none"
-                  class="self-start"
                   col="12"
-                  lg="6"
-                  md="8"
                   name="search"
                   outlined
-                  sm="9"
                   v-bind="$myth.options.dt?.searchInput?.props"
                 >
                   <template #prepend>
@@ -185,7 +181,7 @@
                       v-if="!tableOptions.search"
                       name="ion-ios-search"
                     >
-                      <q-tooltip>
+                      <q-tooltip class="m--dt-btn-tooltip">
                         {{ __('myth.datatable.searchInput') }}
                       </q-tooltip>
                     </q-icon>
@@ -195,7 +191,7 @@
                       name="ion-ios-close"
                       @click="tableOptions.search = ''"
                     >
-                      <q-tooltip>
+                      <q-tooltip class="m--dt-btn-tooltip">
                         {{ __('myth.datatable.searchInputClear') }}
                       </q-tooltip>
                     </q-icon>
@@ -645,7 +641,9 @@
               icon="ion-ios-eye"
               @click="openImageDialog(props.row.avatar_url)"
             >
-              <q-tooltip>{{ __('myth.titles.show') }}</q-tooltip>
+              <q-tooltip class="m--dt-btn-tooltip">
+                {{ __('myth.titles.show') }}
+              </q-tooltip>
             </MDtBtn>
           </q-td>
         </template>
@@ -658,7 +656,9 @@
               icon="ion-ios-eye"
               @click="openImageDialog(props.row.avatar)"
             >
-              <q-tooltip>{{ __('myth.titles.show') }}</q-tooltip>
+              <q-tooltip class="m--dt-btn-tooltip">
+                {{ __('myth.titles.show') }}
+              </q-tooltip>
             </MDtBtn>
           </q-td>
         </template>
@@ -698,7 +698,9 @@
                 flat
                 @click="closeShowDialog()"
               >
-                <q-tooltip>{{ __('myth.titles.back') }}</q-tooltip>
+                <q-tooltip class="m--dt-btn-tooltip">
+                  {{ __('myth.titles.back') }}
+                </q-tooltip>
               </q-btn>
               {{ getShowTitle }}
             </q-toolbar-title>
@@ -757,7 +759,9 @@
                   flat
                   @click="closeFormDialog"
                 >
-                  <q-tooltip>{{ __('myth.titles.back') }}</q-tooltip>
+                  <q-tooltip class="m--dt-btn-tooltip">
+                    {{ __('myth.titles.back') }}
+                  </q-tooltip>
                 </q-btn>
                 {{ getFormTitle }}
               </q-toolbar-title>

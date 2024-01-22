@@ -31,7 +31,7 @@
         >
           <q-item-section>
             <q-item-label header>
-              {{ $t('myth.titles.close') }}
+              {{ __('myth.titles.close') }}
             </q-item-label>
           </q-item-section>
         </q-item>

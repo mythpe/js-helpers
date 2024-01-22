@@ -45,8 +45,8 @@
             color="primary"
             name="search"
           >
-            <q-tooltip>
-              {{ $t('myth.datatable.searchInput') }}
+            <q-tooltip class="m--dt-btn-tooltip">
+              {{ __('myth.datatable.searchInput') }}
             </q-tooltip>
           </q-icon>
           <q-icon
@@ -56,8 +56,8 @@
             name="clear"
             @click="searchValue = ''"
           >
-            <q-tooltip>
-              {{ $t('myth.datatable.searchInputClear') }}
+            <q-tooltip class="m--dt-btn-tooltip">
+              {{ __('myth.datatable.searchInputClear') }}
             </q-tooltip>
           </q-icon>
         </template>
@@ -150,7 +150,7 @@
           name="noData"
         >
           <div class="text-h6 text-center q-gutter-md">
-            <div v-text="$t('myth.select.noData')" />
+            <div v-text="__('myth.select.noData')" />
             <MNoResultImg />
           </div>
         </slot>

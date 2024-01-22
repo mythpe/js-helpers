@@ -62,7 +62,7 @@
       >
         <q-input
           v-model="search"
-          :label="$t('search')"
+          :label="__('search')"
           :loading="loading"
           clearable
           debounce="600"
@@ -112,7 +112,7 @@
               </q-item>
               <q-item v-if="searchResults && searchResults.length === 0 && !loading && search">
                 <q-item-section>
-                  {{ $t('messages.no_items') }}
+                  {{ __('messages.no_items') }}
                 </q-item-section>
               </q-item>
             </q-list>

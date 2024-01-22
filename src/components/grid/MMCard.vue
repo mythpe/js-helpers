@@ -98,7 +98,7 @@ export default {
           class="q-mr-sm print-hide"
           @click="$router.back()"
         >
-          <span class="q-ml-sm">{{ $t('back') }}</span>
+          <span class="q-ml-sm">{{ __('back') }}</span>
         </MBtn>
         <div
           v-if="Boolean(cardOptions.title)"

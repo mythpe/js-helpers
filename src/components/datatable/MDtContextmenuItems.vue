@@ -15,7 +15,7 @@
       <MDtBtn
         v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(item,index) : contextmenuItem.showIf"
         :[contextmenuItem.name]="!0"
-        :label="contextmenuItem.label !== undefined ? $t(contextmenuItem.label || contextmenuItem.name) : undefined"
+        :label="contextmenuItem.label !== undefined ? __(contextmenuItem.label || contextmenuItem.name) : undefined"
         :list-item="displayMode==='item'"
         :round="contextmenuItem.label === undefined"
         :tooltip="contextmenuItem.tooltip !== undefined ? contextmenuItem.tooltip : (contextmenuItem.label === undefined ? contextmenuItem.name : undefined)"

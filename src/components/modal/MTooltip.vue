@@ -8,6 +8,7 @@
 
 <template>
   <q-tooltip
+    class="m--dt-btn-tooltip"
     transition-hide="scale"
     transition-show="scale"
     v-bind="{...($myth.options.tooltip),...($attrs || {})}"

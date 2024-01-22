@@ -230,9 +230,9 @@ export default {
           :disable="!isLoaded && Boolean(urlValue)"
           @click="onClick"
         >
-          <span v-if="clearable && hasSrc">{{ $t('remove') }}</span>
-          <span v-else-if="!clearable && hasSrc">{{ $t('change') }}</span>
-          <span v-else>{{ $t('choose') }}</span>
+          <span v-if="clearable && hasSrc">{{ __('remove') }}</span>
+          <span v-else-if="!clearable && hasSrc">{{ __('change') }}</span>
+          <span v-else>{{ __('choose') }}</span>
         </MBtn>
       </MCol>
       <MFadeTransition>

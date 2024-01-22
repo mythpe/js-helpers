@@ -87,16 +87,16 @@
                 class="text-italic text-grey"
               >
                 <template v-if="autoSearch && searchInput?.length > 0">
-                  {{ $t('myth.select.noData') }}
+                  {{ __('myth.select.noData') }}
                 </template>
                 <template v-else-if="autoSearch && !searchInput?.length">
-                  {{ $t('myth.select.typeToSearch') }}
+                  {{ __('myth.select.typeToSearch') }}
                 </template>
                 <template v-else-if="loading">
                   <q-spinner color="primary" />
                 </template>
                 <template v-else>
-                  {{ $t('myth.select.noData') }}
+                  {{ __('myth.select.noData') }}
                 </template>
               </q-item-section>
             </q-item>
@@ -109,7 +109,7 @@
           <MContainer>
             <MRow class="items-center">
               <MBtn
-                :label="$t('done')"
+                :label="__('done')"
                 flat
                 @click="onDoneOptions()"
               />

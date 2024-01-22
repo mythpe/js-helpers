@@ -61,7 +61,7 @@
           <q-btn
             v-if="scope.queuedFiles.length > 0"
             :icon="removeQueuedIcon"
-            :label="$t('myth.uploader.clearAll')"
+            :label="__('myth.uploader.clearAll')"
             dense
             flat
             @click="scope.removeQueuedFiles"
@@ -69,7 +69,7 @@
           <q-btn
             v-if="scope.uploadedFiles.length > 0"
             :icon="removeUploadedIcon"
-            :label="$t('myth.uploader.removeUploadedFiles')"
+            :label="__('myth.uploader.removeUploadedFiles')"
             dense
             flat
             @click="scope.removeUploadedFiles"
@@ -77,7 +77,7 @@
           <q-btn
             v-if="scope.canAddFiles"
             :icon="pickFilesIcon"
-            :label="$t('myth.uploader.pickFiles')"
+            :label="__('myth.uploader.pickFiles')"
             dense
             flat
             @click="scope.pickFiles"
@@ -87,7 +87,7 @@
           <q-btn
             v-if="scope.canUpload"
             :icon="uploadFilesIcon"
-            :label="$t('myth.uploader.uploadFiles')"
+            :label="__('myth.uploader.uploadFiles')"
             dense
             flat
             @click="scope.upload"
@@ -95,7 +95,7 @@
           <q-btn
             v-if="scope.isUploading"
             :icon="abortUploadIcon"
-            :label="$t('myth.uploader.abortUpload')"
+            :label="__('myth.uploader.abortUpload')"
             dense
             flat
             @click="scope.abort"
@@ -118,7 +118,7 @@
                       left
                       name="error_outline"
                     />
-                    <span v-text="$t('myth.select.noData')" />
+                    <span v-text="__('myth.select.noData')" />
                   </MCol>
                 </MRow>
               </div>
@@ -222,7 +222,7 @@
                     <span
                       v-if="file.__status"
                       class="text-body2 q-pl-xs"
-                    >{{ $te(`myth.uploader.statuses.${file.__status}`) ? $t(`myth.uploader.statuses.${file.__status}`) : file.__status }}</span>
+                    >{{ $te(`myth.uploader.statuses.${file.__status}`) ? __(`myth.uploader.statuses.${file.__status}`) : file.__status }}</span>
                   </q-item-label>
                   <q-item-label
                     v-if="file.size_to_string || file.__sizeLabel"
@@ -240,7 +240,7 @@
                       v-if="Boolean(file.id) && file.url"
                       :href="file.url"
                       :icon="downloadFileIcon"
-                      :label="$t('myth.titles.download')"
+                      :label="__('myth.titles.download')"
                       dense
                       flat
                       target="_blank"
@@ -251,7 +251,7 @@
                       v-if="(!hideDeleteMedia || (hideDeleteMedia && !Boolean(file.id))) && displayMode === 'list'"
                       :disable="deleting || scope.isBusy || scope.isUploading"
                       :icon="deleteMediaIcon"
-                      :label="$t(file.id ? 'myth.uploader.deleteMedia' : 'myth.uploader.removeMedia')"
+                      :label="__(file.id ? 'myth.uploader.deleteMedia' : 'myth.uploader.removeMedia')"
                       color="negative"
                       dense
                       flat
@@ -259,7 +259,9 @@
                       v-bind="$myth.options.uploader?.removeBtnProps"
                       @click="onClickDeleteAttachment(file)"
                     >
-                      <q-tooltip>{{ $t(file.id ? 'myth.uploader.deleteMedia' : 'myth.uploader.removeMedia') }}</q-tooltip>
+                      <q-tooltip class="m--dt-btn-tooltip">
+                        {{ __(file.id ? 'myth.uploader.deleteMedia' : 'myth.uploader.removeMedia') }}
+                      </q-tooltip>
                     </MBtn>
                   </q-item-label>
                 </q-item-section>
@@ -280,7 +282,9 @@
                       v-bind="$myth.options.uploader?.removeBtnProps"
                       @click="onClickDeleteAttachment(file)"
                     >
-                      <q-tooltip>{{ $t(file.id ? 'myth.uploader.deleteMedia' : 'myth.uploader.removeMedia') }}</q-tooltip>
+                      <q-tooltip class="m--dt-btn-tooltip">
+                        {{ __(file.id ? 'myth.uploader.deleteMedia' : 'myth.uploader.removeMedia') }}
+                      </q-tooltip>
                     </q-btn>
                   </q-item-label>
                 </q-item-section>
