@@ -256,7 +256,7 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   /**
    * Auto actions card 'control'
    */
-  noItemControl?: boolean;
+  showCardControlHeader?: boolean;
 }
 
 export interface MDtAvatarProps extends QAvatarProps {

@@ -104,7 +104,7 @@
                     :key="col.name"
                   >
                     <MRow
-                      v-if="col.name !== controlKey || (col.name === controlKey && !noItemControl)"
+                      v-if="col.name !== controlKey || (col.name === controlKey && showCardControlHeader)"
                       class="justify-between q-col-gutter-x-sm"
                     >
                       <MCol auto>
@@ -1113,7 +1113,7 @@ export default {
       type: Boolean,
       default: () => !1
     },
-    noItemControl: {
+    showCardControlHeader: {
       type: Boolean,
       default: () => !1
     },
