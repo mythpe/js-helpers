@@ -56,14 +56,36 @@
   }
 }
 
+.pre {
+  max-width: 100%;
+  white-space-collapse: preserve-breaks;
+  white-space: pre-line;
+}
+
+.text-wrap {
+  text-wrap: wrap;
+}
+
+.break-inside-avoid {
+  page-break-inside: avoid;
+}
+
+.break-after-avoid {
+  page-break-after: avoid;
+}
+
+.break-before-avoid {
+  page-break-before: avoid;
+}
+
 $alignsX: ('top', 'bottom') !default;
 $alignsY: ('left', 'right') !default;
 $radius-class-name: 'border-rounded' !default;
 $radius-value: $generic-border-radius !default;
-
 $bordered-class-name: 'bordered' !default;
 $bordered-size: 1px !default;
 $bordered-style: $bordered-size solid $primary !default;
+
 .#{$radius-class-name} {
   border-radius: $radius-value;
 }
