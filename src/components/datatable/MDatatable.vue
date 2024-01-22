@@ -30,7 +30,7 @@
             v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(itemDialog,itemIndexDialog) : contextmenuItem.showIf"
             :[contextmenuItem.name]="!0"
             :dense="dense"
-            :label="$t(contextmenuItem.label || contextmenuItem.name)"
+            :label="contextmenuItem.contextLabel !== undefined ? (contextmenuItem.contextLabel === null ? undefined : __(contextmenuItem.contextLabel)) : __(contextmenuItem.label || contextmenuItem.name) "
             list-item
             v-bind="{...($myth.options.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
             @click="contextmenuItem.click ? contextmenuItem.click(itemDialog,itemIndexDialog) : undefined"
@@ -186,7 +186,7 @@
                       name="ion-ios-search"
                     >
                       <q-tooltip>
-                        {{ $t('myth.datatable.searchInput') }}
+                        {{ __('myth.datatable.searchInput') }}
                       </q-tooltip>
                     </q-icon>
                     <q-icon
@@ -196,7 +196,7 @@
                       @click="tableOptions.search = ''"
                     >
                       <q-tooltip>
-                        {{ $t('myth.datatable.searchInputClear') }}
+                        {{ __('myth.datatable.searchInputClear') }}
                       </q-tooltip>
                     </q-icon>
                   </template>
@@ -215,7 +215,7 @@
                       >
                         <q-toolbar>
                           <q-toolbar-title>
-                            {{ $t('myth.datatable.searchColumns') }}
+                            {{ __('myth.datatable.searchColumns') }}
                           </q-toolbar-title>
                         </q-toolbar>
                         <q-separator />
@@ -240,7 +240,7 @@
                           <q-btn
                             v-close-popup
                             :class="{'full-width': $q.screen.lt.md}"
-                            :label="$t('myth.titles.done')"
+                            :label="__('myth.titles.done')"
                             :size="$q.screen.lt.md ? 'lg' : 'md'"
                             flat
                             no-caps
@@ -251,7 +251,7 @@
                         </MRow>
                       </MModalMenu>
                       <MTooltip>
-                        {{ $t('myth.datatable.searchColumns') }}
+                        {{ __('myth.datatable.searchColumns') }}
                       </MTooltip>
                     </q-btn>
                   </template>
@@ -360,7 +360,7 @@
                           </q-item-section>
                           <q-item-section>
                             <span>
-                              {{ $t('myth.titles.exportPdf') }}
+                              {{ __('myth.titles.exportPdf') }}
                               <q-badge
                                 v-if="tableOptions.selected.length > 1"
                                 :label="tableOptions.selected.length"
@@ -387,7 +387,7 @@
                           </q-item-section>
                           <q-item-section>
                             <span>
-                              {{ $t('myth.titles.exportExcel') }}
+                              {{ __('myth.titles.exportExcel') }}
                               <q-badge
                                 v-if="tableOptions.selected.length>1"
                                 :label="tableOptions.selected.length"
@@ -411,7 +411,7 @@
                             />
                           </q-item-section>
                           <q-item-section>
-                            <q-item-label>{{ $t('myth.datatable.' + (tableOptions.fullscreen ? 'exitFullscreen' : 'fullscreen')) }}</q-item-label>
+                            <q-item-label>{{ __('myth.datatable.' + (tableOptions.fullscreen ? 'exitFullscreen' : 'fullscreen')) }}</q-item-label>
                           </q-item-section>
                         </q-item>
                       </q-list>
@@ -440,11 +440,11 @@
                         <MContainer class="q-pa-md">
                           <!--<div-->
                           <!--  class="text-body1 q-mb-md"-->
-                          <!--  v-text="$t('myth.datatable.filter.title')"-->
+                          <!--  v-text="__('myth.datatable.filter.title')"-->
                           <!--/>-->
                           <q-toolbar :class="{'q-pa-none': $q.screen.lt.md}">
                             <q-toolbar-title>
-                              {{ $t('myth.datatable.filter.title') }}
+                              {{ __('myth.datatable.filter.title') }}
                             </q-toolbar-title>
                           </q-toolbar>
                           <q-separator />
@@ -464,7 +464,7 @@
                               <MRow class="justify-between">
                                 <MBtn
                                   v-close-popup
-                                  :label="$t('myth.datatable.filter.cancel')"
+                                  :label="__('myth.datatable.filter.cancel')"
                                   color="negative"
                                   flat
                                   v-bind="$myth.options.dt?.dialogButtonsProps"
@@ -472,7 +472,7 @@
                                 />
                                 <MBtn
                                   v-close-popup
-                                  :label="$t('myth.datatable.filter.save')"
+                                  :label="__('myth.datatable.filter.save')"
                                   color="positive"
                                   flat
                                   v-bind="$myth.options.dt?.dialogButtonsProps"
@@ -529,7 +529,7 @@
                   >
                     <q-expansion-item
                       :caption="visibleHeaders.length.toString()"
-                      :label="$t('myth.datatable.columnsToShow')"
+                      :label="__('myth.datatable.columnsToShow')"
                       expand-separator
                       icon="list"
                     >
@@ -560,7 +560,7 @@
                   class="items-center"
                 >
                   <MCol col="auto">
-                    <span class="text-subtitle1 q-mr-sm">{{ $t('myth.datatable.filteredBy') }}</span>
+                    <span class="text-subtitle1 q-mr-sm">{{ __('myth.datatable.filteredBy') }}</span>
                   </MCol>
                   <template
                     v-for="(filterValue,filterKey) in tableOptions.filter"
@@ -580,10 +580,10 @@
                         @click="openFilterDialog"
                         @remove="onRemoveFilter(filterKey)"
                       >
-                        <span>{{ getHeaders.find(e => e.name === filterKey)?.label || $t(`attributes.${filterKey}`) }}</span>
+                        <span>{{ getHeaders.find(e => e.name === filterKey)?.label || __(`attributes.${filterKey}`) }}</span>
                         <span v-if="typeof filterValue === 'boolean'">:
                           <template v-if="filterKey === 'active'">{{ __(filterValue ? 'active' : 'inactive') }}</template>
-                          <template v-else>{{ $t(filterValue ? 'yes' : 'no') }}</template></span>
+                          <template v-else>{{ __(filterValue ? 'yes' : 'no') }}</template></span>
                         <span v-else-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
                         <span v-else-if="typeof filterValue === 'object' && filterValue.label">: {{ filterValue.label }}</span>
                         <span v-else-if="typeof filterValue === 'object' && filterValue.length">: {{ filterValue.map(e => e.label).join(', ') }}</span>
@@ -698,7 +698,7 @@
                 flat
                 @click="closeShowDialog()"
               >
-                <q-tooltip>{{ $t('myth.titles.back') }}</q-tooltip>
+                <q-tooltip>{{ __('myth.titles.back') }}</q-tooltip>
               </q-btn>
               {{ getShowTitle }}
             </q-toolbar-title>
@@ -724,7 +724,7 @@
           class="print-hide"
         >
           <MBtn
-            :label="$t('myth.titles.close')"
+            :label="__('myth.titles.close')"
             color="negative"
             v-bind="$myth.options.dt?.dialogButtonsProps"
             @click="closeShowDialog"
@@ -757,7 +757,7 @@
                   flat
                   @click="closeFormDialog"
                 >
-                  <q-tooltip>{{ $t('myth.titles.back') }}</q-tooltip>
+                  <q-tooltip>{{ __('myth.titles.back') }}</q-tooltip>
                 </q-btn>
                 {{ getFormTitle }}
               </q-toolbar-title>
@@ -787,7 +787,7 @@
             <MBtn
               v-if="$q.screen.gt.sm"
               :disable="tableOptions.loading"
-              :label="$t('myth.titles.close')"
+              :label="__('myth.titles.close')"
               color="negative"
               no-caps
               v-bind="$myth.options.dt?.dialogButtonsProps"
@@ -803,7 +803,7 @@
               <MBtn
                 :class="{'full-width': $q.screen.lt.sm}"
                 :disable="tableOptions.loading "
-                :label="$t('myth.titles.' + (isUpdateMode ? 'save' : 'store'))"
+                :label="__('myth.titles.' + (isUpdateMode ? 'save' : 'store'))"
                 :loading="tableOptions.loading"
                 color="positive"
                 no-caps
@@ -824,7 +824,7 @@
             <MRow class="q-pa-sm justify-between items-center">
               <q-btn
                 :href="imageDialog.src"
-                :label="$t('myth.titles.download')"
+                :label="__('myth.titles.download')"
                 flat
                 icon="ion-ios-cloud-download"
                 target="_blank"

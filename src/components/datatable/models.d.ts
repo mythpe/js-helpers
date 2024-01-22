@@ -156,6 +156,7 @@ export type MDatatableScope = {
 export type GenericMDtBtn = Record<string, any> & {
   name: string;
   label?: string;
+  contextLabel?: string | null;
   tooltip?: string;
   click?: (item: UnwrapRef<MDatatableDialogsOptions['item']>, index: UnwrapRef<MDatatableDialogsOptions['index']>) => void;
   multiClick?: (items: MDtItem[]) => void;
