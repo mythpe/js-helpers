@@ -83,7 +83,7 @@
                 :class="props.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''"
               >
                 <template v-if="getShowSelection || props.colsMap[controlKey] !== undefined">
-                  <q-card-section>
+                  <div>
                     <MRow class="items-center justify-between">
                       <q-checkbox
                         v-if="getShowSelection"
@@ -95,7 +95,7 @@
                         @click="onRowContextmenu($event,props.row,props.rowIndex)"
                       />
                     </MRow>
-                  </q-card-section>
+                  </div>
                   <q-separator />
                 </template>
                 <MContainer>
@@ -104,7 +104,8 @@
                     :key="col.name"
                   >
                     <MRow
-                      class="justify-between q-col-gutter-x-sm "
+                      v-if="col.name !== controlKey || (col.name === controlKey && !noItemControl)"
+                      class="justify-between q-col-gutter-x-sm"
                     >
                       <MCol auto>
                         {{ col.label }}
@@ -1112,6 +1113,10 @@ export default {
       type: Boolean,
       default: () => !1
     },
+    noItemControl: {
+      type: Boolean,
+      default: () => !1
+    },
     formModel: {
       type: Object,
       required: !1,
@@ -1182,10 +1187,11 @@ export default {
     const pagination = ref<MDatatablePagination>({ ...initPaginationOptions })
     const search = ref<string | null>(null)
     const searchColumnsProp = computed(() => props.searchColumns)
-    const searchColumnsRef = ref<string[]>(myth.parseHeaders(searchColumnsProp.value || headersProp.value).filter(e => e?.field !== 'control').map(e => e.name))
+    const searchColumnsRef = ref<string[]>(myth.parseHeaders(searchColumnsProp.value || headersProp.value).filter(e => e?.field !== props.controlKey).map(e => e.name))
     const searchPlaceholder = computed<string>(() => {
       if (searchColumnsRef.value.length > 0) {
-        return t('myth.datatable.searchInputPlaceholder', { v: getHeaders.value.filter(e => e?.field !== 'control' && searchColumnsRef.value.indexOf(e.name) !== -1).map(e => e.label).join(', ') })
+        return t('myth.datatable.searchInputPlaceholder',
+          { v: getHeaders.value.filter(e => e?.field !== props.controlKey && searchColumnsRef.value.indexOf(e.name) !== -1).map(e => e.label).join(', ') })
       }
       return 'myth.datatable.searchInput'
     })
@@ -1425,7 +1431,7 @@ export default {
           indexType: type,
           fdt: 'e',
           toUrl: props.exportToUrl,
-          headerItems: getHeaders.value.filter(e => e?.field !== 'control' && visibleHeaders.value.indexOf(e.name) !== -1)
+          headerItems: getHeaders.value.filter(e => e?.field !== props.controlKey && visibleHeaders.value.indexOf(e.name) !== -1)
         })
         if (tableOptions.selected.length > 0) {
           data.ids = tableOptions.selected.map((e: any) => e.id)
