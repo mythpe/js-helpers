@@ -15,21 +15,19 @@
     :sm="sm"
     :xs="xs"
   >
-    <MRow
-      class="m--google-maps"
-    >
+    <MRow class="m--google-maps">
       <MCol col="12">
-        <p class="text-body1 q-ma-none">
-          {{ label }}
+        <p class="text-body1 q-ma-none q-mb-sm">
+          {{ __(label) }}
         </p>
-        <q-slide-transition>
+        <MFadeTransition>
           <p
             v-if="errors?.latitude?.length >0 || errors?.longitude?.length > 0"
-            class="text-body2 q-ma-none text-negative"
+            class="text-body2 q-ma-none text-negative q-mb-sm"
           >
             {{ errors.latitude[0] }}
           </p>
-        </q-slide-transition>
+        </MFadeTransition>
       </MCol>
       <MCol col="12">
         <GoogleMap
