@@ -161,7 +161,7 @@
                     col="12"
                   >
                     <div
-                      class="text-h5"
+                      class="text-h5 bordered-bottom"
                       v-text="title"
                     />
                   </MCol>
