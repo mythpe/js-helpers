@@ -849,11 +849,20 @@
             col="12"
           >
             <q-img
-              v-if="imageDialog.src"
+              v-if="imageDialog.src && !imageDialog.asAttachment"
               :height="`${$q.screen.height - 70}px`"
               :src="imageDialog.src"
               class="self-center"
               fit="contain"
+            />
+            <iframe
+              v-if="imageDialog.src && imageDialog.asAttachment"
+              :height="`${$q.screen.height - 70}px`"
+              :src="imageDialog.src"
+              allowfullscreen
+              class="full-width"
+              frameborder="0"
+              scrolling="no"
             />
           </MCol>
         </div>
@@ -902,6 +911,7 @@ import {
   MDatatableOptions,
   MDatatablePagination,
   MDatatableProps,
+  MDatatableScope,
   MDtExportOptions,
   MDtItem,
   MDtItemIndex,
@@ -1809,12 +1819,14 @@ export default {
     const rowsPerPageOptions = computed(() => props.rowsPerPageOptions)
     const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))
 
-    const imageDialog = reactive<{ value: boolean, src?: string }>({
+    const imageDialog = reactive<MDatatableScope['imageDialog']>({
       value: !1,
-      src: undefined
+      src: undefined,
+      asAttachment: undefined
     })
-    const openImageDialog = (src: string) => {
+    const openImageDialog = (src: string, opts?: { asAttachment?: boolean }) => {
       imageDialog.src = src
+      imageDialog.asAttachment = opts?.asAttachment
       nextTick(() => {
         imageDialog.value = !0
       })
@@ -1823,6 +1835,7 @@ export default {
       imageDialog.value = !1
       nextTick(() => {
         imageDialog.src = undefined
+        imageDialog.asAttachment = undefined
       })
     }
 

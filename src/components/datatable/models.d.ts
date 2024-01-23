@@ -147,8 +147,8 @@ export type MDatatableScope = {
   firstSelectedItem: ComputedRef<MDtItem>;
   updateDatatableItem: (item: MDtItem, index?: MDtItemIndex) => void;
   updateSelectedItems: ((selected: MDtItem[]) => void);
-  imageDialog: UnwrapNestedRefs<{ value: boolean, src?: string }>;
-  openImageDialog: (src: string) => void;
+  imageDialog: UnwrapNestedRefs<{ value: boolean, src?: string, asAttachment?: boolean }>;
+  openImageDialog: (src: string, opts?: { asAttachment?: boolean }) => void;
   closeImageDialog: () => void;
 
 }
