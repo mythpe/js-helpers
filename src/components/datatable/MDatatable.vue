@@ -574,7 +574,7 @@
                         icon-remove="clear"
                         outline
                         removable
-                        @click="openFilterDialog"
+                        @click="openFilterDialog()"
                         @remove="onRemoveFilter(filterKey)"
                       >
                         <span>{{ getHeaders.find(e => e.name === filterKey)?.label || __(`attributes.${filterKey}`) }}</span>
@@ -901,7 +901,7 @@
 import { computed, nextTick, onMounted, PropType, reactive, ref, toRef, useSlots, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import _ from 'lodash'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {
   ApiServiceParams,
   FetchRowsArgs,
@@ -1139,6 +1139,7 @@ export default {
     const myth = useMyth()
     const slots = useSlots()
     const router = useRouter()
+    const route = useRoute()
     const $q = useQuasar()
     const serviceName = computed(() => props.serviceName)
     const { t } = useI18n({ useScope: 'global' })
@@ -1495,6 +1496,11 @@ export default {
       const filter = filterForm.value
       delete filter[key]
       filterForm.value = { ...filter }
+      if (route.query[key]) {
+        const query = { ...route.query }
+        delete query[key]
+        router.push({ query })
+      }
     }
     const updateFilterOptions = (data: Record<string, any>) => {
       filterForm.value = {
