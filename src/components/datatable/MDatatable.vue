@@ -1354,7 +1354,7 @@ export default {
       let params: ApiServiceParams = {
         // filter: tableOptions.filter,
         // search: filter || undefined,
-        // headers: getHeaders.value.map((e: any) => e.name),
+        headerItems: getHeaders.value.map((e: any) => e.name).join(','),
         // headers: ['name'],
         // ids: tableOptions.selected.map((e: any) => e.id),
         indexType: 'index',
@@ -1372,7 +1372,7 @@ export default {
         params.filter = tableOptions.filter
       }
       if (searchColumnsRef.value.length > 0) {
-        params.searchColumns = searchColumnsRef.value
+        params.searchColumns = searchColumnsRef.value.join(',')
       }
       if (props.requestParams) {
         if (typeof props.requestParams === 'function') {
@@ -1392,41 +1392,44 @@ export default {
       }
       if (tableOptions.loading || !serviceName.value) return
       tableOptions.loading = !0
-      nextTick(async () => {
+      nextTick(() => {
         const params = getDatatableParams(opts)
         const requestWith = getRequestWith('withIndex')
         if (requestWith) {
           params.requestWith = requestWith
         }
-        try {
-          const { _data, _meta } = await getMythApiServicesSchema().index({ params })
-          pagination.value = {
-            page: parseInt((_meta?.current_page || 1).toString()) || 1,
-            rowsPerPage: parseInt(_meta?.per_page) || 0,
-            rowsNumber: parseInt((_meta?.total || 0).toString()) || 0,
-            sortBy: opts?.pagination?.sortBy || undefined,
-            descending: opts?.pagination?.descending || undefined
-          }
-          _meta && (meta.value = _meta)
-          if (props.endReach) {
-            getRows.value = [...getRows.value, ...(_data || [])]
-          } else {
-            getRows.value = _data || []
-          }
-        } catch (e: any) {
-          console.log(e)
-          if (e?.response?.status === 401) {
-            logoutDatatable()
-            return e
-          }
-          if (e?._message) {
-            myth.alertError(e._message)
-          } else if (e?.message) {
-            myth.alertError(e.message)
-          }
-        } finally {
-          tableOptions.loading = !1
-        }
+        getMythApiServicesSchema().index({ params })
+          .then((result) => {
+            const { _data, _meta } = result
+            pagination.value = {
+              page: parseInt((_meta?.current_page || 1).toString()) || 1,
+              rowsPerPage: parseInt(_meta?.per_page) || 0,
+              rowsNumber: parseInt((_meta?.total || 0).toString()) || 0,
+              sortBy: opts?.pagination?.sortBy || undefined,
+              descending: opts?.pagination?.descending || undefined
+            }
+            _meta && (meta.value = _meta)
+            if (props.endReach) {
+              getRows.value = [...getRows.value, ...(_data || [])]
+            } else {
+              getRows.value = _data || []
+            }
+          })
+          .catch((e) => {
+            console.log(e)
+            if (e?.response?.status === 401) {
+              logoutDatatable()
+              return e
+            }
+            if (e?._message) {
+              myth.alertError(e._message)
+            } else if (e?.message) {
+              myth.alertError(e.message)
+            }
+          })
+          .finally(() => {
+            tableOptions.loading = !1
+          })
       })
     }
     const exportData = (type: MDtExportOptions) => {
