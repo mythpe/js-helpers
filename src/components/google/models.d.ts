@@ -18,6 +18,11 @@ export type CoordsType = {
   lng: number;
 }
 
+export type MGoogleMapsMarkerProp = google.maps.MarkerOptions & {
+  position: CoordsType;
+  [k: string]: any;
+}
+
 export type MapCoordsClick = {
   /**
    * Comparison function.
@@ -65,7 +70,7 @@ export type MGoogleMapsProps = {
   style?: string;
   center?: CoordsType;
   zoom?: number;
-  markers?: CoordsType[];
+  markers?: MGoogleMapsMarkerProp[];
   centerMarker?: boolean;
   label?: string;
   errors?: Record<string, any>;

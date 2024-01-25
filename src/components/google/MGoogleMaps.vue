@@ -44,12 +44,17 @@
             v-if="computedCenterMarker && !noCenterMarker"
             :options="computedCenterMarker"
           />
-          <Marker
+          <template
             v-for="(marker,i) in markersRef"
             :key="`marker-${i}`"
-            :options="marker"
-            @dragendf="onDragend"
-          />
+          >
+            <Marker
+              :options="marker"
+              v-bind="marker.attrs"
+              @click="marker.click(marker, $event)"
+              @dragendf="onDragend"
+            />
+          </template>
         </GoogleMap>
       </MCol>
     </MRow>
@@ -136,7 +141,7 @@ import { computed, ref, watch } from 'vue'
 import { GoogleMap, Marker } from 'vue3-google-map'
 import { useGeolocation } from '../../vue3'
 import { ColStyleType } from '../grid/models'
-import { CoordsType, GeocoderResult, GoogleGeocoder, GoogleMapsApi, GoogleMapsMVCObject, GooglePlacesService, MapCoordsClick, PlaceResult } from './models'
+import { CoordsType, GeocoderResult, GoogleGeocoder, GoogleMapsApi, GoogleMapsMVCObject, GooglePlacesService, MapCoordsClick, MGoogleMapsMarkerProp, PlaceResult } from './models'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -152,7 +157,7 @@ interface Props {
   height?: string;
   center?: CoordsType;
   zoom?: number;
-  markers?: CoordsType[];
+  markers?: MGoogleMapsMarkerProp[];
   centerMarker?: boolean;
   label?: string;
   errors?: Record<string, any>;
