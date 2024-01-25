@@ -158,6 +158,7 @@ interface Props {
   errors?: Record<string, any>;
   region?: string;
   language?: string;
+  noSearch?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -178,7 +179,8 @@ const props = withDefaults(defineProps<Props>(), {
   label: undefined,
   errors: () => ({}),
   region: undefined,
-  language: undefined
+  language: undefined,
+  noSearch: undefined
 })
 
 interface Events {
@@ -229,7 +231,11 @@ const mapRef = ref<any | { api: GoogleMapsApi, map: GoogleMapsMVCObject }>(null)
 const placeService = ref<GooglePlacesService>()
 const Geocoder = ref<GoogleGeocoder>()
 const searchResults = ref<PlaceResult[] | null>(null)
+const noSearchProp = computed(() => props.noSearch)
 const onSearch = (query: string | null) => {
+  if (noSearchProp.value) {
+    return
+  }
   searchResults.value = []
   if (loading.value || !mapRef.value || (!query || query.length < 3)) {
     return
@@ -348,6 +354,9 @@ const findCurrentLocation = () => {
 const searchCard = ref()
 const isInitSearchCard = ref(!1)
 const iniSearchCard = () => {
+  if (noSearchProp.value) {
+    return
+  }
   // eslint-disable-next-line no-undef
   mapRef.value.map.controls[google.maps.ControlPosition.TOP_CENTER].push(searchCard.value.$el)
   isInitSearchCard.value = !0
