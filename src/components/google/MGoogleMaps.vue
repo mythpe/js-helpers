@@ -41,7 +41,7 @@
           @click="onClickMap"
         >
           <Marker
-            v-if="computedCenterMarker"
+            v-if="computedCenterMarker && !noCenterMarker"
             :options="computedCenterMarker"
           />
           <Marker
@@ -158,6 +158,7 @@ interface Props {
   errors?: Record<string, any>;
   region?: string;
   language?: string;
+  noCenterMarker?: boolean;
   noSearch?: boolean;
 }
 
@@ -180,6 +181,7 @@ const props = withDefaults(defineProps<Props>(), {
   errors: () => ({}),
   region: undefined,
   language: undefined,
+  noCenterMarker: undefined,
   noSearch: undefined
 })
 

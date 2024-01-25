@@ -70,6 +70,9 @@ export type MGoogleMapsProps = {
   label?: string;
   errors?: Record<string, any>;
   region?: string;
+  language?: string;
+  noCenterMarker?: boolean;
+  noSearch?: boolean;
 }
 
 export type MGoogleMapsSlots = {
