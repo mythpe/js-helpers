@@ -9,7 +9,7 @@
 <template>
   <q-card
     class="m--card"
-    v-bind="$attrs"
+    v-bind="{...($myth.options.card || {}), ...($attrs || {})}"
   >
     <slot
       v-if="!loading"

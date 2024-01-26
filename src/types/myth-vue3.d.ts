@@ -190,6 +190,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
   };
   tooltip?: Partial<QTooltipProps>;
   otp?: Partial<QInputProps>;
+  card?: Partial<QCardProps>
 }
 
 export type MythApiAxiosType = Partial<AxiosInstance>
