@@ -60,9 +60,7 @@ const props = withDefaults(defineProps<Props>(), {
 const closeBtnProps = computed(() => props.noCloseBtn !== undefined && props.noCloseBtn !== !1 && props.noCloseBtn !== null)
 </script>
 
-<script
-  lang="ts"
->
+<script lang="ts">
 
 export default {
   name: 'MModalMenu',

@@ -71,6 +71,7 @@ const classes = computed(() => {
 </script>
 <script lang="ts">
 export default {
+  name: 'MCol',
   inheritAttrs: !1
 }
 </script>

@@ -162,6 +162,7 @@ watch(() => blobValue.value, (v) => {
 
 <script lang="ts">
 export default {
+  name: 'MAvatarViewer',
   inheritAttrs: !1
 }
 </script>

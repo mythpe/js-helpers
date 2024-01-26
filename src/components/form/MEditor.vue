@@ -181,6 +181,7 @@ const { getLabel, inputErrors } = useInputProps(props)
 
 <script lang="ts">
 export default {
+  name: 'MEditor',
   inheritAttrs: !1
 }
 </script>

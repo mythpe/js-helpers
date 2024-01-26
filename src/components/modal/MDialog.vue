@@ -51,9 +51,7 @@ const slideHide = computed<string>(() => 'slide-' + props.from)
 const slideShow = computed<string>(() => 'slide-' + map[props.from])
 </script>
 
-<script
-  lang="ts"
->
+<script lang="ts">
 export default {
   name: 'MDialog',
   inheritAttrs: !1

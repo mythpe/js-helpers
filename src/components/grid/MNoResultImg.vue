@@ -39,6 +39,7 @@ const _slots = useSlots()
 
 <script lang="ts">
 export default {
+  name: 'MNoResultImg',
   inheritAttrs: !1
 }
 </script>

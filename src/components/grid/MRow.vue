@@ -5,13 +5,25 @@
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
-<script
-  lang="ts"
->
+
+<template>
+  <div
+    :class="classes"
+    :col="undefined"
+    :default-gutters="undefined"
+    :gutters="undefined"
+    v-bind="{...($myth.options.row),...($attrs || {})}"
+  >
+    <slot />
+  </div>
+</template>
+
+<script lang="ts">
 
 import { defineComponent } from 'vue'
 
 export default defineComponent({
+  name: 'MRow',
   inheritAttrs: !1,
   props: {
     defaultGutters: {
@@ -53,18 +65,6 @@ export default defineComponent({
   }
 })
 </script>
-
-<template>
-  <div
-    :class="classes"
-    :col="undefined"
-    :default-gutters="undefined"
-    :gutters="undefined"
-    v-bind="{...($myth.options.row),...($attrs || {})}"
-  >
-    <slot />
-  </div>
-</template>
 
 <style>
 .m--row {

@@ -173,3 +173,10 @@ defineExpose({
 })
 
 </script>
+
+<script lang="ts">
+export default {
+  name: 'MFile',
+  inheritAttrs: !1
+}
+</script>

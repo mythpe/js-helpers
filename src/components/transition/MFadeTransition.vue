@@ -5,13 +5,6 @@
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
-<script
-  lang="ts"
->
-export default {
-  inheritAttrs: !1
-}
-</script>
 
 <template>
   <Transition
@@ -22,3 +15,10 @@ export default {
     <slot />
   </Transition>
 </template>
+
+<script lang="ts">
+export default {
+  name: 'MFadeTransition',
+  inheritAttrs: !1
+}
+</script>

@@ -99,6 +99,7 @@ const { getRules, getLabel, getPlaceholder } = useInputProps(props)
 
 <script lang="ts">
 export default {
+  name: 'MCheckbox',
   inheritAttrs: !1
 }
 </script>

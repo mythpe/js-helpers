@@ -6,6 +6,84 @@
   - Github: https://github.com/mythpe
   -->
 
+<template>
+  <MCol
+    :auto="auto"
+    :class="$attrs.class"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :sm="sm"
+    :xs="xs"
+  >
+    <VeeField
+      v-slot="fieldProps"
+      v-model="inputValue"
+      :name="name"
+      :rules="getRules"
+      v-bind="$attrs"
+    >
+      <MColumn>
+        <slot
+          name="top"
+          v-bind="fieldProps"
+        />
+        <div v-if="topLabel">
+          {{ topLabel }}
+        </div>
+        <MCol auto>
+          <slot
+            name="before"
+            v-bind="fieldProps"
+          />
+          <q-toggle
+            :borderless="borderless"
+            :checked-icon="checkedIcon"
+            :clearable="clearable"
+            :color="color"
+            :dense="dense"
+            :error="fieldProps.errors.length>0"
+            :error-message="fieldProps.errorMessage"
+            :false-value="falseValue"
+            :label="getLabel"
+            :model-value="modelValue"
+            :toggle-indeterminate="toggleIndeterminate"
+            :true-value="trueValue"
+            :unchecked-icon="uncheckedIcon"
+            keep-color
+            v-bind="{...($myth.options.toggle||{}),...($attrs || {}),...fieldProps.field}"
+          >
+            <template
+              v-for="(_,slot) in $slots"
+              :key="slot"
+              #[slot]="inputSlot"
+            >
+              <slot
+                v-if="inputSlot"
+                :name="slot"
+                v-bind="inputSlot"
+              />
+              <slot
+                v-else
+                :name="slot"
+              />
+            </template>
+            <slot />
+          </q-toggle>
+          <slot
+            name="after"
+            v-bind="fieldProps"
+          />
+        </MCol>
+        <slot
+          name="bottom"
+          v-bind="fieldProps"
+        />
+      </MColumn>
+    </VeeField>
+  </MCol>
+</template>
+
 <script lang="ts" setup>
 import { useMyth } from '../../vue3'
 import { Field as VeeField } from 'vee-validate'
@@ -93,84 +171,7 @@ const getLabel = computed<string | undefined>(() => {
 
 <script lang="ts">
 export default {
+  name: 'MToggle',
   inheritAttrs: !1
 }
 </script>
-
-<template>
-  <MCol
-    :auto="auto"
-    :class="$attrs.class"
-    :col="col"
-    :lg="lg"
-    :md="md"
-    :sm="sm"
-    :xs="xs"
-  >
-    <VeeField
-      v-slot="fieldProps"
-      v-model="inputValue"
-      :name="name"
-      :rules="getRules"
-      v-bind="$attrs"
-    >
-      <MColumn>
-        <slot
-          name="top"
-          v-bind="fieldProps"
-        />
-        <div v-if="topLabel">
-          {{ topLabel }}
-        </div>
-        <MCol auto>
-          <slot
-            name="before"
-            v-bind="fieldProps"
-          />
-          <q-toggle
-            :borderless="borderless"
-            :checked-icon="checkedIcon"
-            :clearable="clearable"
-            :color="color"
-            :dense="dense"
-            :error="fieldProps.errors.length>0"
-            :error-message="fieldProps.errorMessage"
-            :false-value="falseValue"
-            :label="getLabel"
-            :model-value="modelValue"
-            :toggle-indeterminate="toggleIndeterminate"
-            :true-value="trueValue"
-            :unchecked-icon="uncheckedIcon"
-            keep-color
-            v-bind="{...($myth.options.toggle||{}),...($attrs || {}),...fieldProps.field}"
-          >
-            <template
-              v-for="(_,slot) in $slots"
-              :key="slot"
-              #[slot]="inputSlot"
-            >
-              <slot
-                v-if="inputSlot"
-                :name="slot"
-                v-bind="inputSlot"
-              />
-              <slot
-                v-else
-                :name="slot"
-              />
-            </template>
-            <slot />
-          </q-toggle>
-          <slot
-            name="after"
-            v-bind="fieldProps"
-          />
-        </MCol>
-        <slot
-          name="bottom"
-          v-bind="fieldProps"
-        />
-      </MColumn>
-    </VeeField>
-  </MCol>
-</template>

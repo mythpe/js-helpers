@@ -16,6 +16,7 @@
 
 <script lang="ts">
 export default {
+  name: 'MEmail',
   inheritAttrs: !1
 }
 </script>

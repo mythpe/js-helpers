@@ -53,6 +53,7 @@ const { getRules, getLabel, getPlaceholder } = useInputProps(props)
 
 <script lang="ts">
 export default {
+  name: 'MRadio',
   inheritAttrs: !1
 }
 </script>

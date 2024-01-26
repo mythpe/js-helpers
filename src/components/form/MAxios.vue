@@ -189,6 +189,7 @@ onMounted(() => {
 </script>
 <script lang="ts">
 export default {
+  name: 'MAxios',
   inheritAttrs: !1
 }
 </script>

@@ -133,6 +133,7 @@ defineExpose({
 
 <script lang="ts">
 export default {
+  name: 'MForm',
   inheritAttrs: !1
 }
 </script>

@@ -6,14 +6,6 @@
   - Github: https://github.com/mythpe
   -->
 
-<script
-  lang="ts"
->
-export default {
-  inheritAttrs: !1
-}
-</script>
-
 <template>
   <div
     class="m--column column"
@@ -22,6 +14,13 @@ export default {
     <slot />
   </div>
 </template>
+
+<script lang="ts">
+export default {
+  name: 'MColumn',
+  inheritAttrs: !1
+}
+</script>
 
 <style>
 .m--column {

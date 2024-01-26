@@ -270,6 +270,7 @@ defineExpose({
 
 <script lang="ts">
 export default {
+  name: 'MList',
   inheritAttrs: !1
 }
 </script>
