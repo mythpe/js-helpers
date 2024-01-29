@@ -18,6 +18,7 @@
     :option-label="getOptionLabel"
     :options="items"
     :readonly="loading"
+    :stack-label="stackLabel"
     :view-mode="viewMode"
     :view-mode-value="viewModeValue"
     v-bind="$attrs"
@@ -60,6 +61,7 @@ import { MAxiosProps } from './models'
 import { useQuasar } from 'quasar'
 
 interface Props {
+  stackLabel?: MAxiosProps['stackLabel'];
   multiple?: MAxiosProps['multiple'];
   name: MAxiosProps['name'];
   modelValue?: MAxiosProps['modelValue'];
@@ -77,6 +79,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  stackLabel: undefined,
   multiple: () => !1,
   name: undefined,
   modelValue: undefined,
