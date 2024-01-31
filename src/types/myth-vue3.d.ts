@@ -157,6 +157,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
       menuBtn?: Partial<QBtnProps>;
     };
     dialogButtonsProps?: Partial<MBtnProps>;
+    noQuasarLoading?: boolean;
   };
   button?: Partial<QBtnProps>;
   loadingButtons?: {

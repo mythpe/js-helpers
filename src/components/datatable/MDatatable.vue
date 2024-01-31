@@ -1852,10 +1852,12 @@ export default {
       refresh()
     })
     watch(loading, v => {
-      if (v) {
-        $q.loading.show()
-      } else {
-        $q.loading.hide()
+      if (!myth.options?.dt?.noQuasarLoading) {
+        if (v) {
+          $q.loading.show()
+        } else {
+          $q.loading.hide()
+        }
       }
       tableOptions.hasAction = Boolean(v)
     })
