@@ -114,7 +114,7 @@
                         auto
                         class="overflow-hidden"
                       >
-                        <template v-if="col.field.slice(-4) === '_url'">
+                        <template v-if="col.field.slice(-4) === '_url' || col.field.slice(-10) === '_image_url'">
                           <MDtBtn
                             :src="col.value"
                             icon="ion-ios-eye"
