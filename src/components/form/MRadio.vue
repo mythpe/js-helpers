@@ -5,6 +5,54 @@
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
+<template>
+  <MCol
+    :auto="auto"
+    :class="$attrs.class"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :sm="sm"
+    :xs="xs"
+  >
+    <VeeField
+      v-slot="fieldProps"
+      v-model="inputValue"
+      :name="name"
+      :rules="getRules"
+      v-bind="$attrs"
+    >
+      <q-radio
+        :error="fieldProps.errors.length>0"
+        :error-message="fieldProps.errorMessage"
+        :label="getLabel"
+        :model-value="modelValue"
+        :placeholder="getPlaceholder"
+        :val="val"
+        v-bind="{...($myth.options.radio||{}),...($attrs||{}),...fieldProps.field}"
+      >
+        <template
+          v-for="(_,slot) in $slots"
+          :key="slot"
+          #[slot]="inputSlot"
+        >
+          <slot
+            v-if="inputSlot"
+            :name="slot"
+            v-bind="inputSlot"
+          />
+          <slot
+            v-else-if="slot !== 'default'"
+            :name="slot"
+          />
+        </template>
+      </q-radio>
+      <slot
+        v-bind="fieldProps"
+      />
+    </VeeField>
+  </MCol>
+</template>
 
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
@@ -57,52 +105,3 @@ export default {
   inheritAttrs: !1
 }
 </script>
-
-<template>
-  <MCol
-    :auto="auto"
-    :class="$attrs.class"
-    :col="col"
-    :lg="lg"
-    :md="md"
-    :sm="sm"
-    :xs="xs"
-  >
-    <VeeField
-      v-slot="fieldProps"
-      v-model="inputValue"
-      :name="name"
-      :rules="getRules"
-      v-bind="$attrs"
-    >
-      <q-radio
-        :error="fieldProps.errors.length>0"
-        :error-message="fieldProps.errorMessage"
-        :label="getLabel"
-        :model-value="modelValue"
-        :placeholder="getPlaceholder"
-        :val="val"
-        v-bind="{...($myth.options.radio||{}),...($attrs||{}),...fieldProps.field}"
-      >
-        <template
-          v-for="(_,slot) in $slots"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            v-if="inputSlot"
-            :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else-if="slot !== 'default'"
-            :name="slot"
-          />
-        </template>
-      </q-radio>
-      <slot
-        v-bind="fieldProps"
-      />
-    </VeeField>
-  </MCol>
-</template>

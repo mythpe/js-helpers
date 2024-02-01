@@ -12,7 +12,7 @@
     v-bind="$attrs"
   >
     <template
-      v-if="passwordIcon"
+      v-if="passwordIcon && !Boolean($slots.prepend)"
       #prepend
     >
       <q-icon name="password" />
@@ -22,7 +22,22 @@
         :icon="'ion-ios-eye' + (inputType !== 'password' ? '-off' : '')"
         flat
         round
-        @click="() => inputType = inputType === 'text' ? 'password' : 'text'"
+        @click="inputType = inputType === 'text' ? 'password' : 'text'"
+      />
+    </template>
+    <template
+      v-for="(_,slot) in $slots"
+      :key="slot"
+      #[slot]="inputSlot"
+    >
+      <slot
+        v-if="inputSlot"
+        :name="slot"
+        v-bind="inputSlot"
+      />
+      <slot
+        v-else
+        :name="slot"
       />
     </template>
   </MInput>

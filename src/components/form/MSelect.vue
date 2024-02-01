@@ -31,6 +31,21 @@
             {{ viewModeValue || inputValue }}
           </div>
         </template>
+        <template
+          v-for="(_,slot) in $slots"
+          :key="slot"
+          #[slot]="inputSlot"
+        >
+          <slot
+            v-if="inputSlot"
+            :name="slot"
+            v-bind="inputSlot"
+          />
+          <slot
+            v-else
+            :name="slot"
+          />
+        </template>
       </q-field>
     </template>
     <component

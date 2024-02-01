@@ -25,7 +25,23 @@
         :view-mode="viewMode"
         :view-mode-value="viewModeValue"
         v-bind="$attrs"
-      />
+      >
+        <template
+          v-for="(_,slot) in $slots"
+          :key="slot"
+          #[slot]="inputSlot"
+        >
+          <slot
+            v-if="inputSlot"
+            :name="slot"
+            v-bind="inputSlot"
+          />
+          <slot
+            v-else
+            :name="slot"
+          />
+        </template>
+      </MInput>
     </template>
     <MInput
       v-else
