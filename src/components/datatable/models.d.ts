@@ -52,9 +52,9 @@ export interface FetchRowsArgs {
 export interface ApiServiceParams {
   filter?: Record<string, any>;
   search?: string | null;
-  searchColumns?: string[];
+  searchColumns?: string[] | string;
   // headers: string[];
-  headerItems?: Record<number, any>[];
+  headerItems?: any[] | string[] | string;
   ids?: number[];
   indexType: 'index' | 'pdf' | 'excel';
   // For Datatable, index,export-pdf|excel,update,create,show,delete

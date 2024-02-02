@@ -136,12 +136,12 @@ const prepare = async () => {
   }
   // console.log(method)
   const params = {
-    ...(paramsProps.value || {}),
     requestWith: requestWithProps.value,
     search: searchInput.value,
     itemsPerPage: -1,
     page: 1,
-    mar: 1
+    staticRequest: 1,
+    ...(paramsProps.value || {})
   }
   loading.value = !0
   method({ params })

@@ -1368,8 +1368,29 @@ export default {
         params.search = filter
       }
       if (Object.keys(tableOptions.filter).length > 0) {
+        const TempFilter = { ...tableOptions.filter }
+        for (const fKey in TempFilter) {
+          if (_.isArray(TempFilter[fKey])) {
+            TempFilter[fKey] = TempFilter[fKey].map((elm) => {
+              if (elm.id) {
+                return elm.id
+              } else if (elm.value) {
+                return elm.value
+              }
+              return elm
+            })
+          } else if (_.isPlainObject(TempFilter[fKey])) {
+            if (TempFilter[fKey].id) {
+              TempFilter[fKey] = TempFilter[fKey].id
+            } else if (TempFilter[fKey].value) {
+              TempFilter[fKey] = TempFilter[fKey].value
+            }
+          }
+        }
         // console.log(JSON.stringify(tableOptions.filter))
-        params.filter = tableOptions.filter
+        // params.filter = tableOptions.filter
+        console.log(TempFilter)
+        params.filter = TempFilter
       }
       if (searchColumnsRef.value.length > 0) {
         params.searchColumns = searchColumnsRef.value.join(',')
@@ -1398,6 +1419,7 @@ export default {
         if (requestWith) {
           params.requestWith = requestWith
         }
+        console.log({ params })
         getMythApiServicesSchema().index({ params })
           .then((result) => {
             const { _data, _meta } = result
@@ -1638,7 +1660,7 @@ export default {
       }
     }
     const removeDtItem = (i: MDtItem | number) => {
-      const item = toRef(i)
+      const item = toRef<MDtItem | number>(i)
       const byIndex = typeof item.value !== 'object'
       const id: string | number = byIndex ? item.value : item.value.id
       if (byIndex) {
