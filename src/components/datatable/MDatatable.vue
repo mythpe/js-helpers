@@ -167,7 +167,7 @@
                   </MCol>
                 </MFadeXTransition>
                 <MInput
-                  v-if="hideSearch !== !1"
+                  v-if="!hideSearch"
                   v-model="tableOptions.search"
                   :debounce="searchDebounce"
                   :placeholder="searchPlaceholder"
@@ -484,6 +484,7 @@
                   </MDtBtn>
                   <!--Refresh-->
                   <MDtBtn
+                    v-if="!noRefreshBtn"
                     key="refresh-selection-btn"
                     :disabled="tableOptions.loading"
                     icon="ion-ios-refresh"
@@ -1116,6 +1117,10 @@ export default {
       default: () => undefined
     },
     noFullscreen: {
+      type: Boolean,
+      default: () => !1
+    },
+    noRefreshBtn: {
       type: Boolean,
       default: () => !1
     },
