@@ -1389,7 +1389,7 @@ export default {
         }
         // console.log(JSON.stringify(tableOptions.filter))
         // params.filter = tableOptions.filter
-        console.log(TempFilter)
+        // console.log(TempFilter)
         params.filter = TempFilter
       }
       if (searchColumnsRef.value.length > 0) {
@@ -1419,7 +1419,7 @@ export default {
         if (requestWith) {
           params.requestWith = requestWith
         }
-        console.log({ params })
+        // console.log({ params })
         getMythApiServicesSchema().index({ params })
           .then((result) => {
             const { _data, _meta } = result
@@ -1438,7 +1438,7 @@ export default {
             }
           })
           .catch((e) => {
-            console.log(e)
+            // console.log(e)
             if (e?.response?.status === 401) {
               logoutDatatable()
               return e
