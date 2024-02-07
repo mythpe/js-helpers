@@ -64,7 +64,7 @@
         :visible-columns="visibleHeaders"
         card-container-class="m--datatable-container"
         table-class="m--datatable-container"
-        v-bind="$myth.options.dt?.props"
+        v-bind="{...($myth.options.dt?.props||{}),...($attrs||{})}"
         @request="fetchDatatableItems"
         @virtual-scroll="endReach ? onScroll : undefined"
         @row-contextmenu="onRowContextmenu"
