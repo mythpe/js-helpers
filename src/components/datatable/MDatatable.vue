@@ -83,17 +83,21 @@
                 :class="props.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''"
               >
                 <template v-if="getShowSelection || props.colsMap[controlKey] !== undefined">
-                  <div>
+                  <div class="m--datatable-card-control-header">
                     <MRow class="items-center justify-between">
-                      <q-checkbox
-                        v-if="getShowSelection"
-                        v-model="props.selected"
-                        dense
-                      />
-                      <MDtBtn
-                        icon="ion-ios-more"
-                        @click="onRowContextmenu($event,props.row,props.rowIndex)"
-                      />
+                      <div class="q-px-md">
+                        <q-checkbox
+                          v-if="getShowSelection"
+                          v-model="props.selected"
+                          dense
+                        />
+                      </div>
+                      <div>
+                        <MDtBtn
+                          icon="ion-ios-more"
+                          @click="onRowContextmenu($event,props.row,props.rowIndex)"
+                        />
+                      </div>
                     </MRow>
                   </div>
                   <q-separator />
@@ -107,12 +111,15 @@
                       v-if="col.name !== controlKey || (col.name === controlKey && showCardControlHeader)"
                       class="justify-between q-col-gutter-x-sm"
                     >
-                      <MCol auto>
+                      <MCol
+                        auto
+                        v-if="col.name !== controlKey"
+                      >
                         {{ col.label }}
                       </MCol>
                       <MCol
                         auto
-                        class="overflow-hidden"
+                        :class="`overflow-hidden ${col.name === controlKey ? 'text-right' : ''}`"
                       >
                         <template v-if="col.field.slice(-4) === '_url' || col.field.slice(-10) === '_image_url'">
                           <MDtBtn
@@ -121,8 +128,15 @@
                             @click="openImageDialog(col.value)"
                           />
                         </template>
+                        <template v-else-if="col.name === controlKey">
+                          <MDtContextmenuItems
+                            :index="props.rowIndex"
+                            :item="props.row"
+                            :items="contextmenuItems"
+                          />
+                        </template>
                         <template v-else>
-                          <div class="text-caption">
+                          <div class="m--datatable-card-value">
                             {{ col.value }}
                           </div>
                         </template>
@@ -263,7 +277,7 @@
                   <template v-if="hasSelectedItem">
                     <MDtBtn
                       v-if="hasUpdateBtn"
-                      key="update-selection-btn"
+                      key="update-dt-selection-btn"
                       :disable="!isSingleSelectedItem || tableOptions.loading"
                       :loading="tableOptions.loading"
                       icon="ion-ios-create"
@@ -273,7 +287,7 @@
                     />
                     <MDtBtn
                       v-if="hasShowBtn"
-                      key="show-selection-btn"
+                      key="show-dt-selection-btn"
                       :disable="!isSingleSelectedItem || tableOptions.loading"
                       :loading="tableOptions.loading"
                       icon="ion-ios-eye"
@@ -283,7 +297,7 @@
                     />
                     <MDtBtn
                       v-if="hasDestroyBtn"
-                      key="destroy-selection-btn"
+                      key="destroy-dt-selection-btn"
                       :disable="!hasSelectedItem || tableOptions.loading"
                       :loading="tableOptions.loading"
                       destroy
