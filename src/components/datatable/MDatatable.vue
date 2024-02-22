@@ -108,18 +108,18 @@
                     :key="col.name"
                   >
                     <MRow
-                      v-if="col.name !== controlKey || (col.name === controlKey && showCardControlHeader)"
+                      v-if="col.name !== controlKey || (col.name === controlKey && ( showCardControlHeader === undefined ? $myth.options.dt?.props?.showCardControlHeader : showCardControlHeader ))"
                       class="justify-between q-col-gutter-x-sm"
                     >
                       <MCol
-                        auto
                         v-if="col.name !== controlKey"
+                        auto
                       >
                         {{ col.label }}
                       </MCol>
                       <MCol
-                        auto
                         :class="`overflow-hidden ${col.name === controlKey ? 'text-right' : ''}`"
+                        auto
                       >
                         <template v-if="col.field.slice(-4) === '_url' || col.field.slice(-10) === '_image_url'">
                           <MDtBtn
@@ -1144,7 +1144,7 @@ export default {
     },
     showCardControlHeader: {
       type: Boolean,
-      default: () => !1
+      default: () => undefined
     },
     formModel: {
       type: Object,
