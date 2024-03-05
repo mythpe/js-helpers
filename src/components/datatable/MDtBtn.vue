@@ -61,6 +61,7 @@
 
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useMyth } from '../../vue3'
 
 interface Props {
   show?: boolean | undefined;
@@ -88,7 +89,7 @@ const props = withDefaults(defineProps<Props>(), {
   fabMini: () => !0,
   flat: () => !0,
   round: () => !0,
-  dense: () => !1,
+  dense: undefined,
   label: undefined
 })
 type Events = {
@@ -122,13 +123,14 @@ const getIcon = computed(() => {
   }
   return props.icon
 })
+const myth = useMyth()
 const getColor = computed<string | undefined>(() => {
   if (props.show) {
-    return undefined
+    return myth?.options?.dt?.contextmenu?.btnStyle?.showColor
   } else if (props.update) {
-    return undefined
+    return myth?.options?.dt?.contextmenu?.btnStyle?.updateColor
   } else if (props.destroy) {
-    return undefined
+    return myth?.options?.dt?.contextmenu?.btnStyle?.destroyColor
   }
   return props.color
 })

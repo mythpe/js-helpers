@@ -1847,18 +1847,21 @@ export default {
     const contextmenuItems = computed(() => ([
       {
         name: 'show',
+        label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.show' : undefined,
         click: (item: MDtItem, index: MDtItemIndex) => openShowDialog(item, index),
         showIf: hasShowBtn.value,
         order: 1
       },
       {
         name: 'update',
+        label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.update' : undefined,
         click: (item: MDtItem, index: MDtItemIndex) => openUpdateDialog(item, index),
         showIf: hasUpdateBtn.value,
         order: 1
       },
       {
         name: 'destroy',
+        label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.destroy' : undefined,
         click: (item: MDtItem, index: MDtItemIndex) => onDeleteItem(item, index),
         showIf: hasDestroyBtn.value,
         order: 1

@@ -34,7 +34,6 @@ import {
   QUploaderProps
 } from 'quasar'
 import {
-  GenericMDtBtn,
   MAvatarViewerProps,
   MAvatarViewerSlots,
   MAxiosProps,
@@ -136,7 +135,13 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     contextmenu?: {
       menu?: Partial<QPopupProxyProps>;
       list?: Partial<QListProps>;
-      btn?: Partial<GenericMDtBtn>;
+      btn?: Partial<MDtBtnProps>;
+      btnStyle?: {
+        showLabel?: boolean;
+        updateColor?: string;
+        showColor?: string;
+        destroyColor?: string;
+      }
     },
     buttons?: {
       filter?: Partial<MDtBtnProps>;
