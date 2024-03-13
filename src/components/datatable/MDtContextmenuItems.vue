@@ -17,9 +17,8 @@
         :[contextmenuItem.name]="!0"
         :label="contextmenuItem.label !== undefined ? __(contextmenuItem.label || contextmenuItem.name) : undefined"
         :list-item="displayMode==='item'"
-        :round="contextmenuItem.label === undefined"
         :tooltip="contextmenuItem.tooltip !== undefined ? contextmenuItem.tooltip : (contextmenuItem.label === undefined ? contextmenuItem.name : undefined)"
-        v-bind="{...($myth.options.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
+        v-bind="{...($myth.options.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{}),...$attrs}"
         @click="contextmenuItem.click ? contextmenuItem.click(item,index) : undefined"
       />
     </template>

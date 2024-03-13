@@ -10,24 +10,29 @@
   <q-item
     v-if="listItem"
     v-close-popup
-    :dense="dense"
     clickable
-    v-bind="$attrs"
+    v-bind="{...($myth.options.dt?.listItem?.item||{}),...$attrs}"
     @click="$emit('click',$event)"
   >
     <q-item-section
       avatar
       side
+      v-bind="$myth.options.dt?.listItem?.avatarSection"
     >
       <q-icon
         :color="getColor"
         :name="getIcon"
+        v-bind="$myth.options.dt?.listItem?.icon"
       />
     </q-item-section>
-    <q-item-section>
-      <q-item-label>
+    <q-item-section
+      v-bind="$myth.options.dt?.listItem?.labelSection"
+    >
+      <q-item-label
+        v-bind="$myth.options.dt?.listItem?.labelItem"
+      >
         <slot>
-          {{ __(label || $attrs.label) }}
+          {{ label ? __(label) : label }}
         </slot>
       </q-item-label>
     </q-item-section>
@@ -35,13 +40,10 @@
   <q-btn
     v-else
     :color="getColor"
-    :dense="dense"
-    :fab-min="fabMini"
-    :flat="flat"
     :icon="getIcon"
     :label="label"
-    :round="round"
-    v-bind="$attrs"
+    :round="round !== undefined ? round : label"
+    v-bind="{...($myth.options.dt?.btn||{}),...$attrs}"
     @click="$emit('click',$event)"
   >
     <q-tooltip
@@ -60,7 +62,6 @@
 >
 
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useMyth } from '../../vue3'
 
 interface Props {
@@ -70,27 +71,21 @@ interface Props {
   tooltip?: string | null | undefined;
   color?: string | undefined;
   icon?: string | undefined;
-  listItem?: boolean;
-  fabMini?: boolean | undefined;
-  flat?: boolean | undefined;
-  round?: boolean | undefined;
-  dense?: boolean | undefined;
+  listItem?: boolean | undefined;
   label?: string | undefined;
+  round?: boolean | undefined;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  show: !1,
-  update: !1,
-  destroy: !1,
+  show: undefined,
+  update: undefined,
+  destroy: undefined,
   color: undefined,
   icon: undefined,
   tooltip: undefined,
-  listItem: !1,
-  fabMini: () => !0,
-  flat: () => !0,
-  round: () => !0,
-  dense: undefined,
-  label: undefined
+  listItem: undefined,
+  label: undefined,
+  round: undefined
 })
 type Events = {
   (e: 'click', evt: Event): void;
@@ -99,17 +94,20 @@ defineEmits<Events>()
 
 const hasTooltip = computed(() => Boolean(props.tooltip) || Boolean(props.show) || Boolean(props.update) || Boolean(props.destroy))
 
-const { t, te } = useI18n({ useScope: 'global' })
+const myth = useMyth()
+const { __ } = useMyth()
+// const { t, te } = useI18n({ useScope: 'global' })
 
 const getTooltip = computed(() => {
-  if (props.tooltip) {
-    return te(props.tooltip) ? t(props.tooltip) : props.tooltip
+  if (props.tooltip !== undefined) {
+    return __(props.tooltip)
+    // return te(props.tooltip) ? t(props.tooltip) : props.tooltip
   } else if (props.show) {
-    return t('show')
+    return __('labels.show')
   } else if (props.update) {
-    return t('update')
+    return __('labels.update')
   } else if (props.destroy) {
-    return t('destroy')
+    return __('labels.destroy')
   }
   return props.tooltip
 })
@@ -123,7 +121,6 @@ const getIcon = computed(() => {
   }
   return props.icon
 })
-const myth = useMyth()
 const getColor = computed<string | undefined>(() => {
   if (props.show) {
     return myth?.options?.dt?.contextmenu?.btnStyle?.showColor
@@ -134,4 +131,16 @@ const getColor = computed<string | undefined>(() => {
   }
   return props.color
 })
+// const getLabel = computed(() => {
+//   if (props.label) {
+//     return __(props.label)
+//   } else if (props.show) {
+//     return __('labels.show')
+//   } else if (props.update) {
+//     return __('labels.update')
+//   } else if (props.destroy) {
+//     return __('labels.destroy')
+//   }
+//   return props.label
+// })
 </script>

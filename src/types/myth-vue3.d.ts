@@ -17,10 +17,13 @@ import {
   QDialogProps,
   QEditorProps,
   QFileProps,
+  QIconProps,
   QImgProps,
   QImgSlots,
   QInputProps,
+  QItemLabelProps,
   QItemProps,
+  QItemSectionProps,
   QListProps,
   QMenuProps,
   QNotifyCreateOptions,
@@ -101,6 +104,7 @@ import { ComputedRef, TransitionProps } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { MythApiServicesSchema, ParseHeaderOptions, ParseHeadersHeaderAgr, ParseHeadersType, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
 import { Dates, Helpers, Str } from '../utils'
+import MDtContextmenuItems from 'components/datatable/MDtContextmenuItems.vue'
 
 export interface MythOptionsConfig extends Record<string | number | symbol, any> {
   google?: {
@@ -133,8 +137,10 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
       noFab?: boolean;
     },
     contextmenu?: {
+      props?: Partial<MDtContextmenuItems>;
       menu?: Partial<QPopupProxyProps>;
       list?: Partial<QListProps>;
+      listItem?: Partial<QItemProps>;
       btn?: Partial<MDtBtnProps>;
       btnStyle?: {
         showLabel?: boolean;
@@ -163,6 +169,14 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     };
     dialogButtonsProps?: Partial<MBtnProps>;
     noQuasarLoading?: boolean;
+    listItem?: {
+      item?: Partial<QItemProps>;
+      avatarSection?: Partial<QItemSectionProps>;
+      icon?: Partial<QIconProps>;
+      labelSection?: Partial<QItemSectionProps>;
+      labelItem?: Partial<QItemLabelProps>;
+    };
+    btn?: Partial<MDtBtnProps>;
   };
   button?: Partial<QBtnProps>;
   loadingButtons?: {

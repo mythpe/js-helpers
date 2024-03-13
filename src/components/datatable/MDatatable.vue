@@ -32,7 +32,7 @@
             :dense="dense"
             :label="contextmenuItem.contextLabel !== undefined ? (contextmenuItem.contextLabel === null ? undefined : __(contextmenuItem.contextLabel)) : __(contextmenuItem.label || contextmenuItem.name) "
             list-item
-            v-bind="{...($myth.options.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{})}"
+            v-bind="{...($myth.options.dt?.contextmenu?.listItem||{}),...(contextmenuItem.attr||{})}"
             @click="contextmenuItem.click ? contextmenuItem.click(itemDialog,itemIndexDialog) : undefined"
           />
         </template>
@@ -644,6 +644,7 @@
                 :index="props.rowIndex"
                 :item="props.row"
                 :items="contextmenuItems"
+                v-bind="$myth.options.dt?.contextmenu?.props"
               />
             </q-td>
           </slot>
@@ -1850,21 +1851,21 @@ export default {
         label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.show' : undefined,
         click: (item: MDtItem, index: MDtItemIndex) => openShowDialog(item, index),
         showIf: hasShowBtn.value,
-        order: 1
+        order: 100
       },
       {
         name: 'update',
         label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.update' : undefined,
         click: (item: MDtItem, index: MDtItemIndex) => openUpdateDialog(item, index),
         showIf: hasUpdateBtn.value,
-        order: 1
+        order: 100
       },
       {
         name: 'destroy',
         label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.destroy' : undefined,
         click: (item: MDtItem, index: MDtItemIndex) => onDeleteItem(item, index),
         showIf: hasDestroyBtn.value,
-        order: 1
+        order: 100
       },
       ...(contextmenuItemsProp.value || [])
     ].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))))
