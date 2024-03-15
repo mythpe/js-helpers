@@ -39,7 +39,7 @@
       </q-list>
     </MModalMenu>
     <q-pull-to-refresh
-      :no-mouse="noMouse"
+      :no-mouse="mouse"
       color="primary"
       @refresh="refresh"
     >
@@ -69,33 +69,33 @@
         @virtual-scroll="endReach ? onScroll : undefined"
         @row-contextmenu="onRowContextmenu"
       >
-        <template #item="props">
+        <template #item="iTempProps">
           <slot
             :dt="datatableItemsScope"
             name="item"
-            v-bind="props"
+            v-bind="iTempProps"
           >
             <div
-              :style="props.selected ? 'transform: scale(0.95);' : ''"
+              :style="iTempProps.selected ? 'transform: scale(0.95);' : ''"
               class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
             >
               <q-card
-                :class="props.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''"
+                :class="iTempProps.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''"
               >
-                <template v-if="getShowSelection || props.colsMap[controlKey] !== undefined">
+                <template v-if="getShowSelection || iTempProps.colsMap[controlKey] !== undefined">
                   <div class="m--datatable-card-control-header">
                     <MRow class="items-center justify-between">
                       <div class="q-px-md">
                         <q-checkbox
                           v-if="getShowSelection"
-                          v-model="props.selected"
+                          v-model="iTempProps.selected"
                           dense
                         />
                       </div>
                       <div>
                         <MDtBtn
                           icon="ion-ios-more"
-                          @click="onRowContextmenu($event,props.row,props.rowIndex)"
+                          @click="onRowContextmenu($event,iTempProps.row,iTempProps.rowIndex)"
                         />
                       </div>
                     </MRow>
@@ -104,7 +104,7 @@
                 </template>
                 <MContainer>
                   <template
-                    v-for="col in props.cols"
+                    v-for="col in iTempProps.cols"
                     :key="col.name"
                   >
                     <MRow
@@ -130,8 +130,8 @@
                         </template>
                         <template v-else-if="col.name === controlKey">
                           <MDtContextmenuItems
-                            :index="props.rowIndex"
-                            :item="props.row"
+                            :index="iTempProps.rowIndex"
+                            :item="iTempProps.row"
                             :items="contextmenuItems"
                           />
                         </template>
@@ -629,17 +629,17 @@
 
         <template
           v-if="!noBodyControl"
-          #[`body-cell-${controlKey}`]="props"
+          #[`body-cell-${controlKey}`]="noBodyProps"
         >
           <slot
             :dt="datatableItemsScope"
             :name="`body-cell-${controlKey}`"
-            v-bind="props"
+            v-bind="noBodyProps"
           >
-            <q-td :props="props">
+            <q-td :props="noBodyProps">
               <MDtContextmenuItems
-                :index="props.rowIndex"
-                :item="props.row"
+                :index="noBodyProps.rowIndex"
+                :item="noBodyProps.row"
                 :items="contextmenuItems"
                 v-bind="$myth.options.dt?.contextmenu?.props"
               />
@@ -647,13 +647,13 @@
           </slot>
         </template>
 
-        <template #body-cell-avatar_url="props">
-          <q-td :props="props">
+        <template #body-cell-avatar_url="bCAProps">
+          <q-td :props="bCAProps">
             <MDtBtn
-              v-if="props.row.avatar_url"
-              :src="props.row.avatar_url"
+              v-if="bCAProps.row.avatar_url"
+              :src="bCAProps.row.avatar_url"
               icon="ion-ios-eye"
-              @click="openImageDialog(props.row.avatar_url)"
+              @click="openImageDialog(bCAProps.row.avatar_url)"
             >
               <q-tooltip class="m--dt-btn-tooltip">
                 {{ __('myth.titles.show') }}
@@ -662,13 +662,13 @@
           </q-td>
         </template>
 
-        <template #body-cell-avatar="props">
-          <q-td :props="props">
+        <template #body-cell-avatar="bDAProps2">
+          <q-td :props="bDAProps2">
             <MDtBtn
-              v-if="props.row.avatar"
-              :src="props.row.avatar"
+              v-if="bDAProps2.row.avatar"
+              :src="bDAProps2.row.avatar"
               icon="ion-ios-eye"
-              @click="openImageDialog(props.row.avatar)"
+              @click="openImageDialog(bDAProps2.row.avatar)"
             >
               <q-tooltip class="m--dt-btn-tooltip">
                 {{ __('myth.titles.show') }}
@@ -932,9 +932,8 @@
   </div>
 </template>
 
-<script lang="ts">
-
-import { computed, nextTick, onMounted, PropType, reactive, ref, toRef, useSlots, watch } from 'vue'
+<script lang="ts" setup>
+import { computed, nextTick, onMounted, reactive, ref, toRef, useSlots, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import _ from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
@@ -959,1091 +958,917 @@ import MDtContextmenuItems from './MDtContextmenuItems.vue'
 import MDtBtn from './MDtBtn.vue'
 import MFadeTransition from '../transition/MFadeTransition.vue'
 
-export const initPaginationOptions: MDatatablePagination = {
+const initPaginationOptions: MDatatablePagination = {
   sortBy: undefined,
   descending: undefined,
   page: 1,
   rowsPerPage: 50,
   rowsNumber: 0
 }
-export const initMetaServer: MDatatableMetaServer = {
+const initMetaServer: MDatatableMetaServer = {
   current_page: null,
   last_page: null,
   total: null
 }
 
-export default {
-  name: 'MDatatable',
-  components: { MFadeTransition, MDtBtn, MDtContextmenuItems },
-  inheritAttrs: !1,
-  props: {
-    controlKey: {
-      type: String,
-      default: () => 'control'
-    },
-    defaultItem: {
-      // type: Object as PropType<Partial<(MDtItem & Record<string | number | symbol, unknown>)>>,
-      type: Object as PropType<Partial<MDatatableProps['defaultItem']>>,
-      default: () => undefined
-    },
-    contextItems: {
-      type: Array as PropType<MDatatableProps['contextItems']>,
-      default: () => undefined
-    },
-    hideAutoMessage: {
-      type: Boolean as PropType<MDatatableProps['hideAutoMessage']>,
-      default: () => !1
-    },
-    headers: {
-      type: Array as PropType<MDatatableProps['headers'] | any[]>,
-      required: !0,
-      default: () => ([])
-    },
-    visibleColumns: {
-      type: Array as PropType<MDatatableProps['visibleColumns']>,
-      required: !1,
-      default: () => undefined
-    },
-    searchColumns: {
-      type: Array as PropType<MDatatableProps['searchColumns']>,
-      required: !1,
-      default: () => undefined
-    },
-    rows: {
-      type: Array,
-      default: () => ([])
-    },
-    serviceName: {
-      type: [String, Function],
-      required: !0,
-      default: () => ''
-    },
-    requestParams: {
-      type: [Function, Object],
-      default: () => undefined
-    },
-    pdf: {
-      type: Boolean,
-      default: () => undefined
-    },
-    excel: {
-      type: Boolean,
-      default: () => undefined
-    },
-    exportToUrl: {
-      type: Boolean,
-      default: () => !0
-    },
-    hideSearch: {
-      type: Boolean as PropType<MDatatableProps['hideSearch']>,
-      default: () => undefined
-    },
-    searchDebounce: {
-      type: [String, Number],
-      default: () => 600
-    },
-    withIndex: {
-      type: [String, Array],
-      default: () => undefined
-    },
-    withStore: {
-      type: [String, Array],
-      default: () => undefined
-    },
-    withShow: {
-      type: [String, Array],
-      default: () => undefined
-    },
-    withUpdate: {
-      type: [String, Array],
-      default: () => undefined
-    },
-    hideAddBtn: {
-      type: Boolean,
-      default: () => undefined
-    },
-    hideUpdateBtn: {
-      type: Boolean,
-      default: () => undefined
-    },
-    hideShowBtn: {
-      type: Boolean,
-      default: () => undefined
-    },
-    hideDestroyBtn: {
-      type: Boolean,
-      default: () => undefined
-    },
-    storeRoute: {
-      type: String,
-      default: () => undefined
-    },
-    updateRoute: {
-      type: String,
-      default: () => undefined
-    },
-    showRoute: {
-      type: String,
-      default: () => undefined
-    },
-    noMouse: {
-      type: Boolean,
-      default: () => !0
-    },
-    endReach: {
-      type: Boolean,
-      default: () => !1
-    },
-    showSelection: {
-      type: Boolean,
-      default: () => !1
-    },
-    hideSelection: {
-      type: Boolean,
-      default: () => !1
-    },
-    multiSelection: {
-      type: Boolean,
-      default: () => !1
-    },
-    rowsPerPageOptions: {
-      type: Array as PropType<MDatatableProps['rowsPerPageOptions']>,
-      default: () => [50, 250, 500, 0]
-    },
-    ignoreKeys: {
-      type: [Array as PropType<MDatatableProps['ignoreKeys']>, Function],
-      default: () => undefined
-    },
-    // Style
-    flat: {
-      type: Boolean,
-      default: () => !1
-    },
-    bordered: {
-      type: Boolean,
-      default: () => !1
-    },
-    dense: {
-      type: Boolean,
-      default: () => !1
-    },
-    grid: {
-      type: Boolean,
-      default: () => undefined
-    },
-    title: {
-      type: String as PropType<string | null | undefined>,
-      default: () => undefined
-    },
-    manageColumns: {
-      type: Boolean,
-      default: () => undefined
-    },
-    noAddBtnTop: {
-      type: Boolean,
-      default: () => undefined
-    },
-    noAddBtnList: {
-      type: Boolean,
-      default: () => undefined
-    },
-    noAddBtnFab: {
-      type: Boolean,
-      default: () => undefined
-    },
-    noFullscreen: {
-      type: Boolean,
-      default: () => !1
-    },
-    noRefreshBtn: {
-      type: Boolean,
-      default: () => !1
-    },
-    noBodyControl: {
-      type: Boolean,
-      default: () => !1
-    },
-    showCardControlHeader: {
-      type: Boolean,
-      default: () => undefined
-    },
-    formModel: {
-      type: Object,
-      required: !1,
-      default: undefined
-    }
-  },
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  setup (props) {
-    const myth = useMyth()
-    const slots = useSlots()
-    const router = useRouter()
-    const route = useRoute()
-    const $q = useQuasar()
-    const serviceName = computed(() => props.serviceName)
-    const { t } = useI18n({ useScope: 'global' })
-    // Prevent user from back
-    /* router.beforeResolve(() => {
-      if (dialogs.filter) {
-        closeFilterDialog()
-        return !1
-      } else if (dialogs.show) {
-        closeShowDialog()
-        return !1
-      } else if (dialogs.form) {
-        closeFormDialog()
-        return !1
-      }
-      return !hasAction.value
-    }) */
-    const getRows = ref<MDtItem[]>([])
-    const filterDialogModel = ref(!1)
-    const showDialogModel = ref(!1)
-    const formDialogModel = ref(!1)
-    const isUpdateDialog = ref(!1)
-    const itemDialog = ref<MDtItem | undefined>(undefined)
-    const itemIndexDialog = ref<MDtItemIndex | undefined>()
-    const errorsDialog = ref<any>({})
-    const dialogs = reactive<MDatatableDialogsOptions>({
-      filter: filterDialogModel,
-      show: showDialogModel,
-      form: formDialogModel,
-      isUpdate: isUpdateDialog,
-      item: itemDialog,
-      index: itemIndexDialog,
-      errors: errorsDialog
-    })
-    const resetDialogs = () => {
-      dialogs.filter = !1
-      dialogs.show = !1
-      dialogs.form = !1
-      dialogs.isUpdate = !1
-      dialogs.item = undefined
-      dialogs.index = undefined
-      dialogs.errors = {}
-    }
+// default: () => 'control'
 
-    /** Table */
+interface Props {
+  controlKey?: MDatatableProps['controlKey'];
+  defaultItem?: MDatatableProps['defaultItem'];
+  contextItems?: MDatatableProps['contextItems'];
+  hideAutoMessage?: MDatatableProps['hideAutoMessage'];
+  headers: MDatatableProps['headers'];
+  rows?: MDatatableProps['rows'];
+  serviceName: MDatatableProps['serviceName'];
+  requestParams?: MDatatableProps['requestParams'];
+  pdf?: MDatatableProps['pdf'];
+  excel?: MDatatableProps['excel'];
+  exportToUrl?: MDatatableProps['exportToUrl'];
+  hideSearch?: MDatatableProps['hideSearch'];
+  searchDebounce?: MDatatableProps['searchDebounce'];
+  withIndex?: MDatatableProps['withIndex'];
+  withStore?: MDatatableProps['withStore'];
+  withShow?: MDatatableProps['withShow'];
+  withUpdate?: MDatatableProps['withUpdate'];
+  hideAddBtn?: MDatatableProps['hideAddBtn'];
+  hideUpdateBtn?: MDatatableProps['hideUpdateBtn'];
+  hideShowBtn?: MDatatableProps['hideShowBtn'];
+  hideDestroyBtn?: MDatatableProps['hideDestroyBtn'];
+  storeRoute?: MDatatableProps['storeRoute'];
+  updateRoute?: MDatatableProps['updateRoute'];
+  showRoute?: MDatatableProps['showRoute'];
+  mouse?: MDatatableProps['mouse'];
+  noRefreshBtn?: MDatatableProps['noRefreshBtn'];
+  endReach?: MDatatableProps['endReach'];
+  showSelection?: MDatatableProps['showSelection'];
+  hideSelection?: MDatatableProps['hideSelection'];
+  multiSelection?: MDatatableProps['multiSelection'];
+  rowsPerPageOptions?: MDatatableProps['rowsPerPageOptions'];
+  ignoreKeys?: MDatatableProps['ignoreKeys'];
+  grid?: MDatatableProps['grid'];
+  title?: MDatatableProps['title'];
+  manageColumns?: MDatatableProps['manageColumns'];
+  visibleColumns?: MDatatableProps['visibleColumns'];
+  searchColumns?: MDatatableProps['searchColumns'];
+  noAddBtnTop?: MDatatableProps['noAddBtnTop'];
+  noAddBtnList?: MDatatableProps['noAddBtnList'];
+  noAddBtnFab?: MDatatableProps['noAddBtnFab'];
+  noFullscreen?: MDatatableProps['noFullscreen'];
+  noBodyControl?: MDatatableProps['noBodyControl'];
+  formModel?: MDatatableProps['formModel'];
+  showCardControlHeader?: MDatatableProps['showCardControlHeader'];
+  dense?: MDatatableProps['dense'];
+  bordered?: MDatatableProps['bordered'];
+}
 
-    /** --- */
-    const headersProp = computed(() => props.headers)
-    const getHeaders = computed<any[]>(() => myth.parseHeaders(headersProp.value) || [])
-    const visibleColumnsProp = computed(() => props.visibleColumns)
-    const visibleHeaders = ref(myth.parseHeaders(visibleColumnsProp.value || headersProp.value).map(e => e.name))
-    /** --- */
+const props = withDefaults(defineProps<Props>(), {
+  controlKey: () => 'control',
+  defaultItem: undefined,
+  contextItems: undefined,
+  hideAutoMessage: undefined,
+  headers: () => ([]),
+  rows: undefined,
+  serviceName: () => '',
+  requestParams: undefined,
+  pdf: undefined,
+  excel: undefined,
+  exportToUrl: () => !0,
+  hideSearch: undefined,
+  searchDebounce: () => 600,
+  withIndex: undefined,
+  withStore: undefined,
+  withShow: undefined,
+  withUpdate: undefined,
+  hideAddBtn: undefined,
+  hideUpdateBtn: undefined,
+  hideShowBtn: undefined,
+  hideDestroyBtn: undefined,
+  storeRoute: undefined,
+  updateRoute: undefined,
+  showRoute: undefined,
+  mouse: undefined,
+  noRefreshBtn: undefined,
+  endReach: undefined,
+  showSelection: undefined,
+  hideSelection: undefined,
+  multiSelection: undefined,
+  rowsPerPageOptions: () => [50, 250, 500, 0],
+  ignoreKeys: undefined,
+  grid: undefined,
+  title: undefined,
+  manageColumns: undefined,
+  visibleColumns: undefined,
+  searchColumns: undefined,
+  noAddBtnTop: undefined,
+  noAddBtnList: undefined,
+  noAddBtnFab: undefined,
+  noFullscreen: undefined,
+  noBodyControl: undefined,
+  formModel: undefined,
+  showCardControlHeader: undefined,
+  dense: undefined,
+  bordered: undefined
+})
+const myth = useMyth()
+const slots = useSlots()
+const router = useRouter()
+const route = useRoute()
+const $q = useQuasar()
+const serviceName = computed(() => props.serviceName)
+const { t } = useI18n({ useScope: 'global' })
+// Prevent user from back
+/* router.beforeResolve(() => {
+  if (dialogs.filter) {
+    closeFilterDialog()
+    return !1
+  } else if (dialogs.show) {
+    closeShowDialog()
+    return !1
+  } else if (dialogs.form) {
+    closeFormDialog()
+    return !1
+  }
+  return !hasAction.value
+}) */
+const getRows = ref<MDtItem[]>([])
+const filterDialogModel = ref(!1)
+const showDialogModel = ref(!1)
+const formDialogModel = ref(!1)
+const isUpdateDialog = ref(!1)
+const itemDialog = ref<MDtItem | undefined>(undefined)
+const itemIndexDialog = ref<MDtItemIndex | undefined>()
+const errorsDialog = ref<any>({})
+const dialogs = reactive<MDatatableDialogsOptions>({
+  filter: filterDialogModel,
+  show: showDialogModel,
+  form: formDialogModel,
+  isUpdate: isUpdateDialog,
+  item: itemDialog,
+  index: itemIndexDialog,
+  errors: errorsDialog
+})
+const resetDialogs = () => {
+  dialogs.filter = !1
+  dialogs.show = !1
+  dialogs.form = !1
+  dialogs.isUpdate = !1
+  dialogs.item = undefined
+  dialogs.index = undefined
+  dialogs.errors = {}
+}
 
-    const selected = ref<MDtItem[]>([])
-    const meta = ref<MDatatableMetaServer>({ ...initMetaServer })
-    const pagination = ref<MDatatablePagination>({ ...initPaginationOptions })
-    const search = ref<string | null>(null)
-    const searchColumnsProp = computed(() => props.searchColumns)
-    const searchColumnsRef = ref<string[]>(myth.parseHeaders(searchColumnsProp.value || headersProp.value).filter(e => e?.field !== props.controlKey).map(e => e.name))
-    const searchPlaceholder = computed<string>(() => {
-      if (searchColumnsRef.value.length > 0) {
-        return t('myth.datatable.searchInputPlaceholder',
-          { v: getHeaders.value.filter(e => e?.field !== props.controlKey && searchColumnsRef.value.indexOf(e.name) !== -1).map(e => e.label).join(', ') })
-      }
-      return 'myth.datatable.searchInput'
-    })
-    const loading = ref<boolean>(!1)
-    const filterForm = ref<MDatatableFilterForm>({})
-    const tempFilterForm = ref<MDatatableFilterForm>({})
-    const hasAction = ref<boolean>(!1)
-    const fullscreen = ref(!1)
-    const tableOptions = reactive<MDatatableOptions>({
-      search,
-      loading,
-      pagination,
-      meta,
-      filter: filterForm,
-      tempFilter: tempFilterForm,
-      selected,
-      hasAction,
-      fullscreen
-    })
-    /** Table */
+/** Table */
 
-    /** --- */
+/** --- */
+const headersProp = computed(() => props.headers)
+const getHeaders = computed<any[]>(() => myth.parseHeaders(headersProp.value) || [])
+const visibleColumnsProp = computed(() => props.visibleColumns)
+const visibleHeaders = ref(myth.parseHeaders(visibleColumnsProp.value || headersProp.value).map(e => e.name))
+/** --- */
 
-    const hasAddBtn = computed<boolean>(() => {
-      if (props.hideAddBtn) {
-        return !1
-      }
-      return Boolean(slots.form) || Boolean(props.storeRoute)
-    })
-    const hasUpdateBtn = computed<boolean>(() => {
-      if (props.hideUpdateBtn) {
-        return !1
-      }
-      return Boolean(slots.form) || Boolean(props.updateRoute)
-    })
-    const hasShowBtn = computed<boolean>(() => {
-      if (props.hideShowBtn) {
-        return !1
-      }
-      return Boolean(slots.show) || Boolean(props.showRoute)
-    })
-    const hasDestroyBtn = computed<boolean>(() => !props.hideDestroyBtn)
-    const hasFilterDialog = computed<boolean>(() => slots.filter !== undefined)
-    const hasMenu = computed<boolean>(() => (Boolean(props.pdf) || Boolean(props.excel) || hasFilterDialog.value || hasAddBtn.value))
+const selected = ref<MDtItem[]>([])
+const meta = ref<MDatatableMetaServer>({ ...initMetaServer })
+const pagination = ref<MDatatablePagination>({ ...initPaginationOptions })
+const search = ref<string | null>(null)
+const searchColumnsProp = computed(() => props.searchColumns)
+const searchColumnsRef = ref<string[]>(myth.parseHeaders(searchColumnsProp.value || headersProp.value).filter(e => e?.field !== props.controlKey).map(e => e.name))
+const searchPlaceholder = computed<string>(() => {
+  if (searchColumnsRef.value.length > 0) {
+    return t('myth.datatable.searchInputPlaceholder',
+      { v: getHeaders.value.filter(e => e?.field !== props.controlKey && searchColumnsRef.value.indexOf(e.name) !== -1).map(e => e.label).join(', ') })
+  }
+  return 'myth.datatable.searchInput'
+})
+const loading = ref<boolean>(!1)
+const filterForm = ref<MDatatableFilterForm>({})
+const tempFilterForm = ref<MDatatableFilterForm>({})
+const hasAction = ref<boolean>(!1)
+const fullscreen = ref(!1)
+const tableOptions = reactive<MDatatableOptions>({
+  search,
+  loading,
+  pagination,
+  meta,
+  filter: filterForm,
+  tempFilter: tempFilterForm,
+  selected,
+  hasAction,
+  fullscreen
+})
+/** Table */
 
-    const isUpdateMode = ref<boolean>(!1)
-    const formMode = computed<'update' | 'store'>(() => isUpdateMode.value ? 'update' : 'store')
-    const isSingleSelectedItem = computed<boolean>(() => tableOptions.selected.length === 1)
-    const firstSelectedItem = computed<MDtItem>(() => tableOptions.selected[0])
-    const hasSelectedItem = computed<boolean>(() => tableOptions.selected.length > 0)
+/** --- */
 
-    /* Titles */
-    const getShowTitle = computed(() => {
-      if (serviceName.value && typeof serviceName.value !== 'function') {
-        const c = myth.str.pascalCase(myth.str.pluralize(serviceName.value.split('/').pop()))
-        return t('replace.show_details', { name: t(`choice.${c}`, 1) })
-      }
-      return t('show_details')
-    })
-    const getFormTitle = computed(() => {
-      const name = serviceName.value && typeof serviceName.value !== 'function' ? t(`choice.${myth.str.pascalCase(myth.str.pluralize(serviceName.value.split('/').pop()))}`, 1) : ''
-      return t(`replace.${formMode.value}`, { name })
-    })
-    const defaultItem = computed(() => props.defaultItem)
-    const isGrid = computed(() => {
-      if (props.grid !== undefined) {
-        return props.grid
-      }
-      return $q.screen.lt.md
-    })
-    /* Titles */
+const hasAddBtn = computed<boolean>(() => {
+  if (props.hideAddBtn) {
+    return !1
+  }
+  return Boolean(slots.form) || Boolean(props.storeRoute)
+})
+const hasUpdateBtn = computed<boolean>(() => {
+  if (props.hideUpdateBtn) {
+    return !1
+  }
+  return Boolean(slots.form) || Boolean(props.updateRoute)
+})
+const hasShowBtn = computed<boolean>(() => {
+  if (props.hideShowBtn) {
+    return !1
+  }
+  return Boolean(slots.show) || Boolean(props.showRoute)
+})
+const hasDestroyBtn = computed<boolean>(() => !props.hideDestroyBtn)
+const hasFilterDialog = computed<boolean>(() => slots.filter !== undefined)
+const hasMenu = computed<boolean>(() => (Boolean(props.pdf) || Boolean(props.excel) || hasFilterDialog.value || hasAddBtn.value))
 
-    /** Methods */
-    const getMythApiServicesSchema = (): MDtMythApiServicesSchema => {
-      if (typeof serviceName.value === 'function') {
-        return serviceName.value()
-      }
-      const c = myth.services[serviceName.value]
-      if (!c) {
-        throw Error(`No Service: ${serviceName.value}`)
-      }
-      return c
-    }
-    const updateSelectedItems = (selected: MDtItem[]) => {
-      tableOptions.selected = selected
-    }
-    const onScroll = ({ index, to }: any) => {
-      if (index && to && index === to) {
-        loadMore()
-      }
-    }
-    const loadMore = () => {
-      nextTick(() => {
-        fetchDatatableItems({
-          pagination: {
-            ...tableOptions.pagination,
-            page: (tableOptions.pagination.page ?? 0) + 1
-          },
-          filter: tableOptions.search
-        })
-      })
-    }
-    const refreshNoUpdate = async (done?: () => void) => {
-      if (contextmenu.value) {
-        contextmenu.value = !1
-      }
-      meta.value = { ...initMetaServer }
-      pagination.value.page = 1
-      pagination.value.rowsNumber = 0
-      getRows.value = []
+const isUpdateMode = ref<boolean>(!1)
+const formMode = computed<'update' | 'store'>(() => isUpdateMode.value ? 'update' : 'store')
+const isSingleSelectedItem = computed<boolean>(() => tableOptions.selected.length === 1)
+const firstSelectedItem = computed<MDtItem>(() => tableOptions.selected[0])
+const hasSelectedItem = computed<boolean>(() => tableOptions.selected.length > 0)
 
-      nextTick(() => {
-        fetchDatatableItems({
-          pagination: pagination.value,
-          filter: tableOptions.search
-        })
-        if (done) {
-          done()
-        }
-      })
-    }
-    const refresh = (done?: () => void) => {
-      return refreshNoUpdate(done)
-    }
-    const getRequestWith = (type: 'withIndex' | 'withShow' | 'withUpdate' | 'withStore'): string | null => {
-      let v: any = []
-      const params: { [k: string]: string } & string | (() => string | object) = props[type]
-      if (params) {
-        if (typeof params === 'string') {
-          v = params.split(',')
-        }
+/* Titles */
+const getShowTitle = computed(() => {
+  if (serviceName.value && typeof serviceName.value !== 'function') {
+    const c = myth.str.pascalCase(myth.str.pluralize(serviceName.value.split('/').pop()))
+    return t('replace.show_details', { name: t(`choice.${c}`, 1) })
+  }
+  return t('show_details')
+})
+const getFormTitle = computed(() => {
+  const name = serviceName.value && typeof serviceName.value !== 'function' ? t(`choice.${myth.str.pascalCase(myth.str.pluralize(serviceName.value.split('/').pop()))}`, 1) : ''
+  return t(`replace.${formMode.value}`, { name })
+})
+const defaultItem = computed(() => props.defaultItem)
+const isGrid = computed(() => {
+  if (props.grid !== undefined) {
+    return props.grid
+  }
+  return $q.screen.lt.md
+})
+/* Titles */
 
-        if (_.isArray(params)) {
-          v = [...params]
-        } else if (_.isObject(params) && typeof params !== 'function') {
-          let e
-          for (const k in params) {
-            e = params[k]
-            v.push(`${k}=${e}`)
-          }
-        } else if (_.isFunction(params)) {
-          const f = params()
-          v = typeof f === 'string' ? f.split(',') : f
-        }
-      }
-      return v.join(',') ?? null
-    }
-    const getDatatableParams = ({ pagination, filter }: FetchRowsArgs = {}, merge: Partial<ApiServiceParams> = {}): ApiServiceParams => {
-      let params: ApiServiceParams = {
-        // filter: tableOptions.filter,
-        // search: filter || undefined,
-        headerItems: getHeaders.value.map((e: any) => e.name).join(','),
-        // headers: ['name'],
-        // ids: tableOptions.selected.map((e: any) => e.id),
-        indexType: 'index',
-        fdt: 'i',
-        itemsPerPage: pagination?.rowsPerPage === 0 ? -1 : (pagination?.rowsPerPage !== undefined ? pagination?.rowsPerPage : 0),
-        page: pagination?.page !== undefined ? pagination.page : 0,
-        sortBy: pagination?.sortBy !== undefined ? pagination.sortBy : undefined,
-        sortDesc: !pagination?.sortBy ? undefined : (pagination?.descending === !0 ? 1 : (pagination?.descending === !1 ? 0 : undefined))
-      }
-      if (filter) {
-        params.search = filter
-      }
-      if (Object.keys(tableOptions.filter).length > 0) {
-        const TempFilter = { ...tableOptions.filter } as any
-        for (const fKey in TempFilter) {
-          if (_.isArray(TempFilter[fKey])) {
-            TempFilter[fKey] = TempFilter[fKey].map((elm: any) => {
-              if (elm.id) {
-                return elm.id
-              } else if (elm.value) {
-                return elm.value
-              }
-              return elm
-            })
-          } else if (_.isPlainObject(TempFilter[fKey])) {
-            if (TempFilter[fKey].id) {
-              TempFilter[fKey] = TempFilter[fKey].id
-            } else if (TempFilter[fKey].value) {
-              TempFilter[fKey] = TempFilter[fKey].value
-            }
-          }
-        }
-        // console.log(JSON.stringify(tableOptions.filter))
-        // params.filter = tableOptions.filter
-        // console.log(TempFilter)
-        params.filter = TempFilter
-      }
-      if (searchColumnsRef.value.length > 0) {
-        params.searchColumns = searchColumnsRef.value.join(',')
-      }
-      if (props.requestParams) {
-        if (typeof props.requestParams === 'function') {
-          params = props.requestParams(params)
-        } else {
-          params = {
-            ...params,
-            ...props.requestParams
-          }
-        }
-      }
-      return { ...params, ...merge }
-    }
-    const fetchDatatableItems = async (opts: FetchRowsArgs = {}) => {
-      if (props.endReach && tableOptions.meta.last_page && tableOptions.pagination.page >= tableOptions.meta.last_page) {
-        return
-      }
-      if (tableOptions.loading || !serviceName.value) return
-      tableOptions.loading = !0
-      nextTick(() => {
-        const params = getDatatableParams(opts)
-        const requestWith = getRequestWith('withIndex')
-        if (requestWith) {
-          params.requestWith = requestWith
-        }
-        // console.log({ params })
-        getMythApiServicesSchema().index({ params })
-          .then((result) => {
-            const { _data, _meta } = result
-            pagination.value = {
-              page: parseInt((_meta?.current_page || 1).toString()) || 1,
-              rowsPerPage: parseInt(_meta?.per_page) || 0,
-              rowsNumber: parseInt((_meta?.total || 0).toString()) || 0,
-              sortBy: opts?.pagination?.sortBy || undefined,
-              descending: opts?.pagination?.descending || undefined
-            }
-            _meta && (meta.value = _meta)
-            if (props.endReach) {
-              getRows.value = [...getRows.value, ...(_data || [])]
-            } else {
-              getRows.value = _data || []
-            }
-          })
-          .catch((e) => {
-            // console.log(e)
-            if (e?.response?.status === 401) {
-              logoutDatatable()
-              return e
-            }
-            if (e?._message) {
-              myth.alertError(e._message)
-            } else if (e?.message) {
-              myth.alertError(e.message)
-            }
-          })
-          .finally(() => {
-            tableOptions.loading = !1
-          })
-      })
-    }
-    const exportData = (type: MDtExportOptions) => {
-      if (loading.value) {
-        return
-      }
-      const ex = async () => {
-        loading.value = !0
-        const data = getDatatableParams({
-          pagination: tableOptions.pagination,
-          filter: tableOptions.search
-        }, {
-          indexType: type,
-          fdt: 'e',
-          toUrl: props.exportToUrl,
-          headerItems: getHeaders.value.filter(e => e?.field !== props.controlKey && visibleHeaders.value.indexOf(e.name) !== -1)
-        })
-        if (tableOptions.selected.length > 0) {
-          data.ids = tableOptions.selected.map((e: any) => e.id)
-        }
-        try {
-          const response = await getMythApiServicesSchema().export(data)
-          await myth.helpers.downloadFromResponse(response)
-        } catch (e: any) {
-          if (e?.code === 'window_blocked') {
-            myth.alertError(t('messages.window_blocked'))
-          } else if (e?._message) {
-            myth.alertError(e._message)
-          } else if (e?.message) {
-            myth.alertError(e.message)
-          } else {
-            myth.alertError(t('messages.error'))
-          }
-        } finally {
-          loading.value = !1
-        }
-      }
-      if (!tableOptions.selected.length) {
-        myth.confirmMessage(t('messages.export_all')).onOk(() => {
-          ex()
-        })
-        // if (confirm(t('messages.export_all'))) {
-        //   ex()
-        // }
-      } else {
-        ex()
-      }
-    }
-    /** Methods */
-
-    /** Filter Dialog */
-    const openFilterDialog = () => {
-      dialogs.filter = !0
-      tempFilterForm.value = { ...tableOptions.filter }
-    }
-    const saveFilterDialog = () => {
-      filterForm.value = { ...tableOptions.tempFilter }
-      nextTick(() => {
-        dialogs.filter = !1
-      })
-    }
-    const closeFilterDialog = () => {
-      dialogs.filter = !1
-      tempFilterForm.value = { ...tableOptions.filter }
-    }
-    const onRemoveFilter = (key: string | number) => {
-      const filter = filterForm.value
-      delete filter[key]
-      filterForm.value = { ...filter }
-      if (route.query[key]) {
-        const query = { ...route.query }
-        delete query[key]
-        router.push({ query })
-      }
-    }
-    const updateFilterOptions = (data: Record<string, any>) => {
-      filterForm.value = {
-        ...tableOptions.filter,
-        ...data
-      }
-    }
-    /** Filter Dialog */
-    const openDialogTimeout = 100
-    /** Show Dialog */
-    const openShowDialogNoIndex = async (i: MDtItem) => {
-      const item = toRef(i)
-      const index = getRows.value.findIndex(e => e.id === item.value.id)
-      return await openShowDialog(item.value, index)
-    }
-    const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
-      const item = toRef(i)
-      if (props.showRoute) {
-        router.push({
-          name: props.showRoute,
-          params: { id: item.value.id }
-        })
-        return
-      }
-      if (loading.value) {
-        return
-      }
-      loading.value = !0
-      const params: any = { fdt: 's' }
-      if (getRequestWith('withShow')) {
-        params.requestWith = getRequestWith('withShow')
-      }
-
-      getMythApiServicesSchema().show(item.value.id, { params })
-        .then(({ _data }) => {
-          dialogs.item = _data
-          dialogs.index = index
-          getRows.value[index] = _data
-          setTimeout(() => (dialogs.show = !0), openDialogTimeout)
-        })
-        .catch((e: any) => {
-          const message = e?._message || e?.message
-          message && myth.alertError(message)
-        })
-        .finally(() => (loading.value = !1))
-    }
-    const closeShowDialog = () => {
-      dialogs.show = !1
-      dialogs.item = undefined
-      dialogs.index = undefined
-    }
-    /** Show Dialog */
-
-    /** Form Dialog */
-    const updateRouteProp = computed(() => props.updateRoute)
-    const openUpdateDialogNoIndex = (i: MDtItem) => {
-      const item = toRef(i)
-      const index = getRows.value.findIndex(e => e.id === item.value.id)
-      return openUpdateDialog(item.value, index)
-    }
-    const openUpdateDialog = (i: MDtItem, index: MDtItemIndex) => {
-      const item = toRef(i)
-      if (updateRouteProp.value) {
-        router.push({
-          name: updateRouteProp.value,
-          params: { id: item.value.id }
-        })
-        return
-      }
-      if (loading.value) {
-        return
-      }
-      loading.value = !0
-      isUpdateMode.value = !0
-      nextTick(() => {
-        dialogs.form = !0
-      })
-      const params: any = { fdt: 'u' }
-      if (getRequestWith('withUpdate')) {
-        params.requestWith = getRequestWith('withUpdate')
-      }
-      getMythApiServicesSchema().show(item.value.id, { params })
-        .then(({ _data }) => {
-          dialogs.item = _data
-          dialogs.index = index
-          if (index || index === 0) {
-            getRows.value[index] = _data
-          }
-          // setTimeout(() => (dialogs.form = !0), openDialogTimeout)
-        })
-        .catch((e) => {
-          const message = e?._message || e?.message
-          message && myth.alertError(message)
-        })
-        .finally(() => (loading.value = !1))
-    }
-    const openCreateDialog = (dtItem?: MDtItem) => {
-      if (props.storeRoute) {
-        router.push({ name: props.storeRoute })
-        return
-      }
-      const item = { ...(defaultItem.value || {}), ...(dtItem || {}) }
-      isUpdateMode.value = !1
-      itemDialog.value = { ...item }
-      itemIndexDialog.value = undefined
-      // console.log(item)
-      nextTick(() => {
-        setTimeout(() => (dialogs.form = !0), openDialogTimeout)
-      })
-    }
-    const closeFormDialog = () => {
-      dialogs.form = !1
-      nextTick(() => {
-        isUpdateMode.value = !1
-        dialogs.item = undefined
-        dialogs.index = undefined
-      })
-    }
-    /** Form Dialog */
-
-    const updateDatatableItem = (i: MDtItem, index?: MDtItemIndex) => {
-      const item = toRef(i)
-      if (item.value && index) {
-        getRows.value[index] = item.value
-      }
-      if (item.value && !index) {
-        const findIndex = getRows.value.findIndex(e => parseInt(e.id?.toString()) === parseInt(item.value.id.toString()))
-        getRows.value[findIndex] = item.value
-        // const r = [...getRows.value]
-        // r[parseInt(findIndex.toString())] = item
-        // getRows.value = []
-        // nextTick(() => {
-        //   getRows.value = [...r]
-        // })
-      }
-    }
-    const removeDtItem = (i: MDtItem | number) => {
-      const item = toRef<MDtItem | number>(i)
-      const id: string | number = typeof item.value !== 'object' ? item.value : item.value.id
-      if (typeof item.value !== 'object') {
-        getRows.value = getRows.value.filter((e, i) => i !== id)
-      } else {
-        getRows.value = getRows.value.filter((e) => parseInt(e.id?.toString()) !== parseInt(id.toString()))
-      }
-    }
-    const ignoreKeysProps = computed(() => props.ignoreKeys)
-    const defaultSubmitItem = async (_form: Record<string, any>) => {
-      // let form = { ..._form, ...(dialogs.itemForm || {}) }
-      let form = { ...(props.formModel ? props.formModel : _form) }
-      // console.log(form)
-      if (loading.value) {
-        return
-      }
-      loading.value = !0
-      const api = getMythApiServicesSchema()
-      form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withStore')
-      if (!form.requestWith) {
-        delete form.requestWith
-      }
-      const fdt = isUpdateMode.value ? 'u' : 'c'
-      form.fdt = fdt
-      if (ignoreKeysProps.value) {
-        if (typeof ignoreKeysProps.value === 'function') {
-          form = ignoreKeysProps.value(form)
-        } else {
-          for (const k in ignoreKeysProps.value) {
-            delete form[ignoreKeysProps.value[k]]
-          }
-        }
-      }
-
-      const ignoreKeys = [
-        '_to_string',
-        '_to_number_format',
-        '_to_date_format',
-        'toString',
-        'toNumberFormat',
-        'toDateFormat'
-      ]
-
-      for (const i in ignoreKeys) {
-        for (const k in form) {
-          if (k.slice(-ignoreKeys[i].length) === ignoreKeys[i]) {
-            delete form[k]
-          }
-        }
-      }
-      const _conf: any = { params: { fdt } }
-      const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form, _conf) : await api.store(form, _conf)
-      try {
-        const { _data, _message, _success }: any = await method()
-        _message && myth.alertSuccess(_message)
-        if (_success) {
-          if (isUpdateMode.value) {
-            _data && updateDatatableItem(_data, dialogs.index)
-          } else {
-            nextTick(() => refresh())
-            // emit('itemCreated', { item: _data })
-          }
-          nextTick(() => closeFormDialog())
-        }
-      } catch (e: any) {
-        const { _message, _errors } = e || {}
-        dialogs.errors = _errors || {}
-        _message && myth.alertError(_message)
-      } finally {
-        loading.value = !1
-      }
-    }
-    const hideAutoMessage = computed(() => props.hideAutoMessage)
-    const onDeleteItem = (i: MDtItem, index: number) => {
-      const item = toRef(i)
-      if (loading.value || !item.value?.id) {
-        return
-      }
-      tableOptions.hasAction = !0
-      myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
-        loading.value = !0
-        try {
-          const { _message, _success } = await getMythApiServicesSchema().destroy(item.value.id)
-          if (!hideAutoMessage.value && _success && _message) {
-            _message && myth.alertSuccess(_message)
-          }
-          if (_success) {
-            --tableOptions.pagination.rowsNumber
-            removeDtItem(index)
-          }
-        } catch (e: any) {
-          e?._message && myth.alertError(e._message)
-        } finally {
-          loading.value = !1
-          nextTick(() => {
-            selected.value = []
-          })
-        }
-      }).onDismiss(() => {
-        tableOptions.hasAction = !1
-      })
-    }
-    const deleteSelectionItem = () => {
-      if (!tableOptions.selected.length) return
-      if (tableOptions.selected.length === 1) {
-        const dtItem: MDtItem = tableOptions.selected[0]
-        const index = getRows.value.findIndex((e: any) => parseInt(e.id) === parseInt(dtItem.id.toString()))
-        return onDeleteItem(dtItem, index)
-      }
-      if (loading.value || !tableOptions.selected.length) {
-        return
-      }
-
-      tableOptions.hasAction = !0
-      myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
-        loading.value = !0
-        try {
-          const { _message, _success } = await getMythApiServicesSchema().destroyAll(tableOptions.selected.map((e: MDtItem) => e.id))
-          if (!hideAutoMessage.value && _success && _message) {
-            _message && myth.alertSuccess(_message)
-          }
-          if (_success) {
-            refresh()
-          }
-        } catch (e: any) {
-          e?._message && myth.alertError(e._message)
-        } finally {
-          loading.value = !1
-          nextTick(() => {
-            selected.value = []
-          })
-        }
-        // console.log(item)
-      }).onDismiss(() => {
-        tableOptions.hasAction = !1
-      })
-    }
-    const logoutDatatable = () => {
-      // const { logout, removeStorage } = myth.store.state.
-      // removeStorage()
-      // logout(window.push_token)
-      // const name = this.$routes.auth.login
-      // if (this.$route.name !== name) {
-      //   this.$router.replace({ name })
-      // }
-    }
-    /** --- */
-
-    /**
-     * Dom
-     */
-    const contextmenu = ref(!1)
-    const onRowContextmenu = (e: MouseEvent, row: MDtItem, index: number) => {
-      dialogs.item = row
-      dialogs.index = index
-      nextTick(() => {
-        setTimeout(() => {
-          if (isGrid.value) {
-            contextmenu.value = !0
-          }
-        }, 90)
-      })
-    }
-    const contextmenuItemsProp = computed(() => props.contextItems)
-    const contextmenuItems = computed(() => ([
-      {
-        name: 'show',
-        label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.show' : undefined,
-        click: (item: MDtItem, index: MDtItemIndex) => openShowDialog(item, index),
-        showIf: hasShowBtn.value,
-        order: 100
+/** Methods */
+const getMythApiServicesSchema = (): MDtMythApiServicesSchema => {
+  if (typeof serviceName.value === 'function') {
+    return serviceName.value() as MDtMythApiServicesSchema
+  }
+  const c = myth.services[serviceName.value]
+  if (!c) {
+    throw Error(`No Service: ${serviceName.value}`)
+  }
+  return c
+}
+const updateSelectedItems = (selected: MDtItem[]) => {
+  tableOptions.selected = selected
+}
+const onScroll = ({ index, to }: any) => {
+  if (index && to && index === to) {
+    loadMore()
+  }
+}
+const loadMore = () => {
+  nextTick(() => {
+    fetchDatatableItems({
+      pagination: {
+        ...tableOptions.pagination,
+        page: (tableOptions.pagination.page ?? 0) + 1
       },
-      {
-        name: 'update',
-        label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.update' : undefined,
-        click: (item: MDtItem, index: MDtItemIndex) => openUpdateDialog(item, index),
-        showIf: hasUpdateBtn.value,
-        order: 100
-      },
-      {
-        name: 'destroy',
-        label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.destroy' : undefined,
-        click: (item: MDtItem, index: MDtItemIndex) => onDeleteItem(item, index),
-        showIf: hasDestroyBtn.value,
-        order: 100
-      },
-      ...(contextmenuItemsProp.value || [])
-    ].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))))
-    const endReach = computed<boolean>(() => props.endReach)
-    const rowsPerPageOptions = computed(() => props.rowsPerPageOptions)
-    const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))
-
-    const imageDialog = reactive<MDatatableScope['imageDialog']>({
-      value: !1,
-      src: undefined,
-      asAttachment: undefined
+      filter: tableOptions.search
     })
-    const openImageDialog = (src: string, opts?: { asAttachment?: boolean }) => {
-      imageDialog.src = src
-      imageDialog.asAttachment = opts?.asAttachment
-      nextTick(() => {
-        imageDialog.value = !0
-      })
+  })
+}
+const refreshNoUpdate = async (done?: () => void) => {
+  if (contextmenu.value) {
+    contextmenu.value = !1
+  }
+  meta.value = { ...initMetaServer }
+  pagination.value.page = 1
+  pagination.value.rowsNumber = 0
+  getRows.value = []
+
+  nextTick(() => {
+    fetchDatatableItems({
+      pagination: pagination.value,
+      filter: tableOptions.search
+    })
+    if (done) {
+      done()
     }
-    const closeImageDialog = () => {
-      imageDialog.value = !1
-      nextTick(() => {
-        imageDialog.src = undefined
-        imageDialog.asAttachment = undefined
-      })
+  })
+}
+const refresh = (done?: () => void) => {
+  return refreshNoUpdate(done)
+}
+const getRequestWith = (type: 'withIndex' | 'withShow' | 'withUpdate' | 'withStore'): string | null => {
+  let v: any = []
+  const params: { [k: string]: string } & string | (() => string | object) = props[type] as any
+  if (params) {
+    if (typeof params === 'string') {
+      v = params.split(',')
     }
 
-    onMounted(() => {
-      refresh()
-    })
-    watch(loading, v => {
-      if (!myth.options?.dt?.noQuasarLoading) {
-        if (v) {
-          $q.loading.show()
-        } else {
-          $q.loading.hide()
-        }
+    if (_.isArray(params)) {
+      v = [...params]
+    } else if (_.isObject(params) && typeof params !== 'function') {
+      let e
+      for (const k in params) {
+        e = params[k]
+        v.push(`${k}=${e}`)
       }
-      tableOptions.hasAction = Boolean(v)
-    })
-    watch(filterForm, () => refreshNoUpdate())
-    watch(() => $q.lang.nativeName, () => {
-      refreshNoUpdate()
-    })
-
-    // Watch on Form dialog
-    // watch(() => dialogs.item, (v) => {
-    //   dialogs.itemForm = v ? { ...v } : v
-    // })
-    watch(() => dialogs.form, (v) => {
-      if (!v) {
-        dialogs.errors = {}
-      }
-    })
-    const datatableItemsScope = computed(() => ({
-      openShowDialog,
-      openShowDialogNoIndex,
-      closeShowDialog,
-      openUpdateDialog,
-      openUpdateDialogNoIndex,
-      openCreateDialog,
-      closeFormDialog,
-      onDeleteItem,
-      refresh,
-      refreshNoUpdate,
-      tableOptions,
-      isSingleSelectedItem,
-      firstSelectedItem,
-      updateDatatableItem,
-      updateSelectedItems,
-      imageDialog,
-      openImageDialog,
-      closeImageDialog
-    }))
-
-    return {
-      contextmenu,
-      contextmenuItems,
-      onRowContextmenu,
-      getRowsPerPageOptions,
-      dialogs,
-      itemDialog,
-      itemIndexDialog,
-      resetDialogs,
-
-      searchPlaceholder,
-      searchColumnsRef,
-
-      getHeaders,
-      hasAddBtn,
-      hasUpdateBtn,
-      hasShowBtn,
-      hasDestroyBtn,
-      hasFilterDialog,
-      hasMenu,
-
-      isUpdateMode,
-      formMode,
-      isSingleSelectedItem,
-      firstSelectedItem,
-      hasSelectedItem,
-
-      datatableItemsScope,
-
-      getMythApiServicesSchema,
-      updateSelectedItems,
-      onScroll,
-      loadMore,
-      refresh,
-      refreshNoUpdate,
-      getRequestWith,
-      getDatatableParams,
-      fetchDatatableItems,
-      exportData,
-      openFilterDialog,
-      saveFilterDialog,
-      closeFilterDialog,
-      openShowDialog,
-      openShowDialogNoIndex,
-      closeShowDialog,
-      openUpdateDialog,
-      openUpdateDialogNoIndex,
-      openCreateDialog,
-      closeFormDialog,
-      updateDatatableItem,
-      removeDtItem,
-      defaultSubmitItem,
-      onDeleteItem,
-      deleteSelectionItem,
-      getShowTitle,
-      getFormTitle,
-      // rowDblclick,
-      onRemoveFilter,
-      updateFilterOptions,
-      logoutDatatable,
-
-      selected,
-      pagination,
-      tableOptions,
-      getRows,
-      visibleHeaders,
-      imageDialog,
-      openImageDialog,
-      closeImageDialog,
-
-      isGrid
-    }
-  },
-  computed: {
-    getShowSelection (): boolean | undefined {
-      if (this.hideSelection) {
-        return !1
-      }
-      return this.showSelection
+    } else if (_.isFunction(params)) {
+      const f = params()
+      v = typeof f === 'string' ? f.split(',') : f
     }
   }
+  return v.join(',') ?? null
+}
+const getDatatableParams = ({ pagination, filter }: FetchRowsArgs = {}, merge: Partial<ApiServiceParams> = {}): ApiServiceParams => {
+  let params: ApiServiceParams = {
+    // filter: tableOptions.filter,
+    // search: filter || undefined,
+    headerItems: getHeaders.value.map((e: any) => e.name).join(','),
+    // headers: ['name'],
+    // ids: tableOptions.selected.map((e: any) => e.id),
+    indexType: 'index',
+    fdt: 'i',
+    itemsPerPage: pagination?.rowsPerPage === 0 ? -1 : (pagination?.rowsPerPage !== undefined ? pagination?.rowsPerPage : 0),
+    page: pagination?.page !== undefined ? pagination.page : 0,
+    sortBy: pagination?.sortBy !== undefined ? pagination.sortBy : undefined,
+    sortDesc: !pagination?.sortBy ? undefined : (pagination?.descending === !0 ? 1 : (pagination?.descending === !1 ? 0 : undefined))
+  }
+  if (filter) {
+    params.search = filter
+  }
+  if (Object.keys(tableOptions.filter).length > 0) {
+    const TempFilter = { ...tableOptions.filter } as any
+    for (const fKey in TempFilter) {
+      if (_.isArray(TempFilter[fKey])) {
+        TempFilter[fKey] = TempFilter[fKey].map((elm: any) => {
+          if (elm.id) {
+            return elm.id
+          } else if (elm.value) {
+            return elm.value
+          }
+          return elm
+        })
+      } else if (_.isPlainObject(TempFilter[fKey])) {
+        if (TempFilter[fKey].id) {
+          TempFilter[fKey] = TempFilter[fKey].id
+        } else if (TempFilter[fKey].value) {
+          TempFilter[fKey] = TempFilter[fKey].value
+        }
+      }
+    }
+    // console.log(JSON.stringify(tableOptions.filter))
+    // params.filter = tableOptions.filter
+    // console.log(TempFilter)
+    params.filter = TempFilter
+  }
+  if (searchColumnsRef.value.length > 0) {
+    params.searchColumns = searchColumnsRef.value.join(',')
+  }
+  if (props.requestParams) {
+    if (typeof props.requestParams === 'function') {
+      params = props.requestParams(params) as ApiServiceParams
+    } else {
+      params = {
+        ...params,
+        ...props.requestParams
+      }
+    }
+  }
+  return { ...params, ...merge }
+}
+const fetchDatatableItems = async (opts: FetchRowsArgs = {}) => {
+  if (props.endReach && tableOptions.meta.last_page && tableOptions.pagination.page >= tableOptions.meta.last_page) {
+    return
+  }
+  if (tableOptions.loading || !serviceName.value) return
+  tableOptions.loading = !0
+  nextTick(() => {
+    const params = getDatatableParams(opts)
+    const requestWith = getRequestWith('withIndex')
+    if (requestWith) {
+      params.requestWith = requestWith
+    }
+    // console.log({ params })
+    getMythApiServicesSchema().index({ params })
+      .then((result) => {
+        const { _data, _meta } = result
+        pagination.value = {
+          page: parseInt((_meta?.current_page || 1).toString()) || 1,
+          rowsPerPage: parseInt(_meta?.per_page) || 0,
+          rowsNumber: parseInt((_meta?.total || 0).toString()) || 0,
+          sortBy: opts?.pagination?.sortBy || undefined,
+          descending: opts?.pagination?.descending || undefined
+        }
+        _meta && (meta.value = _meta)
+        if (props.endReach) {
+          getRows.value = [...getRows.value, ...(_data || [])]
+        } else {
+          getRows.value = _data || []
+        }
+      })
+      .catch((e) => {
+        // console.log(e)
+        if (e?.response?.status === 401) {
+          logoutDatatable()
+          return e
+        }
+        if (e?._message) {
+          myth.alertError(e._message)
+        } else if (e?.message) {
+          myth.alertError(e.message)
+        }
+      })
+      .finally(() => {
+        tableOptions.loading = !1
+      })
+  })
+}
+const exportData = (type: MDtExportOptions) => {
+  if (loading.value) {
+    return
+  }
+  const ex = async () => {
+    loading.value = !0
+    const data = getDatatableParams({
+      pagination: tableOptions.pagination,
+      filter: tableOptions.search
+    }, {
+      indexType: type,
+      fdt: 'e',
+      toUrl: props.exportToUrl,
+      headerItems: getHeaders.value.filter(e => e?.field !== props.controlKey && visibleHeaders.value.indexOf(e.name) !== -1)
+    })
+    if (tableOptions.selected.length > 0) {
+      data.ids = tableOptions.selected.map((e: any) => e.id)
+    }
+    try {
+      const response = await getMythApiServicesSchema().export(data)
+      await myth.helpers.downloadFromResponse(response)
+    } catch (e: any) {
+      if (e?.code === 'window_blocked') {
+        myth.alertError(t('messages.window_blocked'))
+      } else if (e?._message) {
+        myth.alertError(e._message)
+      } else if (e?.message) {
+        myth.alertError(e.message)
+      } else {
+        myth.alertError(t('messages.error'))
+      }
+    } finally {
+      loading.value = !1
+    }
+  }
+  if (!tableOptions.selected.length) {
+    myth.confirmMessage(t('messages.export_all')).onOk(() => {
+      ex()
+    })
+    // if (confirm(t('messages.export_all'))) {
+    //   ex()
+    // }
+  } else {
+    ex()
+  }
+}
+/** Methods */
+
+/** Filter Dialog */
+const openFilterDialog = () => {
+  dialogs.filter = !0
+  tempFilterForm.value = { ...tableOptions.filter }
+}
+const saveFilterDialog = () => {
+  filterForm.value = { ...tableOptions.tempFilter }
+  nextTick(() => {
+    dialogs.filter = !1
+  })
+}
+const closeFilterDialog = () => {
+  dialogs.filter = !1
+  tempFilterForm.value = { ...tableOptions.filter }
+}
+const onRemoveFilter = (key: string | number) => {
+  const filter = filterForm.value
+  delete filter[key]
+  filterForm.value = { ...filter }
+  if (route.query[key]) {
+    const query = { ...route.query }
+    delete query[key]
+    router.push({ query })
+  }
+}
+const updateFilterOptions = (data: Record<string, any>) => {
+  filterForm.value = {
+    ...tableOptions.filter,
+    ...data
+  }
+}
+/** Filter Dialog */
+const openDialogTimeout = 100
+/** Show Dialog */
+const openShowDialogNoIndex = async (i: MDtItem) => {
+  const item = toRef(i)
+  const index = getRows.value.findIndex(e => e.id === item.value.id)
+  return await openShowDialog(item.value, index)
+}
+const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
+  const item = toRef(i)
+  if (props.showRoute) {
+    router.push({
+      name: props.showRoute,
+      params: { id: item.value.id }
+    })
+    return
+  }
+  if (loading.value) {
+    return
+  }
+  loading.value = !0
+  const params: any = { fdt: 's' }
+  if (getRequestWith('withShow')) {
+    params.requestWith = getRequestWith('withShow')
+  }
+
+  getMythApiServicesSchema().show(item.value.id, { params })
+    .then(({ _data }) => {
+      dialogs.item = _data
+      dialogs.index = index
+      getRows.value[index] = _data
+      setTimeout(() => (dialogs.show = !0), openDialogTimeout)
+    })
+    .catch((e: any) => {
+      const message = e?._message || e?.message
+      message && myth.alertError(message)
+    })
+    .finally(() => (loading.value = !1))
+}
+const closeShowDialog = () => {
+  dialogs.show = !1
+  dialogs.item = undefined
+  dialogs.index = undefined
+}
+/** Show Dialog */
+
+/** Form Dialog */
+const updateRouteProp = computed(() => props.updateRoute)
+const openUpdateDialogNoIndex = (i: MDtItem) => {
+  const item = toRef(i)
+  const index = getRows.value.findIndex(e => e.id === item.value.id)
+  return openUpdateDialog(item.value, index)
+}
+const openUpdateDialog = (i: MDtItem, index: MDtItemIndex) => {
+  const item = toRef(i)
+  if (updateRouteProp.value) {
+    router.push({
+      name: updateRouteProp.value,
+      params: { id: item.value.id }
+    })
+    return
+  }
+  if (loading.value) {
+    return
+  }
+  loading.value = !0
+  isUpdateMode.value = !0
+  nextTick(() => {
+    dialogs.form = !0
+  })
+  const params: any = { fdt: 'u' }
+  if (getRequestWith('withUpdate')) {
+    params.requestWith = getRequestWith('withUpdate')
+  }
+  getMythApiServicesSchema().show(item.value.id, { params })
+    .then(({ _data }) => {
+      dialogs.item = _data
+      dialogs.index = index
+      if (index || index === 0) {
+        getRows.value[index] = _data
+      }
+      // setTimeout(() => (dialogs.form = !0), openDialogTimeout)
+    })
+    .catch((e) => {
+      const message = e?._message || e?.message
+      message && myth.alertError(message)
+    })
+    .finally(() => (loading.value = !1))
+}
+const openCreateDialog = (dtItem?: MDtItem) => {
+  if (props.storeRoute) {
+    router.push({ name: props.storeRoute })
+    return
+  }
+  const item = { ...(defaultItem.value || {}), ...(dtItem || {}) }
+  isUpdateMode.value = !1
+  itemDialog.value = { ...item } as MDtItem
+  itemIndexDialog.value = undefined
+  // console.log(item)
+  nextTick(() => {
+    setTimeout(() => (dialogs.form = !0), openDialogTimeout)
+  })
+}
+const closeFormDialog = () => {
+  dialogs.form = !1
+  nextTick(() => {
+    isUpdateMode.value = !1
+    dialogs.item = undefined
+    dialogs.index = undefined
+  })
+}
+/** Form Dialog */
+
+const updateDatatableItem = (i: MDtItem, index?: MDtItemIndex) => {
+  const item = toRef(i)
+  if (item.value && index) {
+    getRows.value[index] = item.value
+  }
+  if (item.value && !index) {
+    const findIndex = getRows.value.findIndex(e => parseInt(e.id?.toString()) === parseInt(item.value.id.toString()))
+    getRows.value[findIndex] = item.value
+    // const r = [...getRows.value]
+    // r[parseInt(findIndex.toString())] = item
+    // getRows.value = []
+    // nextTick(() => {
+    //   getRows.value = [...r]
+    // })
+  }
+}
+const removeDtItem = (i: MDtItem | number) => {
+  const item = toRef<MDtItem | number>(i)
+  const id: string | number = typeof item.value !== 'object' ? item.value : item.value.id
+  if (typeof item.value !== 'object') {
+    getRows.value = getRows.value.filter((e, i) => i !== id)
+  } else {
+    getRows.value = getRows.value.filter((e) => parseInt(e.id?.toString()) !== parseInt(id.toString()))
+  }
+}
+const ignoreKeysProps = computed(() => props.ignoreKeys)
+const defaultSubmitItem = async (_form: Record<string, any>) => {
+  // let form = { ..._form, ...(dialogs.itemForm || {}) }
+  let form = { ...(props.formModel ? props.formModel : _form) }
+  // console.log(form)
+  if (loading.value) {
+    return
+  }
+  loading.value = !0
+  const api = getMythApiServicesSchema()
+  form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withStore')
+  if (!form.requestWith) {
+    delete form.requestWith
+  }
+  const fdt = isUpdateMode.value ? 'u' : 'c'
+  form.fdt = fdt
+  if (ignoreKeysProps.value) {
+    if (typeof ignoreKeysProps.value === 'function') {
+      form = ignoreKeysProps.value(form)
+    } else {
+      for (const k in ignoreKeysProps.value) {
+        delete form[ignoreKeysProps.value[k]]
+      }
+    }
+  }
+
+  const ignoreKeys = [
+    '_to_string',
+    '_to_number_format',
+    '_to_date_format',
+    'toString',
+    'toNumberFormat',
+    'toDateFormat'
+  ]
+
+  for (const i in ignoreKeys) {
+    for (const k in form) {
+      if (k.slice(-ignoreKeys[i].length) === ignoreKeys[i]) {
+        delete form[k]
+      }
+    }
+  }
+  const _conf: any = { params: { fdt } }
+  const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form, _conf) : await api.store(form, _conf)
+  try {
+    const { _data, _message, _success }: any = await method()
+    _message && myth.alertSuccess(_message)
+    if (_success) {
+      if (isUpdateMode.value) {
+        _data && updateDatatableItem(_data, dialogs.index)
+      } else {
+        nextTick(() => refresh())
+        // emit('itemCreated', { item: _data })
+      }
+      nextTick(() => closeFormDialog())
+    }
+  } catch (e: any) {
+    const { _message, _errors } = e || {}
+    dialogs.errors = _errors || {}
+    _message && myth.alertError(_message)
+  } finally {
+    loading.value = !1
+  }
+}
+const hideAutoMessage = computed(() => props.hideAutoMessage)
+const onDeleteItem = (i: MDtItem, index: number) => {
+  const item = toRef(i)
+  if (loading.value || !item.value?.id) {
+    return
+  }
+  tableOptions.hasAction = !0
+  myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
+    loading.value = !0
+    try {
+      const { _message, _success } = await getMythApiServicesSchema().destroy(item.value.id)
+      if (!hideAutoMessage.value && _success && _message) {
+        _message && myth.alertSuccess(_message)
+      }
+      if (_success) {
+        --tableOptions.pagination.rowsNumber
+        removeDtItem(index)
+      }
+    } catch (e: any) {
+      e?._message && myth.alertError(e._message)
+    } finally {
+      loading.value = !1
+      nextTick(() => {
+        selected.value = []
+      })
+    }
+  }).onDismiss(() => {
+    tableOptions.hasAction = !1
+  })
+}
+const deleteSelectionItem = () => {
+  if (!tableOptions.selected.length) return
+  if (tableOptions.selected.length === 1) {
+    const dtItem: MDtItem = tableOptions.selected[0]
+    const index = getRows.value.findIndex((e: any) => parseInt(e.id) === parseInt(dtItem.id.toString()))
+    return onDeleteItem(dtItem, index)
+  }
+  if (loading.value || !tableOptions.selected.length) {
+    return
+  }
+
+  tableOptions.hasAction = !0
+  myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
+    loading.value = !0
+    try {
+      const { _message, _success } = await getMythApiServicesSchema().destroyAll(tableOptions.selected.map((e: MDtItem) => e.id))
+      if (!hideAutoMessage.value && _success && _message) {
+        _message && myth.alertSuccess(_message)
+      }
+      if (_success) {
+        refresh()
+      }
+    } catch (e: any) {
+      e?._message && myth.alertError(e._message)
+    } finally {
+      loading.value = !1
+      nextTick(() => {
+        selected.value = []
+      })
+    }
+    // console.log(item)
+  }).onDismiss(() => {
+    tableOptions.hasAction = !1
+  })
+}
+const logoutDatatable = () => {
+  // const { logout, removeStorage } = myth.store.state.
+  // removeStorage()
+  // logout(window.push_token)
+  // const name = this.$routes.auth.login
+  // if (this.$route.name !== name) {
+  //   this.$router.replace({ name })
+  // }
+}
+/** --- */
+
+/**
+ * Dom
+ */
+const contextmenu = ref(!1)
+const onRowContextmenu = (e: MouseEvent, row: MDtItem, index: number) => {
+  dialogs.item = row
+  dialogs.index = index
+  nextTick(() => {
+    setTimeout(() => {
+      if (isGrid.value) {
+        contextmenu.value = !0
+      }
+    }, 90)
+  })
+}
+const contextmenuItemsProp = computed(() => props.contextItems)
+const contextmenuItems = computed<any>(() => ([
+  {
+    name: 'show',
+    label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.show' : undefined,
+    click: (item: MDtItem, index: MDtItemIndex) => openShowDialog(item, index),
+    showIf: hasShowBtn.value,
+    order: 100
+  },
+  {
+    name: 'update',
+    label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.update' : undefined,
+    click: (item: MDtItem, index: MDtItemIndex) => openUpdateDialog(item, index),
+    showIf: hasUpdateBtn.value,
+    order: 100
+  },
+  {
+    name: 'destroy',
+    label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.destroy' : undefined,
+    click: (item: MDtItem, index: MDtItemIndex) => onDeleteItem(item, index),
+    showIf: hasDestroyBtn.value,
+    order: 100
+  },
+  ...(contextmenuItemsProp.value || [])
+].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))))
+const endReach = computed<boolean>(() => props.endReach)
+const rowsPerPageOptions = computed(() => props.rowsPerPageOptions)
+const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))
+
+const imageDialog = reactive<MDatatableScope['imageDialog']>({
+  value: !1,
+  src: undefined,
+  asAttachment: undefined
+})
+const openImageDialog = (src: string, opts?: { asAttachment?: boolean }) => {
+  imageDialog.src = src
+  imageDialog.asAttachment = opts?.asAttachment
+  nextTick(() => {
+    imageDialog.value = !0
+  })
+}
+const closeImageDialog = () => {
+  imageDialog.value = !1
+  nextTick(() => {
+    imageDialog.src = undefined
+    imageDialog.asAttachment = undefined
+  })
+}
+
+onMounted(() => {
+  refresh()
+})
+watch(loading, v => {
+  if (!myth.options?.dt?.noQuasarLoading) {
+    if (v) {
+      $q.loading.show()
+    } else {
+      $q.loading.hide()
+    }
+  }
+  tableOptions.hasAction = Boolean(v)
+})
+watch(filterForm, () => refreshNoUpdate())
+watch(() => $q.lang.nativeName, () => {
+  refreshNoUpdate()
+})
+
+// Watch on Form dialog
+// watch(() => dialogs.item, (v) => {
+//   dialogs.itemForm = v ? { ...v } : v
+// })
+watch(() => dialogs.form, (v) => {
+  if (!v) {
+    dialogs.errors = {}
+  }
+})
+const datatableItemsScope = computed(() => ({
+  openShowDialog,
+  openShowDialogNoIndex,
+  closeShowDialog,
+  openUpdateDialog,
+  openUpdateDialogNoIndex,
+  openCreateDialog,
+  closeFormDialog,
+  onDeleteItem,
+  refresh,
+  refreshNoUpdate,
+  tableOptions,
+  isSingleSelectedItem,
+  firstSelectedItem,
+  updateDatatableItem,
+  updateSelectedItems,
+  imageDialog,
+  openImageDialog,
+  closeImageDialog
+}))
+const getShowSelection = computed<boolean | undefined>(() => {
+  if (props.hideSelection) {
+    return !1
+  }
+  return props.showSelection
+})
+</script>
+
+<script lang="ts">
+
+export default {
+  name: 'MDatatable',
+  inheritAttrs: !1
 }
 </script>
 
