@@ -823,7 +823,6 @@
           <q-separator />
           <q-card-actions
             ref="formActions"
-            align="between"
             class="m--datatable-form-actions print-hide"
           >
             <MBtn
@@ -844,8 +843,8 @@
             >
               <MBtn
                 :class="{'full-width': $q.screen.lt.sm}"
-                :disable="tableOptions.loading "
                 :label="__('myth.titles.' + (isUpdateMode ? 'save' : 'store'))"
+                :loading="tableOptions.loading"
                 color="positive"
                 no-caps
                 type="submit"
