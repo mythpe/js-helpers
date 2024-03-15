@@ -767,17 +767,22 @@
           <q-card-section ref="formTitle">
             <q-toolbar :class="{'q-pa-none': $q.screen.lt.md}">
               <q-toolbar-title>
-                <q-btn
-                  :icon="`ion-ios-arrow-${$q.lang.rtl ? 'forward' : 'back'}`"
-                  fab-mini
-                  flat
-                  @click="closeFormDialog"
-                >
-                  <q-tooltip class="m--dt-btn-tooltip">
-                    {{ __('myth.titles.back') }}
-                  </q-tooltip>
-                </q-btn>
-                {{ getFormTitle }}
+                <template v-if="tableOptions.loading && !dialogs.item">
+                  <q-skeleton width="200px" />
+                </template>
+                <template v-else>
+                  <q-btn
+                    :icon="`ion-ios-arrow-${$q.lang.rtl ? 'forward' : 'back'}`"
+                    fab-mini
+                    flat
+                    @click="closeFormDialog"
+                  >
+                    <q-tooltip class="m--dt-btn-tooltip">
+                      {{ __('myth.titles.back') }}
+                    </q-tooltip>
+                  </q-btn>
+                  {{ getFormTitle }}
+                </template>
               </q-toolbar-title>
             </q-toolbar>
           </q-card-section>
@@ -786,15 +791,34 @@
             :style="`height: ${($q.screen.height || 100) - 3 - ($refs.formActions?.$el?.offsetHeight || 60) - ($refs.formTitle?.$el?.offsetHeight || 80)}px`"
             class="scroll"
           >
-            <MFadeTransition>
-              <slot
-                :form="form"
-                :index="itemIndexDialog"
-                :item="itemDialog"
-                name="form"
-                v-bind="datatableItemsScope"
-              />
-            </MFadeTransition>
+            <!--<MFadeTransition>-->
+            <MContainer v-if="tableOptions.loading && !dialogs.item">
+              <MRow
+                v-if="tableOptions.loading"
+                col
+              >
+                <template
+                  v-for="ai in 15"
+                  :key="`form-skeleton-${ai}`"
+                >
+                  <MCol
+                    col="12"
+                    md="6"
+                  >
+                    <q-skeleton type="QInput" />
+                  </MCol>
+                </template>
+              </MRow>
+            </MContainer>
+            <slot
+              v-else
+              :form="form"
+              :index="itemIndexDialog"
+              :item="itemDialog"
+              name="form"
+              v-bind="datatableItemsScope"
+            />
+            <!--</MFadeTransition>-->
           </q-card-section>
           <q-separator />
           <q-card-actions
@@ -822,7 +846,6 @@
                 :class="{'full-width': $q.screen.lt.sm}"
                 :disable="tableOptions.loading "
                 :label="__('myth.titles.' + (isUpdateMode ? 'save' : 'store'))"
-                :loading="tableOptions.loading"
                 color="positive"
                 no-caps
                 type="submit"
@@ -1385,10 +1408,10 @@ export default {
         params.search = filter
       }
       if (Object.keys(tableOptions.filter).length > 0) {
-        const TempFilter = { ...tableOptions.filter }
+        const TempFilter = { ...tableOptions.filter } as any
         for (const fKey in TempFilter) {
           if (_.isArray(TempFilter[fKey])) {
-            TempFilter[fKey] = TempFilter[fKey].map((elm) => {
+            TempFilter[fKey] = TempFilter[fKey].map((elm: any) => {
               if (elm.id) {
                 return elm.id
               } else if (elm.value) {
@@ -1617,6 +1640,9 @@ export default {
       }
       loading.value = !0
       isUpdateMode.value = !0
+      nextTick(() => {
+        dialogs.form = !0
+      })
       const params: any = { fdt: 'u' }
       if (getRequestWith('withUpdate')) {
         params.requestWith = getRequestWith('withUpdate')
@@ -1628,7 +1654,7 @@ export default {
           if (index || index === 0) {
             getRows.value[index] = _data
           }
-          setTimeout(() => (dialogs.form = !0), openDialogTimeout)
+          // setTimeout(() => (dialogs.form = !0), openDialogTimeout)
         })
         .catch((e) => {
           const message = e?._message || e?.message
@@ -1678,9 +1704,8 @@ export default {
     }
     const removeDtItem = (i: MDtItem | number) => {
       const item = toRef<MDtItem | number>(i)
-      const byIndex = typeof item.value !== 'object'
-      const id: string | number = byIndex ? item.value : item.value.id
-      if (byIndex) {
+      const id: string | number = typeof item.value !== 'object' ? item.value : item.value.id
+      if (typeof item.value !== 'object') {
         getRows.value = getRows.value.filter((e, i) => i !== id)
       } else {
         getRows.value = getRows.value.filter((e) => parseInt(e.id?.toString()) !== parseInt(id.toString()))
