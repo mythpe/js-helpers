@@ -24,6 +24,15 @@
             />
           </template>
           <template v-else>
+            <q-btn
+              v-if="backBtn"
+              :icon="!$q.lang.rtl ? 'arrow_back' : 'arrow_forward'"
+              class="q-ml-sm"
+              fab-mini
+              flat
+              v-bind="backBtnProps"
+              @click="() => noBack ? undefined : $router.back()"
+            />
             {{ __(title) }}
           </template>
           <slot
@@ -50,6 +59,7 @@
 <script lang="ts" setup>
 
 import { MCardProps } from './models'
+import { QBtnProps } from 'quasar'
 
 interface Props {
   readonly loading?: MCardProps['loading'];
@@ -57,6 +67,9 @@ interface Props {
   readonly center?: MCardProps['center'];
   readonly color?: MCardProps['color'];
   readonly padding?: MCardProps['padding'];
+  readonly backBtn?: boolean;
+  readonly noBack?: boolean;
+  readonly backBtnProps?: QBtnProps;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -64,7 +77,10 @@ withDefaults(defineProps<Props>(), {
   title: undefined,
   center: () => !1,
   color: () => 'primary',
-  padding: () => !1
+  padding: () => !1,
+  backBtn: undefined,
+  noBack: undefined,
+  backBtnProps: undefined
 })
 </script>
 
