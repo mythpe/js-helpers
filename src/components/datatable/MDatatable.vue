@@ -825,15 +825,6 @@
             ref="formActions"
             class="m--datatable-form-actions print-hide"
           >
-            <MBtn
-              v-if="$q.screen.gt.sm"
-              :disable="tableOptions.loading"
-              :label="__('myth.titles.close')"
-              color="negative"
-              no-caps
-              v-bind="$myth.options.dt?.dialogButtonsProps"
-              @click="closeFormDialog"
-            />
             <slot
               :form="form"
               :index="itemIndexDialog"
@@ -851,6 +842,15 @@
                 v-bind="$myth.options.dt?.dialogButtonsProps"
               />
             </slot>
+            <MBtn
+              v-if="$q.screen.gt.sm"
+              :disable="tableOptions.loading"
+              :label="__('myth.titles.close')"
+              color="negative"
+              no-caps
+              v-bind="$myth.options.dt?.dialogButtonsProps"
+              @click="closeFormDialog"
+            />
           </q-card-actions>
         </q-card>
       </MForm>
