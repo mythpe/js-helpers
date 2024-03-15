@@ -1020,6 +1020,7 @@ interface Props {
   showCardControlHeader?: MDatatableProps['showCardControlHeader'];
   dense?: MDatatableProps['dense'];
   bordered?: MDatatableProps['bordered'];
+  flat?: MDatatableProps['flat'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -1068,7 +1069,8 @@ const props = withDefaults(defineProps<Props>(), {
   formModel: undefined,
   showCardControlHeader: undefined,
   dense: undefined,
-  bordered: undefined
+  bordered: undefined,
+  flat: undefined
 })
 const myth = useMyth()
 const slots = useSlots()
