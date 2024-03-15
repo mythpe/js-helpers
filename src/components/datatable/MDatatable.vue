@@ -274,50 +274,6 @@
                 <TransitionGroup
                   name="m__transition__fade"
                 >
-                  <template v-if="hasSelectedItem">
-                    <MDtBtn
-                      v-if="hasUpdateBtn"
-                      key="update-dt-selection-btn"
-                      :disable="!isSingleSelectedItem || tableOptions.loading"
-                      :loading="tableOptions.loading"
-                      icon="ion-ios-create"
-                      update
-                      v-bind="$myth.options.dt?.topSelection?.btn"
-                      @click="openUpdateDialogNoIndex(tableOptions.selected[0])"
-                    />
-                    <MDtBtn
-                      v-if="hasShowBtn"
-                      key="show-dt-selection-btn"
-                      :disable="!isSingleSelectedItem || tableOptions.loading"
-                      :loading="tableOptions.loading"
-                      icon="ion-ios-eye"
-                      show
-                      v-bind="$myth.options.dt?.topSelection?.btn"
-                      @click="openShowDialogNoIndex(tableOptions.selected[0])"
-                    />
-                    <MDtBtn
-                      v-if="hasDestroyBtn"
-                      key="destroy-dt-selection-btn"
-                      :disable="!hasSelectedItem || tableOptions.loading"
-                      :loading="tableOptions.loading"
-                      destroy
-                      icon="ion-ios-trash"
-                      v-bind="$myth.options.dt?.topSelection?.btn"
-                      @click="deleteSelectionItem()"
-                    />
-                    <template
-                      v-for="(contextBtn,i) in contextItems"
-                      :key="`top-s-${i}`"
-                    >
-                      <MDtBtn
-                        v-if="(typeof contextBtn.showIf === 'function' ? contextBtn.showIf(tableOptions.selected[0],0) : contextBtn.showIf) && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
-                        :tooltip="__(contextBtn.tooltip || contextBtn.name)"
-                        v-bind="{...($myth.options.dt?.topSelection?.btn||{}),...(contextBtn.attr||{})}"
-                        @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
-                      />
-                    </template>
-                  </template>
-
                   <!--More Menu-->
                   <MDtBtn
                     v-if="hasMenu"
@@ -516,6 +472,47 @@
                     v-bind="$myth.options.dt?.buttons?.fullscreen"
                     @click="tableOptions.fullscreen = !tableOptions.fullscreen"
                   />
+
+                  <template v-if="hasSelectedItem">
+                    <MDtBtn
+                      v-if="hasUpdateBtn"
+                      key="update-dt-selection-btn"
+                      :disable="!isSingleSelectedItem || tableOptions.loading"
+                      icon="ion-ios-create"
+                      update
+                      v-bind="$myth.options.dt?.topSelection?.btn"
+                      @click="openUpdateDialogNoIndex(tableOptions.selected[0])"
+                    />
+                    <MDtBtn
+                      v-if="hasShowBtn"
+                      key="show-dt-selection-btn"
+                      :disable="!isSingleSelectedItem || tableOptions.loading"
+                      icon="ion-ios-eye"
+                      show
+                      v-bind="$myth.options.dt?.topSelection?.btn"
+                      @click="openShowDialogNoIndex(tableOptions.selected[0])"
+                    />
+                    <MDtBtn
+                      v-if="hasDestroyBtn"
+                      key="destroy-dt-selection-btn"
+                      :disable="!hasSelectedItem || tableOptions.loading"
+                      destroy
+                      icon="ion-ios-trash"
+                      v-bind="$myth.options.dt?.topSelection?.btn"
+                      @click="deleteSelectionItem()"
+                    />
+                    <template
+                      v-for="(contextBtn,i) in contextItems"
+                      :key="`top-s-${i}`"
+                    >
+                      <MDtBtn
+                        v-if="(typeof contextBtn.showIf === 'function' ? contextBtn.showIf(tableOptions.selected[0],0) : contextBtn.showIf) && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
+                        :tooltip="__(contextBtn.tooltip || contextBtn.name)"
+                        v-bind="{...($myth.options.dt?.topSelection?.btn||{}),...contextBtn,...(contextBtn.attr||{})}"
+                        @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
+                      />
+                    </template>
+                  </template>
                 </TransitionGroup>
 
                 <q-space />

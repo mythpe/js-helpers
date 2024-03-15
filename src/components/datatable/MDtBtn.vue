@@ -41,7 +41,7 @@
     v-else
     :color="getColor"
     :icon="getIcon"
-    :label="label"
+    :label="label !== undefined ? __(label) : label"
     :round="round !== undefined ? round : label === undefined"
     v-bind="{...($myth.options.dt?.btn||{}),...$attrs}"
     @click="$emit('click',$event)"
