@@ -187,7 +187,13 @@
                 </q-item-section>
                 <q-item-section :class="displayMode === 'card' ? 'q-mt-sm' : undefined">
                   <q-item-label
-                    v-if="file.name && !file.id"
+                    v-if="Boolean(file.file_name)"
+                    :lines="1"
+                  >
+                    {{ file.file_name }}
+                  </q-item-label>
+                  <q-item-label
+                    v-else-if="Boolean(file.name)"
                     :lines="1"
                   >
                     {{ file.name }}
