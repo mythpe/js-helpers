@@ -590,12 +590,11 @@
                         @remove="onRemoveFilter(filterKey)"
                       >
                         <span>{{ getHeaders.find(e => e.name === filterKey)?.label || __(`attributes.${filterKey}`) }}</span>
-                        <span v-if="typeof filterValue === 'boolean'">:
-                          <template v-if="filterKey === 'active'">{{ __(filterValue ? 'active' : 'inactive') }}</template>
-                          <template v-else>{{ __(filterValue ? 'yes' : 'no') }}</template></span>
+                        <span v-if="typeof filterValue === 'boolean'">: {{ __(filterValue ? 'yes' : 'no') }}</span>
                         <span v-else-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
-                        <span v-else-if="typeof filterValue === 'object' && filterValue.label">: {{ filterValue.label }}</span>
-                        <span v-else-if="typeof filterValue === 'object' && filterValue.length">: {{ filterValue.map(e => e.label).join(', ') }}</span>
+                        <span v-else-if="_.isArray(filterValue) && !_.isObject(filterValue[0])">: {{ filterValue.join(', ') }}</span>
+                        <span v-else-if="_.isArray(filterValue) && _.isObject(filterValue[0])">: {{ filterValue.map(e => e.label).join(', ') }}</span>
+                        <span v-else-if="_.isObject(filterValue) && filterValue.label">: {{ filterValue.label }}</span>
                       </q-chip>
                     </MCol>
                   </template>
