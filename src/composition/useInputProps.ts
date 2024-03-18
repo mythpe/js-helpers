@@ -10,7 +10,7 @@ import { computed, ComputedRef, Ref } from 'vue'
 import { useMyth } from '../vue3'
 
 type Generic = Record<string, any>
-type Args = Ref<Generic> | ComputedRef<Generic>
+type Args = Ref<Generic> | ComputedRef<Generic> | any
 export default function useInputProps (Props: Args) {
   const props = computed<Generic>(() => Props)
   const { __ } = useMyth()

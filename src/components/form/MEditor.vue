@@ -156,7 +156,7 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  modelValue: undefined,
+  modelValue: () => '',
   minHeight: '10rem',
   name: undefined,
   label: undefined,
@@ -172,7 +172,7 @@ type EmitsTypes = {
 const emit = defineEmits<EmitsTypes>()
 
 const inputValue = computed({
-  get: () => props.modelValue,
+  get: () => props.modelValue ?? '',
   set: value => emit('update:modelValue', value)
 })
 

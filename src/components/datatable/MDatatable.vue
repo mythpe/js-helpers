@@ -17,7 +17,7 @@
       @before-hide="resetDialogs()"
     >
       <q-list
-        v-if="itemDialog"
+        v-if="dialogs.item"
         :separator="!$myth.tools.isSmall"
         style="min-width: 280px;"
         v-bind="$myth.options.dt?.contextmenu?.list"
@@ -27,13 +27,13 @@
           :key="i"
         >
           <MDtBtn
-            v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(itemDialog,itemIndexDialog) : contextmenuItem.showIf"
+            v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
             :[contextmenuItem.name]="!0"
             :dense="dense"
             :label="contextmenuItem.contextLabel !== undefined ? (contextmenuItem.contextLabel === null ? undefined : __(contextmenuItem.contextLabel)) : __(contextmenuItem.label || contextmenuItem.name) "
             list-item
             v-bind="{...($myth.options.dt?.contextmenu?.listItem||{}),...(contextmenuItem.attr||{})}"
-            @click="contextmenuItem.click ? contextmenuItem.click(itemDialog,itemIndexDialog) : undefined"
+            @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
           />
         </template>
       </q-list>
@@ -726,8 +726,8 @@
         >
           <MFadeTransition>
             <slot
-              :index="itemIndexDialog"
-              :item="itemDialog"
+              :index="dialogs.index"
+              :item="dialogs.item"
               name="show"
             />
           </MFadeTransition>
@@ -757,7 +757,7 @@
         ref="formDialogRef"
         v-slot="form"
         :errors="dialogs.errors"
-        :form="itemDialog"
+        :form="dialogs.item"
         :form-props="{class: 'column full-height justify-between no-wrap'}"
         class="full-height no-wrap"
         @submit="defaultSubmitItem"
@@ -812,8 +812,8 @@
             <slot
               v-else
               :form="form"
-              :index="itemIndexDialog"
-              :item="itemDialog"
+              :index="dialogs.index"
+              :item="dialogs.item"
               name="form"
               v-bind="datatableItemsScope"
             />
@@ -826,8 +826,8 @@
           >
             <slot
               :form="form"
-              :index="itemIndexDialog"
-              :item="itemDialog"
+              :index="dialogs.index"
+              :item="dialogs.item"
               name="form-actions"
               v-bind="datatableItemsScope"
             >
@@ -1545,8 +1545,8 @@ const openUpdateDialog = (i: MDtItem, index: MDtItemIndex) => {
     .then(({ _data }) => {
       dialogs.item = _data
       dialogs.index = index
-      if (index || index === 0) {
-        getRows.value[index] = _data
+      if (_data && (index || index === 0)) {
+        getRows.value[index] = { ..._data }
       }
       // setTimeout(() => (dialogs.form = !0), openDialogTimeout)
     })
@@ -1563,8 +1563,8 @@ const openCreateDialog = (dtItem?: MDtItem) => {
   }
   const item = { ...(defaultItem.value || {}), ...(dtItem || {}) }
   isUpdateMode.value = !1
-  itemDialog.value = { ...item } as MDtItem
-  itemIndexDialog.value = undefined
+  dialogs.item = { ...item } as MDtItem
+  dialogs.index = undefined
   // console.log(item)
   nextTick(() => {
     setTimeout(() => (dialogs.form = !0), openDialogTimeout)
@@ -1861,6 +1861,40 @@ const getShowSelection = computed<boolean | undefined>(() => {
     return !1
   }
   return props.showSelection
+})
+
+defineExpose({
+  resetDialogs,
+  tableOptions,
+  getMythApiServicesSchema,
+  updateSelectedItems,
+  onScroll,
+  loadMore,
+  refreshNoUpdate,
+  refresh,
+  getRequestWith,
+  getDatatableParams,
+  fetchDatatableItems,
+  exportData,
+  openFilterDialog,
+  saveFilterDialog,
+  closeFilterDialog,
+  onRemoveFilter,
+  updateFilterOptions,
+  openShowDialogNoIndex,
+  openShowDialog,
+  closeShowDialog,
+  openUpdateDialogNoIndex,
+  openUpdateDialog,
+  openCreateDialog,
+  closeFormDialog,
+  updateDatatableItem,
+  removeDtItem,
+  onDeleteItem,
+  deleteSelectionItem,
+  logoutDatatable,
+  openImageDialog,
+  closeImageDialog
 })
 </script>
 
