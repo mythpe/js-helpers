@@ -19,14 +19,24 @@
     <p v-if="getLabel">
       {{ getLabel }}
     </p>
-    <q-editor
+    <VeeField
+      ref="veeFieldRef"
+      v-slot="fieldScope"
       v-model="inputValue"
-      :dense="dense !== undefined ? dense : $q.screen.lt.md"
-      :fonts="fonts === undefined ? _fonts : fonts"
-      :min-height="minHeight"
-      :toolbar="toolbar === undefined ? _toolbar : toolbar"
-      v-bind="{...($myth.options.editor || {}),...($attrs || {})}"
-    />
+      :name="name"
+      :rules="getRules"
+      v-bind="$attrs"
+    >
+      <q-editor
+        :dense="dense !== undefined ? dense : $q.screen.lt.md"
+        :fonts="fonts === undefined ? _fonts : fonts"
+        :min-height="minHeight"
+        :model-value="inputValue"
+        :toolbar="toolbar === undefined ? _toolbar : toolbar"
+        v-bind="{...($myth.options.editor || {}),...($attrs || {})}"
+        @update:model-value="fieldScope.handleChange"
+      />
+    </VeeField>
     <slot />
     <q-slide-transition>
       <p
@@ -43,6 +53,7 @@
 import { useQuasar } from 'quasar'
 import { computed } from 'vue'
 import useInputProps from '../../composition/useInputProps'
+import { Field as VeeField } from 'vee-validate'
 import { ColStyleType } from '../grid/models'
 
 interface Props {
@@ -165,18 +176,17 @@ const props = withDefaults(defineProps<Props>(), {
   toolbar: undefined,
   fonts: undefined
 })
-
 type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
 }
 const emit = defineEmits<EmitsTypes>()
 
 const inputValue = computed({
-  get: () => props.modelValue ?? '',
+  get: () => props.modelValue || '',
   set: value => emit('update:modelValue', value)
 })
 
-const { getLabel, inputErrors } = useInputProps(props)
+const { getRules, getLabel, inputErrors } = useInputProps(props)
 </script>
 
 <script lang="ts">
