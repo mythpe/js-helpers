@@ -1534,9 +1534,9 @@ const openUpdateDialog = (i: MDtItem, index: MDtItemIndex) => {
   }
   loading.value = !0
   isUpdateMode.value = !0
-  nextTick(() => {
-    dialogs.form = !0
-  })
+  // nextTick(() => {
+  //   dialogs.form = !0
+  // })
   const params: any = { fdt: 'u' }
   if (getRequestWith('withUpdate')) {
     params.requestWith = getRequestWith('withUpdate')
@@ -1548,7 +1548,7 @@ const openUpdateDialog = (i: MDtItem, index: MDtItemIndex) => {
       if (_data && (index || index === 0)) {
         getRows.value[index] = { ..._data }
       }
-      // setTimeout(() => (dialogs.form = !0), openDialogTimeout)
+      setTimeout(() => (dialogs.form = !0), openDialogTimeout)
     })
     .catch((e) => {
       const message = e?._message || e?.message
@@ -1831,7 +1831,7 @@ watch(() => $q.lang.nativeName, () => {
 // watch(() => dialogs.item, (v) => {
 //   dialogs.itemForm = v ? { ...v } : v
 // })
-watch(() => dialogs.form, (v) => {
+watch(formDialogModel, (v) => {
   if (!v) {
     dialogs.errors = {}
   }
