@@ -109,7 +109,7 @@
                   >
                     <MRow
                       v-if="col.name !== controlKey || (col.name === controlKey && ( showCardControlHeader === undefined ? $myth.options.dt?.props?.showCardControlHeader : showCardControlHeader ))"
-                      class="justify-between q-col-gutter-x-sm"
+                      class="justify-between"
                     >
                       <MCol
                         v-if="col.name !== controlKey"
@@ -118,8 +118,8 @@
                         {{ col.label }}
                       </MCol>
                       <MCol
-                        :class="`overflow-hidden ${col.name === controlKey ? 'text-right' : ''}`"
-                        auto
+                        :class="`overflow-hidden ${col.name === controlKey ? 'text-right col-12 q-pb-xs' : ''}`"
+                        :auto="col.name !== controlKey"
                       >
                         <template v-if="col.field.slice(-4) === '_url' || col.field.slice(-10) === '_image_url'">
                           <MDtBtn
@@ -129,11 +129,13 @@
                           />
                         </template>
                         <template v-else-if="col.name === controlKey">
-                          <MDtContextmenuItems
-                            :index="iTempProps.rowIndex"
-                            :item="iTempProps.row"
-                            :items="contextmenuItems"
-                          />
+                          <div class="row q-gutter-xs">
+                            <MDtContextmenuItems
+                              :index="iTempProps.rowIndex"
+                              :item="iTempProps.row"
+                              :items="contextmenuItems"
+                            />
+                          </div>
                         </template>
                         <template v-else>
                           <div class="m--datatable-card-value">

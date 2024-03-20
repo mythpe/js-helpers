@@ -142,13 +142,13 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
     parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[] {
       const defaultOptions: Partial<ParseHeaderOptions> = {
         controlKey: 'control',
-        controlStyle: 'max-width: 100px',
+        controlStyle: 'max-width: 150px',
         align: 'center',
         sortable: !0
       }
       const opts = options || { ...defaultOptions }
-      let control: string | undefined = 'control'
-      let controlStyle: string | undefined = 'max-width: 150px'
+      let control: string | undefined = defaultOptions.controlKey
+      let controlStyle: string | undefined = defaultOptions.controlStyle
 
       if (opts.controlKey) {
         control = opts.controlKey
