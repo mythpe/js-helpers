@@ -118,8 +118,8 @@
                         {{ col.label }}
                       </MCol>
                       <MCol
-                        :class="`overflow-hidden ${col.name === controlKey ? 'text-right col-12 q-pb-xs' : ''}`"
                         :auto="col.name !== controlKey"
+                        :class="`overflow-hidden ${col.name === controlKey ? 'text-right col-12 q-pb-xs' : ''}`"
                       >
                         <template v-if="col.field.slice(-4) === '_url' || col.field.slice(-10) === '_image_url'">
                           <MDtBtn
@@ -933,7 +933,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, reactive, ref, toRef, useSlots, watch } from 'vue'
+import { computed, defineEmits, nextTick, onMounted, reactive, ref, toRef, useSlots, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import _ from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
@@ -970,8 +970,6 @@ const initMetaServer: MDatatableMetaServer = {
   last_page: null,
   total: null
 }
-
-// default: () => 'control'
 
 interface Props {
   controlKey?: MDatatableProps['controlKey'];
@@ -1072,6 +1070,13 @@ const props = withDefaults(defineProps<Props>(), {
   bordered: undefined,
   flat: undefined
 })
+
+interface Emits {
+  (e: 'update:rows', value: any): void
+}
+
+const emit = defineEmits<Emits>()
+
 const myth = useMyth()
 const slots = useSlots()
 const router = useRouter()
@@ -1094,6 +1099,7 @@ const { t } = useI18n({ useScope: 'global' })
   return !hasAction.value
 }) */
 const getRows = ref<MDtItem[]>([])
+watch(getRows, (v) => emit('update:rows', v))
 const filterDialogModel = ref(!1)
 const showDialogModel = ref(!1)
 const formDialogModel = ref(!1)
