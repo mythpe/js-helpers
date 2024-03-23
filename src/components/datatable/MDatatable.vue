@@ -977,7 +977,6 @@ interface Props {
   contextItems?: MDatatableProps['contextItems'];
   hideAutoMessage?: MDatatableProps['hideAutoMessage'];
   headers: MDatatableProps['headers'];
-  rows?: MDatatableProps['rows'];
   serviceName: MDatatableProps['serviceName'];
   requestParams?: MDatatableProps['requestParams'];
   pdf?: MDatatableProps['pdf'];
@@ -1027,7 +1026,6 @@ const props = withDefaults(defineProps<Props>(), {
   contextItems: undefined,
   hideAutoMessage: undefined,
   headers: () => ([]),
-  rows: undefined,
   serviceName: () => '',
   requestParams: undefined,
   pdf: undefined,

@@ -192,13 +192,12 @@ export type MDtServiceNameStringProp = string
 export type MDtRequestParamsCallbackProp = (params: ApiServiceParams) => Partial<GenericFormValues>
 export type MDtRequestParamsObjectProp = Partial<GenericFormValues>
 
-export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPageOptions' | 'grid' | 'title' | 'visibleColumns'> {
+export interface MDatatableProps extends Omit<QTableProps, 'rowsPerPageOptions' | 'grid' | 'title' | 'visibleColumns'> {
   controlKey?: string;
   defaultItem?: Partial<MDtItem> & Record<string, any>;
   contextItems?: GenericMDtBtn[];
   hideAutoMessage?: boolean;
   headers: string[] | Partial<QTableProps['columns']>[] | any[];
-  rows?: readonly any[] | undefined;
   serviceName: MDtServiceNameStringProp | MDtServiceNameCallbackProp;
   requestParams?: MDtRequestParamsObjectProp | MDtRequestParamsCallbackProp;
   pdf?: boolean;
