@@ -39,7 +39,7 @@ import MRow from './grid/MRow.vue'
 import MFadeTransition from './transition/MFadeTransition.vue'
 import MFadeXTransition from './transition/MFadeXTransition.vue'
 import MModalMenu from './modal/MModalMenu.vue'
-// import MModalMenu from './modal/MModalMenu.vue'
+import MTypingString from './typography/MTypingString.vue'
 
 export {
   MDatatable,
@@ -73,14 +73,16 @@ export {
   MRow,
   MFadeTransition,
   MFadeXTransition,
-  MModalMenu
+  MModalMenu,
+  MTypingString
 }
 
 export * from './datatable/models.d'
 export * from './form/models.d'
 export * from './google/models.d'
 export * from './grid/models.d'
-export * from './transition/models.d'
 export * from './modal/models.d'
+export * from './transition/models.d'
+export * from './typography/models.d'
 
 export default {}
