@@ -6,7 +6,6 @@
  * Github: https://github.com/mythpe
  */
 
-import { VNode } from 'vue'
 import { TypedOptions } from 'typed.js'
 
 export type MTypingStringProps = {
@@ -14,9 +13,11 @@ export type MTypingStringProps = {
   string: string | string[];
   loop?: TypedOptions['loop'];
   typeSpeed?: TypedOptions['typeSpeed'];
-  options?: Omit<TypedOptions, 'loop' | 'typeSpeed'>;
+  backDelay?: TypedOptions['backDelay'];
+  fadeOut?: TypedOptions['fadeOut'];
+  options?: Omit<TypedOptions, 'loop' | 'typeSpeed' | 'backDelay' | 'fadeOut'>;
 }
 
 export type MTypingStringSlots = {
-  default: () => VNode[];
+  //
 }

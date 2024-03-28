@@ -11,15 +11,17 @@
   setup
 >
 
-import Typed from 'typed.js'
+import Typed, { TypedOptions } from 'typed.js'
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
-import { MTypingStringProps } from 'app/src'
+import { MTypingStringProps, useMyth } from 'app/src'
 
 interface Props {
   name: MTypingStringProps['name'];
   string: MTypingStringProps['string'];
   loop?: MTypingStringProps['loop'];
   typeSpeed?: MTypingStringProps['typeSpeed'];
+  backDelay?: MTypingStringProps['backDelay'];
+  fadeOut?: MTypingStringProps['fadeOut'];
   options?: MTypingStringProps['options'];
 }
 
@@ -28,20 +30,27 @@ const props = withDefaults(defineProps<Props>(), {
   string: undefined,
   loop: () => !0,
   typeSpeed: () => 45,
+  backDelay: () => 3000,
+  fadeOut: () => !0,
   options: () => ({})
 })
+const myth = useMyth()
 const elmId = computed(() => `typed-content-${props.name}`)
+const computedOptions = computed<TypedOptions>(() => ({
+  loop: props.loop,
+  typeSpeed: props.typeSpeed,
+  backDelay: props.backDelay,
+  fadeOut: props.fadeOut,
+  strings: typeof props.string === 'string' ? [props.string] : props.string,
+  ...myth.options.typingString,
+  ...props.options
+}))
 let typed: Typed | undefined
 const iniTyped = () => {
   try {
-    typed = new Typed(`#${elmId.value}`, {
-      loop: props.loop,
-      typeSpeed: props.typeSpeed,
-      strings: typeof props.string === 'string' ? [props.string] : props.string,
-      ...props.options
-    })
+    typed = new Typed(`#${elmId.value}`, computedOptions.value)
   } catch (e) {
-
+    console.log(e)
   }
 }
 const destroy = () => {
@@ -53,24 +62,22 @@ const destroy = () => {
     }
   }
 }
-watch(() => props.string, (v) => {
+watch(() => props.string, () => {
   destroy()
   iniTyped()
 })
 onMounted(() => {
   if (props.string) {
-    setTimeout(() => {
-      try {
-        iniTyped()
-      } catch (e) {
-        const a = document.getElementById(`typed-content-${props.name}`)
-        a && (a.textContent = typeof props.string === 'string' ? props.string : props.string[0])
-      }
-    }, 400 * parseInt(props.name.toString()))
+    try {
+      iniTyped()
+    } catch (e) {
+      console.log(e)
+      const a = document.getElementById(elmId.value)
+      a && (a.innerHTML = typeof props.string === 'string' ? props.string : props.string.join('<br />'))
+    }
   }
 })
 onBeforeUnmount(() => {
-  // console.log(123)
   destroy()
 })
 defineExpose({ typed })

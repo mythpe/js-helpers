@@ -105,6 +105,7 @@ import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { MythApiServicesSchema, ParseHeaderOptions, ParseHeadersHeaderAgr, ParseHeadersType, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
 import { Dates, Helpers, Str } from '../utils'
 import MDtContextmenuItems from 'components/datatable/MDtContextmenuItems.vue'
+import { MTypingStringProps, MTypingStringSlots } from 'app/src'
 
 export interface MythOptionsConfig extends Record<string | number | symbol, any> {
   google?: {
@@ -210,7 +211,8 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
   };
   tooltip?: Partial<QTooltipProps>;
   otp?: Partial<QInputProps>;
-  card?: Partial<QCardProps>
+  card?: Partial<QCardProps>;
+  typingString?: Partial<Omit<MTypingStringProps, 'string'>>;
 }
 
 export type MythApiAxiosType = Partial<AxiosInstance>
@@ -310,6 +312,7 @@ declare module '@vue/runtime-core' {
     MModalMenu: GlobalComponentConstructor<MModalMenuProps, MModalMenuSlots>;
     MTooltip: GlobalComponentConstructor<MTooltipProps, MTooltipSlots>;
     MDialog: GlobalComponentConstructor<MDialogProps, MDialogSlots>;
+    MTypingString: GlobalComponentConstructor<MTypingStringProps, MTypingStringSlots>;
   }
 
   interface ComponentCustomProperties {
