@@ -13,7 +13,8 @@
 
 import Typed, { TypedOptions } from 'typed.js'
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
-import { MTypingStringProps, useMyth } from 'app/src'
+import { MTypingStringProps } from './models'
+import { useMyth } from '../../vue3/InstallPlugin'
 
 interface Props {
   name: MTypingStringProps['name'];
