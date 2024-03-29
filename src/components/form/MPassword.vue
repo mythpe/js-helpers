@@ -26,25 +26,18 @@
       />
     </template>
     <template
-      v-for="(_,slot) in $slots"
+      v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
       :key="slot"
-      #[slot]="inputSlot"
+      #[slot]
     >
-      <slot
-        v-if="inputSlot"
-        :name="slot"
-        v-bind="inputSlot"
-      />
-      <slot
-        v-else
-        :name="slot"
-      />
+      <slot :name="slot" />
     </template>
   </MInput>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { MInputSlots } from './models'
 
 const inputType = ref<'text' | 'password'>('password')
 </script>

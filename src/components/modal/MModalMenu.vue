@@ -8,7 +8,7 @@
 
 <template>
   <q-popup-proxy
-    :breakpoint="$myth.tools.popupBreakpoint"
+    :breakpoint="$myth.tools.popupBreakpoint as any"
     :position="position"
     :transition-hide="position === 'top' ? $myth.tools.transitions.slideUpFade.hide : $myth.tools.transitions.slideDownFade.hide"
     :transition-show="position === 'top' ? $myth.tools.transitions.slideUpFade.show : $myth.tools.transitions.slideDownFade.show"

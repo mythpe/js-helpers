@@ -33,19 +33,18 @@
       </div>
     </template>
     <template
-      v-for="(_,slot) in $slots"
+      v-for="(_,slot) in ($slots as Readonly<MSelectSlots>)"
       :key="slot"
       #[slot]="inputSlot"
     >
       <slot
-        v-if="inputSlot"
         :name="slot"
-        v-bind="inputSlot"
+        v-bind="inputSlot || {}"
       />
-      <slot
-        v-else
-        :name="slot"
-      />
+      <!--<slot-->
+      <!--  v-else-->
+      <!--  :name="slot"-->
+      <!--/>-->
     </template>
   </MSelect>
 </template>
@@ -57,7 +56,7 @@
 
 import { computed, defineEmits, defineProps, nextTick, onBeforeMount, onMounted, ref, watch } from 'vue'
 import { useMyth } from '../../vue3'
-import { MAxiosProps } from './models'
+import { MAxiosProps, MSelectSlots } from './models'
 import { useQuasar } from 'quasar'
 
 interface Props {
@@ -81,7 +80,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   stackLabel: undefined,
   multiple: () => !1,
-  name: undefined,
+  name: () => '',
   modelValue: undefined,
   requestWith: undefined,
   options: () => ([]),

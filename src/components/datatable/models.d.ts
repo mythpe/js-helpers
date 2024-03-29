@@ -39,7 +39,7 @@ export interface MDatatablePagination {
   /**
    * For server-side fetching only. How many total database rows are there to be added to the table.
    */
-  rowsNumber: number;
+  rowsNumber?: number;
 }
 
 export type MDatatableFilterForm = Partial<GenericFormValues>
@@ -192,7 +192,7 @@ export type MDtServiceNameStringProp = string
 export type MDtRequestParamsCallbackProp = (params: ApiServiceParams) => Partial<GenericFormValues>
 export type MDtRequestParamsObjectProp = Partial<GenericFormValues>
 
-export interface MDatatableProps extends Omit<QTableProps, 'rowsPerPageOptions' | 'grid' | 'title' | 'visibleColumns'> {
+export interface MDatatableProps extends Omit<QTableProps, 'rowsPerPageOptions' | 'grid' | 'visibleColumns'> {
   controlKey?: string;
   defaultItem?: Partial<MDtItem> & Record<string, any>;
   contextItems?: GenericMDtBtn[];
@@ -225,7 +225,6 @@ export interface MDatatableProps extends Omit<QTableProps, 'rowsPerPageOptions' 
   rowsPerPageOptions?: (string | number)[];
   ignoreKeys?: string[] | ((from: any) => any);
   grid?: boolean;
-  title?: string | null | undefined;
   manageColumns?: boolean;
   visibleColumns?: string[];
   searchColumns?: string[];

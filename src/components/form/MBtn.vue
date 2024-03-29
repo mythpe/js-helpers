@@ -9,18 +9,10 @@
 <template>
   <q-btn v-bind="{...($myth.options.button||{}),...($attrs || {})}">
     <template
-      v-for="(k,v) in _slots"
-      #[v]="scope"
+      v-for="(k,v) in ($slots as Readonly<QBtnSlots>)"
+      #[v]
     >
-      <template v-if="Boolean(scope)">
-        <slot
-          :name="v"
-          v-bind="scope"
-        />
-      </template>
-      <template v-else>
-        <slot :name="v" />
-      </template>
+      <slot :name="v" />
     </template>
     <template
       v-if="$myth.options.loadingButtons?.elm"
@@ -148,9 +140,8 @@
 </template>
 
 <script lang="ts" setup>
-import { useSlots } from 'vue'
-
-const _slots = useSlots()
+//
+import { QBtnSlots } from 'quasar'
 </script>
 
 <script lang="ts">

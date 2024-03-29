@@ -120,7 +120,7 @@ const emit = defineEmits<Emits>()
 const otpErrors = computed(() => props.errors ? props.errors : [])
 const length = computed<number>(() => parseInt(props.inputLength?.toString() || '0'))
 const fields = ref<any>([])
-const fieldValues = ref<(number | string | symbol)[]>([])
+const fieldValues = ref<(string | number | null | undefined)[]>([])
 watchEffect(() => {
   fieldValues.value = (props.modelValue || '').toString().split('').slice(0, length.value)
 })
@@ -172,7 +172,7 @@ const blur = (index: number) => {
   fields.value[index]?.blur()
 }
 
-const onUpdate = (value: string | number, index: number) => {
+const onUpdate = (value: string | number | null, index: number) => {
   if (value) {
     if (props.numeric !== !1 && isNaN(value)) {
       nextTick(() => {

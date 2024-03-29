@@ -312,6 +312,7 @@ import { useMyth } from '../../vue3'
 import { ColStyleType } from '../grid/models'
 import { MUploaderMediaItem, MUploaderProps, MUploaderXhrInfo } from './models'
 import { useI18n } from 'vue-i18n'
+import { QUploaderFactoryObject } from 'quasar/dist/types/api/quploader'
 
 interface Props {
   auto?: boolean | undefined;
@@ -446,7 +447,7 @@ const iconsSizeProp = computed(() => $myth.options.uploader?.iconsSize || props.
 const fieldNameProp = computed(() => props.fieldName)
 const errors = ref<any>([])
 /* Events Callback */
-const startUpload = async (files: readonly File[]) => {
+const startUpload = async (files: readonly File[]) : Promise<QUploaderFactoryObject> => {
   return new Promise((resolve, reject) => {
     try {
       const common = $myth.axios?.defaults?.headers.common || {}

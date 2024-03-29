@@ -239,18 +239,18 @@ const placeService = ref<GooglePlacesService>()
 const Geocoder = ref<GoogleGeocoder>()
 const searchResults = ref<PlaceResult[] | null>(null)
 const noSearchProp = computed(() => props.noSearch)
-const onSearch = (query: string | null) => {
+const onSearch = (query: string | number | null) => {
   if (noSearchProp.value) {
     return
   }
   searchResults.value = []
-  if (loading.value || !mapRef.value || (!query || query.length < 3)) {
+  if (loading.value || !mapRef.value || (!query || query?.toString().length < 3)) {
     return
   }
   loading.value = !0
   // placeService.value?.findPlaceFromQuery({ query, language: $q.lang.isoName, fields: ['formatted_address', 'geometry'] }, (res: PlaceResult[] | null) => {
   placeService.value?.textSearch({
-    query,
+    query: query as string,
     region: props.region,
     language: $q.lang.isoName
   }, (res: PlaceResult[] | null) => {

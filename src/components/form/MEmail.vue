@@ -6,15 +6,21 @@
   - Github: https://github.com/mythpe
   -->
 
+<script lang="ts" setup>
+//
+</script>
 <template>
   <MInput
     email
     type="email"
     v-bind="$attrs"
-  />
+  >
+    <slot />
+  </MInput>
 </template>
 
 <script lang="ts">
+
 export default {
   name: 'MEmail',
   inheritAttrs: !1

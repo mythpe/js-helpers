@@ -12,28 +12,16 @@
     type="date"
     v-bind="$attrs"
   >
-    <template
-      v-for="(k,v) in _slots"
-      #[v]="scope"
-    >
-      <template v-if="Boolean(scope)">
-        <slot
-          :name="v"
-          v-bind="scope"
-        />
-      </template>
-      <template v-else>
-        <slot :name="v" />
-      </template>
-    </template>
+    <slot />
   </MPicker>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, useSlots } from 'vue'
+import { computed, defineEmits } from 'vue'
+import { MPickerProps } from './models'
 
 interface Props {
-  modelValue: any
+  modelValue: MPickerProps['modelValue'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -50,7 +38,6 @@ const inputValue = computed({
   set: v => emit('update:modelValue', v)
 })
 
-const _slots = useSlots()
 </script>
 
 <script lang="ts">

@@ -32,21 +32,7 @@
         :val="val"
         v-bind="{...($myth.options.checkbox),...($attrs || {}),...fieldProps.field}"
       >
-        <template
-          v-for="(_,slot) in $slots"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            v-if="inputSlot"
-            :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else
-            :name="slot"
-          />
-        </template>
+        <slot />
       </q-checkbox>
     </VeeField>
   </MCol>
@@ -56,19 +42,19 @@
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineEmits, defineProps } from 'vue'
 import useInputProps from '../../composition/useInputProps'
-import { ColStyleType } from '../grid/models'
+import { MCheckboxProps } from './models'
 
 interface Props {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  name: string;
-  modelValue: any;
-  val?: any | undefined;
+  auto?: MCheckboxProps['auto'];
+  col?: MCheckboxProps['col'];
+  xs?: MCheckboxProps['xs'];
+  sm?: MCheckboxProps['sm'];
+  md?: MCheckboxProps['md'];
+  lg?: MCheckboxProps['lg'];
+  xl?: MCheckboxProps['xl'];
+  name: MCheckboxProps['name'];
+  modelValue: MCheckboxProps['modelValue'];
+  val?: MCheckboxProps['val'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -79,7 +65,7 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  name: undefined,
+  name: () => '',
   modelValue: undefined,
   val: undefined
 })

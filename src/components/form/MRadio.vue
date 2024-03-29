@@ -30,23 +30,7 @@
         :placeholder="getPlaceholder"
         :val="val"
         v-bind="{...($myth.options.radio||{}),...($attrs||{}),...fieldProps.field}"
-      >
-        <template
-          v-for="(_,slot) in $slots"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            v-if="inputSlot"
-            :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else-if="slot !== 'default'"
-            :name="slot"
-          />
-        </template>
-      </q-radio>
+      />
       <slot
         v-bind="fieldProps"
       />
@@ -58,19 +42,19 @@
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineEmits, defineProps } from 'vue'
 import useInputProps from '../../composition/useInputProps'
-import { ColStyleType } from '../grid/models'
+import { MRadioProps } from './models'
 
 interface Props {
-  auto?: boolean;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  name: string;
-  modelValue: any;
-  val: any | undefined;
+  auto?: MRadioProps['auto'];
+  col?: MRadioProps['col'];
+  xs?: MRadioProps['xs'];
+  sm?: MRadioProps['sm'];
+  md?: MRadioProps['md'];
+  lg?: MRadioProps['lg'];
+  xl?: MRadioProps['xl'];
+  name: MRadioProps['name'];
+  modelValue: MRadioProps['modelValue'];
+  val: MRadioProps['val'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -81,7 +65,7 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  name: undefined,
+  name: () => '',
   modelValue: undefined,
   val: undefined
 })

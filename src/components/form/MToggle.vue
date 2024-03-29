@@ -53,21 +53,6 @@
             keep-color
             v-bind="{...($myth.options.toggle||{}),...($attrs || {}),...fieldProps.field}"
           >
-            <template
-              v-for="(_,slot) in $slots"
-              :key="slot"
-              #[slot]="inputSlot"
-            >
-              <slot
-                v-if="inputSlot"
-                :name="slot"
-                v-bind="inputSlot"
-              />
-              <slot
-                v-else
-                :name="slot"
-              />
-            </template>
             <slot />
           </q-toggle>
           <slot
@@ -90,32 +75,33 @@ import { Field as VeeField } from 'vee-validate'
 import { computed } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 
-import { ColStyleType } from '../grid/models'
+import { MToggleProps } from './models'
+import { QToolbarSlots } from 'quasar'
 
 interface Props {
-  auto?: boolean;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  borderless?: boolean | undefined;
-  clearable?: boolean | undefined;
-  dense?: boolean | undefined;
-  modelValue?: any | undefined;
-  val?: any | undefined;
-  name?: string | undefined;
-  label?: string | undefined;
-  activeLabel?: string;
-  inactiveLabel?: string;
-  trueValue?: any | undefined;
-  falseValue?: any | undefined;
-  color?: string | undefined;
-  checkedIcon?: string | undefined;
-  uncheckedIcon?: string | undefined;
-  toggleIndeterminate?: boolean | undefined;
-  statusLabels?: boolean | undefined;
+  auto?: MToggleProps['auto'];
+  col?: MToggleProps['col'];
+  xs?: MToggleProps['xs'];
+  sm?: MToggleProps['sm'];
+  md?: MToggleProps['md'];
+  lg?: MToggleProps['lg'];
+  xl?: MToggleProps['xl'];
+  borderless?: MToggleProps['borderless'];
+  clearable?: MToggleProps['clearable'];
+  dense?: MToggleProps['dense'];
+  modelValue?: MToggleProps['modelValue'];
+  val?: MToggleProps['val'];
+  name?: MToggleProps['name'];
+  label?: MToggleProps['label'];
+  activeLabel?: MToggleProps['activeLabel'];
+  inactiveLabel?: MToggleProps['inactiveLabel'];
+  trueValue?: MToggleProps['trueValue'];
+  falseValue?: MToggleProps['falseValue'];
+  color?: MToggleProps['color'];
+  checkedIcon?: MToggleProps['checkedIcon'];
+  uncheckedIcon?: MToggleProps['uncheckedIcon'];
+  toggleIndeterminate?: MToggleProps['toggleIndeterminate'];
+  statusLabels?: MToggleProps['statusLabels'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -131,7 +117,7 @@ const props = withDefaults(defineProps<Props>(), {
   dense: undefined,
   modelValue: undefined,
   val: undefined,
-  name: undefined,
+  name: () => '',
   label: undefined,
   activeLabel: 'yes',
   inactiveLabel: 'no',

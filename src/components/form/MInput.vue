@@ -5,94 +5,12 @@
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
-
-<template>
-  <MCol
-    :auto="auto"
-    :class="$attrs.class"
-    :col="col"
-    :lg="lg"
-    :md="md"
-    :sm="sm"
-    :xs="xs"
-  >
-    <template v-if="viewMode">
-      <q-field
-        :label="getLabel"
-        :placeholder="getPlaceholder"
-        stack-label
-        v-bind="{...($myth.options.input||{}),...($attrs || {})}"
-      >
-        <template #control>
-          <div
-            class="self-center full-width no-outline ellipsis"
-            tabindex="0"
-          >
-            {{ viewModeValue || inputValue }}
-          </div>
-        </template>
-        <template
-          v-for="(_,slot) in $slots"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            v-if="inputSlot"
-            :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else
-            :name="slot"
-          />
-        </template>
-      </q-field>
-    </template>
-    <VeeField
-      v-else
-      ref="veeFieldRef"
-      v-slot="fieldScope"
-      v-model="inputValue"
-      :name="name"
-      :rules="getRules"
-      v-bind="$attrs"
-    >
-      <q-input
-        :error="fieldScope.errors.length > 0"
-        :error-message="fieldScope.errorMessage"
-        :label="getLabel"
-        :model-value="inputValue"
-        :placeholder="getPlaceholder"
-        :stack-label="stackLabel"
-        v-bind="{...($myth.options.input||{}),...($attrs || {}),...fieldScope.field}"
-        @update:model-value="fieldScope.handleChange"
-      >
-        <template
-          v-for="(_,slot) in $slots"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            v-if="inputSlot"
-            :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else-if="slot !== 'default'"
-            :name="slot"
-          />
-        </template>
-      </q-input>
-      <slot v-bind="fieldScope" />
-    </VeeField>
-  </MCol>
-</template>
-
 <script lang="ts" setup>
 import { computed, defineProps } from 'vue'
 import { Field as VeeField } from 'vee-validate'
 import useInputProps from '../../composition/useInputProps'
 import { MInputProps } from './models'
+import { QFieldSlots, QInputSlots } from 'quasar'
 
 interface Props {
   name?: MInputProps['name'];
@@ -151,6 +69,77 @@ const inputValue = computed({
 })
 const { getRules, getLabel, getPlaceholder } = useInputProps(props)
 </script>
+
+<template>
+  <MCol
+    :auto="auto"
+    :class="$attrs.class"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :sm="sm"
+    :xs="xs"
+  >
+    <template v-if="viewMode">
+      <q-field
+        :label="getLabel"
+        :placeholder="getPlaceholder"
+        stack-label
+        v-bind="{...($myth.options.field||{}),...($attrs || {})}"
+      >
+        <template #control>
+          <div
+            class="self-center full-width no-outline ellipsis"
+            tabindex="0"
+          >
+            {{ viewModeValue || inputValue }}
+          </div>
+        </template>
+        <template
+          v-for="(_,slot) in ($slots as Readonly<QFieldSlots>)"
+          :key="slot"
+          #[slot]="inputSlot"
+        >
+          <slot
+            :name="slot"
+            v-bind="inputSlot || {}"
+          />
+        </template>
+      </q-field>
+    </template>
+    <VeeField
+      v-else
+      ref="veeFieldRef"
+      v-slot="fieldScope"
+      v-model="inputValue"
+      :name="name"
+      :rules="getRules"
+      v-bind="$attrs"
+    >
+      <q-input
+        :error="fieldScope.errors.length > 0"
+        :error-message="fieldScope.errorMessage"
+        :label="getLabel"
+        :model-value="inputValue"
+        :placeholder="getPlaceholder"
+        :stack-label="stackLabel"
+        v-bind="{...($myth.options.input||{}),...($attrs || {}),...fieldScope.field}"
+        @update:model-value="fieldScope.handleChange"
+      >
+        <template
+          v-for="(_,slot) in ($slots as Readonly<QInputSlots>)"
+          :key="slot"
+          #[slot]
+        >
+          <slot
+            :name="slot"
+          />
+        </template>
+      </q-input>
+      <slot v-bind="fieldScope" />
+    </VeeField>
+  </MCol>
+</template>
 
 <script lang="ts">
 export default {

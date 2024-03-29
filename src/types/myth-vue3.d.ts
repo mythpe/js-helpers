@@ -15,7 +15,7 @@ import {
   QDateProps,
   QDialogOptions,
   QDialogProps,
-  QEditorProps,
+  QEditorProps, QFieldProps,
   QFileProps,
   QIconProps,
   QImgProps,
@@ -163,7 +163,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
       btn?: Partial<MDtBtnProps>;
     },
     searchInput?: {
-      props?: Partial<QInputProps>;
+      props?: Partial<MInputProps>;
       optionsIcon?: string;
       menuProps?: Partial<QMenuProps>;
       menuBtn?: Partial<QBtnProps>;
@@ -186,6 +186,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     size?: string | undefined;
   };
   input?: Partial<QInputProps>;
+  field?: Partial<QFieldProps>;
   file?: Partial<QFileProps>;
   date?: Partial<QDateProps>;
   time?: Partial<QTimeProps>;
@@ -242,7 +243,7 @@ export type UseMythVue = {
   helpers: typeof Helpers,
   tools: {
     isSmall: ComputedRef<boolean>;
-    popupBreakpoint: ComputedRef<number>;
+    popupBreakpoint: ComputedRef<string | number | undefined>;
     transitions: {
       slideLeftFade: {
         hide: ComputedRef<string>;

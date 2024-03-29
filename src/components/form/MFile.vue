@@ -40,7 +40,7 @@
         :placeholder="getPlaceholder"
         :stack-label="stackLabel"
         :standout="standout"
-        v-bind="{...($myth.options.input||{}),...($attrs || {})}"
+        v-bind="{...($myth.options.file||{}),...($attrs || {})}"
         @blur="fieldScope.handleBlur"
         @change="fieldScope.handleChange"
         @clear="fieldScope.handleBlur"
@@ -51,7 +51,7 @@
             <q-icon
               class="cursor-pointer"
               name="ion-ios-attach"
-              @click="$refs.fileInput?.pickFiles()"
+              @click="($refs.fileInput as QFile)?.pickFiles()"
             />
           </slot>
         </template>
@@ -82,40 +82,40 @@ import useAcceptProp from '../../composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
-import { ColStyleType } from '../grid/models'
+import { MFileProps } from './models'
 
 interface Props {
-  auto?: boolean;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  accept?: string;
-  images?: boolean;
-  video?: boolean;
-  pdf?: boolean;
-  excel?: boolean;
-  outlined?: boolean;
-  standout?: boolean | string;
-  borderless?: boolean;
-  stackLabel?: boolean;
-  filled?: boolean;
-  dense?: boolean;
-  hideBottomSpace?: boolean;
-  name?: string;
-  label?: string;
-  placeholder?: string;
-  hidePlaceholder?: boolean;
-  required?: boolean;
-  hideRequired?: boolean;
-  email?: boolean;
-  clearable?: boolean;
-  loading?: boolean;
-  rules?: string | string[];
-  errors?: Record<string, string[]>;
-  modelValue: any;
+  auto?: MFileProps['auto'];
+  col?: MFileProps['col'];
+  xs?: MFileProps['xs'];
+  sm?: MFileProps['sm'];
+  md?: MFileProps['md'];
+  lg?: MFileProps['lg'];
+  xl?: MFileProps['xl'];
+  accept?: MFileProps['accept'];
+  images?: MFileProps['images'];
+  video?: MFileProps['video'];
+  pdf?: MFileProps['pdf'];
+  excel?: MFileProps['excel'];
+  outlined?: MFileProps['outlined'];
+  standout?: MFileProps['standout'];
+  borderless?: MFileProps['borderless'];
+  stackLabel?: MFileProps['stackLabel'];
+  filled?: MFileProps['filled'];
+  dense?: MFileProps['dense'];
+  hideBottomSpace?: MFileProps['hideBottomSpace'];
+  name: MFileProps['name'];
+  label?: MFileProps['label'];
+  placeholder?: MFileProps['placeholder'];
+  hidePlaceholder?: MFileProps['hidePlaceholder'];
+  required?: MFileProps['required'];
+  hideRequired?: MFileProps['hideRequired'];
+  email?: MFileProps['email'];
+  clearable?: MFileProps['clearable'];
+  loading?: MFileProps['loading'];
+  rules?: MFileProps['rules'];
+  errors?: MFileProps['errors'];
+  modelValue: MFileProps['modelValue'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -138,7 +138,7 @@ const props = withDefaults(defineProps<Props>(), {
   filled: undefined,
   dense: undefined,
   hideBottomSpace: undefined,
-  name: undefined,
+  name: () => '',
   label: undefined,
   placeholder: undefined,
   hidePlaceholder: undefined,
@@ -164,8 +164,8 @@ const inputValue = computed({
   get: () => props.modelValue,
   set: (v) => emit('update:modelValue', v)
 })
-const pickFiles = (...args: any[]) => fileInput.value?.pickFiles(...args)
-const removeAtIndex = (...args: any[]) => fileInput.value?.removeAtIndex(...args)
+const pickFiles = (...args: any) => fileInput.value?.pickFiles(...args)
+const removeAtIndex = (index: number) => fileInput.value?.removeAtIndex(index)
 
 defineExpose({
   pickFiles,

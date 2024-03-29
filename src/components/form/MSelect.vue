@@ -32,18 +32,13 @@
           </div>
         </template>
         <template
-          v-for="(_,slot) in $slots"
+          v-for="(_,slot) in ($slots as Readonly<QFieldSlots>)"
           :key="slot"
           #[slot]="inputSlot"
         >
           <slot
-            v-if="inputSlot"
             :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else
-            :name="slot"
+            v-bind="inputSlot || {}"
           />
         </template>
       </q-field>
@@ -132,18 +127,13 @@
           </MContainer>
         </template>
         <template
-          v-for="(_,slot) in $slots"
+          v-for="(_,slot) in ($slots as Readonly<QSelectSlots>)"
           :key="slot"
           #[slot]="inputSlot"
         >
           <slot
-            v-if="inputSlot"
             :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else
-            :name="slot"
+            v-bind="inputSlot || {}"
           />
         </template>
       </q-select>
@@ -173,6 +163,7 @@ import { computed, defineProps, ref, watch } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { ColStyleType } from '../grid/models'
 import { MSelectProps } from './models'
+import { QFieldSlots, QSelectSlots } from 'quasar'
 
 interface Props {
   auto?: boolean;
@@ -216,7 +207,7 @@ const props = withDefaults(defineProps<Props>(), {
   lg: undefined,
   xl: undefined,
   behavior: undefined,
-  name: undefined,
+  name: () => '',
   label: undefined,
   stackLabel: undefined,
   required: undefined,

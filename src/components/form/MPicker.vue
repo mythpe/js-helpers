@@ -27,19 +27,11 @@
         v-bind="$attrs"
       >
         <template
-          v-for="(_,slot) in $slots"
+          v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
           :key="slot"
-          #[slot]="inputSlot"
+          #[slot]
         >
-          <slot
-            v-if="inputSlot"
-            :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else
-            :name="slot"
-          />
+          <slot :name="slot" />
         </template>
       </MInput>
     </template>
@@ -53,18 +45,11 @@
       v-bind="$attrs"
     >
       <template
-        v-for="(k,v) in _slots"
-        #[v]="scope"
+        v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
+        :key="slot"
+        #[slot]
       >
-        <template v-if="Boolean(scope)">
-          <slot
-            :name="v"
-            v-bind="scope"
-          />
-        </template>
-        <template v-else>
-          <slot :name="v" />
-        </template>
+        <slot :name="slot" />
       </template>
       <template #append>
         <q-btn
@@ -136,8 +121,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, nextTick, ref, useSlots } from 'vue'
-import { MPickerProps } from './models'
+import { computed, defineEmits, nextTick, ref } from 'vue'
+import { MInputSlots, MPickerProps } from './models'
 
 interface Props {
   auto?: MPickerProps['auto'];
@@ -182,7 +167,6 @@ interface Emits {
 }
 
 const emit = defineEmits<Emits>()
-const _slots = useSlots()
 
 const isDate = computed(() => props.type === 'date')
 const isRange = computed(() => props.range !== !1 && props.range !== undefined)

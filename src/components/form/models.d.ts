@@ -95,7 +95,7 @@ export interface MBtnSlots extends QBtnSlots {
   loading: () => VNode[];
 }
 
-export interface MInputProps extends MColProps, Omit<QInputProps, 'rules' | 'modelValue' | 'errors'>, MColProps {
+export interface MInputProps extends Omit<QInputProps, 'rules' | 'modelValue' | 'errors'>, MColProps {
   placeholder?: string | undefined;
   hidePlaceholder?: boolean | undefined;
   required?: boolean | undefined;
@@ -104,7 +104,7 @@ export interface MInputProps extends MColProps, Omit<QInputProps, 'rules' | 'mod
   mobile?: boolean | string | undefined;
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
-  modelValue?: string | number | null | symbol | undefined;
+  modelValue?: string | number | null | undefined;
   /**
    * Set input to vie mode use q-field
    */
@@ -139,7 +139,7 @@ export interface MFileProps extends MColProps, Omit<QFileProps, 'rules'> {
   filled?: boolean | undefined;
   dense?: boolean | undefined;
   hideBottomSpace?: boolean | undefined;
-  name?: string | undefined;
+  name: string;
   label?: string | undefined;
   placeholder?: string | undefined;
   hidePlaceholder?: boolean | undefined;
@@ -201,7 +201,7 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
   emitValue?: boolean | undefined;
   mapOptions?: boolean | undefined;
   useInput?: boolean | undefined;
-  name: string | undefined;
+  name: string;
   label?: string | undefined;
   required?: boolean | undefined;
   hideRequired?: boolean | undefined;
@@ -530,9 +530,8 @@ export type MUploaderXhrInfo = { files: readonly any[]; xhr: any; }
 export interface MEditorProps extends QEditorProps, MColProps {
   modelValue: string;
   minHeight?: string;
-  name?: string;
+  name: string;
   label?: string;
-  errors?: Record<string, string[]>;
   dense?: boolean;
   toolbar?: readonly any[];
   fonts?: any;

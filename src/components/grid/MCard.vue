@@ -48,7 +48,7 @@
       </q-toolbar>
       <q-separator />
     </template>
-    <q-card-section :class="`${padding !== undefined ? ( !padding ? 'q-pa-none' : padding?.length > 0 ? padding : '' ) : ''} `">
+    <q-card-section :class="`${padding !== undefined ? ( !padding ? 'q-pa-none' : padding?.toString()?.length > 0 ? padding : '' ) : ''} `">
       <MContainer>
         <slot :name="loading ? 'loading' : 'default'" />
       </MContainer>

@@ -29,11 +29,11 @@
     >
       <q-editor
         :dense="dense !== undefined ? dense : $q.screen.lt.md"
-        :fonts="fonts === undefined ? _fonts : fonts"
+        :fonts="fonts"
         :min-height="minHeight"
         :model-value="inputValue"
-        :toolbar="toolbar === undefined ? _toolbar : toolbar"
-        v-bind="{...($myth.options.editor || {}),...($attrs || {})}"
+        :toolbar="toolbar"
+        v-bind="{...$myth.options.editor,...$attrs}"
         @update:model-value="fieldScope.handleChange"
       />
     </VeeField>
@@ -54,24 +54,23 @@ import { useQuasar } from 'quasar'
 import { computed } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { Field as VeeField } from 'vee-validate'
-import { ColStyleType } from '../grid/models'
+import { MEditorProps } from './models'
 
 interface Props {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  modelValue?: string | undefined;
-  minHeight?: string | undefined;
-  name?: string | undefined;
-  label?: string | undefined;
-  errors?: Record<string, string[]> | undefined;
-  dense?: boolean | undefined;
-  toolbar?: readonly any[] | undefined;
-  fonts?: any | undefined;
+  auto?: MEditorProps['auto'];
+  col?: MEditorProps['col'];
+  xs?: MEditorProps['xs'];
+  sm?: MEditorProps['sm'];
+  md?: MEditorProps['md'];
+  lg?: MEditorProps['lg'];
+  xl?: MEditorProps['xl'];
+  modelValue?: MEditorProps['modelValue'];
+  minHeight?: MEditorProps['minHeight'];
+  name: MEditorProps['name'];
+  label?: MEditorProps['label'];
+  dense?: MEditorProps['dense'];
+  toolbar?: MEditorProps['toolbar'];
+  fonts?: MEditorProps['fonts'];
 }
 
 const $q = useQuasar()
@@ -159,6 +158,7 @@ const _fonts = {
   times_new_roman: 'Times New Roman',
   verdana: 'Verdana'
 }
+
 const props = withDefaults(defineProps<Props>(), {
   auto: undefined,
   col: undefined,
@@ -169,13 +169,13 @@ const props = withDefaults(defineProps<Props>(), {
   xl: undefined,
   modelValue: () => '',
   minHeight: '10rem',
-  name: undefined,
+  name: () => '',
   label: undefined,
-  errors: undefined,
   dense: undefined,
-  toolbar: undefined,
-  fonts: undefined
+  toolbar: () => _toolbar,
+  fonts: () => _fonts
 })
+
 type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
 }

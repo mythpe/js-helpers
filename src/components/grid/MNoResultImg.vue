@@ -15,26 +15,16 @@
     width="50px"
   >
     <template
-      v-for="(k,v) in _slots"
-      #[v]="scope"
+      v-for="(k,v) in ($slots as Readonly<QImgSlots>)"
+      #[v]
     >
-      <template v-if="Boolean(scope)">
-        <slot
-          :name="v"
-          v-bind="scope"
-        />
-      </template>
-      <template v-else>
-        <slot :name="v" />
-      </template>
+      <slot :name="v" />
     </template>
   </q-img>
 </template>
 
 <script lang="ts" setup>
-import { useSlots } from 'vue'
-
-const _slots = useSlots()
+import { QImgSlots } from 'quasar'
 </script>
 
 <script lang="ts">

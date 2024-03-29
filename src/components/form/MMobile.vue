@@ -8,9 +8,11 @@
 
 <template>
   <MInput
-    mobile
     v-bind="$attrs"
-  />
+    mobile
+  >
+    <slot />
+  </MInput>
 </template>
 
 <script lang="ts">
