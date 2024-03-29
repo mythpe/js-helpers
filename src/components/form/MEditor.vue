@@ -29,10 +29,10 @@
     >
       <q-editor
         :dense="dense !== undefined ? dense : $q.screen.lt.md"
-        :fonts="fonts"
+        :fonts="fonts || _fonts"
         :min-height="minHeight"
         :model-value="inputValue"
-        :toolbar="toolbar"
+        :toolbar="toolbar || _toolbar"
         v-bind="{...$myth.options.editor,...$attrs}"
         @update:model-value="fieldScope.handleChange"
       />
@@ -172,8 +172,8 @@ const props = withDefaults(defineProps<Props>(), {
   name: () => '',
   label: undefined,
   dense: undefined,
-  toolbar: () => _toolbar,
-  fonts: () => _fonts
+  toolbar: undefined,
+  fonts: undefined
 })
 
 type EmitsTypes = {
