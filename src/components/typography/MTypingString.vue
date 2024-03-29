@@ -29,7 +29,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   name: undefined,
   string: undefined,
-  loop: () => !0,
+  loop: undefined,
   typeSpeed: () => 45,
   backDelay: () => 3000,
   fadeOut: () => !0,
