@@ -101,7 +101,7 @@ export type MDatatableDialogsOptions = {
   isUpdate: Ref<boolean>;
   item: Ref<MDtItem | undefined>;
   index: Ref<MDtItemIndex | undefined>;
-  errors: Record<string | number | symbol, string[]>;
+  errors: Record<string | number | symbol, string[]> | any;
 }
 
 export interface MDtBtnProps extends MBtnProps {

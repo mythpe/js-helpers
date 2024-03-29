@@ -867,7 +867,7 @@ const contextmenuItems = computed<any>(() => ([
   },
   ...(contextmenuItemsProp.value || [])
 ].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))))
-const endReach = computed<boolean>(() => props.endReach)
+const endReach = computed<boolean>(() => Boolean(props.endReach))
 const rowsPerPageOptions = computed(() => props.rowsPerPageOptions)
 const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))
 

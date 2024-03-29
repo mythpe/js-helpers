@@ -90,7 +90,7 @@ const blobValue = computed<File | null | undefined>({
 })
 
 const veeFieldRemovedValue = ref<InstanceType<typeof VeeField>>()
-const removedValue = computed<boolean>({
+const removedValue = computed<any>({
   get: () => props.removed,
   set: v => emit('update:removed', v)
 })

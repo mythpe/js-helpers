@@ -63,7 +63,7 @@ export type VeeFieldFormScope = {
   errors: Record<string, string>;
   isSubmitting: Ref<boolean>;
   meta: VeeFormFormMeta;
-  values: GenericFormValues
+  values: GenericFormValues | any;
   setFieldError: (field: string, message: string) => void
   setErrors: (fields: Record<string, string>) => void
   setFieldValue: (field: string, value: any) => void
@@ -76,7 +76,7 @@ export type VeeFieldFormScope = {
   submitForm: (evt: Event) => void
   submitCount: number
   handleReset: () => void
-  resetForm: (state?: Partial<VeeFormState>) => void
+  resetForm: (state?: Partial<VeeFormState>) => void;
 }
 
 export interface MBtnProps extends QBtnProps {

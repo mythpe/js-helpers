@@ -5,9 +5,6 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "composite": false,
-    "typeRoots": ["./node_modules/@types", "./src/types"]
+    "types": ["vite/client"]
   },
-  "exclude": [
-    "node_modules"
-  ]
 }
