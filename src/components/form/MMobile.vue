@@ -6,12 +6,22 @@
   - Github: https://github.com/mythpe
   -->
 
+<script lang="ts" setup>
+import { MInputSlots } from './models'
+</script>
+
 <template>
   <MInput
-    v-bind="$attrs"
     mobile
+    v-bind="$attrs"
   >
-    <slot />
+    <template
+      v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
+      :key="slot"
+      #[slot]
+    >
+      <slot :name="slot" />
+    </template>
   </MInput>
 </template>
 

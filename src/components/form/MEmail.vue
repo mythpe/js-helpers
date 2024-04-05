@@ -7,20 +7,26 @@
   -->
 
 <script lang="ts" setup>
-//
+import { MInputSlots } from './models'
 </script>
+
 <template>
   <MInput
     email
     type="email"
     v-bind="$attrs"
   >
-    <slot />
+    <template
+      v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
+      :key="slot"
+      #[slot]
+    >
+      <slot :name="slot" />
+    </template>
   </MInput>
 </template>
 
 <script lang="ts">
-
 export default {
   name: 'MEmail',
   inheritAttrs: !1
