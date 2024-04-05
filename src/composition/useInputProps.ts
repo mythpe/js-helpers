@@ -45,25 +45,22 @@ export default function useInputProps (Props: Args) {
       if (label && hasRequired.value && !props.value.hideRequired) {
         label = `${label} *`
       }
-      return label
+      return props.value.label
     }
-    return undefined
+    return props.value.label
   })
   const getPlaceholder = computed<string | undefined>(() => {
     if (props.value.hidePlaceholder) {
       return props.value.placeholder !== undefined ? (__(props.value.placeholder) || undefined) : undefined
     }
-    // if (props.value.placeholder === undefined && props.value.stackLabel) {
-    //   return undefined
-    // }
     const k = props.value.placeholder === undefined ? props.value.name : props.value.placeholder
     if (k && props.value.placeholder === undefined) {
       return __('replace.enter', { name: __(k) }) || undefined
     }
     if (k) {
-      return __(k) || undefined
+      return __(k) || props.value.placeholder
     }
-    return undefined
+    return props.value.placeholder
   })
   const inputErrors = computed<string[]>(() => {
     if (!props.value.errors || !props.value.name) return []
