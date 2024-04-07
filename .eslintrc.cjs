@@ -1,10 +1,3 @@
-/*
- * Ahmed Faiz Copyright © 2016-2023 All rights reserved.
- * Email: mythpe@gmail.com
- * Mobile: +966590470092
- * Website: https://www.4myth.com
- * Github: https://github.com/mythpe
- */
 
 module.exports = {
   // https://eslint.org/docs/user-guide/configuring#configuration-cascading-and-hierarchy

@@ -104,7 +104,7 @@ export interface MInputProps extends Omit<QInputProps, 'rules' | 'modelValue' | 
   mobile?: boolean | string | undefined;
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
-  modelValue?: string | number | null | undefined;
+  modelValue?: string | number | null | undefined | any;
   /**
    * Set input to vie mode use q-field
    */
