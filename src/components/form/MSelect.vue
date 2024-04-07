@@ -56,6 +56,7 @@
       <q-select
         ref="selectRef"
         :behavior="$q.platform.is.ios === !0 ? 'dialog' : behavior"
+        :clearable="clearable === undefined ? ( useInput ? !!modelValue : clearable ) : clearable"
         :emit-value="emitValue"
         :error="(fieldProps||{errors:[]}).errors.length > 0 || Boolean(errorMessageField)"
         :error-message="(fieldProps||{errorMessage:undefined}).errorMessage || errorMessageField"
@@ -69,7 +70,7 @@
         :options="getOptions"
         :placeholder="useInput && !modelValue ? getPlaceholder : placeholder"
         :stack-label="stackLabel"
-        :use-input="useInput"
+        :use-input="useInput ? !modelValue : useInput"
         v-bind="{...($myth.options.select||{}),...($attrs || {}),...(fieldProps||{field:{}}).field}"
         @filter="filterFn"
         @update:model-value="updateModelValue"
@@ -184,6 +185,7 @@ interface Props {
   rules?: MSelectProps['rules'];
   errors?: MSelectProps['errors'];
   modelValue: MSelectProps['modelValue'];
+  clearable: MSelectProps['clearable'];
   options: MSelectProps['options'];
   optionLabel?: MSelectProps['optionLabel'];
   optionValue?: MSelectProps['optionValue'];
@@ -218,6 +220,7 @@ const props = withDefaults(defineProps<Props>(), {
   rules: undefined,
   errors: undefined,
   modelValue: undefined,
+  clearable: undefined,
   options: () => ([]),
   optionLabel: () => 'label',
   optionValue: () => 'value',
