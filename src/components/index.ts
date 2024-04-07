@@ -36,6 +36,7 @@ import MContainer from './grid/MContainer.vue'
 import MList from './grid/MList.vue'
 import MNoResultImg from './grid/MNoResultImg.vue'
 import MRow from './grid/MRow.vue'
+import MTransition from './transition/MTransition.vue'
 import MFadeTransition from './transition/MFadeTransition.vue'
 import MFadeXTransition from './transition/MFadeXTransition.vue'
 import MModalMenu from './modal/MModalMenu.vue'
@@ -71,6 +72,7 @@ export {
   MList,
   MNoResultImg,
   MRow,
+  MTransition,
   MFadeTransition,
   MFadeXTransition,
   MModalMenu,

@@ -106,6 +106,7 @@ import { MythApiServicesSchema, ParseHeaderOptions, ParseHeadersHeaderAgr, Parse
 import { Dates, Helpers, Str } from '../utils'
 import MDtContextmenuItems from 'components/datatable/MDtContextmenuItems.vue'
 import { MTypingStringProps, MTypingStringSlots } from 'app/src'
+import { MTransitionProps } from 'components/transition/models'
 
 export interface MythOptionsConfig extends Record<string | number | symbol, any> {
   google?: {
@@ -308,6 +309,7 @@ declare module '@vue/runtime-core' {
     MList: GlobalComponentConstructor<MListProps, MListSlots>;
     MNoResultImg: GlobalComponentConstructor<QImgProps, QImgSlots>;
     MRow: GlobalComponentConstructor<MRowProps, MRowSlots>;
+    MTransition: GlobalComponentConstructor<MTransitionProps, MTransitionsSlots>;
     MFadeTransition: GlobalComponentConstructor<TransitionProps, MTransitionsSlots>;
     MFadeXTransition: GlobalComponentConstructor<TransitionProps, MTransitionsSlots>;
     MModalMenu: GlobalComponentConstructor<MModalMenuProps, MModalMenuSlots>;

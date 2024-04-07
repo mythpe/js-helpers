@@ -6,7 +6,13 @@
  * Github: https://github.com/mythpe
  */
 
-import { VNode } from 'vue'
+import { TransitionGroupProps, VNode } from 'vue'
+
+export type MTransitionProps = TransitionGroupProps & {
+  enterIn?: string;
+  enterOut?: string;
+  slow?: boolean;
+}
 
 export type MTransitionsSlots = {
   default: () => VNode[];

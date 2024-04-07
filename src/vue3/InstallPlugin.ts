@@ -446,6 +446,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.component('MTooltip', defineAsyncComponent(() => import('../components/modal/MTooltip.vue')))
 
   // Transition
+  app.component('MTransition', defineAsyncComponent(() => import('../components/transition/MTransition.vue')))
   app.component('MFadeTransition', defineAsyncComponent(() => import('../components/transition/MFadeTransition.vue')))
   app.component('MFadeXTransition', defineAsyncComponent(() => import('../components/transition/MFadeXTransition.vue')))
 
