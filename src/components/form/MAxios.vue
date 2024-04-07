@@ -11,12 +11,14 @@
     ref="mSelectRef"
     v-model="model"
     :auto-search="autoSearch"
+    :label="label"
     :loading="loading"
     :multiple="multiple"
     :name="name"
     :no-filter="autoSearch"
     :option-label="getOptionLabel"
     :options="items"
+    :placeholder="placeholder"
     :readonly="loading"
     :stack-label="stackLabel"
     :view-mode="viewMode"
@@ -61,6 +63,8 @@ import { useQuasar } from 'quasar'
 
 interface Props {
   stackLabel?: MAxiosProps['stackLabel'];
+  label?: MAxiosProps['label'];
+  placeholder?: MAxiosProps['placeholder'];
   multiple?: MAxiosProps['multiple'];
   name: MAxiosProps['name'];
   modelValue?: MAxiosProps['modelValue'];
@@ -79,6 +83,8 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   stackLabel: undefined,
+  label: undefined,
+  placeholder: undefined,
   multiple: () => !1,
   name: () => '',
   modelValue: undefined,
@@ -189,6 +195,7 @@ onMounted(() => {
   (props.iniData || !props.autoSearch) && prepare()
 })
 </script>
+
 <script lang="ts">
 export default {
   name: 'MAxios',

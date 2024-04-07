@@ -203,6 +203,7 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
   useInput?: boolean | undefined;
   name: string;
   label?: string | undefined;
+  placeholder?: any;
   required?: boolean | undefined;
   hideRequired?: boolean | undefined;
   rules?: string | string[] | undefined;

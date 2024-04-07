@@ -67,6 +67,7 @@
         :option-label="optionLabel"
         :option-value="optionValue"
         :options="getOptions"
+        :placeholder="useInput && !modelValue ? getPlaceholder : placeholder"
         :stack-label="stackLabel"
         :use-input="useInput"
         v-bind="{...($myth.options.select||{}),...($attrs || {}),...(fieldProps||{field:{}}).field}"
@@ -176,6 +177,7 @@ interface Props {
   behavior?: MSelectProps['behavior'];
   name: MSelectProps['name'];
   label?: MSelectProps['label'];
+  placeholder?: MSelectProps['placeholder'];
   stackLabel?: MSelectProps['stackLabel'];
   required?: MSelectProps['required'];
   hideRequired?: MSelectProps['hideRequired'];
@@ -209,6 +211,7 @@ const props = withDefaults(defineProps<Props>(), {
   behavior: undefined,
   name: () => '',
   label: undefined,
+  placeholder: undefined,
   stackLabel: undefined,
   required: undefined,
   hideRequired: undefined,
@@ -242,7 +245,7 @@ const inputValue = computed({
   set: v => emit('update:modelValue', v)
 })
 const errorMessageField = ref<string | undefined>(undefined)
-const { getRules, getLabel, getPlaceholder } = useInputProps(props)
+const { getRules, getLabel, getPlaceholder } = useInputProps(props, { choose: !0 })
 const originalOptions = computed<any>(() => props.options)
 const noFilterProp = computed<any>(() => props.noFilter !== !1)
 const searchInput = ref('')

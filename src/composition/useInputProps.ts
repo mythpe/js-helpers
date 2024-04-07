@@ -11,7 +11,7 @@ import { useMyth } from '../vue3'
 
 type Generic = Record<string, any>
 type Args = Ref<Generic> | ComputedRef<Generic> | any
-export default function useInputProps (Props: Args) {
+export default function useInputProps (Props: Args, opts?: { choose?: boolean }) {
   const props = computed<Generic>(() => Props)
   const { __ } = useMyth()
 
@@ -45,7 +45,7 @@ export default function useInputProps (Props: Args) {
       if (label && hasRequired.value && !props.value.hideRequired) {
         label = `${label} *`
       }
-      return props.value.label
+      return label
     }
     return props.value.label
   })
@@ -55,7 +55,7 @@ export default function useInputProps (Props: Args) {
     }
     const k = props.value.placeholder === undefined ? props.value.name : props.value.placeholder
     if (k && props.value.placeholder === undefined) {
-      return __('replace.enter', { name: __(k) }) || undefined
+      return __(`replace.${opts?.choose ? 'choose' : 'enter'}`, { name: __(k) }) || props.value.placeholder
     }
     if (k) {
       return __(k) || props.value.placeholder
