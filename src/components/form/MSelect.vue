@@ -185,7 +185,7 @@ interface Props {
   rules?: MSelectProps['rules'];
   errors?: MSelectProps['errors'];
   modelValue: MSelectProps['modelValue'];
-  clearable: MSelectProps['clearable'];
+  clearable?: MSelectProps['clearable'];
   options: MSelectProps['options'];
   optionLabel?: MSelectProps['optionLabel'];
   optionValue?: MSelectProps['optionValue'];
