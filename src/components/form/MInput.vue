@@ -85,7 +85,7 @@ const { getRules, getLabel, getPlaceholder } = useInputProps(props)
         :label="getLabel"
         :placeholder="getPlaceholder"
         stack-label
-        v-bind="{...($myth.options.field||{}),...($attrs || {})}"
+        v-bind="{...$myth.options.input,...$myth.options.field,...$attrs}"
       >
         <template #control>
           <div
