@@ -13,19 +13,13 @@ import { QCardProps } from 'quasar'
 
 export type ColStyleType = 'auto' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | undefined
 
-export type MContainerProps = {
-//
-}
+export type MContainerProps = Record<string, unknown>;
 
 export type MContainerSlots = {
-  default: () => VNode[];
+  default?: () => VNode[];
 }
 
 export interface MCardProps extends QCardProps {
-  // titleFromRoute?: boolean | undefined;
-  // title?: string | (() => string) | undefined;
-  // subtitle?: string | (() => string) | undefined;
-  // backRoute?: boolean | undefined;
   readonly loading?: boolean | undefined;
   readonly title?: string | null | undefined;
   readonly center?: boolean | undefined;
