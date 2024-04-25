@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { computed, defineEmits, nextTick, onMounted, reactive, ref, toRef, useSlots, watch } from 'vue'
-import { QTableSlots, useQuasar, is as quasarHelpers } from 'quasar'
+import { is as quasarHelpers, QTableSlots, useQuasar } from 'quasar'
 import lodash from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
 import {
@@ -75,6 +75,7 @@ interface Props {
   showSelection?: MDatatableProps['showSelection'];
   hideSelection?: MDatatableProps['hideSelection'];
   multiSelection?: MDatatableProps['multiSelection'];
+  multiDestroy?: MDatatableProps['multiDestroy'];
   rowsPerPageOptions?: MDatatableProps['rowsPerPageOptions'];
   ignoreKeys?: MDatatableProps['ignoreKeys'];
   grid?: MDatatableProps['grid'];
@@ -124,6 +125,7 @@ const props = withDefaults(defineProps<Props>(), {
   showSelection: undefined,
   hideSelection: undefined,
   multiSelection: undefined,
+  multiDestroy: undefined,
   rowsPerPageOptions: () => [50, 250, 500, 0],
   ignoreKeys: undefined,
   grid: undefined,
@@ -783,15 +785,17 @@ const onDeleteItem = (i: MDtItem, index: number) => {
 }
 const deleteSelectionItem = () => {
   if (!tableOptions.selected.length) return
+  if (loading.value || !tableOptions.selected.length) {
+    return
+  }
   if (tableOptions.selected.length === 1) {
     const dtItem: MDtItem = tableOptions.selected[0]
     const index = getRows.value.findIndex((e: any) => parseInt(e.id) === parseInt(dtItem.id.toString()))
     return onDeleteItem(dtItem, index)
   }
-  if (loading.value || !tableOptions.selected.length) {
+  if (!props.multiDestroy) {
     return
   }
-
   tableOptions.hasAction = !0
   myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
     loading.value = !0
@@ -1247,9 +1251,7 @@ defineExpose({
 
               <!--Buttons-->
               <MRow class="row q-gutter-x-sm q-gutter-xs-y-sm items-center justify-between">
-                <TransitionGroup
-                  name="m__transition__fade"
-                >
+                <MTransition>
                   <!--More Menu-->
                   <MDtBtn
                     v-if="hasMenu"
@@ -1465,7 +1467,7 @@ defineExpose({
                       @click="openShowDialogNoIndex(tableOptions.selected[0])"
                     />
                     <MDtBtn
-                      v-if="hasDestroyBtn"
+                      v-if="tableOptions.selected.length > 1 ? (hasDestroyBtn && multiDestroy) : hasDestroyBtn"
                       key="destroy-dt-selection-btn"
                       :disable="!hasSelectedItem || tableOptions.loading"
                       destroy
@@ -1485,7 +1487,7 @@ defineExpose({
                       />
                     </template>
                   </template>
-                </TransitionGroup>
+                </MTransition>
 
                 <q-space />
                 <!-- Add Btn -->
@@ -1662,8 +1664,8 @@ defineExpose({
         </template>
       </q-table>
       <slot
-        name="default"
         :dt="datatableItemsScope"
+        name="default"
       />
     </q-pull-to-refresh>
 

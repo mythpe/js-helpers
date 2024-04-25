@@ -222,6 +222,7 @@ export interface MDatatableProps extends Omit<QTableProps, 'rowsPerPageOptions' 
   showSelection?: boolean;
   hideSelection?: boolean;
   multiSelection?: boolean;
+  multiDestroy?: boolean;
   rowsPerPageOptions?: (string | number)[];
   ignoreKeys?: string[] | ((from: any) => any);
   grid?: boolean;

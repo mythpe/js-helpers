@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, useSlots } from 'vue'
+import { computed, defineEmits } from 'vue'
 import { MTimeProps } from './models'
 
 interface Props {
@@ -37,8 +37,6 @@ const inputValue = computed({
   get: () => props.modelValue,
   set: v => emit('update:modelValue', v)
 })
-
-const _slots = useSlots()
 
 </script>
 

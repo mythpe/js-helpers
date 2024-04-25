@@ -9,5 +9,6 @@
 export * from './src'
 
 import { installPlugin, useMyth } from './src'
+
 export { installPlugin, useMyth }
 export default {}

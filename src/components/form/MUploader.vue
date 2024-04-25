@@ -447,7 +447,7 @@ const iconsSizeProp = computed(() => $myth.options.uploader?.iconsSize || props.
 const fieldNameProp = computed(() => props.fieldName)
 const errors = ref<any>([])
 /* Events Callback */
-const startUpload = async (files: readonly File[]) : Promise<QUploaderFactoryObject> => {
+const startUpload = async (files: readonly File[]): Promise<QUploaderFactoryObject> => {
   return new Promise((resolve, reject) => {
     try {
       const common = $myth.axios?.defaults?.headers.common || {}

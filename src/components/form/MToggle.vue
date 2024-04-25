@@ -76,7 +76,6 @@ import { computed } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 
 import { MToggleProps } from './models'
-import { QToolbarSlots } from 'quasar'
 
 interface Props {
   auto?: MToggleProps['auto'];

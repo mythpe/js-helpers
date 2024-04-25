@@ -5,6 +5,8 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "composite": false,
-    "types": ["vite/client"]
-  },
+    "types": [
+      "vite/client"
+    ]
+  }
 }
