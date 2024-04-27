@@ -431,6 +431,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.component('MGoogleMaps', defineAsyncComponent(() => import('../components/google/MGoogleMaps.vue')))
 
   // Grid
+  app.component('MBlock', defineAsyncComponent(() => import('../components/grid/MBlock.vue')))
   app.component('MCard', defineAsyncComponent(() => import('../components/grid/MCard.vue')))
   app.component('MCol', defineAsyncComponent(() => import('../components/grid/MCol.vue')))
   app.component('MColumn', defineAsyncComponent(() => import('../components/grid/MColumn.vue')))

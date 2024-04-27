@@ -9,13 +9,24 @@
 import { VNode } from 'vue'
 import { AxiosDataRow } from '../../types'
 import { AxiosRequestConfig } from 'axios'
-import { QCardProps } from 'quasar'
+import { QCardProps, QImgProps, QImgSlots } from 'quasar'
 
-export type ColStyleType = 'auto' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | undefined
+export type ColStyleType = | 'auto' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | undefined
 
-export type MContainerProps = Record<string, unknown>;
+export type MContainerProps = {
+  readonly dense?: boolean | undefined;
+} & Record<string, unknown>;
 
 export type MContainerSlots = {
+  default?: () => VNode[];
+}
+
+export type MBlockProps = {
+  readonly dense?: boolean | undefined;
+  readonly shadow?: string | number | boolean | undefined;
+} & Record<string, unknown>;
+
+export type MBlockSlots = {
   default?: () => VNode[];
 }
 
@@ -43,9 +54,9 @@ export type MColumnSlots = {
 }
 
 export type MRowProps = {
-  defaultGutters?: string | undefined;
-  gutters?: boolean | string | undefined;
-  col?: boolean | string | undefined;
+  space?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined;
+  gutter?: boolean | undefined;
+  col?: boolean | undefined;
 }
 export type MRowSlots = {
   default: () => VNode[];
@@ -93,3 +104,6 @@ export type MDraggableProps = {
 export type MDraggableSlots = {
   default: () => VNode[];
 }
+
+export type MNoResultImgProps = QImgProps;
+export type MNoResultImgSlots = QImgSlots;

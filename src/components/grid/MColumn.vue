@@ -9,7 +9,7 @@
 <template>
   <div
     class="m--column column"
-    v-bind="$attrs"
+    v-bind="{...$myth.options.column,...$attrs}"
   >
     <slot />
   </div>
@@ -21,9 +21,3 @@ export default {
   inheritAttrs: !1
 }
 </script>
-
-<style>
-.m--column {
-
-}
-</style>

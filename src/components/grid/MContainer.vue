@@ -6,9 +6,26 @@
   - Github: https://github.com/mythpe
   -->
 
+<script lang="ts" setup>
+import { MContainerProps } from './models.d'
+import { computed } from 'vue'
+
+interface Props {
+  dense?: MContainerProps['dense']
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  dense: undefined
+})
+const getDense = computed<>(() => (opts?: MContainerProps) => props.dense !== undefined ? props.dense : (opts?.dense !== undefined ? opts.dense : undefined))
+</script>
+
 <template>
   <div
-    class="m--container"
+    :class="{
+      'm--container' : !0,
+      'm--container--dense' : getDense($myth.options.container) !== undefined
+    }"
     v-bind="$attrs"
   >
     <slot />
@@ -21,9 +38,3 @@ export default {
   inheritAttrs: !1
 }
 </script>
-
-<style>
-.m--container {
-
-}
-</style>

@@ -19,8 +19,6 @@ import {
   QFieldProps,
   QFileProps,
   QIconProps,
-  QImgProps,
-  QImgSlots,
   QInputProps,
   QItemLabelProps,
   QItemProps,
@@ -42,6 +40,8 @@ import {
   MAvatarViewerSlots,
   MAxiosProps,
   MAxiosSlots,
+  MBlockProps,
+  MBlockSlots,
   MBtnProps,
   MBtnSlots,
   MCardProps,
@@ -80,6 +80,8 @@ import {
   MListSlots,
   MModalMenuProps,
   MModalMenuSlots,
+  MNoResultImgProps,
+  MNoResultImgSlots,
   MOtpProps,
   MOtpSlots,
   MPickerProps,
@@ -207,6 +209,9 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
   container?: Partial<MContainerProps>;
   row?: Partial<MRowProps>;
   col?: Partial<MColProps>;
+  column?: Partial<MColumnProps>;
+  draggable?: Partial<MDraggableProps>;
+  noResultImg?: Partial<MNoResultImgProps>;
   modalMenu?: {
     props?: Partial<MModalMenuProps>;
     card?: Partial<QCardProps>;
@@ -302,13 +307,14 @@ declare module '@vue/runtime-core' {
     MTime: GlobalComponentConstructor<MTimeProps, MTimeSlots>;
     MToggle: GlobalComponentConstructor<MToggleProps, MToggleSlots>;
     MGoogleMaps: GlobalComponentConstructor<MGoogleMapsProps, MGoogleMapsSlots>;
+    MBlock: GlobalComponentConstructor<MBlockProps, MBlockSlots>;
     MCard: GlobalComponentConstructor<MCardProps, MCardSlots>;
     MCol: GlobalComponentConstructor<MColProps, MColSlots>;
     MColumn: GlobalComponentConstructor<MColumnProps, MColumnSlots>;
     MContainer: GlobalComponentConstructor<MContainerProps, MContainerSlots>;
     MDraggable: GlobalComponentConstructor<MDraggableProps, MDraggableSlots>;
     MList: GlobalComponentConstructor<MListProps, MListSlots>;
-    MNoResultImg: GlobalComponentConstructor<QImgProps, QImgSlots>;
+    MNoResultImg: GlobalComponentConstructor<MNoResultImgProps, MNoResultImgSlots>;
     MRow: GlobalComponentConstructor<MRowProps, MRowSlots>;
     MTransition: GlobalComponentConstructor<MTransitionProps, MTransitionsSlots>;
     MFadeTransition: GlobalComponentConstructor<TransitionProps, MTransitionsSlots>;

@@ -19,47 +19,80 @@
   }
 }
 
+$m-space-base: $space-base !default;
+$container-max-width: 1024px !default;
+.container-max-width {
+  max-width: $container-max-width !important;
+  margin: auto !important;
+}
+
+.m--row, .m--column, .m--flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .m--container {
-  padding: 8px;
+  &:not(.m--container--dense) {
+    padding: ($m-space-base * .25);
+  }
+
+  .m--row + .m--row,
+  .column + .column {
+    margin-top: ($m-space-base * .5);
+  }
 }
 
 .flex-break {
   flex: 1 0 100% !important
 }
 
-.row .flex-break {
-  height: 0 !important
+.row {
+  .flex-break {
+    height: 0 !important
+  }
 }
 
-.column .flex-break {
-  width: 0 !important
+.column {
+  .flex-break {
+    width: 0 !important
+  }
 }
 
-.m--row + .m--row,
-.m--form + .m--row,
-.m--row + .m--form {
-  margin-top: 1rem;
+$directions: ('rtl', 'ltr') !default;
+@each $direction in $directions {
+  .#{$direction} {
+    direction: $direction !important
+  }
 }
 
-.rtl {
-  direction: ltr !important
+$text-decorations: ('none', 'overline', 'underline', 'line-through') !default;
+@each $decoration in $text-decorations {
+  .text-decoration-#{$decoration} {
+    text-decoration: $decoration;
+  }
 }
 
-.ltr {
-  direction: rtl !important
+$text-wraps: ('wrap', 'nowrap', 'balance', 'pretty', 'stable') !default;
+@each $text-wrap in $text-wraps {
+  .text-wrap-#{$text-wrap} {
+    text-wrap: $text-wrap;
+  }
 }
 
-.text-decoration-none {
-  text-decoration: none;
+$break-avoids: ('inside', 'after', 'before') !default;
+@each $break-avoid in $break-avoids {
+  .break-#{$break-avoid}-avoid {
+    page-break-#{$break-avoid}: avoid !important;
+  }
 }
 
-.text-decoration-underline {
-  text-decoration: underline;
+$maxes: ('width', 'height') !default;
+@each $max in $maxes {
+  .max-#{$max} {
+    max-#{$max}: 100% !important;
+  }
 }
 
-.text-decoration-line-through {
-  text-decoration: line-through;
-}
 
 .m--confirm.actions-between {
   .q-card__actions {
@@ -71,27 +104,6 @@
   max-width: 100%;
   white-space-collapse: preserve-breaks;
   white-space: pre-line;
-}
-
-.text-wrap {
-  text-wrap: wrap;
-}
-
-.break-inside-avoid {
-  page-break-inside: avoid;
-}
-
-.break-after-avoid {
-  page-break-after: avoid;
-}
-
-.break-before-avoid {
-  page-break-before: avoid;
-}
-
-
-.max-width {
-  max-width: 100% !important;
 }
 
 $alignsX: ('top', 'bottom') !default;

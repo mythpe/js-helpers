@@ -11,11 +11,11 @@
     :ratio="1"
     fit="contain"
     src="../../assets/icons/no-result.png"
-    v-bind="$attrs"
+    v-bind="{...$myth.options.noResultImg,...$attrs}"
     width="50px"
   >
     <template
-      v-for="(k,v) in ($slots as Readonly<QImgSlots>)"
+      v-for="(k,v) in ($slots as Readonly<MNoResultImgSlots>)"
       #[v]
     >
       <slot :name="v" />
@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-import { QImgSlots } from 'quasar'
+import { MNoResultImgSlots } from './models.d'
 </script>
 
 <script lang="ts">

@@ -9,7 +9,7 @@
 <template>
   <div
     :class="classes"
-    v-bind="$attrs"
+    v-bind="{...$myth.options.col,...$attrs}"
   >
     <slot />
   </div>
@@ -48,35 +48,37 @@ const classes = computed(() => {
   }
 
   if (props.col) {
-    if (props.col?.toString()?.length > 0) {
-      list.push(`col-${props.col}`)
-    } else {
-      list.push('col')
+    if (props.col?.toString()?.trim()?.length > 0) {
+      if (list.indexOf(`col-${props.col}`) === -1) {
+        list.push(`col-${props.col}`)
+      }
     }
   }
 
   let k: keyof Props
   for (k in props) {
     if (k) {
-      if (k === 'col') {
+      if (['col', 'auto'].indexOf(k) > -1) {
         continue
       }
       if (props[k] && typeof props[k] !== 'boolean') {
-        list.push(`col-${k}-${props[k]}`)
+        if (list.indexOf(`col-${k}-${props[k]}`) === -1) {
+          list.push(`col-${k}-${props[k]}`)
+        }
       }
     }
+  }
+
+  if (list.indexOf('col') === -1 || list.length === 1) {
+    list.push('col')
   }
   return list
 })
 </script>
+
 <script lang="ts">
 export default {
   name: 'MCol',
   inheritAttrs: !1
 }
 </script>
-<style>
-.m--col {
-
-}
-</style>

@@ -12,7 +12,7 @@
     v-model="model"
     :item-key="itemKey"
     class="draggable-group"
-    v-bind="{...dragOptions,...$attrs}"
+    v-bind="{...$myth.options.draggable,...dragOptions,...$attrs}"
     @end="onEnd"
     @start="onStart"
   >

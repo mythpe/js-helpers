@@ -6,13 +6,45 @@
   - Github: https://github.com/mythpe
   -->
 
+<script
+  lang="ts"
+  setup
+>
+import { computed } from 'vue'
+import { MRowProps } from './models.d'
+
+interface Props {
+  space?: MRowProps['space'];
+  gutter?: MRowProps['gutter'];
+  col?: MRowProps['col'];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  space: undefined,
+  gutter: undefined,
+  col: undefined
+})
+const defaultSpace: Props['space'] = 'sm'
+const classes = computed(() => (opts?: MRowProps) => {
+  const space = props.space === undefined ? (opts?.space === undefined ? defaultSpace : opts.space) : props.space
+  const gutter = Boolean(props.gutter === undefined ? (opts?.gutter === undefined ? undefined : opts.gutter) : props.gutter)
+  const col = Boolean(props.col === undefined ? (opts?.col === undefined ? undefined : opts.col) : props.col)
+
+  const l = ['m--row', 'row']
+  if (gutter) {
+    l.push(`q-gutter-${space}`)
+  }
+  if (col) {
+    l.push(`q-col-gutter-${space}`)
+  }
+  return l
+})
+</script>
+
 <template>
   <div
-    :class="classes"
-    :col="undefined"
-    :default-gutters="undefined"
-    :gutters="undefined"
-    v-bind="{...($myth.options.row),...($attrs || {})}"
+    :class="classes($myth.options.row)"
+    v-bind="$attrs"
   >
     <slot />
   </div>
@@ -20,54 +52,8 @@
 
 <script lang="ts">
 
-import { defineComponent } from 'vue'
-
-export default defineComponent({
+export default {
   name: 'MRow',
-  inheritAttrs: !1,
-  props: {
-    defaultGutters: {
-      type: String,
-      default: () => undefined
-    },
-    gutters: {
-      type: [String, Boolean],
-      default: () => undefined
-    },
-    col: {
-      type: [String, Boolean],
-      default: () => undefined
-    }
-  },
-  computed: {
-    classes () {
-      const l = ['m--row', 'row']
-      const gutters = this.gutters
-      const col = this.col
-
-      if (typeof gutters === 'string') {
-        if (gutters.length >= 1) {
-          l.push(`q-gutter-${gutters}`)
-        } else {
-          l.push(`q-gutter-${this.$myth.options.row?.defaultGutters || 'sm'}`)
-        }
-      }
-      if (typeof col === 'string') {
-        if (col.length >= 1) {
-          l.push(`q-col-gutter-${col}`)
-        } else {
-          l.push(`q-col-gutter-${this.$myth.options.row?.defaultGutters || 'sm'}`)
-        }
-      }
-
-      return l
-    }
-  }
-})
-</script>
-
-<style>
-.m--row {
-
+  inheritAttrs: !1
 }
-</style>
+</script>
