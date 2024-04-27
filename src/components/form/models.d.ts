@@ -32,8 +32,8 @@ import {
   QUploaderProps,
   QUploaderSlots
 } from 'quasar'
-import { FormActions } from 'vee-validate'
-import { Ref, VNode } from 'vue'
+import type { FormActions, FormContext, FormMeta, Path, SubmissionHandler } from 'vee-validate'
+import { Ref, UnwrapRef, VNode } from 'vue'
 import { ColStyleType, MColProps } from '../grid/models'
 
 export declare type GenericFormValues = Record<any, unknown>;
@@ -320,8 +320,20 @@ export interface MToggleSlots extends QToggleSlots {
   bottom: (scope: VeeFieldFormScope) => VNode[];
 }
 
+type GenericObject = Record<string, any>;
+type FormErrors<TValues extends GenericObject> = Partial<Record<Path<TValues>, string | undefined>>;
+type FormSlotProps =
+  UnwrapRef<Pick<FormContext, 'meta' | 'errors' | 'errorBag' | 'values' | 'isSubmitting' | 'isValidating' | 'submitCount' | 'validate' | 'validateField' | 'handleReset' | 'setErrors' | 'setFieldError' | 'setFieldValue' | 'setValues' | 'setFieldTouched' | 'setTouched' | 'resetForm' | 'resetField' | 'controlledValues'>>
+  & {
+  handleSubmit: (evt: Event | SubmissionHandler, onSubmit?: SubmissionHandler) => Promise<unknown>;
+  submitForm (evt?: Event): void;
+  getValues<TValues extends GenericObject = GenericObject> (): TValues;
+  getMeta<TValues extends GenericObject = GenericObject> (): FormMeta<TValues>;
+  getErrors<TValues extends GenericObject = GenericObject> (): FormErrors<TValues>;
+};
+
 export interface MFormSlots {
-  default: (scope: { form: VeeFieldFormScope }) => VNode[];
+  default: (scope: FormSlotProps) => VNode[];
 }
 
 export interface MFormProps {
