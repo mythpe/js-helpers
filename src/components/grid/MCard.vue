@@ -9,7 +9,6 @@
 <script lang="ts" setup>
 
 import { MCardProps } from './models'
-import { QBtnProps } from 'quasar'
 
 interface Props {
   readonly loading?: MCardProps['loading'];
@@ -17,9 +16,9 @@ interface Props {
   readonly center?: MCardProps['center'];
   readonly color?: MCardProps['color'];
   readonly padding?: MCardProps['padding'];
-  readonly backBtn?: boolean;
-  readonly noBack?: boolean;
-  readonly backBtnProps?: QBtnProps;
+  readonly backBtn?: MCardProps['backBtn'];
+  readonly noBack?: MCardProps['noBack'];
+  readonly backBtnProps?: MCardProps['backBtnProps'];
 }
 
 withDefaults(defineProps<Props>(), {

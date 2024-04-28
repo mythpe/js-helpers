@@ -9,7 +9,7 @@
 import { VNode } from 'vue'
 import { AxiosDataRow } from '../../types'
 import { AxiosRequestConfig } from 'axios'
-import { QCardProps, QImgProps, QImgSlots } from 'quasar'
+import { QBtnProps, QCardProps, QImgProps, QImgSlots } from 'quasar'
 
 export type ColStyleType =
   | 'auto'
@@ -76,6 +76,9 @@ export interface MCardProps extends QCardProps {
   readonly center?: boolean | undefined;
   readonly color?: string | undefined;
   readonly padding?: string | boolean;
+  readonly backBtn?: boolean;
+  readonly noBack?: boolean;
+  readonly backBtnProps?: QBtnProps;
 }
 
 export interface MCardSlots {
