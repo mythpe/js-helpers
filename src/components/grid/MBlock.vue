@@ -11,25 +11,28 @@ import { MBlockProps } from './models.d'
 
 interface Props {
   dense?: MBlockProps['dense'];
+  size?: MBlockProps['size'];
   rounded?: MBlockProps['rounded'];
   shadow?: MBlockProps['shadow'];
 }
 
 withDefaults(defineProps<Props>(), {
   dense: undefined,
+  size: () => 'md',
   rounded: undefined,
   shadow: () => 2
 })
-// .rounded-borders
+
 </script>
 
 <template>
   <div
     :class="{
-      'm--block' : !0,
-      'rounded-borders' : !0,
+      'rounded-borders' : rounded !== undefined ? Boolean(rounded) : ($myth.options.block?.rounded !== undefined ? $myth.options.block?.rounded : !0),
+      [`q-pa-${$myth.options.block?.size || size}`] : dense !== undefined ? Boolean(dense) : ($myth.options.block?.dense !== undefined ? $myth.options.block?.dense : !0),
+      [`shadow-${$myth.options.block?.shadow || shadow}`] : !0
     }"
-    v-bind="{...$myth.options.card,...$attrs}"
+    v-bind="$attrs"
   >
     <slot />
   </div>

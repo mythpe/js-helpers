@@ -11,7 +11,33 @@ import { AxiosDataRow } from '../../types'
 import { AxiosRequestConfig } from 'axios'
 import { QCardProps, QImgProps, QImgSlots } from 'quasar'
 
-export type ColStyleType = | 'auto' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | undefined
+export type ColStyleType =
+  | 'auto'
+  | '1'
+  | '2'
+  | '3'
+  | '4'
+  | '5'
+  | '6'
+  | '7'
+  | '8'
+  | '9'
+  | '10'
+  | '11'
+  | '12'
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | undefined
 
 export type MContainerProps = {
   readonly dense?: boolean | undefined;
@@ -22,9 +48,23 @@ export type MContainerSlots = {
 }
 
 export type MBlockProps = {
-  readonly dense?: boolean | undefined;
-  readonly shadow?: string | number | boolean | undefined;
-} & Record<string, unknown>;
+  /**
+   * No padding block
+   * */
+  readonly dense?: boolean;
+  /**
+   * Size of the padding block. Default: 'md'
+   * */
+  readonly size?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /**
+   * Rounded block
+   */
+  readonly rounded?: boolean;
+  /**
+   * Shadow level
+   */
+  readonly shadow?: string | number | 'transition';
+};
 
 export type MBlockSlots = {
   default?: () => VNode[];

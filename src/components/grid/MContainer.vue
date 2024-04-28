@@ -17,7 +17,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   dense: undefined
 })
-const getDense = computed<>(() => (opts?: MContainerProps) => props.dense !== undefined ? props.dense : (opts?.dense !== undefined ? opts.dense : undefined))
+const getDense = computed(() => (opts?: MContainerProps) => props.dense !== undefined ? props.dense : (opts?.dense !== undefined ? opts.dense : undefined))
 </script>
 
 <template>
