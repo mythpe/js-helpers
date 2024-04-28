@@ -494,7 +494,7 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
    */
   label?: string;
   /** The Attachments list */
-  modelValue: MUploaderMediaItem[];
+  modelValue: MUploaderMediaItem[] | any[];
   /**
    *  Hide delete media items from uploader, no delete media For API
    */
@@ -540,14 +540,10 @@ export interface MUploaderSlots extends QUploaderSlots {
 
 export type MUploaderXhrInfo = { files: readonly any[]; xhr: any; }
 
-export interface MEditorProps extends QEditorProps, MColProps {
-  modelValue: string;
-  minHeight?: string;
+export interface MEditorProps extends Omit<QEditorProps, 'modelValue'>, MColProps {
+  modelValue: string | any;
   name: string;
   label?: string;
-  dense?: boolean;
-  toolbar?: readonly any[];
-  fonts?: any;
 }
 
 export interface MEditorSlots extends QEditorSlots {

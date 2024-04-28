@@ -226,8 +226,8 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     closeBtn?: Partial<QItemProps>;
   };
   tooltip?: Partial<QTooltipProps>;
-  otp?: Partial<QInputProps>;
-  card?: Partial<QCardProps>;
+  otp?: Partial<MOtpProps>;
+  card?: Partial<MCardProps>;
   block?: Partial<MBlockProps>;
   typingString?: Partial<Omit<MTypingStringProps, 'string'>>;
 }
