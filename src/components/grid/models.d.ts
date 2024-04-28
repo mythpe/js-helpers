@@ -94,7 +94,10 @@ export type MColumnSlots = {
 }
 
 export type MRowProps = {
-  space?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined;
+  /**
+   * Default: 'md'
+   */
+  space?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | string;
   gutter?: boolean | undefined;
   col?: boolean | undefined;
 }

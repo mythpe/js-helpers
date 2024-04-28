@@ -10,7 +10,6 @@
   lang="ts"
   setup
 >
-import { computed } from 'vue'
 import { MRowProps } from './models.d'
 
 interface Props {
@@ -19,31 +18,20 @@ interface Props {
   col?: MRowProps['col'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   space: undefined,
   gutter: undefined,
   col: undefined
-})
-const defaultSpace: Props['space'] = 'sm'
-const classes = computed(() => (opts?: MRowProps) => {
-  const space = props.space === undefined ? (opts?.space === undefined ? defaultSpace : opts.space) : props.space
-  const gutter = Boolean(props.gutter === undefined ? (opts?.gutter === undefined ? undefined : opts.gutter) : props.gutter)
-  const col = Boolean(props.col === undefined ? (opts?.col === undefined ? undefined : opts.col) : props.col)
-
-  const l = ['m--row', 'row']
-  if (gutter) {
-    l.push(`q-gutter-${space}`)
-  }
-  if (col) {
-    l.push(`q-col-gutter-${space}`)
-  }
-  return l
 })
 </script>
 
 <template>
   <div
-    :class="classes($myth.options.row)"
+    :class="{
+      'm--row row': !0,
+      [`q-gutter-${space || $myth.options.row?.space || 'md'}`]: gutter !== undefined ? gutter : ( $myth.options.row?.gutter !== undefined ? $myth.options.row.gutter : !1 ),
+      [`q-col-gutter-${space || $myth.options.row?.space || 'md'}`]: col !== undefined ? col : ( $myth.options.row?.col !== undefined ? $myth.options.row.col : !1 ),
+    }"
     v-bind="$attrs"
   >
     <slot />
