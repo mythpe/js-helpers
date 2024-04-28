@@ -198,7 +198,7 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   contextItems?: GenericMDtBtn[];
   hideAutoMessage?: boolean;
   headers: string[] | Partial<QTableProps['columns']>[] | any[];
-  serviceName: MDtServiceNameStringProp | MDtServiceNameCallbackProp;
+  serviceName?: MDtServiceNameStringProp | MDtServiceNameCallbackProp;
   requestParams?: MDtRequestParamsObjectProp | MDtRequestParamsCallbackProp;
   pdf?: boolean;
   excel?: boolean;
