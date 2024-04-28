@@ -214,7 +214,8 @@ const meta = ref<MDatatableMetaServer>({ ...initMetaServer })
 const pagination = ref<MDatatablePagination>({ ...initPaginationOptions })
 const search = ref<string | null>(null)
 const searchColumnsProp = computed(() => props.searchColumns)
-const searchColumnsRef = ref<string[]>(myth.parseHeaders(searchColumnsProp.value || headersProp.value).filter(e => e?.field !== props.controlKey).map(e => e.name))
+const searchColumnsRef = ref<string[]>(myth.parseHeaders(searchColumnsProp.value || headersProp.value).filter(e => e?.field !== props.controlKey).map(
+  e => e.name))
 const searchPlaceholder = computed<string>(() => {
   if (searchColumnsRef.value.length > 0) {
     return t('myth.datatable.searchInputPlaceholder',
@@ -279,7 +280,8 @@ const getShowTitle = computed(() => {
   return t('show_details')
 })
 const getFormTitle = computed(() => {
-  const name = serviceName.value && typeof serviceName.value !== 'function' ? t(`choice.${myth.str.pascalCase(myth.str.pluralize(serviceName.value.split('/').pop()))}`, 1) : ''
+  const name = serviceName.value && typeof serviceName.value !== 'function' ? t(`choice.${myth.str.pascalCase(myth.str.pluralize(serviceName.value.split(
+    '/').pop()))}`, 1) : ''
   return t(`replace.${formMode.value}`, { name })
 })
 const defaultItem = computed(() => props.defaultItem)
@@ -1026,12 +1028,9 @@ defineExpose({
         v-model:fullscreen="tableOptions.fullscreen"
         v-model:pagination="pagination"
         v-model:selected="selected"
-        :bordered="bordered"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
-        :dense="dense"
         :filter="tableOptions.search"
-        :flat="flat"
         :grid="isGrid"
         :hide-pagination="endReach"
         :loading="tableOptions.loading"
@@ -1042,7 +1041,13 @@ defineExpose({
         :visible-columns="visibleHeaders"
         card-container-class="m--datatable-container"
         table-class="m--datatable-container"
-        v-bind="{...($myth.options.dt?.props||{}),...($attrs||{})}"
+        v-bind="{
+          ...$myth.options.dt?.props,
+          ...$attrs,
+          bordered: bordered === undefined ? $myth.options.dt?.props?.bordered : bordered,
+          dense: dense === undefined ? $myth.options.dt?.props?.dense : dense,
+          flat: flat === undefined ? $myth.options.dt?.props?.flat : flat,
+        }"
         @request="fetchDatatableItems"
         @virtual-scroll="endReach ? onScroll : undefined"
         @row-contextmenu="onRowContextmenu"
@@ -1567,7 +1572,9 @@ defineExpose({
                         <span v-if="typeof filterValue === 'boolean'">: {{ __(filterValue ? 'yes' : 'no') }}</span>
                         <span v-else-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
                         <span v-else-if="lodash.isArray(filterValue) && !quasarHelpers.object(filterValue[0])">: {{ filterValue.join(', ') }}</span>
-                        <span v-else-if="lodash.isArray(filterValue) && quasarHelpers.object(filterValue[0])">: {{ filterValue.map(e => e.label).join(', ') }}</span>
+                        <span v-else-if="lodash.isArray(filterValue) && quasarHelpers.object(filterValue[0])">: {{
+                          filterValue.map(e => e.label).join(', ')
+                        }}</span>
                         <span v-else-if="quasarHelpers.object(filterValue) && filterValue.label">: {{ filterValue.label }}</span>
                       </q-chip>
                     </MCol>
