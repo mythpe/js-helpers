@@ -51,7 +51,7 @@ interface Props {
   contextItems?: MDatatableProps['contextItems'];
   hideAutoMessage?: MDatatableProps['hideAutoMessage'];
   headers: MDatatableProps['headers'];
-  serviceName: MDatatableProps['serviceName'];
+  serviceName?: MDatatableProps['serviceName'];
   requestParams?: MDatatableProps['requestParams'];
   pdf?: MDatatableProps['pdf'];
   excel?: MDatatableProps['excel'];
@@ -93,9 +93,11 @@ interface Props {
   dense?: MDatatableProps['dense'];
   bordered?: MDatatableProps['bordered'];
   flat?: MDatatableProps['flat'];
+  rows?: MDatatableProps['rows'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  rows: undefined,
   controlKey: () => 'control',
   defaultItem: undefined,
   contextItems: undefined,

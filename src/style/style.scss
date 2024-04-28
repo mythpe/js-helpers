@@ -34,11 +34,13 @@ $container-max-width: 1024px !default;
 .m--container {
   &:not(.m--container--dense) {
     padding: ($m-space-base * .25);
-  }
 
-  .m--row + .m--row,
-  .column + .column {
-    margin-top: ($m-space-base * .5);
+    > {
+      .m--row + .m--row,
+      .m--column + .m--column {
+        margin-top: ($m-space-base * .5);
+      }
+    }
   }
 }
 
@@ -46,13 +48,13 @@ $container-max-width: 1024px !default;
   flex: 1 0 100% !important
 }
 
-.row {
+.row, .m--row {
   .flex-break {
     height: 0 !important
   }
 }
 
-.column {
+.column, .m--column {
   .flex-break {
     width: 0 !important
   }
