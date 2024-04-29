@@ -11,6 +11,7 @@ import { Field as VeeField } from 'vee-validate'
 import useInputProps from '../../composition/useInputProps'
 import { MInputProps } from './models'
 import { QFieldSlots, QInputSlots } from 'quasar'
+import lodash from 'lodash'
 
 interface Props {
   name?: MInputProps['name'];
@@ -34,6 +35,7 @@ interface Props {
   modelValue?: MInputProps['modelValue'];
   viewMode?: MInputProps['viewMode'];
   viewModeValue?: MInputProps['viewModeValue'];
+  autocomplete?: MInputProps['autocomplete'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,7 +59,8 @@ const props = withDefaults(defineProps<Props>(), {
   errors: undefined,
   modelValue: undefined,
   viewMode: () => !1,
-  viewModeValue: undefined
+  viewModeValue: undefined,
+  autocompleteAttribute: undefined
 })
 type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
@@ -68,6 +71,19 @@ const inputValue = computed({
   set: value => emit('update:modelValue', value)
 })
 const { getRules, getLabel, getPlaceholder } = useInputProps(props)
+const getAutocompleteAttribute = computed(() => {
+  if (props.autocomplete !== undefined) {
+    if (props.autocomplete === !0 || props.autocomplete === '') {
+      return lodash.kebabCase(props.name)
+    } else if (props.autocomplete === !1) {
+      return undefined
+    } else if (props.autocomplete.length > 0) {
+      return props.autocomplete
+    }
+    return props.autocomplete
+  }
+  return undefined
+})
 </script>
 
 <template>
@@ -117,6 +133,7 @@ const { getRules, getLabel, getPlaceholder } = useInputProps(props)
       v-bind="$attrs"
     >
       <q-input
+        :autocomplete="getAutocompleteAttribute"
         :error="fieldScope.errors.length > 0"
         :error-message="fieldScope.errorMessage"
         :label="getLabel"
