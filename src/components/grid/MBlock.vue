@@ -28,6 +28,7 @@ withDefaults(defineProps<Props>(), {
 <template>
   <div
     :class="{
+      'm---block' : !0,
       'rounded-borders' : rounded !== undefined ? Boolean(rounded) : ($myth.options.block?.rounded !== undefined ? $myth.options.block?.rounded : !0),
       [`q-pa-${$myth.options.block?.size || size}`] : dense !== undefined ? Boolean(dense) : ($myth.options.block?.dense !== undefined ? $myth.options.block?.dense : !0),
       [`shadow-${$myth.options.block?.shadow || shadow}`] : !0
