@@ -5,52 +5,6 @@
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
-
-<template>
-  <MSelect
-    ref="mSelectRef"
-    v-model="model"
-    :auto-search="autoSearch"
-    :label="label"
-    :loading="loading"
-    :multiple="multiple"
-    :name="name"
-    :no-filter="autoSearch"
-    :option-label="getOptionLabel"
-    :options="items"
-    :placeholder="placeholder"
-    :readonly="loading"
-    :stack-label="stackLabel"
-    :view-mode="viewMode"
-    :view-mode-value="viewModeValue"
-    v-bind="$attrs"
-    @search="onSearchInput"
-  >
-    <template
-      v-if="loading"
-      #selected-item
-    >
-      <div>
-        <q-spinner />
-      </div>
-    </template>
-    <template
-      v-for="(_,slot) in ($slots as Readonly<MSelectSlots>)"
-      :key="slot"
-      #[slot]="inputSlot"
-    >
-      <slot
-        :name="slot"
-        v-bind="inputSlot || {}"
-      />
-      <!--<slot-->
-      <!--  v-else-->
-      <!--  :name="slot"-->
-      <!--/>-->
-    </template>
-  </MSelect>
-</template>
-
 <script
   lang="ts"
   setup
@@ -78,6 +32,7 @@ interface Props {
   viewMode?: MAxiosProps['viewMode'];
   viewModeValue?: MAxiosProps['viewModeValue'];
   optionLabel?: MAxiosProps['optionLabel'];
+  optionValue?: MAxiosProps['optionValue'];
   attributeName?: MAxiosProps['attributeName'];
 }
 
@@ -98,6 +53,7 @@ const props = withDefaults(defineProps<Props>(), {
   viewMode: () => !1,
   viewModeValue: undefined,
   optionLabel: undefined,
+  optionValue: undefined,
   attributeName: () => 'name'
 })
 
@@ -128,6 +84,8 @@ const autoProps = computed(() => props.autoSearch)
 const paramsProps = computed(() => props.params)
 const requestWithProps = computed(() => props.requestWith)
 const guestProps = computed(() => props.guest !== !1)
+const viewModeProp = computed(() => props.viewMode)
+
 const mSelectRef = ref<any>()
 const searchInput = ref<any>()
 const prepare = async () => {
@@ -178,7 +136,14 @@ const onSearchInput = (v: any) => {
     prepare()
   })
 }
-const viewModeProp = computed(() => props.viewMode)
+const currentItem = computed(() => {
+  if (!props.modelValue) {
+    return null
+  }
+  const v = typeof props.modelValue === 'object' ? props.modelValue[props.optionValue as any || 'value'] : props.modelValue
+  return items.value.find((e: any) => parseInt(e[props.optionValue as any || 'value'] as any) === parseInt(v))
+})
+
 onBeforeMount(() => {
   if (viewModeProp.value) {
     return
@@ -194,7 +159,59 @@ onMounted(() => {
   }
   (props.iniData || !props.autoSearch) && prepare()
 })
+
+defineExpose({
+  items,
+  mSelectRef,
+  searchInput,
+  prepare,
+  onSearchInput,
+  currentItem
+
+})
 </script>
+
+<template>
+  <MSelect
+    ref="mSelectRef"
+    v-model="model"
+    :auto-search="autoSearch"
+    :label="label"
+    :loading="loading"
+    :multiple="multiple"
+    :name="name"
+    :no-filter="autoSearch"
+    :option-label="getOptionLabel"
+    :option-value="optionValue"
+    :options="items"
+    :placeholder="placeholder"
+    :readonly="loading"
+    :stack-label="stackLabel"
+    :view-mode="viewMode"
+    :view-mode-value="viewModeValue"
+    v-bind="$attrs"
+    @search="onSearchInput"
+  >
+    <template
+      v-if="loading"
+      #selected-item
+    >
+      <div>
+        <q-spinner />
+      </div>
+    </template>
+    <template
+      v-for="(_,slot) in ($slots as Readonly<MSelectSlots>)"
+      :key="slot"
+      #[slot]="inputSlot"
+    >
+      <slot
+        :name="slot"
+        v-bind="inputSlot || {}"
+      />
+    </template>
+  </MSelect>
+</template>
 
 <script lang="ts">
 export default {
