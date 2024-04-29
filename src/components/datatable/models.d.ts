@@ -8,7 +8,7 @@
 
 import { AxiosResponse } from 'axios'
 import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
-import { ComputedRef, Ref, UnwrapNestedRefs, UnwrapRef, VNode } from 'vue'
+import { ComputedRef, MaybeRef, Ref, UnwrapNestedRefs, UnwrapRef, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
 import { AxiosMetaResponse, StubSchema } from '../../types'
 
@@ -99,7 +99,7 @@ export type MDatatableDialogsOptions = {
   show: Ref<boolean>;
   form: Ref<boolean>;
   isUpdate: Ref<boolean>;
-  item: Ref<MDtItem | undefined>;
+  item: Ref<MDtItem> | MaybeRef<MDtItem>;
   index: Ref<MDtItemIndex | undefined>;
   errors: Record<string | number | symbol, string[]> | any;
 }
