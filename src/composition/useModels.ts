@@ -65,6 +65,9 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
           meta.value = _meta || { ...defMeta }
           page.value = _meta?.current_page ?? 0
           resolve(res)
+          if (opts?.onSuccess) {
+            opts?.onSuccess(res)
+          }
         })
         .catch((e: any) => reject(e))
         .finally(() => {
@@ -172,6 +175,9 @@ export function useModel<T extends Partial<Item> = Item> (name: string, id: any,
           const { _data } = r
           model.value = _data
           resolve(r)
+          if (args.opts?.onSuccess) {
+            args.opts?.onSuccess(r)
+          }
           return r
         })
         .catch(e => {

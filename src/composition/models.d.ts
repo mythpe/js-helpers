@@ -15,5 +15,6 @@ export type UseModelsOptionsArg = {
   method?: string;
   timeout?: number | undefined;
   qInfiniteScroll?: Ref<QInfiniteScroll | undefined>;
+  onSuccess?: (data: any) => void;
 }
 export type UseModelsOptions = UnwrapNestedRefs<UseModelsOptionsArg> | Ref<UseModelsOptionsArg> | UseModelsOptionsArg
