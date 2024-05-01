@@ -113,7 +113,10 @@
             <div class="absolute-full">
               <div class="full-width full-height  overflow-hidden">
                 <MRow class="full-height justify-center items-center">
-                  <MCol class="text-h6">
+                  <MCol
+                    class="text-h6 text-center"
+                    auto
+                  >
                     <q-icon
                       left
                       name="error_outline"
