@@ -16,9 +16,23 @@
     :sm="sm"
     :xs="xs"
   >
-    <p v-if="getLabel">
-      {{ getLabel }}
-    </p>
+    <div
+      v-if="!!getLabel || !!hint"
+      class="q-mb-md"
+    >
+      <div
+        v-if="!!getLabel "
+        class="text-body1"
+      >
+        {{ getLabel }}
+      </div>
+      <div
+        v-if="!!hint"
+        class="text-caption"
+      >
+        {{ hint }}
+      </div>
+    </div>
     <VeeField
       ref="veeFieldRef"
       v-slot="fieldScope"
@@ -68,6 +82,7 @@ interface Props {
   minHeight?: MEditorProps['minHeight'];
   name: MEditorProps['name'];
   label?: MEditorProps['label'];
+  hint?: MEditorProps['hint'];
   dense?: MEditorProps['dense'];
   toolbar?: MEditorProps['toolbar'];
   fonts?: MEditorProps['fonts'];
@@ -171,6 +186,7 @@ const props = withDefaults(defineProps<Props>(), {
   minHeight: '10rem',
   name: () => '',
   label: undefined,
+  hint: undefined,
   dense: undefined,
   toolbar: undefined,
   fonts: undefined

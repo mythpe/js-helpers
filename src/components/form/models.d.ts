@@ -545,6 +545,7 @@ export interface MEditorProps extends Omit<QEditorProps, 'modelValue'>, MColProp
   modelValue: string | any;
   name: string;
   label?: string;
+  hint?: string;
 }
 
 export interface MEditorSlots extends QEditorSlots {
