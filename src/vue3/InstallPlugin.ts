@@ -7,7 +7,16 @@
  */
 
 import { App, computed, defineAsyncComponent, inject, reactive } from 'vue'
-import { MythPluginOptionsType, ParseHeaderOptions, ParseHeadersHeaderAgr, ParseHeadersType, UseMythVue, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from '../types'
+import {
+  MythPluginOptionsType,
+  ParseHeaderOptions,
+  ParseHeadersHeaderAgr,
+  ParseHeadersType,
+  UseMythVue,
+  Vue3MAlertMessage,
+  Vue3MAlertMessageOptions,
+  Vue3MConfirmMessage
+} from '../types'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { INJECT_KEY } from './Const'
 import { Dates, Helpers, Str } from '../utils'
@@ -118,7 +127,6 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
           } else {
             const parents: string[] = routeName.split('.')
             if (parents.length > 1) {
-              // console.log(parents[parents.length - 2])
               const e = `choice.${Str.pascalCase(_.pluralize(parents[parents.length - 2]))}`
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore

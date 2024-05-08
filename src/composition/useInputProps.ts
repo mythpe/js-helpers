@@ -30,9 +30,13 @@ export default function useInputProps (Props: Args, opts?: { choose?: boolean })
     }
     if (props.value.mobile !== undefined && props.value.mobile !== null) {
       const defLen = 10
-      const len = (props.value.mobile === !0 || props.value.mobile?.length === 0) ? defLen : (props.value.mobile.split(':')[1] || defLen)
-      rules.push(`digits:${len}`)
-      // rules.push('mobile')
+      if (props.value.mobile === !0 || props.value.mobile?.length === 0) {
+        rules.push(`digits:${defLen}`)
+      } else if (props.value.mobile?.length) {
+        const len = props.value.mobile.split(':')[1] || defLen
+        rules.push(`digits:${len}`)
+      }
+      console.log(rules)
     }
 
     return rules.join('|') || undefined
