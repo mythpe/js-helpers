@@ -5,6 +5,7 @@
  * Website: https://www.4myth.com
  * Github: https://github.com/mythpe
  */
+@use "sass:map";
 
 .m--datatable-component {
   .m--control-cell > * {
@@ -60,35 +61,35 @@ $container-max-width: 1024px !default;
   }
 }
 
-$directions: ('rtl', 'ltr') !default;
-@each $direction in $directions {
-  .#{$direction} {
-    direction: $direction !important
+$directions: ("rtl": rtl, "ltr": ltr);
+@each $name, $value in $directions {
+  .#{$name} {
+    direction: map.get($directions, $value) !important;
   }
 }
 
-$text-decorations: ('none', 'overline', 'underline', 'line-through') !default;
-@each $decoration in $text-decorations {
-  .text-decoration-#{$decoration} {
-    text-decoration: $decoration;
+$text-decorations: ("none": none, "overline": overline, "underline": overline, "line-through": line-through);
+@each $name, $value in $text-decorations {
+  .text-decoration-#{$name} {
+    text-decoration: map.get($text-decorations, $value) !important;
   }
 }
 
-$text-wraps: ('wrap', 'nowrap', 'balance', 'pretty', 'stable') !default;
-@each $text-wrap in $text-wraps {
-  .text-wrap-#{$text-wrap} {
-    text-wrap: $text-wrap;
+$text-wraps: ("wrap": wrap, "nowrap": nowrap, "balance": balance, "pretty": pretty, "stable": stable);
+@each $name, $value in $text-wraps {
+  .text-wrap-#{$name} {
+    text-wrap: map.get($text-wraps, $value) !important;
   }
 }
 
-$break-avoids: ('inside', 'after', 'before') !default;
+$break-avoids: ("inside", "after", "before");
 @each $break-avoid in $break-avoids {
   .break-#{$break-avoid}-avoid {
     page-break-#{$break-avoid}: avoid !important;
   }
 }
 
-$maxes: ('width', 'height') !default;
+$maxes: ("width", "height") !default;
 @each $max in $maxes {
   .max-#{$max} {
     max-#{$max}: 100% !important;
@@ -108,11 +109,11 @@ $maxes: ('width', 'height') !default;
   white-space: pre-line;
 }
 
-$alignsX: ('top', 'bottom') !default;
-$alignsY: ('left', 'right') !default;
-$radius-class-name: 'border-rounded' !default;
+$alignsX: ("top", "bottom") !default;
+$alignsY: ("left", "right") !default;
+$radius-class-name: "border-rounded" !default;
 $radius-value: $generic-border-radius !default;
-$bordered-class-name: 'bordered' !default;
+$bordered-class-name: "bordered" !default;
 $bordered-size: 1px !default;
 $bordered-style: $bordered-size solid $primary !default;
 
