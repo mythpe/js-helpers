@@ -42,8 +42,6 @@
             :clearable="clearable"
             :color="color"
             :dense="dense"
-            :error="fieldProps.errors.length>0"
-            :error-message="fieldProps.errorMessage"
             :false-value="falseValue"
             :label="getLabel"
             :model-value="modelValue"
@@ -55,6 +53,12 @@
           >
             <slot />
           </q-toggle>
+          <div
+            v-if="fieldProps.errors.length > 0"
+            class="text-caption text-negative"
+          >
+            {{ fieldProps.errorMessage }}
+          </div>
           <slot
             name="after"
             v-bind="fieldProps"

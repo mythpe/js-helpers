@@ -60,7 +60,8 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
-  autocompleteAttribute: undefined
+  autocompleteAttribute: undefined,
+  autocomplete: undefined
 })
 type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
