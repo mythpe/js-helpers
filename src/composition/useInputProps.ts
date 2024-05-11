@@ -36,7 +36,6 @@ export default function useInputProps (Props: Args, opts?: { choose?: boolean })
         const len = props.value.mobile.split(':')[1] || defLen
         rules.push(`digits:${len}`)
       }
-      console.log(rules)
     }
 
     return rules.join('|') || undefined
