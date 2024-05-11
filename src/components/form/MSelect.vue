@@ -70,7 +70,7 @@
         :options="getOptions"
         :placeholder="useInput && !modelValue ? getPlaceholder : placeholder"
         :stack-label="stackLabel"
-        :use-input="useInput ? !modelValue : useInput"
+        :use-input="useInput ? ( multiple ? useInput : !modelValue) : useInput"
         v-bind="{...($myth.options.select||{}),...($attrs || {}),...(fieldProps||{field:{}}).field}"
         @filter="filterFn"
         @update:model-value="updateModelValue"
