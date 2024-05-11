@@ -46,18 +46,24 @@ $container-max-width: 1024px !default;
 }
 
 .flex-break {
-  flex: 1 0 100% !important
+  flex: 1 0 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .row, .m--row {
-  .flex-break {
-    height: 0 !important
+  > {
+    .flex-break {
+      height: 0 !important
+    }
   }
 }
 
 .column, .m--column {
-  .flex-break {
-    width: 0 !important
+  > {
+    .flex-break {
+      width: 0 !important
+    }
   }
 }
 
