@@ -23,17 +23,41 @@
       :rules="getRules"
       v-bind="$attrs"
     >
-      <q-checkbox
-        :error="fieldProps.errors.length>0"
-        :error-message="fieldProps.errorMessage"
-        :label="getLabel"
-        :model-value="modelValue"
-        :placeholder="getPlaceholder"
-        :val="val"
-        v-bind="{...($myth.options.checkbox),...($attrs || {}),...fieldProps.field}"
-      >
-        <slot />
-      </q-checkbox>
+      <MColumn>
+        <slot
+          name="top"
+          v-bind="fieldProps"
+        />
+        <MCol auto>
+          <slot
+            name="before"
+            v-bind="fieldProps"
+          />
+          <q-checkbox
+            :label="getLabel"
+            :model-value="modelValue"
+            :placeholder="getPlaceholder"
+            :val="val"
+            v-bind="{...($myth.options.checkbox),...($attrs || {}),...fieldProps.field}"
+          >
+            <slot />
+          </q-checkbox>
+          <div
+            v-if="fieldProps.errors.length > 0"
+            class="text-caption text-negative"
+          >
+            {{ fieldProps.errorMessage }}
+          </div>
+          <slot
+            name="after"
+            v-bind="fieldProps"
+          />
+        </MCol>
+        <slot
+          name="bottom"
+          v-bind="fieldProps"
+        />
+      </MColumn>
     </VeeField>
   </MCol>
 </template>
@@ -55,6 +79,7 @@ interface Props {
   name: MCheckboxProps['name'];
   modelValue: MCheckboxProps['modelValue'];
   val?: MCheckboxProps['val'];
+  required?: MCheckboxProps['required'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -67,7 +92,8 @@ const props = withDefaults(defineProps<Props>(), {
   xl: undefined,
   name: () => '',
   modelValue: undefined,
-  val: undefined
+  val: undefined,
+  required: undefined
 })
 
 interface Emits {

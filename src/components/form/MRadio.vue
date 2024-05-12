@@ -22,18 +22,39 @@
       :rules="getRules"
       v-bind="$attrs"
     >
-      <q-radio
-        :error="fieldProps.errors.length>0"
-        :error-message="fieldProps.errorMessage"
-        :label="getLabel"
-        :model-value="modelValue"
-        :placeholder="getPlaceholder"
-        :val="val"
-        v-bind="{...($myth.options.radio||{}),...($attrs||{}),...fieldProps.field}"
-      />
-      <slot
-        v-bind="fieldProps"
-      />
+      <MColumn>
+        <slot
+          name="top"
+          v-bind="fieldProps"
+        />
+        <MCol auto>
+          <slot
+            name="before"
+            v-bind="fieldProps"
+          />
+          <q-radio
+            :label="getLabel"
+            :model-value="modelValue"
+            :placeholder="getPlaceholder"
+            :val="val"
+            v-bind="{...$myth.options.radio,...$attrs,...fieldProps.field}"
+          />
+          <div
+            v-if="fieldProps.errors.length > 0"
+            class="text-caption text-negative"
+          >
+            {{ fieldProps.errorMessage }}
+          </div>
+          <slot
+            name="after"
+            v-bind="fieldProps"
+          />
+        </MCol>
+        <slot
+          name="bottom"
+          v-bind="fieldProps"
+        />
+      </MColumn>
     </VeeField>
   </MCol>
 </template>
@@ -55,6 +76,7 @@ interface Props {
   name: MRadioProps['name'];
   modelValue: MRadioProps['modelValue'];
   val: MRadioProps['val'];
+  required: MRadioProps['required'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -67,7 +89,8 @@ const props = withDefaults(defineProps<Props>(), {
   xl: undefined,
   name: () => '',
   modelValue: undefined,
-  val: undefined
+  val: undefined,
+  required: undefined
 })
 
 interface Emits {

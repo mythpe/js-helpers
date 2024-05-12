@@ -278,13 +278,15 @@ export interface MCheckboxProps extends QCheckboxProps {
   name: string;
   modelValue: any;
   val?: any | undefined;
+  required?: boolean | undefined;
 }
 
 export interface MCheckboxSlots extends QCheckboxSlots {
-  /**
-   * Field main content
-   */
   default: () => VNode[];
+  top: () => VNode[];
+  before: () => VNode[];
+  after: () => VNode[];
+  bottom: () => VNode[];
 }
 
 export interface MToggleProps extends MColProps, Omit<QToggleProps, 'modelValue'> {
@@ -559,13 +561,15 @@ export interface MRadioProps extends QRadioProps, MColProps {
   name: string;
   modelValue: any;
   val: any;
+  required?: boolean | undefined;
 }
 
 export interface MRadioSlots extends QRadioSlots {
-  /**
-   * Field main content
-   */
   default: () => VNode[];
+  top: () => VNode[];
+  before: () => VNode[];
+  after: () => VNode[];
+  bottom: () => VNode[];
 }
 
 export interface MOtpProps extends Omit<QInputProps, 'modelValue'> {
