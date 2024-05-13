@@ -259,8 +259,18 @@ export const Helpers = {
       const k = Object.keys(errors)[0]
       this.scrollToElement(elm || `[name='${k}']`)
     }
+  },
+  makeUrl (path: string) {
+    path = path || ''
+    if (path.slice(0, 1) === '/') {
+      path = path.slice(1)
+    }
+    if (window) {
+      const l = window.location
+      return `${l.protocol}//${l.host}/${path}`
+    }
+    return `//${path}`
   }
-
 }
 
 export default {}
