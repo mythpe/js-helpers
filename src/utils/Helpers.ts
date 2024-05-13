@@ -6,8 +6,10 @@
  * Github: https://github.com/mythpe
  */
 
+import { ComponentPublicInstance, nextTick, Ref } from 'vue'
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
-import _ from 'lodash'
+import lodash from 'lodash'
+import { scroll } from 'quasar'
 import { ConfigType, DownloadFromResponse, ParamsType, StubSchema, UrlType } from '../types'
 
 export const Helpers = {
@@ -21,7 +23,7 @@ export const Helpers = {
         value = values[key]
         if (value !== null && value !== undefined && typeof value === 'object') {
           const k = name ? name + '[' + key + ']' : key
-          if (_.isArray(value) && value.length < 1) {
+          if (lodash.isArray(value) && value.length < 1) {
             formData.append(`${key}`, '')
           } else {
             this.appendArray(formData, value, k)
@@ -140,7 +142,7 @@ export const Helpers = {
     parent?: UrlType
   ): string => ((parent ?? '') + (parent && group ? '/' : '')) + (group ?? '') + ((group && segments ? '/' : '') + (segments ?? '')),
   findBy (search: any, value: any, column: string | number = 'id') {
-    return _.find(search, (e: any) => _.isPlainObject(e) ? e[column] === value : e === value)
+    return lodash.find(search, (e: any) => lodash.isPlainObject(e) ? e[column] === value : e === value)
   },
   // queryStringify: (v: never) => new URLSearchParams(qs.stringify(v, {
   //   arrayFormat: 'indices'
@@ -217,7 +219,48 @@ export const Helpers = {
         rejectPromise(e)
       }
     })
+  },
+  async scrollToElement (el: Element | Window | HTMLElement | string, opt?: {
+    target?:
+      | Element
+      | Window
+      | any
+      | Ref<ComponentPublicInstance | undefined>;
+    duration?: number;
+  }) {
+    const { getScrollTarget, setVerticalScrollPosition } = scroll
+    const scrollTo: any = typeof el === 'string' ? document.querySelector(el) : el
+    if (!scrollTo) {
+      return
+    }
+    const t = opt?.target || window.document.body
+    const target = getScrollTarget(t)
+    let offset = 0
+    try {
+      let parent: any = scrollTo
+      do {
+        offset += parent?.offsetTop || 0
+        parent = parent.offsetParent
+      } while (parent?.offsetParent)
+    } catch (e) {
+      console.log(e)
+      offset = scrollTo?.offsetTop || 0
+    }
+    const duration = opt?.duration || 500
+    nextTick(() => {
+      setVerticalScrollPosition(target, offset - 50, duration)
+    })
+  },
+  async scrollToElementFromErrors (errors?: any, elm?: any) {
+    if (!errors) {
+      return
+    }
+    if (Object.keys(errors).length > 0) {
+      const k = Object.keys(errors)[0]
+      this.scrollToElement(elm || `[name='${k}']`)
+    }
   }
+
 }
 
 export default {}
