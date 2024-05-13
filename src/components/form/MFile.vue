@@ -40,7 +40,7 @@
         :placeholder="getPlaceholder"
         :stack-label="stackLabel"
         :standout="standout"
-        v-bind="{...($myth.options.file||{}),...($attrs || {})}"
+        v-bind="{...$myth.options.file,...$attrs}"
         @blur="fieldScope.handleBlur"
         @change="fieldScope.handleChange"
         @clear="fieldScope.handleBlur"
@@ -80,7 +80,7 @@
 import { QFile } from 'quasar'
 import useAcceptProp from '../../composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
-import { computed, defineProps, ref } from 'vue'
+import { computed, defineProps, nextTick, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { MFileProps } from './models'
 
@@ -162,7 +162,12 @@ const fileInput = ref<InstanceType<typeof QFile>>()
 // const inputValue = ref(props.modelValue)
 const inputValue = computed({
   get: () => props.modelValue,
-  set: (v) => emit('update:modelValue', v)
+  set: (v) => {
+    emit('update:modelValue', v)
+    nextTick(() => {
+      fileInput.value?.blur()
+    })
+  }
 })
 const pickFiles = (...args: any) => fileInput.value?.pickFiles(...args)
 const removeAtIndex = (index: number) => fileInput.value?.removeAtIndex(index)
