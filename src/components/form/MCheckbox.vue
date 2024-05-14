@@ -16,6 +16,7 @@
     :sm="sm"
     :xs="xs"
   >
+    <slot name="beforeField" />
     <VeeField
       v-slot="fieldProps"
       v-model="inputValue"
@@ -59,6 +60,7 @@
         />
       </MColumn>
     </VeeField>
+    <slot name="afterField" />
   </MCol>
 </template>
 

@@ -285,7 +285,9 @@ export interface MCheckboxSlots extends QCheckboxSlots {
   default: () => VNode[];
   top: () => VNode[];
   before: () => VNode[];
+  beforeField: () => VNode[];
   after: () => VNode[];
+  afterField: () => VNode[];
   bottom: () => VNode[];
 }
 
