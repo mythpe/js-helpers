@@ -20,6 +20,20 @@
   }
 }
 
+$text-light-color: #000000 !default;
+$text-dark-color: #ffffff !default;
+.body--light {
+  .text-color {
+    color: $text-light-color !important;
+  }
+}
+
+.body--dark {
+  .text-color {
+    color: $text-dark-color !important;
+  }
+}
+
 $m-space-base: $space-base !default;
 $container-max-width: 1024px !default;
 .container-max-width {
