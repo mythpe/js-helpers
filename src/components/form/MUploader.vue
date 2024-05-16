@@ -75,7 +75,7 @@
             @click="scope.removeUploadedFiles"
           />
           <q-btn
-            v-if="scope.canAddFiles"
+            v-if="scope.canAddFiles && !hideUploadBtn"
             :icon="pickFilesIcon"
             :label="__('myth.uploader.pickFiles')"
             dense
@@ -85,7 +85,7 @@
             <q-uploader-add-trigger />
           </q-btn>
           <q-btn
-            v-if="scope.canUpload"
+            v-if="scope.canUpload && !hideUploadBtn"
             :icon="uploadFilesIcon"
             :label="__('myth.uploader.uploadFiles')"
             dense
@@ -114,8 +114,8 @@
               <div class="full-width full-height  overflow-hidden">
                 <MRow class="full-height justify-center items-center">
                   <MCol
-                    class="text-h6 text-center"
                     auto
+                    class="text-h6 text-center"
                   >
                     <q-icon
                       left
@@ -342,6 +342,7 @@ interface Props {
   label?: MUploaderProps['label'];
   modelValue: MUploaderProps['modelValue'];
   hideDeleteMedia?: MUploaderProps['hideDeleteMedia'];
+  hideUploadBtn?: MUploaderProps['hideUploadBtn'];
   service: MUploaderProps['service'];
   modelId: MUploaderProps['modelId'];
   uploading?: MUploaderProps['uploading'];
@@ -372,10 +373,10 @@ const props = withDefaults(defineProps<Props>(), {
   readonly: undefined,
   disable: undefined,
   accept: undefined,
-  images: !1,
-  video: !1,
-  pdf: !1,
-  excel: !1,
+  images: undefined,
+  video: undefined,
+  pdf: undefined,
+  excel: undefined,
   autoUpload: () => !0,
   fieldName: 'attachment',
   collection: undefined,
@@ -385,7 +386,8 @@ const props = withDefaults(defineProps<Props>(), {
   headers: undefined,
   label: undefined,
   modelValue: () => ([]),
-  hideDeleteMedia: !1,
+  hideDeleteMedia: undefined,
+  hideUploadBtn: undefined,
   service: undefined,
   modelId: undefined,
   uploading: undefined,
@@ -495,7 +497,9 @@ const startUpload = async (files: readonly File[]): Promise<QUploaderFactoryObje
         formFields.push({ name: 'return', value: returnTypeProp.value })
       }
       let url: string
-      url = typeof serviceProp.value !== 'object' ? $myth.services[serviceProp.value].getUploadAttachmentsUrl(modelIdProp.value) : serviceProp.value.uploadAttachments(modelIdProp.value, files)
+      url = typeof serviceProp.value !== 'object' ? $myth.services[serviceProp.value].getUploadAttachmentsUrl(modelIdProp.value) : serviceProp.value.uploadAttachments(
+        modelIdProp.value,
+        files)
       url = `${$myth.baseUrl}/${url}`
       resolve({
         url,
@@ -568,7 +572,8 @@ const deleteMedia = (media: MUploaderMediaItem) => {
       if (!config.params.return) {
         delete config.params.return
       }
-      const method = async (file: MUploaderMediaItem) => typeof serviceProp.value !== 'object' ? await $myth.services[serviceProp.value].deleteAttachment(modelIdProp.value,
+      const method = async (file: MUploaderMediaItem) => typeof serviceProp.value !== 'object' ? await $myth.services[serviceProp.value].deleteAttachment(
+        modelIdProp.value,
         file.id,
         config) : serviceProp.value.deleteAttachment(media, config)
       if (method) {
