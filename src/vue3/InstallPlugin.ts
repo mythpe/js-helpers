@@ -157,7 +157,6 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       const opts = options || { ...defaultOptions }
       let control: string | undefined = defaultOptions.controlKey
       let controlStyle: string | undefined = defaultOptions.controlStyle
-
       if (opts.controlKey) {
         control = opts.controlKey
         delete opts.controlKey
@@ -188,7 +187,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         item = {
           ...item,
           name: Str.strBefore(Str.strBefore(item.name), 'ToString'),
-          label: item.label ? Str.strBefore(Str.strBefore(item.label), 'ToString') : item.name
+          label: (item.label !== undefined && item.label !== null) ? Str.strBefore(Str.strBefore(item.label), 'ToString') : item.label
         }
         const name = item.name
         let k
@@ -244,7 +243,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         item = { ...opts, ...item }
         result.push(item)
       })
-      // console.log(result)
+      console.log(result)
       return result
     },
     /**
