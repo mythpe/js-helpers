@@ -181,14 +181,14 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
           label: elm,
           field: elm
         } : { ...elm }
-        item.name = item.name || ''
-        item.label = item.label || item.name
-        item.field = item.field || item.name
+        item.name = item.name ?? ''
+        item.label = (item.label === undefined || item.label === null) ? item.name : item.label
+        item.field = (item.field === undefined || item.field === null) ? item.name : item.field
 
         item = {
           ...item,
           name: Str.strBefore(Str.strBefore(item.name), 'ToString'),
-          label: Str.strBefore(Str.strBefore(item.label || item.name), 'ToString')
+          label: item.label ? Str.strBefore(Str.strBefore(item.label), 'ToString') : item.name
         }
         const name = item.name
         let k
