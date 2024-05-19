@@ -243,7 +243,6 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         item = { ...opts, ...item }
         result.push(item)
       })
-      console.log(result)
       return result
     },
     /**
