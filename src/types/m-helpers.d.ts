@@ -125,7 +125,7 @@ export type ParamsType = Record<string, any> | FormData | object
 export type ConfigType = AxiosRequestConfig<AppApiResponse> & Partial<{
   params: Partial<ApiServiceParams> & Generic
 }>
-export type StubSchema = {
+export type StubSchemaContext = {
   index (config?: ConfigType): Promise<AppApiResponse>;
 
   staticIndex (config?: ConfigType): Promise<AppApiResponse>;
@@ -150,8 +150,9 @@ export type StubSchema = {
 
   deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig): Promise<AppApiResponse>;
 
-} & {
-  [k: string]: ((...args: any) => Promise<AppApiResponse>) & string;
+}
+export type StubSchema = StubSchemaContext & {
+  [k: string]: ((...args: any) => Promise<AppApiResponse>) & string & StubSchemaContext;
 }
 
 export type MythApiServicesSchema = { [key: string | symbol | number]: StubSchema }

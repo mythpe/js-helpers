@@ -18,7 +18,7 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
   const opts = reactive<UseModelsOptionsArg | Record<string, any>>(options || {})
   const params = reactive({ search, filter })
   const axiosConfig = reactive<AxiosRequestConfig>(config || {})
-  const models = ref<(Item | T)[]>([])
+  const models = ref<T[]>([])
   const defMeta = {
     per_page: 0,
     total: 0,
@@ -61,7 +61,7 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
       return f(config)
         .then((res) => {
           const { _data, _meta } = res
-          models.value.push(...(_data || []))
+          models.value.push(...(_data || []) as any)
           meta.value = _meta || { ...defMeta }
           page.value = _meta?.current_page ?? 0
           resolve(res)
@@ -158,7 +158,7 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
 
 export function useModel<T extends Partial<Item> = Item> (name: string, id: any, opts?: Options, config?: AxiosRequestConfig | undefined) {
   const api = useMyth()
-  const model = ref<T & any>({})
+  const model = ref<T>({} as T)
   const fetching = ref(!1)
   const fetched = ref(!1)
   const args = reactive({ id, model, name, opts, config })
@@ -173,7 +173,7 @@ export function useModel<T extends Partial<Item> = Item> (name: string, id: any,
       return m(args.id, args.config)
         .then((r) => {
           const { _data } = r
-          model.value = _data
+          model.value = (_data as any)
           resolve(r)
           if (args.opts?.onSuccess) {
             args.opts?.onSuccess(r)
