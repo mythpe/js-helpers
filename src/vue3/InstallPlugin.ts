@@ -20,10 +20,12 @@ import {
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { INJECT_KEY } from './Const'
 import { Dates, Helpers, Str } from '../utils'
-import _ from 'lodash'
+import lodash from 'lodash'
 import { copyToClipboard, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
+import { VueI18n } from 'vue-i18n'
 
+type __VueI18n = VueI18n;
 /**
  * Install Plugin
  * @param app
@@ -79,36 +81,32 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         const s = routeName.split('.')
         lastRouteName = s[s.length - 2] ?? lastRouteName
       }
-      const pluralize = Str.pascalCase(_.pluralize(lastRouteName))
-      const singular = Str.pascalCase(_.singularize(lastRouteName))
-      const keys = _.filter(_.uniq([
+      const pluralize = Str.pascalCase(lodash.pluralize(lastRouteName))
+      const singular = Str.pascalCase(lodash.singularize(lastRouteName))
+      const keys = lodash.filter(lodash.uniq([
         // `routes.${routeName}`,
         // `routes.${routePath}`,
         `${lastRouteName}Page.title`,
-        `${_.camelCase(lastRouteName)}Page.title`,
+        `${lodash.camelCase(lastRouteName)}Page.title`,
         `choice.${pluralize}`,
         `choice.${singular}`,
         `replace.${lastRouteName}_details`,
         `replace.${lastRouteName}`,
         pluralize,
-        _.snakeCase(pluralize),
+        lodash.snakeCase(pluralize),
         singular,
-        _.snakeCase(singular)
+        lodash.snakeCase(singular)
       ]))
 
-      const { t, te } = baseI18n.value?.global
+      const { t, te } = baseI18n.value?.global as __VueI18n
       let str = null
       let k: string
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (te((k = `routes.${routeName}`)) && _.isString((str = t(k)))) {
+      if (te((k = `routes.${routeName}`)) && lodash.isString((str = t(k)))) {
         return str
       }
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (te((k = `routes.${routePath}`)) && _.isString((str = t(k)))) {
+      if (te((k = `routes.${routePath}`)) && lodash.isString((str = t(k)))) {
         return str
       }
 
@@ -116,24 +114,33 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         if (!(k = keys[f])) {
           continue
         }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        if (te && te(k) && _.isString(t(k))) {
-          if (_.startsWith(k, 'choice.')) {
-            const pop: string = k.split('.').pop() || ''
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            str = te(k) ? t(k, number, { [pop]: number }) : null
+        if (te && te(k) && lodash.isString(t(k))) {
+          if (lodash.startsWith(k, 'choice.')) {
+            const s = k.split('.')
+            const n = routeName.split('.')
+            if (s.length === 2 && n.length > 1) {
+              const model = n[n.length - 2]
+              const rep = lodash.singularize(n[n.length - 1]).toLocaleLowerCase()
+              const e = `replace.${rep}`
+              const pluralizeModel = lodash.pluralize(lodash.pascalCase(model))
+              const _modelChoiceKey = `choice.${pluralizeModel}`
+              if (te(_modelChoiceKey)) {
+                const l = t(_modelChoiceKey, 1 as any)
+                str = te(e) ? t(e, { name: l }) : null
+              } else {
+                const pop: string = k.split('.').pop() || ''
+                str = te(k) ? t(k, number as any, { [pop]: number }) : null
+              }
+            } else {
+              const pop: string = k.split('.').pop() || ''
+              str = te(k) ? t(k, number as any, { [pop]: number }) : null
+            }
           } else {
             const parents: string[] = routeName.split('.')
             if (parents.length > 1) {
-              const e = `choice.${Str.pascalCase(_.pluralize(parents[parents.length - 2]))}`
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
+              const e = `choice.${Str.pascalCase(lodash.pluralize(parents[parents.length - 2]))}`
               str = te(e) ? t(k, { name: t(e, '1') }) : null
             } else {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
               str = te(k) ? t(k, { name: '' }) : null
             }
           }
@@ -196,11 +203,11 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             item.label = t(k)
-          } else if (te((k = `attributes.${_.snakeCase(item.label)}`))) {
+          } else if (te((k = `attributes.${lodash.snakeCase(item.label)}`))) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             item.label = t(k)
-          } else if (te((k = `attributes.${_.camelCase(item.label)}`))) {
+          } else if (te((k = `attributes.${lodash.camelCase(item.label)}`))) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             item.label = t(k)
@@ -208,7 +215,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             item.label = t(k)
-          } else if (te((k = `choice.${_.pluralize(Str.pascalCase(item.label))}`))) {
+          } else if (te((k = `choice.${lodash.pluralize(Str.pascalCase(item.label))}`))) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             item.label = t(k, 2)
@@ -264,7 +271,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       if (te) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        if (te((transKey = `attributes.${key}`)) && _.isString(t(transKey))) {
+        if (te((transKey = `attributes.${key}`)) && lodash.isString(t(transKey))) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           return t(transKey, ...args)
@@ -272,7 +279,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        if (te((transKey = `choice.${key}`)) && _.isString(t(transKey))) {
+        if (te((transKey = `choice.${key}`)) && lodash.isString(t(transKey))) {
           args = args || [2]
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
@@ -281,7 +288,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        if (te(key) && _.isString(t(key))) {
+        if (te(key) && lodash.isString(t(key))) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           return t(key, ...args)
