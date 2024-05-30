@@ -149,6 +149,7 @@ const getAutocompleteAttribute = computed(() => {
           #[slot]
         >
           <slot
+            v-if="slot !== 'default'"
             :name="slot"
           />
         </template>
