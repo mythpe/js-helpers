@@ -189,31 +189,24 @@
                   />
                 </q-item-section>
                 <q-item-section :class="displayMode === 'card' ? 'q-mt-sm' : undefined">
-                  <q-item-label
-                    v-if="Boolean(file.file_name)"
-                    :lines="1"
-                  >
+                  <q-item-label v-if="!!file.file_name">
                     {{ file.file_name }}
                   </q-item-label>
-                  <q-item-label
-                    v-else-if="Boolean(file.name)"
-                    :lines="1"
-                  >
+                  <q-item-label v-else-if="!!file.name">
                     {{ file.name }}
                   </q-item-label>
-
-                  <q-item-label
-                    v-if="file.attachment_type"
-                    :lines="1"
-                  >
-                    {{ file.attachment_type }}
+                  <q-item-label v-if="!!file.user_id_to_string">
+                    <q-icon
+                      name="ion-ios-contact"
+                      color="primary"
+                    />
+                    {{ file.user_id_to_string }}
                   </q-item-label>
-
-                  <q-item-label
-                    v-if="file.description"
-                    :lines="1"
-                  >
+                  <q-item-label v-if="!!file.description">
                     {{ file.description }}
+                  </q-item-label>
+                  <q-item-label v-else-if="!!file.attachment_type">
+                    {{ file.attachment_type }}
                   </q-item-label>
                   <slot
                     :item="file"
