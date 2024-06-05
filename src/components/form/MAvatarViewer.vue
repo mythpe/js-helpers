@@ -269,12 +269,7 @@ export default {
         class="hidden"
         type="textarea"
       />
+      <slot />
     </MColumn>
   </MCol>
 </template>
-
-<style>
-.m--avatar-viewer {
-
-}
-</style>
