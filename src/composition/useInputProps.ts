@@ -45,7 +45,7 @@ export default function useInputProps (Props: Args, opts?: { choose?: boolean })
     const k = props.value.label === undefined ? props.value.name : props.value.label
     if (k) {
       let label = __(k) || k
-      if (label && hasRequired.value && !props.value.hideRequired) {
+      if (label && hasRequired.value && !props.value.hideRequired && !props.value.viewMode) {
         label = `${label} *`
       }
       return label
