@@ -25,7 +25,7 @@
       >
         <template #control>
           <div
-            class="self-center full-width no-outline ellipsis"
+            class="self-center full-width no-outline"
             tabindex="0"
           >
             {{ viewModeValue || inputValue }}
