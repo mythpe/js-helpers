@@ -101,7 +101,7 @@ const getAutocompleteAttribute = computed(() => {
       <q-field
         :label="getLabel"
         :placeholder="getPlaceholder"
-        v-bind="{...$myth.options.input,...$myth.options.field,...$attrs,stackLabel: !0}"
+        v-bind="{...$myth.options.input,...$myth.options.field,...$attrs, stackLabel: !0}"
       >
         <template #control>
           <div

@@ -20,8 +20,7 @@
       <q-field
         :label="getLabel"
         :placeholder="getPlaceholder"
-        stack-label
-        v-bind="{...($myth.options.select||{}),...($attrs || {})}"
+        v-bind="{...$myth.options.select,...$myth.options.field,...$attrs, stackLabel: !0}"
       >
         <template #control>
           <div
