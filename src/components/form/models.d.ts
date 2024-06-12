@@ -104,7 +104,7 @@ export interface MInputProps extends Omit<QInputProps, 'rules' | 'modelValue' | 
   mobile?: boolean | string | undefined;
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
-  modelValue?: string | number | null | undefined | any;
+  modelValue?: any;
   /**
    * Set input to vie mode use q-field
    */
@@ -161,7 +161,7 @@ export interface MFileSlots extends QFileSlots {
   default: () => VNode[];
 }
 
-export interface MPickerProps extends Omit<MInputProps, 'onUpdate:modelValue' | 'modelValue' | 'type'>, Omit<QDateProps, 'onUpdate:modelValue' | 'options'>, QTimeProps {
+export interface MPickerProps extends Omit<MInputProps, 'modelValue' | 'type'>, Omit<QDateProps, 'modelValue' | 'options'>, Omit<QTimeProps, 'modelValue'> {
   modelValue: any;
   type?: 'date' | 'time';
   btnProps?: MBtnProps;

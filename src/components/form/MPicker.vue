@@ -54,7 +54,7 @@
       <template #append>
         <q-btn
           v-if="!disable&&!readonly"
-          :icon="icon"
+          :icon="isDate ? 'event' : 'access_time'"
           flat
           round
           v-bind="{...btnProps,...$myth.options?.pickerBtn}"
@@ -74,7 +74,7 @@
               :multiple="multiple"
               :range="range"
               today-btn
-              v-bind="{...($myth.options.date||{}),...($attrs || {})}"
+              v-bind="{...$myth.options.date,...$attrs}"
             >
               <div class="row items-center justify-end">
                 <MBtn
@@ -96,7 +96,7 @@
               v-model="dateRef"
               :mask="format"
               now-btn
-              v-bind="{...($myth.options.time||{}),...($attrs || {})}"
+              v-bind="{...$myth.options.time,...$attrs}"
             >
               <div class="row items-center justify-end">
                 <MBtn
@@ -121,7 +121,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, nextTick, ref } from 'vue'
+import { computed, defineEmits, ref } from 'vue'
 import { MInputSlots, MPickerProps } from './models'
 
 interface Props {
@@ -184,18 +184,17 @@ const mask = computed(() => {
   }
   return isDate.value ? '####-##-##' : '##:##'
 })
-const format = isDate.value ? 'YYYY-MM-DD' : 'HH:mm'
-const icon = isDate.value ? 'event' : 'access_time'
+const format = computed(() => isDate.value ? 'YYYY-MM-DD' : 'HH:mm')
 const dateRef = ref()
 const inputRef = ref()
 const onBeforeShow = () => {
-  dateRef.value = props.modelValue || undefined
+  dateRef.value = props.modelValue ?? null
 }
 const onBeforeHide = () => {
-  nextTick(() => (dateRef.value = undefined))
+  dateRef.value = null
 }
 const saveDialog = () => {
-  let newVal = dateRef.value
+  let newVal: any = dateRef.value
   if (typeof newVal === 'object' && isDate.value) {
     const values: any[] = Object.values(newVal)
     for (const aKey in values) {
