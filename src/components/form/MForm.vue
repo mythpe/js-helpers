@@ -17,6 +17,7 @@
     v-bind="$attrs"
   >
     <form
+      class="m--form"
       v-bind="formProps"
       @submit="v.handleSubmit($event, onSubmit)"
     >

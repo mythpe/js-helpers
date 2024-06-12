@@ -47,8 +47,20 @@ $container-max-width: 1024px !default;
 }
 
 .m--container {
-  &:not(.m--container--dense) {
+  &:not(.m--container--dense):not(.dense) {
     padding: ($m-space-base * .5);
+
+    > {
+      .m--row + .m--row,
+      .m--column + .m--column {
+        margin-top: ($m-space-base * .5);
+      }
+    }
+  }
+}
+
+.m--form {
+  &:not(.m--container--dense):not(.dense) {
 
     > {
       .m--row + .m--row,
