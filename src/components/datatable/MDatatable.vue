@@ -1014,7 +1014,7 @@ defineExpose({
             :dense="dense"
             :label="contextmenuItem.contextLabel !== undefined ? (contextmenuItem.contextLabel === null ? undefined : __(contextmenuItem.contextLabel)) : __(contextmenuItem.label || contextmenuItem.name) "
             list-item
-            v-bind="{...($myth.options.dt?.contextmenu?.listItem||{}),...(contextmenuItem.attr||{})}"
+            v-bind="{...$myth.options.dt?.contextmenu?.listItem,...contextmenuItem.attr}"
             @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
           />
         </template>

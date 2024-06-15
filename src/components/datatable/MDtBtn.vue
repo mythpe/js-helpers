@@ -11,7 +11,7 @@
     v-if="listItem"
     v-close-popup
     clickable
-    v-bind="{...($myth.options.dt?.listItem?.item||{}),...$attrs}"
+    v-bind="{...$myth.options.dt?.listItem?.item,...$attrs}"
     @click="$emit('click',$event)"
   >
     <q-item-section
