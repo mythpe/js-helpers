@@ -59,9 +59,9 @@ $container-max-width: 1024px !default;
   }
 }
 
-.m--form {
-  &:not(.m--container--dense):not(.dense) {
-
+.m--form,
+.q-tab-panel {
+  &:not(.dense) {
     > {
       .m--row + .m--row,
       .m--column + .m--column {

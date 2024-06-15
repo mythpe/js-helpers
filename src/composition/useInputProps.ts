@@ -56,7 +56,7 @@ export default function useInputProps (Props: Args, opts?: { choose?: boolean })
     if (props.value.hidePlaceholder) {
       return props.value.placeholder !== undefined ? (__(props.value.placeholder) || undefined) : undefined
     }
-    const k = props.value.placeholder === undefined ? props.value.name : props.value.placeholder
+    const k = props.value.placeholder === undefined ? (props.value.label !== undefined ? props.value.label : props.value.name) : props.value.placeholder
     if (k && props.value.placeholder === undefined) {
       return __(`replace.${opts?.choose ? 'choose' : 'enter'}`, { name: __(k) }) || props.value.placeholder
     }

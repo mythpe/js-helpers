@@ -139,8 +139,7 @@ const getAutocompleteAttribute = computed(() => {
         :label="getLabel"
         :model-value="inputValue"
         :placeholder="getPlaceholder"
-        :stack-label="stackLabel"
-        v-bind="{...($myth.options.input||{}),...($attrs || {}),...fieldScope.field}"
+        v-bind="{...$myth.options.input,...$attrs,...fieldScope.field,stackLabel}"
         @update:model-value="fieldScope.handleChange"
       >
         <template
