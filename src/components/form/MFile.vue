@@ -8,12 +8,12 @@
 
 <script lang="ts" setup>
 
-import { QFile } from 'quasar'
+import { QFieldSlots, QFile } from 'quasar'
 import useAcceptProp from '../../composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, nextTick, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
-import { MFileProps, MInputProps } from './models'
+import { MFileProps } from './models'
 
 interface Props {
   auto?: MFileProps['auto'];
@@ -131,7 +131,34 @@ export default {
     :sm="sm"
     :xs="xs"
   >
+    <template v-if="viewMode">
+      <q-field
+        :label="getLabel"
+        :placeholder="getPlaceholder"
+        v-bind="{...$myth.options.input,...$myth.options.field,...$attrs, stackLabel: !0}"
+      >
+        <template #control>
+          <div
+            class="self-center full-width no-outline"
+            tabindex="0"
+          >
+            {{ viewModeValue || inputValue }}
+          </div>
+        </template>
+        <template
+          v-for="(_,slot) in ($slots as Readonly<QFieldSlots>)"
+          :key="slot"
+          #[slot]="inputSlot"
+        >
+          <slot
+            :name="slot"
+            v-bind="inputSlot || {}"
+          />
+        </template>
+      </q-field>
+    </template>
     <VeeField
+      v-else
       v-slot="fieldScope"
       v-model="inputValue"
       :name="name"
