@@ -152,6 +152,11 @@ export interface MFileProps extends MColProps, Omit<QFileProps, 'rules'> {
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
   modelValue: any;
+  /**
+   * Set input to vie mode use q-field
+   */
+  viewMode?: boolean | undefined;
+  viewModeValue?: any | undefined;
 }
 
 export interface MFileSlots extends QFileSlots {

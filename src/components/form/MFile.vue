@@ -13,7 +13,7 @@ import useAcceptProp from '../../composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, nextTick, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
-import { MFileProps } from './models'
+import { MFileProps, MInputProps } from './models'
 
 interface Props {
   auto?: MFileProps['auto'];
@@ -47,6 +47,8 @@ interface Props {
   rules?: MFileProps['rules'];
   errors?: MFileProps['errors'];
   modelValue: MFileProps['modelValue'];
+  viewMode?: MFileProps['viewMode'];
+  viewModeValue?: MFileProps['viewModeValue'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -80,7 +82,9 @@ const props = withDefaults(defineProps<Props>(), {
   loading: undefined,
   rules: () => ([]),
   errors: () => ({}),
-  modelValue: undefined
+  modelValue: undefined,
+  viewMode: undefined,
+  viewModeValue: undefined
 })
 
 type Events = {
