@@ -6,75 +6,6 @@
   - Github: https://github.com/mythpe
   -->
 
-<template>
-  <MCol
-    :auto="auto"
-    :class="$attrs.class"
-    :col="col"
-    :lg="lg"
-    :md="md"
-    :sm="sm"
-    :xs="xs"
-  >
-    <VeeField
-      v-slot="fieldScope"
-      v-model="inputValue"
-      :name="name"
-      :rules="getRules"
-      v-bind="$attrs"
-    >
-      <q-file
-        ref="fileInput"
-        :accept="accepts.join(',')"
-        :borderless="borderless"
-        :clearable="clearable"
-        :dense="dense"
-        :error="fieldScope.errors.length > 0"
-        :error-message="fieldScope.errorMessage"
-        :filled="filled"
-        :hide-bottom-space="hideBottomSpace"
-        :label="getLabel"
-        :loading="loading"
-        :model-value="fieldScope.value"
-        :name="name"
-        :outlined="outlined"
-        :placeholder="getPlaceholder"
-        :standout="standout"
-        v-bind="{...$myth.options.file,...$attrs,stackLabel}"
-        @blur="fieldScope.handleBlur"
-        @change="fieldScope.handleChange"
-        @clear="fieldScope.handleBlur"
-        @update:model-value="fieldScope.handleChange"
-      >
-        <template #prepend>
-          <slot name="prepend">
-            <q-icon
-              class="cursor-pointer"
-              name="ion-ios-attach"
-              @click="($refs.fileInput as QFile)?.pickFiles()"
-            />
-          </slot>
-        </template>
-        <template
-          v-for="(_,slot) in $slots"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            v-if="inputSlot"
-            :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else
-            :name="slot"
-          />
-        </template>
-      </q-file>
-    </VeeField>
-  </MCol>
-</template>
-
 <script lang="ts" setup>
 
 import { QFile } from 'quasar'
@@ -185,3 +116,72 @@ export default {
   inheritAttrs: !1
 }
 </script>
+
+<template>
+  <MCol
+    :auto="auto"
+    :class="$attrs.class"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :sm="sm"
+    :xs="xs"
+  >
+    <VeeField
+      v-slot="fieldScope"
+      v-model="inputValue"
+      :name="name"
+      :rules="getRules"
+      v-bind="$attrs"
+    >
+      <q-file
+        ref="fileInput"
+        :accept="accepts.join(',')"
+        :borderless="borderless"
+        :clearable="clearable"
+        :dense="dense"
+        :error="fieldScope.errors.length > 0"
+        :error-message="fieldScope.errorMessage"
+        :filled="filled"
+        :hide-bottom-space="hideBottomSpace"
+        :label="getLabel"
+        :loading="loading"
+        :model-value="fieldScope.value"
+        :name="name"
+        :outlined="outlined"
+        :placeholder="getPlaceholder"
+        :standout="standout"
+        v-bind="{...$myth.options.file,...$attrs,stackLabel}"
+        @blur="fieldScope.handleBlur"
+        @change="fieldScope.handleChange"
+        @clear="fieldScope.handleBlur"
+        @update:model-value="fieldScope.handleChange"
+      >
+        <template #prepend>
+          <slot name="prepend">
+            <q-icon
+              class="cursor-pointer"
+              name="ion-ios-attach"
+              @click="($refs.fileInput as QFile)?.pickFiles()"
+            />
+          </slot>
+        </template>
+        <template
+          v-for="(_,slot) in $slots"
+          :key="slot"
+          #[slot]="inputSlot"
+        >
+          <slot
+            v-if="inputSlot"
+            :name="slot"
+            v-bind="inputSlot"
+          />
+          <slot
+            v-else
+            :name="slot"
+          />
+        </template>
+      </q-file>
+    </VeeField>
+  </MCol>
+</template>
