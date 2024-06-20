@@ -161,6 +161,7 @@ export default {
       v-else
       v-slot="fieldScope"
       v-model="inputValue"
+      :label="label ?? name"
       :name="name"
       :rules="getRules"
       v-bind="$attrs"

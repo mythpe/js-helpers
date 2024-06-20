@@ -283,6 +283,7 @@ export interface MCheckboxProps extends QCheckboxProps {
   name: string;
   modelValue: any;
   val?: any | undefined;
+  label?: any;
   required?: boolean | undefined;
 }
 
@@ -564,10 +565,11 @@ export interface MEditorSlots extends QEditorSlots {
   default: () => VNode[];
 }
 
-export interface MRadioProps extends QRadioProps, MColProps {
+export interface MRadioProps extends Omit<QRadioProps, 'name' | 'modelValue' | 'val' | 'label'>, MColProps {
   name: string;
   modelValue: any;
   val: any;
+  label?: string | null | undefined;
   required?: boolean | undefined;
 }
 

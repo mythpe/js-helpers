@@ -20,6 +20,7 @@
     <VeeField
       v-slot="fieldProps"
       v-model="inputValue"
+      :label="label ?? name"
       :name="name"
       :rules="getRules"
       v-bind="$attrs"
@@ -79,6 +80,7 @@ interface Props {
   lg?: MCheckboxProps['lg'];
   xl?: MCheckboxProps['xl'];
   name: MCheckboxProps['name'];
+  label: MCheckboxProps['label'];
   modelValue: MCheckboxProps['modelValue'];
   val?: MCheckboxProps['val'];
   required?: MCheckboxProps['required'];
@@ -93,6 +95,7 @@ const props = withDefaults(defineProps<Props>(), {
   lg: undefined,
   xl: undefined,
   name: () => '',
+  label: () => '',
   modelValue: undefined,
   val: undefined,
   required: undefined

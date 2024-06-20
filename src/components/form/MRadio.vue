@@ -18,6 +18,7 @@
     <VeeField
       v-slot="fieldProps"
       v-model="inputValue"
+      :label="label ?? name"
       :name="name"
       :rules="getRules"
       v-bind="$attrs"
@@ -74,6 +75,7 @@ interface Props {
   lg?: MRadioProps['lg'];
   xl?: MRadioProps['xl'];
   name: MRadioProps['name'];
+  label: MRadioProps['label'];
   modelValue: MRadioProps['modelValue'];
   val: MRadioProps['val'];
   required: MRadioProps['required'];
@@ -88,6 +90,7 @@ const props = withDefaults(defineProps<Props>(), {
   lg: undefined,
   xl: undefined,
   name: () => '',
+  label: () => '',
   modelValue: undefined,
   val: undefined,
   required: undefined

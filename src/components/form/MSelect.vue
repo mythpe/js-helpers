@@ -145,6 +145,7 @@
     <VeeField
       ref="veeFieldRef"
       v-model="inputValue"
+      :label="label ?? name"
       :name="name"
       :rules="getRules"
       class="hidden"
