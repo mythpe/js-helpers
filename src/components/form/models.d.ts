@@ -280,7 +280,7 @@ export interface MCheckboxProps extends QCheckboxProps {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  name: string;
+  name?: string;
   modelValue: any;
   val?: any | undefined;
   label?: any;

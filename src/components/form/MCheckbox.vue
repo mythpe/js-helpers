@@ -80,7 +80,7 @@ interface Props {
   lg?: MCheckboxProps['lg'];
   xl?: MCheckboxProps['xl'];
   name: MCheckboxProps['name'];
-  label: MCheckboxProps['label'];
+  label?: MCheckboxProps['label'];
   modelValue: MCheckboxProps['modelValue'];
   val?: MCheckboxProps['val'];
   required?: MCheckboxProps['required'];
@@ -95,7 +95,7 @@ const props = withDefaults(defineProps<Props>(), {
   lg: undefined,
   xl: undefined,
   name: () => '',
-  label: () => '',
+  label: undefined,
   modelValue: undefined,
   val: undefined,
   required: undefined

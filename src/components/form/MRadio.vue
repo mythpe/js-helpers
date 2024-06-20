@@ -75,7 +75,7 @@ interface Props {
   lg?: MRadioProps['lg'];
   xl?: MRadioProps['xl'];
   name: MRadioProps['name'];
-  label: MRadioProps['label'];
+  label?: MRadioProps['label'];
   modelValue: MRadioProps['modelValue'];
   val: MRadioProps['val'];
   required: MRadioProps['required'];
@@ -90,7 +90,7 @@ const props = withDefaults(defineProps<Props>(), {
   lg: undefined,
   xl: undefined,
   name: () => '',
-  label: () => '',
+  label: undefined,
   modelValue: undefined,
   val: undefined,
   required: undefined

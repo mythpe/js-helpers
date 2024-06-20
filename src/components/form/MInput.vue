@@ -40,6 +40,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   name: () => '',
+  label: undefined,
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -47,7 +48,6 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  label: undefined,
   stackLabel: undefined,
   placeholder: undefined,
   hidePlaceholder: undefined,
