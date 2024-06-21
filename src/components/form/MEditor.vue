@@ -43,6 +43,7 @@
       v-bind="$attrs"
     >
       <q-editor
+        :_definitions="{..._definitions,...$myth.options.editor?.definitions}"
         :dense="dense !== undefined ? dense : $q.screen.lt.md"
         :fonts="fonts || _fonts"
         :min-height="minHeight"
@@ -53,14 +54,14 @@
       />
     </VeeField>
     <slot />
-    <q-slide-transition>
+    <MTransition>
       <p
         v-if="inputErrors.length > 0"
         class="text-body2 text-negative"
       >
         {{ inputErrors[0] }}
       </p>
-    </q-slide-transition>
+    </MTransition>
   </MCol>
 </template>
 
@@ -92,13 +93,13 @@ interface Props {
 const $q = useQuasar()
 const _toolbar = [
   [
-    {
-      label: $q.lang.editor.align,
-      icon: $q.iconSet.editor.align,
-      fixedLabel: true,
-      list: 'only-icons',
-      options: ['left', 'center', 'right', 'justify']
-    },
+    // {
+    //   label: $q.lang.editor.align,
+    //   icon: $q.iconSet.editor.align,
+    //   fixedLabel: true,
+    //   list: 'only-icons',
+    //   options: ['left', 'center', 'right', 'justify']
+    // },
     {
       label: $q.lang.editor.align,
       icon: $q.iconSet.editor.align,
@@ -107,8 +108,7 @@ const _toolbar = [
     }
   ],
   ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript'],
-  ['token', 'hr', 'link', 'custom_btn'],
-  ['print', 'fullscreen'],
+  ['hr', 'link', 'print', 'fullscreen'],
   [
     {
       label: $q.lang.editor.formatting,
@@ -123,6 +123,22 @@ const _toolbar = [
         'h5',
         'h6',
         'code'
+      ]
+    },
+    {
+      label: $q.lang.editor.fontSize,
+      icon: $q.iconSet.editor.fontSize,
+      fixedLabel: true,
+      fixedIcon: true,
+      list: 'no-icons',
+      options: [
+        'size-1',
+        'size-2',
+        'size-3',
+        'size-4',
+        'size-5',
+        'size-6',
+        'size-7'
       ]
     },
     {
@@ -174,7 +190,13 @@ const _fonts = {
   times_new_roman: 'Times New Roman',
   verdana: 'Verdana'
 }
-
+const _definitions = {
+  colors: {
+    label: 'Colors',
+    tip: 'Change the text & background colors',
+    icon: 'colorize'
+  }
+}
 const props = withDefaults(defineProps<Props>(), {
   auto: undefined,
   col: undefined,
