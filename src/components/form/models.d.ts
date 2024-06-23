@@ -280,11 +280,12 @@ export interface MCheckboxProps extends QCheckboxProps {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  name?: string;
+  name: string;
   modelValue: any;
   val?: any | undefined;
   label?: any;
-  required?: boolean | undefined;
+  noLabel?: boolean;
+  required?: boolean;
 }
 
 export interface MCheckboxSlots extends QCheckboxSlots {
@@ -570,7 +571,8 @@ export interface MRadioProps extends Omit<QRadioProps, 'name' | 'modelValue' | '
   modelValue: any;
   val: any;
   label?: string | null | undefined;
-  required?: boolean | undefined;
+  noLabel?: boolean;
+  required?: boolean;
 }
 
 export interface MRadioSlots extends QRadioSlots {

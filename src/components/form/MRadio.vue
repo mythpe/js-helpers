@@ -34,7 +34,7 @@
             v-bind="fieldProps"
           />
           <q-radio
-            :label="getLabel"
+            :label="noLabel ? undefined : getLabel"
             :model-value="modelValue"
             :placeholder="getPlaceholder"
             :val="val"
@@ -76,6 +76,7 @@ interface Props {
   xl?: MRadioProps['xl'];
   name: MRadioProps['name'];
   label?: MRadioProps['label'];
+  noLabel?: MRadioProps['label'];
   modelValue: MRadioProps['modelValue'];
   val: MRadioProps['val'];
   required: MRadioProps['required'];
@@ -91,6 +92,7 @@ const props = withDefaults(defineProps<Props>(), {
   xl: undefined,
   name: () => '',
   label: undefined,
+  noLabel: undefined,
   modelValue: undefined,
   val: undefined,
   required: undefined

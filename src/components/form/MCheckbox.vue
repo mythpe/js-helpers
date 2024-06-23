@@ -36,11 +36,11 @@
             v-bind="fieldProps"
           />
           <q-checkbox
-            :label="getLabel"
+            :label="noLabel ? undefined : getLabel"
             :model-value="modelValue"
             :placeholder="getPlaceholder"
             :val="val"
-            v-bind="{...($myth.options.checkbox),...($attrs || {}),...fieldProps.field}"
+            v-bind="{...$myth.options.checkbox,...$attrs,...fieldProps.field}"
           >
             <slot />
           </q-checkbox>
@@ -81,6 +81,7 @@ interface Props {
   xl?: MCheckboxProps['xl'];
   name: MCheckboxProps['name'];
   label?: MCheckboxProps['label'];
+  noLabel?: MCheckboxProps['noLabel'];
   modelValue: MCheckboxProps['modelValue'];
   val?: MCheckboxProps['val'];
   required?: MCheckboxProps['required'];
@@ -96,6 +97,7 @@ const props = withDefaults(defineProps<Props>(), {
   xl: undefined,
   name: () => '',
   label: undefined,
+  noLabel: undefined,
   modelValue: undefined,
   val: undefined,
   required: undefined
