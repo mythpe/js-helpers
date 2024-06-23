@@ -76,7 +76,7 @@ interface Props {
   xl?: MRadioProps['xl'];
   name: MRadioProps['name'];
   label?: MRadioProps['label'];
-  noLabel?: MRadioProps['label'];
+  noLabel?: MRadioProps['noLabel'];
   modelValue: MRadioProps['modelValue'];
   val: MRadioProps['val'];
   required: MRadioProps['required'];
