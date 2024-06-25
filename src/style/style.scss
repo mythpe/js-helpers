@@ -114,10 +114,16 @@ $text-wraps: ('wrap': wrap, 'nowrap': nowrap, 'balance': balance, 'pretty': pret
   }
 }
 
-$break-avoids: ('inside', 'after', 'before');
-@each $break-avoid in $break-avoids {
-  .break-#{$break-avoid}-avoid {
-    page-break-#{$break-avoid}: avoid;
+$breaks: ('inside', 'after', 'before');
+@each $break in $breaks {
+  .break-#{$break}-avoid {
+    page-break-#{$break}: avoid;
+  }
+}
+
+@each $break in $breaks {
+  .break-#{$break}-always {
+    page-break-#{$break}: always;
   }
 }
 
