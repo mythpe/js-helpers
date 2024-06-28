@@ -1026,7 +1026,7 @@ defineExpose({
           <MDtBtn
             v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
             :[contextmenuItem.name]="!0"
-            :dense="dense"
+            :dense="dense === undefined ? $myth.options.dt?.props?.dense : dense"
             :label="contextmenuItem.contextLabel !== undefined ? (contextmenuItem.contextLabel === null ? undefined : __(contextmenuItem.contextLabel)) : __(contextmenuItem.label || contextmenuItem.name) "
             list-item
             v-bind="{...$myth.options.dt?.contextmenu?.listItem,...contextmenuItem.attr}"
@@ -1186,7 +1186,7 @@ defineExpose({
                   v-if="!hideSearch"
                   v-model="tableOptions.search"
                   :debounce="searchDebounce"
-                  :dense="dense"
+                  :dense="dense === undefined ? $myth.options.dt?.props?.dense : dense"
                   :placeholder="searchPlaceholder"
                   autocomplete="none"
                   col="12"
