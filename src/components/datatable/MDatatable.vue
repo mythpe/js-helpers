@@ -186,7 +186,7 @@ const filterDialogModel = ref(!1)
 const showDialogModel = ref(!1)
 const formDialogModel = ref(!1)
 const isUpdateDialog = ref(!1)
-const itemDialog = ref<MDtItem | undefined>({} as MDtItem)
+const itemDialog = ref<MDtItem | undefined>(undefined)
 const itemIndexDialog = ref<MDtItemIndex | undefined>()
 const errorsDialog = ref<any>({})
 const dialogs = reactive<MDatatableDialogsOptions>({
@@ -203,7 +203,7 @@ const resetDialogs = () => {
   dialogs.show = !1
   dialogs.form = !1
   dialogs.isUpdate = !1
-  dialogs.item = {}
+  dialogs.item = undefined
   dialogs.index = undefined
   dialogs.errors = {}
 }
@@ -602,7 +602,7 @@ const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
 }
 const closeShowDialog = () => {
   dialogs.show = !1
-  dialogs.item = { ...defaultItem.value } as any
+  dialogs.item = undefined
   dialogs.index = undefined
 }
 /** Show Dialog */
@@ -662,7 +662,7 @@ const openCreateDialog = async (dtItem?: MDtItem) => {
     await router.push({ name: props.storeRoute, query: route.query })
     return
   }
-  const item = { ...(defaultItem.value || {}), ...(dtItem || {}) }
+  const item = { ...defaultItem.value, ...dtItem }
   isUpdateMode.value = !1
   dialogs.item = { ...item } as MDtItem
   dialogs.index = undefined
@@ -675,7 +675,7 @@ const closeFormDialog = () => {
   dialogs.form = !1
   nextTick(() => {
     isUpdateMode.value = !1
-    dialogs.item = { ...defaultItem.value } as any
+    dialogs.item = undefined
     dialogs.index = undefined
   })
 }
@@ -1171,9 +1171,9 @@ defineExpose({
                 class="items-center"
                 col
               >
-                <MFadeXTransition>
+                <MTransition>
                   <MCol
-                    v-if="Boolean(title)"
+                    v-if="!!title"
                     col="12"
                   >
                     <div
@@ -1181,11 +1181,12 @@ defineExpose({
                       v-text="title"
                     />
                   </MCol>
-                </MFadeXTransition>
+                </MTransition>
                 <MInput
                   v-if="!hideSearch"
                   v-model="tableOptions.search"
                   :debounce="searchDebounce"
+                  :dense="dense"
                   :placeholder="searchPlaceholder"
                   autocomplete="none"
                   col="12"
@@ -1452,7 +1453,7 @@ defineExpose({
                   <MDtBtn
                     v-if="!noRefreshBtn"
                     key="refresh-selection-btn"
-                    :disabled="tableOptions.loading"
+                    :disable="tableOptions.loading"
                     icon="ion-ios-refresh"
                     tooltip="myth.datatable.hints.refresh"
                     v-bind="$myth.options.dt?.buttons?.refresh"
@@ -1462,7 +1463,7 @@ defineExpose({
                   <MDtBtn
                     v-if="!noFullscreen"
                     key="fullscreen-selection-btn"
-                    :disabled="tableOptions.loading"
+                    :disable="tableOptions.loading"
                     :icon="tableOptions.fullscreen ? 'ion-ios-contract' : 'ion-ios-desktop'"
                     :tooltip="`myth.datatable.${tableOptions.fullscreen ? 'exitFullscreen' : 'fullscreen'}`"
                     v-bind="$myth.options.dt?.buttons?.fullscreen"
@@ -1471,18 +1472,18 @@ defineExpose({
 
                   <template v-if="hasSelectedItem">
                     <MDtBtn
-                      v-if="hasUpdateBtn"
+                      v-if="hasUpdateBtn && isSingleSelectedItem"
                       key="update-dt-selection-btn"
-                      :disable="!isSingleSelectedItem || tableOptions.loading"
+                      :disable="tableOptions.loading"
                       icon="ion-ios-create"
                       update
                       v-bind="$myth.options.dt?.topSelection?.btn"
                       @click="openUpdateDialogNoIndex(tableOptions.selected[0])"
                     />
                     <MDtBtn
-                      v-if="hasShowBtn"
+                      v-if="hasShowBtn && isSingleSelectedItem"
                       key="show-dt-selection-btn"
-                      :disable="!isSingleSelectedItem || tableOptions.loading"
+                      :disable="tableOptions.loading"
                       icon="ion-ios-eye"
                       show
                       v-bind="$myth.options.dt?.topSelection?.btn"
@@ -1523,7 +1524,7 @@ defineExpose({
               </MRow>
 
               <!-- Manage Columns -->
-              <MFadeTransition>
+              <MTransition>
                 <MRow
                   v-if="manageColumns"
                   class="items-center"
@@ -1556,10 +1557,10 @@ defineExpose({
                     </q-expansion-item>
                   </q-list>
                 </MRow>
-              </MFadeTransition>
+              </MTransition>
 
               <!-- Filter Row -->
-              <MFadeTransition>
+              <MTransition>
                 <MRow
                   v-if="Object.values(tableOptions.filter).filter(e => e !== undefined && e !== null).length > 0"
                   class="items-center"
@@ -1597,10 +1598,10 @@ defineExpose({
                     </MCol>
                   </template>
                 </MRow>
-              </MFadeTransition>
+              </MTransition>
 
               <!-- Selection Row -->
-              <MFadeTransition>
+              <MTransition>
                 <MRow
                   v-if="Boolean($slots.selection)"
                   class="items-center q-gutter-xs"
@@ -1611,7 +1612,7 @@ defineExpose({
                     name="selection"
                   />
                 </MRow>
-              </MFadeTransition>
+              </MTransition>
             </MContainer>
           </div>
         </template>
