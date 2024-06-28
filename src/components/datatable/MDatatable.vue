@@ -67,9 +67,11 @@ interface Props {
   hideShowBtn?: MDatatableProps['hideShowBtn'];
   hideDestroyBtn?: MDatatableProps['hideDestroyBtn'];
   storeRoute?: MDatatableProps['storeRoute'];
+  storeQueryParams?: MDatatableProps['storeQueryParams'];
   updateRoute?: MDatatableProps['updateRoute'];
+  updateQueryParams?: MDatatableProps['updateQueryParams'];
   showRoute?: MDatatableProps['showRoute'];
-  useQueryParams?: MDatatableProps['useQueryParams'];
+  showQueryParams?: MDatatableProps['showQueryParams'];
   mouse?: MDatatableProps['mouse'];
   noRefreshBtn?: MDatatableProps['noRefreshBtn'];
   endReach?: MDatatableProps['endReach'];
@@ -120,9 +122,11 @@ const props = withDefaults(defineProps<Props>(), {
   hideShowBtn: undefined,
   hideDestroyBtn: undefined,
   storeRoute: undefined,
+  storeQueryParams: undefined,
   updateRoute: undefined,
+  updateQueryParams: undefined,
   showRoute: undefined,
-  useQueryParams: undefined,
+  showQueryParams: undefined,
   mouse: undefined,
   noRefreshBtn: undefined,
   endReach: undefined,
@@ -564,25 +568,21 @@ const openShowDialogNoIndex = async (i: MDtItem) => {
   return await openShowDialog(item.value, index)
 }
 const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
+  const fdt = 's'
   const item = toRef(i)
+  if (props.showQueryParams) {
+    await router.push({ query: { ...route.query, id: item.value.id, fdt } })
+    return
+  }
   if (props.showRoute) {
-    if (props.useQueryParams) {
-      await router.push({
-        query: { ...route.query, id: item.value.id, t: 'show' }
-      })
-    } else {
-      await router.push({
-        name: props.showRoute,
-        params: { id: item.value.id }
-      })
-    }
+    await router.push({ name: props.showRoute, params: { id: item.value.id }, query: route.query })
     return
   }
   if (loading.value) {
     return
   }
   loading.value = !0
-  const params: any = { fdt: 's' }
+  const params: any = { fdt }
   if (getRequestWith('withShow')) {
     params.requestWith = getRequestWith('withShow')
   }
@@ -615,18 +615,14 @@ const openUpdateDialogNoIndex = (i: MDtItem) => {
   return openUpdateDialog(item.value, index)
 }
 const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
+  const fdt = 'u'
   const item = toRef(i)
+  if (props.updateQueryParams) {
+    await router.push({ query: { ...route.query, id: item.value.id, fdt } })
+    return
+  }
   if (updateRouteProp.value) {
-    if (props.useQueryParams) {
-      await router.push({
-        query: { ...route.query, id: item.value.id, t: 'update' }
-      })
-    } else {
-      await router.push({
-        name: updateRouteProp.value,
-        params: { id: item.value.id }
-      })
-    }
+    await router.push({ name: updateRouteProp.value, params: { id: item.value.id }, query: route.query })
     return
   }
   if (loading.value) {
@@ -637,7 +633,7 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
   // nextTick(() => {
   //   dialogs.form = !0
   // })
-  const params: any = { fdt: 'u' }
+  const params: any = { fdt }
   if (getRequestWith('withUpdate')) {
     params.requestWith = getRequestWith('withUpdate')
   }
@@ -657,14 +653,13 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
     .finally(() => (loading.value = !1))
 }
 const openCreateDialog = async (dtItem?: MDtItem) => {
+  const fdt = 'c'
+  if (props.storeQueryParams) {
+    await router.push({ query: { ...route.query, id: undefined, fdt } })
+    return
+  }
   if (props.storeRoute) {
-    if (props.useQueryParams) {
-      await router.push({
-        query: { ...route.query, id: undefined, t: 'store' }
-      })
-    } else {
-      await router.push({ name: props.storeRoute })
-    }
+    await router.push({ name: props.storeRoute, query: route.query })
     return
   }
   const item = { ...(defaultItem.value || {}), ...(dtItem || {}) }

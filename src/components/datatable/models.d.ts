@@ -215,9 +215,11 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   hideShowBtn?: boolean;
   hideDestroyBtn?: boolean;
   storeRoute?: string;
+  storeQueryParams?: boolean;
   updateRoute?: string;
+  updateQueryParams?: boolean;
   showRoute?: string;
-  useQueryParams?: boolean;
+  showQueryParams?: boolean;
   mouse?: boolean;
   noRefreshBtn?: boolean;
   endReach?: boolean;
