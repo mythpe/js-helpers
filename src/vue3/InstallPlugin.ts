@@ -23,9 +23,8 @@ import { Dates, Helpers, Str } from '../utils'
 import lodash from 'lodash'
 import { copyToClipboard, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
-import { useI18n, VueI18n } from 'vue-i18n'
+import { VueI18n } from 'vue-i18n'
 
-type __VueI18n = VueI18n;
 /**
  * Install Plugin
  * @param app
@@ -96,7 +95,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         lodash.snakeCase(singular)
       ]))
 
-      const { t, te } = useI18n({ useScope: 'global' })
+      const { t, te, tc } = baseI18n.value?.global as VueI18n
       let str = null
       let k: string
 
@@ -118,12 +117,12 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
             const n = routeName.split('.')
             if (s.length === 2 && n.length > 1) {
               const model = n[n.length - 2]
-              const rep = lodash.singularize(n[n.length - 1]).toLocaleLowerCase()
-              const e = `replace.${rep}`
               const pluralizeModel = lodash.pluralize(lodash.pascalCase(model))
               const _modelChoiceKey = `choice.${pluralizeModel}`
               if (te(_modelChoiceKey)) {
-                const l = t(_modelChoiceKey, number)
+                const l = t(_modelChoiceKey, number as any)
+                const rep = lodash.singularize(n[n.length - 1]).toLocaleLowerCase()
+                const e = `replace.${rep}`
                 str = te(e) ? t(e, { name: l }) : null
               } else {
                 const pop: string = k.split('.').pop() || ''
