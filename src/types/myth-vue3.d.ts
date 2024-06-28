@@ -197,6 +197,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     color?: string | undefined;
     size?: string | undefined;
   };
+  mobileLength?: MInputProps['mobile'];
   input?: Partial<QInputProps>;
   field?: Partial<QFieldProps>;
   file?: Partial<QFileProps>;

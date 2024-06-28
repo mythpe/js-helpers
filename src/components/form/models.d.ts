@@ -101,7 +101,7 @@ export interface MInputProps extends Omit<QInputProps, 'rules' | 'modelValue' | 
   required?: boolean | undefined;
   hideRequired?: boolean | undefined;
   email?: boolean | undefined;
-  mobile?: boolean | string | undefined;
+  mobile?: boolean | string | number | undefined;
   rules?: string | string[] | undefined;
   errors?: Record<string, string[]>;
   modelValue?: any;
