@@ -79,7 +79,7 @@ interface Props {
   noLabel?: MRadioProps['noLabel'];
   modelValue: MRadioProps['modelValue'];
   val: MRadioProps['val'];
-  required: MRadioProps['required'];
+  required?: MRadioProps['required'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
