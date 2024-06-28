@@ -99,7 +99,7 @@ export type MDatatableDialogsOptions = {
   show: Ref<boolean>;
   form: Ref<boolean>;
   isUpdate: Ref<boolean>;
-  item: Ref<MDtItem> | MaybeRef<MDtItem>;
+  item: Ref<MDtItem> | MaybeRef<MDtItem> | any;
   index: Ref<MDtItemIndex | undefined>;
   errors: Record<string | number | symbol, string[]> | any;
 }
@@ -217,6 +217,7 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   storeRoute?: string;
   updateRoute?: string;
   showRoute?: string;
+  useQueryParams?: boolean;
   mouse?: boolean;
   noRefreshBtn?: boolean;
   endReach?: boolean;

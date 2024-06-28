@@ -69,6 +69,7 @@ interface Props {
   storeRoute?: MDatatableProps['storeRoute'];
   updateRoute?: MDatatableProps['updateRoute'];
   showRoute?: MDatatableProps['showRoute'];
+  useQueryParams?: MDatatableProps['useQueryParams'];
   mouse?: MDatatableProps['mouse'];
   noRefreshBtn?: MDatatableProps['noRefreshBtn'];
   endReach?: MDatatableProps['endReach'];
@@ -121,6 +122,7 @@ const props = withDefaults(defineProps<Props>(), {
   storeRoute: undefined,
   updateRoute: undefined,
   showRoute: undefined,
+  useQueryParams: undefined,
   mouse: undefined,
   noRefreshBtn: undefined,
   endReach: undefined,
@@ -180,7 +182,7 @@ const filterDialogModel = ref(!1)
 const showDialogModel = ref(!1)
 const formDialogModel = ref(!1)
 const isUpdateDialog = ref(!1)
-const itemDialog = ref<MDtItem | undefined>(undefined)
+const itemDialog = ref<MDtItem | undefined>({} as MDtItem)
 const itemIndexDialog = ref<MDtItemIndex | undefined>()
 const errorsDialog = ref<any>({})
 const dialogs = reactive<MDatatableDialogsOptions>({
@@ -197,7 +199,7 @@ const resetDialogs = () => {
   dialogs.show = !1
   dialogs.form = !1
   dialogs.isUpdate = !1
-  dialogs.item = undefined
+  dialogs.item = {}
   dialogs.index = undefined
   dialogs.errors = {}
 }
@@ -564,10 +566,16 @@ const openShowDialogNoIndex = async (i: MDtItem) => {
 const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
   const item = toRef(i)
   if (props.showRoute) {
-    router.push({
-      name: props.showRoute,
-      params: { id: item.value.id }
-    })
+    if (props.useQueryParams) {
+      await router.push({
+        query: { ...route.query, id: item.value.id, t: 'show' }
+      })
+    } else {
+      await router.push({
+        name: props.showRoute,
+        params: { id: item.value.id }
+      })
+    }
     return
   }
   if (loading.value) {
@@ -594,7 +602,7 @@ const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
 }
 const closeShowDialog = () => {
   dialogs.show = !1
-  dialogs.item = undefined
+  dialogs.item = { ...defaultItem.value } as any
   dialogs.index = undefined
 }
 /** Show Dialog */
@@ -606,13 +614,19 @@ const openUpdateDialogNoIndex = (i: MDtItem) => {
   const index = getRows.value.findIndex(e => e.id === item.value.id)
   return openUpdateDialog(item.value, index)
 }
-const openUpdateDialog = (i: MDtItem, index: MDtItemIndex) => {
+const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
   const item = toRef(i)
   if (updateRouteProp.value) {
-    router.push({
-      name: updateRouteProp.value,
-      params: { id: item.value.id }
-    })
+    if (props.useQueryParams) {
+      await router.push({
+        query: { ...route.query, id: item.value.id, t: 'update' }
+      })
+    } else {
+      await router.push({
+        name: updateRouteProp.value,
+        params: { id: item.value.id }
+      })
+    }
     return
   }
   if (loading.value) {
@@ -642,9 +656,15 @@ const openUpdateDialog = (i: MDtItem, index: MDtItemIndex) => {
     })
     .finally(() => (loading.value = !1))
 }
-const openCreateDialog = (dtItem?: MDtItem) => {
+const openCreateDialog = async (dtItem?: MDtItem) => {
   if (props.storeRoute) {
-    router.push({ name: props.storeRoute })
+    if (props.useQueryParams) {
+      await router.push({
+        query: { ...route.query, id: undefined, t: 'store' }
+      })
+    } else {
+      await router.push({ name: props.storeRoute })
+    }
     return
   }
   const item = { ...(defaultItem.value || {}), ...(dtItem || {}) }
@@ -660,7 +680,7 @@ const closeFormDialog = () => {
   dialogs.form = !1
   nextTick(() => {
     isUpdateMode.value = !1
-    dialogs.item = undefined
+    dialogs.item = { ...defaultItem.value } as any
     dialogs.index = undefined
   })
 }
