@@ -23,7 +23,7 @@ import { Dates, Helpers, Str } from '../utils'
 import lodash from 'lodash'
 import { copyToClipboard, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
-import { VueI18n } from 'vue-i18n'
+import { useI18n, VueI18n } from 'vue-i18n'
 
 type __VueI18n = VueI18n;
 /**
@@ -84,8 +84,6 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       const pluralize = Str.pascalCase(lodash.pluralize(lastRouteName))
       const singular = Str.pascalCase(lodash.singularize(lastRouteName))
       const keys = lodash.filter(lodash.uniq([
-        // `routes.${routeName}`,
-        // `routes.${routePath}`,
         `${lastRouteName}Page.title`,
         `${lodash.camelCase(lastRouteName)}Page.title`,
         `choice.${pluralize}`,
@@ -98,7 +96,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         lodash.snakeCase(singular)
       ]))
 
-      const { t, te } = baseI18n.value?.global as __VueI18n
+      const { t, te } = useI18n({ useScope: 'global' })
       let str = null
       let k: string
 
@@ -125,7 +123,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
               const pluralizeModel = lodash.pluralize(lodash.pascalCase(model))
               const _modelChoiceKey = `choice.${pluralizeModel}`
               if (te(_modelChoiceKey)) {
-                const l = t(_modelChoiceKey, 1 as any)
+                const l = t(_modelChoiceKey, number)
                 str = te(e) ? t(e, { name: l }) : null
               } else {
                 const pop: string = k.split('.').pop() || ''
@@ -404,8 +402,8 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   // @ts-ignore
   app.config.globalProperties.$myth = r
 
-  app.config.globalProperties.openWindow = function (...args: any) {
-    return window.open(...args)
+  app.config.globalProperties.openWindow = function (url?: string | URL, target?: string, features?: string): Window | null {
+    return window.open(url, target, features)
   }
   app.config.globalProperties.__ = function (string: string | { text: string } | any, ...args: any): string {
     return this.$myth.__(string, ...args)
