@@ -12,7 +12,7 @@ import { MInputSlots } from './models'
 
 <template>
   <MInput
-    :mobile="$myth.options.mobileLength ?? !0"
+    :mobile="$myth.options.mobileLength !== undefined ? $myth.options.mobileLength : !0"
     type="tel"
     v-bind="$attrs"
   >
