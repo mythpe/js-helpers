@@ -12,9 +12,8 @@ import { MInputSlots } from './models'
 
 <template>
   <MInput
-    :mobile="$myth.options.mobileLength !== undefined ? $myth.options.mobileLength : !0"
     type="tel"
-    v-bind="$attrs"
+    v-bind="{...$myth.options.mobile,...$attrs}"
   >
     <template
       v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
