@@ -11,20 +11,32 @@ import { MContainerProps } from './models.d'
 import { computed } from 'vue'
 
 interface Props {
-  dense?: MContainerProps['dense']
+  dense?: MContainerProps['dense'];
+  fluid?: MContainerProps['fluid'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  dense: undefined
+  dense: undefined,
+  fluid: undefined
 })
-const getDense = computed(() => (opts?: MContainerProps) => props.dense !== undefined ? props.dense : (opts?.dense !== undefined ? opts.dense : undefined))
+const getOption = computed(() => (opts?: MContainerProps, name: keyof Props) => {
+  if (props[name] !== undefined) {
+    return props[name]
+  }
+  opts = opts ?? {}
+  if (opts[name] !== undefined) {
+    return opts[name]
+  }
+  return props[name]
+})
 </script>
 
 <template>
   <div
     :class="{
       'm--container' : !0,
-      'm--container--dense' : getDense($myth.options.container) !== undefined
+      'm--container__dense' : getOption($myth.options.container,'dense') === !0,
+      'm--container__fluid' : getOption($myth.options.container,'fluid') === !0,
     }"
     v-bind="$attrs"
   >

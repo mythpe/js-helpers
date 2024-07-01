@@ -30,7 +30,6 @@ import { useMyth } from '../../vue3'
 import { useI18n } from 'vue-i18n'
 import MDtContextmenuItems from './MDtContextmenuItems.vue'
 import MDtBtn from './MDtBtn.vue'
-import MFadeTransition from '../transition/MFadeTransition.vue'
 
 const initPaginationOptions: MDatatablePagination = {
   sortBy: undefined,
@@ -1722,13 +1721,11 @@ defineExpose({
           :style="`height: ${($q.screen.height || 100) - 3 - (($refs.showActionsRef as any)?.$el?.offsetHeight || 60) - (($refs.showTitleRef as any)?.$el?.offsetHeight || 80)}px`"
           class="scroll"
         >
-          <MFadeTransition>
-            <slot
-              :index="dialogs.index"
-              :item="dialogs.item"
-              name="show"
-            />
-          </MFadeTransition>
+          <slot
+            :index="dialogs.index"
+            :item="dialogs.item"
+            name="show"
+          />
         </q-card-section>
         <q-separator />
         <q-card-actions
@@ -1788,7 +1785,6 @@ defineExpose({
             :style="`height: ${($q.screen.height || 100) - 3 - (($refs.formActions as any)?.$el?.offsetHeight || 60) - (($refs.formTitle as any)?.$el?.offsetHeight || 80)}px`"
             class="scroll"
           >
-            <!--<MFadeTransition>-->
             <MContainer v-if="tableOptions.loading && !dialogs.item">
               <MRow
                 v-if="tableOptions.loading"
@@ -1815,7 +1811,6 @@ defineExpose({
               name="form"
               v-bind="datatableItemsScope"
             />
-            <!--</MFadeTransition>-->
           </q-card-section>
           <q-separator />
           <q-card-actions
@@ -1900,31 +1895,29 @@ defineExpose({
         </div>
       </q-card>
     </MDialog>
-    <MFadeTransition>
-      <!-- Add Btn -->
-      <q-page-sticky
-        v-if="hasAddBtn && (noAddBtnFab ? !1 : $myth.options.dt?.addBtn?.noFab !== !0)"
-        :offset="$myth.options.dt?.fabBtn?.offset|| [25,25]"
-        :position="$myth.options.dt?.fabBtn?.position || 'bottom-right'"
-        v-bind="$myth.options.dt?.fabBtn?.pageStickyProps"
+    <!-- Add Btn -->
+    <q-page-sticky
+      v-if="hasAddBtn && (noAddBtnFab ? !1 : $myth.options.dt?.addBtn?.noFab !== !0)"
+      :offset="$myth.options.dt?.fabBtn?.offset|| [25,25]"
+      :position="$myth.options.dt?.fabBtn?.position || 'bottom-right'"
+      v-bind="$myth.options.dt?.fabBtn?.pageStickyProps"
+    >
+      <q-btn
+        color="primary"
+        fab
+        icon="add"
+        v-bind="$myth.options.dt?.fabBtn?.buttonProps"
+        @click="openCreateDialog()"
       >
-        <q-btn
-          color="primary"
-          fab
-          icon="add"
-          v-bind="$myth.options.dt?.fabBtn?.buttonProps"
-          @click="openCreateDialog()"
+        <MTooltip
+          anchor="top middle"
+          class="m--datatable-fab-tooltip"
+          self="bottom start"
         >
-          <MTooltip
-            anchor="top middle"
-            class="m--datatable-fab-tooltip"
-            self="bottom start"
-          >
-            <span class="text-caption">{{ getFormTitle }}</span>
-          </MTooltip>
-        </q-btn>
-      </q-page-sticky>
-    </MFadeTransition>
+          <span class="text-caption">{{ getFormTitle }}</span>
+        </MTooltip>
+      </q-btn>
+    </q-page-sticky>
   </div>
 </template>
 

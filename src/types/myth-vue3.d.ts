@@ -11,15 +11,10 @@ import {
   GlobalComponentConstructor,
   QBtnProps,
   QCardProps,
-  QCheckboxProps,
-  QDateProps,
   QDialogOptions,
   QDialogProps,
-  QEditorProps,
   QFieldProps,
-  QFileProps,
   QIconProps,
-  QInputProps,
   QItemLabelProps,
   QItemProps,
   QItemSectionProps,
@@ -28,12 +23,8 @@ import {
   QNotifyCreateOptions,
   QPageStickyProps,
   QPopupProxyProps,
-  QRadioProps,
   QSelectProps,
-  QTimeProps,
-  QToggleProps,
-  QTooltipProps,
-  QUploaderProps
+  QTooltipProps
 } from 'quasar'
 import {
   MAvatarViewerProps,
@@ -197,20 +188,20 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
     color?: string | undefined;
     size?: string | undefined;
   };
-  input?: Partial<QInputProps>;
-  mobile?: Partial<QInputProps>;
+  input?: Partial<MInputProps>;
+  mobile?: Partial<MInputProps>;
   field?: Partial<QFieldProps>;
-  file?: Partial<QFileProps>;
-  date?: Partial<QDateProps>;
-  time?: Partial<QTimeProps>;
+  file?: Partial<MFileProps>;
+  date?: Partial<MDateProps>;
+  time?: Partial<MTimeProps>;
   pickerBtn?: Partial<MBtnProps>;
   select?: Partial<QSelectProps>;
-  checkbox?: Partial<QCheckboxProps>;
-  editor?: Partial<QEditorProps>;
-  radio?: Partial<QRadioProps>;
-  toggle?: Partial<QToggleProps>;
+  checkbox?: Partial<MCheckboxProps>;
+  editor?: Partial<MEditorProps>;
+  radio?: Partial<MRadioProps>;
+  toggle?: Partial<MToggleProps>;
   uploader?: {
-    props?: Partial<QUploaderProps>;
+    props?: Partial<MUploaderProps>;
     downloadBtnProps?: Partial<MBtnProps>;
     removeBtnProps?: Partial<QBtnProps>;
     iconsSize?: MUploaderProps['iconsSize'];

@@ -35,9 +35,9 @@ $text-dark-color: #ffffff !default;
 }
 
 $m-space-base: $space-base !default;
-$container-max-width: 1024px !default;
-.container-max-width {
-  max-width: $container-max-width !important;
+$container-fluid-width: 1024px !default;
+.m--container__fluid {
+  max-width: $container-fluid-width !important;
   margin: auto !important;
 }
 
@@ -47,7 +47,7 @@ $container-max-width: 1024px !default;
 }
 
 .m--container {
-  &:not(.m--container--dense):not(.dense) {
+  &:not(.m--container__dense):not(.dense) {
     padding: ($m-space-base * .5);
 
     > {

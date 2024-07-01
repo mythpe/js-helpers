@@ -55,7 +55,7 @@ const props = withDefaults(defineProps<Props>(), {
   video: !1,
   pdf: !1,
   excel: !1,
-  size: () => '150px',
+  size: () => '100px',
   avatarText: undefined,
   fit: () => 'contain',
   clearable: undefined,
@@ -178,7 +178,7 @@ export default {
     :xs="xs"
   >
     <MColumn class="items-center">
-      <MFadeTransition>
+      <MTransition>
         <MCol
           v-if="label"
           col="auto"
@@ -191,7 +191,7 @@ export default {
             >*</span>
           </div>
         </MCol>
-      </MFadeTransition>
+      </MTransition>
       <MCol
         :class="`rounded-borders q-mb-sm ${hasErrors ? 'q-pa-xs bg-negative' : ''}`"
         col="auto"
@@ -228,7 +228,7 @@ export default {
       <MCol col="auto">
         <MBtn
           :color="!hasSrc ? 'positive' : 'secondary'"
-          :disable="!isLoaded && Boolean(urlValue)"
+          :disable="!isLoaded && !!urlValue"
           @click="onClick"
         >
           <span v-if="clearable && hasSrc">{{ __('remove') }}</span>
