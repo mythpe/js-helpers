@@ -152,7 +152,7 @@ export type StubSchemaContext = {
 
 }
 export type StubSchema = StubSchemaContext & {
-  [k: string]: ((...args: any) => Promise<AppApiResponse>) & string & StubSchemaContext;
+  [k: string]: ((...args: any) => Promise<AppApiResponse>) & string & StubSchemaContext & Record<string, StubSchemaContext>;
 }
 
 export type MythApiServicesSchema = { [key: string | symbol | number]: StubSchema }
