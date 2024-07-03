@@ -46,28 +46,14 @@ $container-fluid-width: 1024px !default;
   flex-wrap: wrap;
 }
 
+.m--row + .m--row,
+.m--column + .m--column {
+  margin-top: ($m-space-base * .5);
+}
+
 .m--container {
   &:not(.m--container__dense):not(.dense) {
     padding: ($m-space-base * .5);
-
-    > {
-      .m--row + .m--row,
-      .m--column + .m--column {
-        margin-top: ($m-space-base * .5);
-      }
-    }
-  }
-}
-
-.m--form,
-.q-tab-panel {
-  &:not(.dense) {
-    > {
-      .m--row + .m--row,
-      .m--column + .m--column {
-        margin-top: ($m-space-base * .5);
-      }
-    }
   }
 }
 

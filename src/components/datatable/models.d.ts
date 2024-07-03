@@ -260,6 +260,10 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
    * Auto actions card 'control'
    */
   showCardControlHeader?: boolean;
+  /**
+   * Set datatable to fixed view
+   */
+  fixed?: boolean;
 }
 
 export interface MDtAvatarProps extends QAvatarProps {

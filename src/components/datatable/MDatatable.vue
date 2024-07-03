@@ -96,6 +96,7 @@ interface Props {
   bordered?: MDatatableProps['bordered'];
   flat?: MDatatableProps['flat'];
   rows?: MDatatableProps['rows'];
+  fixed?: MDatatableProps['fixed'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -149,7 +150,8 @@ const props = withDefaults(defineProps<Props>(), {
   showCardControlHeader: undefined,
   dense: undefined,
   bordered: undefined,
-  flat: undefined
+  flat: undefined,
+  fixed: undefined
 })
 
 interface Emits {
@@ -1003,7 +1005,9 @@ defineExpose({
 </script>
 
 <template>
-  <div class="m--datatable-component">
+  <div
+    :class="{ 'm--datatable-component': !0, 'm--datatable-component__fixed': fixed === undefined ? ( $myth.options.dt?.props?.fixed === undefined ? undefined : $myth.options.dt?.props?.fixed) : fixed }"
+  >
     <MModalMenu
       v-model="contextmenu"
       class="shadow-1"
@@ -1948,15 +1952,16 @@ export default {
     thead tr:first-child th
       background: var(--q-dark-page)
 
-.m--datatable:not(.m--datatable-grid)
-  max-height: 80vh
+.m--datatable-component.m--datatable-component__fixed
+  .m--datatable:not(.m--datatable-grid)
+    max-height: 80vh
 
-  thead tr th
-    position: sticky
-    z-index: 1
+    thead tr th
+      position: sticky
+      z-index: 1
 
-  thead tr:first-child th
-    top: 0
+    thead tr:first-child th
+      top: 0
 
 .m--datatable:not(.m--datatable-grid).q-table--dense
   &.q-table--loading thead tr:last-child th
