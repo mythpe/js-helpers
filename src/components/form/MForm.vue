@@ -52,8 +52,6 @@ const emit = defineEmits<Events>()
 const veeForm = ref<VeeFormElm>()
 
 watch(() => props.errors, (v) => {
-  // resetForm({ errors })
-  // console.log(v)
   const errors: Record<string, string> = {}
   for (const errorsKey in v) {
     if (v[errorsKey].length > 0) {
@@ -61,16 +59,6 @@ watch(() => props.errors, (v) => {
     }
   }
   setErrors(errors)
-  // resetForm({ errors })
-  // nextTick(() => {
-  //   const touched:Record<string, boolean> = {}
-  //   for (const errorsKey in v) {
-  //     touched[errorsKey] = !1
-  //   }
-  //   setTouched(touched)
-  //   // console.log(v, touched)
-  //   // validate()
-  // })
 })
 watch(() => props.form, (values) => {
   resetForm({ values })
