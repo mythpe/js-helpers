@@ -48,12 +48,12 @@ $container-fluid-width: 1024px !default;
 
 .m--row + .m--row,
 .m--column + .m--column {
-  margin-top: ($m-space-base * .5);
+  margin-top: $m-space-base * .5;
 }
 
 .m--container {
   &:not(.m--container__dense):not(.dense) {
-    padding: ($m-space-base * .5);
+    padding: ($m-space-base * .5) $m-space-base;
   }
 }
 

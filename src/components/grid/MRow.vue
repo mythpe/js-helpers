@@ -23,14 +23,15 @@ withDefaults(defineProps<Props>(), {
   gutter: undefined,
   col: undefined
 })
+const defSpace = 'md'
 </script>
 
 <template>
   <div
     :class="{
       'm--row row': !0,
-      [`q-gutter-${space || $myth.options.row?.space || 'sm'}`]: gutter !== undefined ? gutter : ( $myth.options.row?.gutter !== undefined ? $myth.options.row.gutter : !1 ),
-      [`q-col-gutter-${space || $myth.options.row?.space || 'sm'}`]: col !== undefined ? col : ( $myth.options.row?.col !== undefined ? $myth.options.row.col : !1 ),
+      [`q-gutter-${space || $myth.options.row?.space || defSpace}`]: gutter !== undefined ? gutter : ( $myth.options.row?.gutter !== undefined ? $myth.options.row.gutter : !1 ),
+      [`q-col-gutter-${space || $myth.options.row?.space || defSpace}`]: col !== undefined ? col : ( $myth.options.row?.col !== undefined ? $myth.options.row.col : !1 ),
     }"
     v-bind="$attrs"
   >
