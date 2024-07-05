@@ -19,13 +19,12 @@ const props = withDefaults(defineProps<Props>(), {
   dense: undefined,
   fluid: undefined
 })
-const getOption = computed(() => (opts?: MContainerProps, name: keyof Props) => {
+const getOption = computed(() => (opts?: Partial<MContainerProps>, name: keyof Props) => {
   if (props[name] !== undefined) {
-    return props[name]
+    return !!props[name]
   }
-  opts = opts ?? {}
-  if (opts[name] !== undefined) {
-    return opts[name]
+  if (opts?.[name] !== undefined) {
+    return !!opts[name]
   }
   return props[name]
 })
