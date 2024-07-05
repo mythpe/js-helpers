@@ -95,6 +95,8 @@ export interface MBtnSlots extends QBtnSlots {
   loading: () => VNode[];
 }
 
+export type InputsRules = string | string[] | Record<string, any> | null | undefined;
+
 export interface MInputProps extends Omit<QInputProps, 'rules' | 'modelValue' | 'errors'>, MColProps {
   placeholder?: string | undefined;
   hidePlaceholder?: boolean | undefined;
@@ -102,7 +104,7 @@ export interface MInputProps extends Omit<QInputProps, 'rules' | 'modelValue' | 
   hideRequired?: boolean | undefined;
   email?: boolean | undefined;
   mobile?: boolean | string | number | undefined;
-  rules?: string | string[] | undefined;
+  rules?: InputsRules;
   errors?: Record<string, string[]>;
   modelValue?: any;
   /**
@@ -149,7 +151,7 @@ export interface MFileProps extends MColProps, Omit<QFileProps, 'rules'> {
   email?: boolean | undefined;
   clearable?: boolean | undefined;
   loading?: boolean | undefined;
-  rules?: string | string[] | undefined;
+  rules?: InputsRules;
   errors?: Record<string, string[]>;
   modelValue: any;
   /**
@@ -212,7 +214,7 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
   placeholder?: any;
   required?: boolean | undefined;
   hideRequired?: boolean | undefined;
-  rules?: string | string[] | undefined;
+  rules?: InputsRules;
   errors?: Record<string, string[]>;
   modelValue: any;
   options: any[];
@@ -286,6 +288,7 @@ export interface MCheckboxProps extends QCheckboxProps {
   label?: any;
   noLabel?: boolean;
   required?: boolean;
+  rules?: InputsRules;
 }
 
 export interface MCheckboxSlots extends QCheckboxSlots {
@@ -322,6 +325,8 @@ export interface MToggleProps extends MColProps, Omit<QToggleProps, 'modelValue'
   uncheckedIcon?: string | undefined;
   toggleIndeterminate?: boolean | undefined;
   statusLabels?: boolean | undefined;
+  rules?: InputsRules;
+  required?: boolean;
 }
 
 export interface MToggleSlots extends QToggleSlots {
@@ -557,6 +562,8 @@ export interface MEditorProps extends Omit<QEditorProps, 'modelValue'>, MColProp
   name: string;
   label?: string;
   hint?: string;
+  rules?: InputsRules;
+  required?: boolean;
 }
 
 export interface MEditorSlots extends QEditorSlots {
@@ -573,6 +580,7 @@ export interface MRadioProps extends Omit<QRadioProps, 'name' | 'modelValue' | '
   label?: string | null | undefined;
   noLabel?: boolean;
   required?: boolean;
+  rules?: InputsRules;
 }
 
 export interface MRadioSlots extends QRadioSlots {

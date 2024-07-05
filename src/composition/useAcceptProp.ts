@@ -6,25 +6,29 @@
  * Github: https://github.com/mythpe
  */
 
-import { computed } from 'vue'
+import { MaybeRef, onUnmounted, ref, toValue } from 'vue'
+import { MFileProps } from 'app/src'
 
-export default function useAcceptProp (Props: any) {
-  const props = computed(() => Props)
-  const accepts: string[] = []
-  if (props.value.accept) {
-    accepts.push(props.value.accept)
+export default function useAcceptProp (Props: MaybeRef<Partial<MFileProps>>) {
+  const props = toValue(Props)
+  const accepts = ref<string[]>([])
+  if (props.accept) {
+    accepts.value.push(props.accept)
   }
-  if (props.value.images) {
-    accepts.push('image/png,image/jpg,image/jpeg')
+  if (props.images) {
+    accepts.value.push('image/png,image/jpg,image/jpeg')
   }
-  if (props.value.video) {
-    accepts.push('video/mp4,video/x-m4v,video/*')
+  if (props.video) {
+    accepts.value.push('video/mp4,video/x-m4v,video/*')
   }
-  if (props.value.pdf) {
-    accepts.push('application/pdf')
+  if (props.pdf) {
+    accepts.value.push('application/pdf')
   }
-  if (props.value.excel) {
-    accepts.push('.csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  if (props.excel) {
+    accepts.value.push('.csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   }
+  onUnmounted(() => {
+    accepts.value = []
+  })
   return accepts
 }

@@ -6,68 +6,79 @@
  * Github: https://github.com/mythpe
  */
 
-import { computed, ComputedRef, Ref } from 'vue'
+import { computed, MaybeRef, toValue } from 'vue'
 import { useMyth } from '../vue3'
+import { MCheckboxProps, MEditorProps, MFileProps, MInputProps, MRadioProps, MSelectProps, MToggleProps } from 'app/src'
 
-type Generic = Record<string, any>
-type Args = Ref<Generic> | ComputedRef<Generic> | any
-export default function useInputProps (Props: Args, opts?: { choose?: boolean }) {
-  const props = computed<Generic>(() => Props)
+type PropsList =
+  | MInputProps
+  | MCheckboxProps
+  | MEditorProps
+  | MFileProps
+  | MRadioProps
+  | MSelectProps
+  | MToggleProps
+
+type Args = MaybeRef<Partial<PropsList>> | Partial<PropsList> | Record<string, any>;
+
+export default function useInputProps (Props: Args, Opts?: MaybeRef<{ choose?: boolean }>) {
+  const opts = toValue(Opts || {})
+  const props = toValue(Props)
   const { __ } = useMyth()
 
   const getRules = computed<string | undefined>(() => {
-    let rules = props.value.rules || []
+    let rules = props.rules || []
 
     if (typeof rules === 'string') {
       rules = rules.split('|')
     }
 
-    if (props.value.required) {
+    if (props.required) {
       rules.push('required')
     }
-    if (props.value.email) {
+    if (props.email) {
       rules.push('email')
     }
-    if (props.value.mobile !== undefined && props.value.mobile !== null) {
+    if (props.mobile !== undefined && props.mobile !== null) {
       const defLen = 10
-      if (typeof props.value.mobile === 'boolean') {
-        props.value.mobile && rules.push(`digits:${defLen}`)
+      if (typeof props.mobile === 'boolean') {
+        props.mobile && rules.push(`digits:${defLen}`)
       } else {
-        const len = props.value.mobile || defLen
+        const len = props.mobile || defLen
         rules.push(`digits:${len}`)
       }
     }
 
     return rules.join('|') || undefined
   })
-  const hasRequired = computed<boolean>(() => props.value.required === !0 ? !0 : getRules.value !== undefined && getRules.value?.indexOf('required') >= 0)
+  const hasRequired = computed<boolean>(() => props.required === !0 ? !0 : getRules.value !== undefined && getRules.value?.indexOf('required') >= 0)
   const getLabel = computed<string | undefined>(() => {
-    const k = props.value.label === undefined ? props.value.name : props.value.label
+    const k = props.label === undefined ? props.name : props.label
     if (k) {
       let label = __(k) || k
-      if (label && hasRequired.value && !props.value.hideRequired && !props.value.viewMode) {
+      if (label && hasRequired.value && !props.hideRequired && !props.viewMode) {
         label = `${label} *`
       }
       return label
     }
-    return props.value.label
+    return props.label
   })
   const getPlaceholder = computed<string | undefined>(() => {
-    if (props.value.hidePlaceholder) {
-      return props.value.placeholder !== undefined ? (__(props.value.placeholder) || undefined) : undefined
+    if (props.hidePlaceholder) {
+      return props.placeholder !== undefined ? (__(props.placeholder) || undefined) : undefined
     }
-    const k = props.value.placeholder === undefined ? (props.value.label !== undefined ? props.value.label : props.value.name) : props.value.placeholder
-    if (k && props.value.placeholder === undefined) {
-      return __(`replace.${opts?.choose ? 'choose' : 'enter'}`, { name: __(k) }) || props.value.placeholder
+    const k = props.placeholder === undefined ? (props.label !== undefined ? props.label : props.name) : props.placeholder
+    if (k && props.placeholder === undefined) {
+      return __(`replace.${opts?.choose ? 'choose' : 'enter'}`, { name: __(k) }) || props.placeholder
     }
     if (k) {
-      return __(k) || props.value.placeholder
+      return __(k) || props.placeholder
     }
-    return props.value.placeholder
+    return props.placeholder
   })
   const inputErrors = computed<string[]>(() => {
-    if (!props.value.errors || !props.value.name) return []
-    return props.value.errors[props.value.name] || []
+    if (!props.errors || !props.name) return []
+    return props.errors[props.name] || []
   })
   return { getRules, hasRequired, getLabel, getPlaceholder, inputErrors }
 }

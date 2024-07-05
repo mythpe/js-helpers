@@ -60,10 +60,10 @@ const props = withDefaults(defineProps<Props>(), {
   lg: undefined,
   xl: undefined,
   accept: undefined,
-  images: !1,
-  video: !1,
-  pdf: !1,
-  excel: !1,
+  images: undefined,
+  video: undefined,
+  pdf: undefined,
+  excel: undefined,
   outlined: undefined,
   standout: undefined,
   borderless: undefined,
@@ -94,7 +94,6 @@ const emit = defineEmits<Events>()
 const { getRules, getLabel, getPlaceholder } = useInputProps(props)
 const accepts = useAcceptProp(props)
 const fileInput = ref<InstanceType<typeof QFile>>()
-// const inputValue = ref(props.modelValue)
 const inputValue = computed({
   get: () => props.modelValue,
   set: (v) => {
@@ -108,6 +107,7 @@ const pickFiles = (...args: any) => fileInput.value?.pickFiles(...args)
 const removeAtIndex = (index: number) => fileInput.value?.removeAtIndex(index)
 
 defineExpose({
+  fileInput,
   pickFiles,
   removeAtIndex
 })
