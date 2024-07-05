@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 
-import useAcceptProp from '../../composition/useAcceptProp'
+import { useAcceptProp } from '../../composition/useAcceptProp'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { ColStyleType } from '../grid/models'
 
@@ -76,7 +76,7 @@ type Events = {
   (e: 'update:removed', value: MAvatarViewerProps['removed']): void;
 }
 const emit = defineEmits<Events>()
-const accepts = useAcceptProp(props)
+const { accepts } = useAcceptProp(props)
 const errorsProp = computed<MAvatarViewerProps['errors']>({
   get: () => props.errors,
   set: v => emit('update:errors', v)

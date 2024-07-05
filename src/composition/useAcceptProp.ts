@@ -6,29 +6,39 @@
  * Github: https://github.com/mythpe
  */
 
-import { MaybeRef, onUnmounted, ref, toValue } from 'vue'
-import { MFileProps } from 'app/src'
+import { MaybeRef, onUnmounted, ref, toValue, watchEffect } from 'vue'
+import { MAvatarViewerProps, MFileProps, MUploaderProps } from 'app/src'
 
-export default function useAcceptProp (Props: MaybeRef<Partial<MFileProps>>) {
-  const props = toValue(Props)
+type PropsList = MFileProps | MUploaderProps | MAvatarViewerProps;
+type Arg = MaybeRef<Partial<PropsList>> | Partial<PropsList>;
+
+export function useAcceptProp (Props: Arg) {
   const accepts = ref<string[]>([])
-  if (props.accept) {
-    accepts.value.push(props.accept)
-  }
-  if (props.images) {
-    accepts.value.push('image/png,image/jpg,image/jpeg')
-  }
-  if (props.video) {
-    accepts.value.push('video/mp4,video/x-m4v,video/*')
-  }
-  if (props.pdf) {
-    accepts.value.push('application/pdf')
-  }
-  if (props.excel) {
-    accepts.value.push('.csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  const updateAccepts = (remove?: boolean) => {
+    const props = toValue(Props)
+    accepts.value = []
+    if (remove) {
+      return
+    }
+    if (props.accept) {
+      accepts.value.push(props.accept)
+    }
+    if (props.images) {
+      accepts.value.push('image/png,image/jpg,image/jpeg')
+    }
+    if (props.video) {
+      accepts.value.push('video/mp4,video/x-m4v,video/*')
+    }
+    if (props.pdf) {
+      accepts.value.push('application/pdf')
+    }
+    if (props.excel) {
+      accepts.value.push('.csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    }
   }
   onUnmounted(() => {
-    accepts.value = []
+    updateAccepts(!0)
   })
+  watchEffect(() => updateAccepts())
   return { accepts }
 }

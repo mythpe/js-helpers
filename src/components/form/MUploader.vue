@@ -9,7 +9,7 @@
 import { QList, QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
 import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
-import useAcceptProp from '../../composition/useAcceptProp'
+import { useAcceptProp } from '../../composition/useAcceptProp'
 import { useMyth } from '../../vue3'
 import { ColStyleType } from '../grid/models'
 import { MUploaderMediaItem, MUploaderProps, MUploaderXhrInfo } from './models'
@@ -133,7 +133,7 @@ const attachmentsRef = computed({
   get: () => props.modelValue,
   set: v => emit('update:modelValue', v)
 })
-const accepts = useAcceptProp(props)
+const { accepts } = useAcceptProp(props)
 const quasarLoading = computed<boolean | undefined>({
   get: () => $q.loading.isActive,
   set: v => v ? $q.loading.show() : $q.loading.hide()

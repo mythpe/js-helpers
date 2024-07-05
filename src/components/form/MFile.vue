@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 
 import { QFieldSlots, QFile } from 'quasar'
-import useAcceptProp from '../../composition/useAcceptProp'
+import { useAcceptProp } from '../../composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, nextTick, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
@@ -135,7 +135,7 @@ export default {
       <q-field
         :label="getLabel"
         :placeholder="getPlaceholder"
-        v-bind="{...$myth.options.input,...$myth.options.field,...$attrs, stackLabel: !0}"
+        v-bind="{...($myth.options.input as any),...$myth.options.field,...$attrs, stackLabel: !0}"
       >
         <template #control>
           <div
@@ -183,7 +183,7 @@ export default {
         :outlined="outlined"
         :placeholder="getPlaceholder"
         :standout="standout"
-        v-bind="{...$myth.options.file,...$attrs,stackLabel}"
+        v-bind="{...($myth.options.file as any),...$attrs,stackLabel}"
         @blur="fieldScope.handleBlur"
         @change="fieldScope.handleChange"
         @clear="fieldScope.handleBlur"
