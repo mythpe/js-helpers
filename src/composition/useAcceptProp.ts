@@ -30,5 +30,5 @@ export default function useAcceptProp (Props: MaybeRef<Partial<MFileProps>>) {
   onUnmounted(() => {
     accepts.value = []
   })
-  return accepts
+  return { accepts }
 }
