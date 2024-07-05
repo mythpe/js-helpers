@@ -53,7 +53,7 @@ $container-fluid-width: 1024px !default;
 
 .m--container {
   &:not(.m--container__dense):not(.dense) {
-    padding: ($m-space-base * .5) $m-space-base;
+    padding: $m-space-base;
   }
 }
 
