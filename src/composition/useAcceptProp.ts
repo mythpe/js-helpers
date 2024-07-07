@@ -40,5 +40,5 @@ export function useAcceptProp (Props: Arg) {
     updateAccepts(!0)
   })
   watchEffect(() => updateAccepts())
-  return toRefs({ accepts })
+  return { accepts }
 }

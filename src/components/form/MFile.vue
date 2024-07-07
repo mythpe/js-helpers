@@ -91,8 +91,8 @@ type Events = {
   (e: 'update:modelValue', value: any | undefined): void;
 }
 const emit = defineEmits<Events>()
-const { getRules, getLabel, getPlaceholder } = reactive(useInputProps(props))
-const { accepts } = reactive(useAcceptProp(props))
+const { getRules, getLabel, getPlaceholder } = useInputProps(props)
+const { accepts } = useAcceptProp(props)
 const fileInput = ref<InstanceType<typeof QFile>>()
 const inputValue = computed({
   get: () => props.modelValue,
