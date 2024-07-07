@@ -6,7 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
-import { MaybeRef, onUnmounted, ref, toValue, watchEffect } from 'vue'
+import { MaybeRef, onUnmounted, ref, toRefs, toValue, watchEffect } from 'vue'
 import { MAvatarViewerProps, MFileProps, MUploaderProps } from 'app/src'
 
 type PropsList = MFileProps | MUploaderProps | MAvatarViewerProps;
@@ -40,5 +40,5 @@ export function useAcceptProp (Props: Arg) {
     updateAccepts(!0)
   })
   watchEffect(() => updateAccepts())
-  return { accepts }
+  return toRefs({ accepts })
 }

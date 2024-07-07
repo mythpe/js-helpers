@@ -11,7 +11,7 @@
 import { QFieldSlots, QFile } from 'quasar'
 import { useAcceptProp } from '../../composition/useAcceptProp'
 import { Field as VeeField } from 'vee-validate'
-import { computed, defineProps, nextTick, ref } from 'vue'
+import { computed, defineProps, nextTick, reactive, ref } from 'vue'
 import useInputProps from '../../composition/useInputProps'
 import { MFileProps } from './models'
 
@@ -91,8 +91,8 @@ type Events = {
   (e: 'update:modelValue', value: any | undefined): void;
 }
 const emit = defineEmits<Events>()
-const { getRules, getLabel, getPlaceholder } = useInputProps(props)
-const { accepts } = useAcceptProp(props)
+const { getRules, getLabel, getPlaceholder } = reactive(useInputProps(props))
+const { accepts } = reactive(useAcceptProp(props))
 const fileInput = ref<InstanceType<typeof QFile>>()
 const inputValue = computed({
   get: () => props.modelValue,
