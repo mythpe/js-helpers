@@ -150,10 +150,14 @@ export type StubSchemaContext = {
 
   deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig): Promise<AppApiResponse>;
 
-}
-export type StubSchema = &
-  StubSchemaContext
-  & Record<string, ((...args: any) => Promise<AppApiResponse>) & string & StubSchemaContext & Record<string, StubSchemaContext>>;
+} & Record<string, ((...args: any) => Promise<AppApiResponse>)>
+  & Record<string, Record<string, ((...args: any) => Promise<AppApiResponse>)>>
+  & Record<string, Record<string, Record<string, ((...args: any) => Promise<AppApiResponse>)>>>
+
+export type StubSchema = StubSchemaContext
+  & ((...args: any) => Promise<AppApiResponse>)
+  & string
+  & Record<string, StubSchemaContext>
 
 export type MythApiServicesSchema = { [key: string | symbol | number]: StubSchema }
 // Axios
