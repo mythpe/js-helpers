@@ -20,7 +20,7 @@
     <VeeField
       v-slot="fieldProps"
       v-model="inputValue"
-      :label="label ?? name"
+      :label="label ? __(label) : name"
       :name="name"
       :rules="getRules"
       v-bind="$attrs"

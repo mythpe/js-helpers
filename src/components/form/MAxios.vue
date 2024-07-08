@@ -176,7 +176,7 @@ defineExpose({
     ref="mSelectRef"
     v-model="model"
     :auto-search="autoSearch"
-    :label="label"
+    :label="label ? __(label) : name"
     :loading="loading"
     :multiple="multiple"
     :name="name"
