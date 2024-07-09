@@ -99,7 +99,7 @@ export type MDatatableDialogsOptions = {
   show: Ref<boolean>;
   form: Ref<boolean>;
   isUpdate: Ref<boolean>;
-  item: Ref<Partial<MDtItem>> | MaybeRef<Partial<MDtItem>> | UnwrapRef<MDtItem> | Record<string, any>;
+  item: Ref<Partial<MDtItem>> | MaybeRef<Partial<MDtItem>> | UnwrapRef<MDtItem> | Record<string, any> | undefined;
   index: Ref<MDtItemIndex | undefined>;
   errors: Record<string | number | symbol, string[]> | any;
 }
