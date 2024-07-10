@@ -120,12 +120,13 @@ export type MainAxiosAppResponse = {
   _errors: AxiosErrorsResponse;
 }
 export type AppApiResponse = AxiosResponse<AxiosDataResponse> & MainAxiosAppResponse
-export type UrlType = string | number;
+export type UrlType = string | number | any;
 export type ParamsType = Record<string, any> | FormData | object
 export type ConfigType = AxiosRequestConfig<AppApiResponse> & Partial<{
   params: Partial<ApiServiceParams> & Generic
 }>
-export type StubSchemaContext = {
+export type HelpersStubSchema = {
+
   index (config?: ConfigType): Promise<AppApiResponse>;
 
   staticIndex (config?: ConfigType): Promise<AppApiResponse>;
@@ -149,8 +150,10 @@ export type StubSchemaContext = {
   uploadAttachments (id: UrlType, data: Generic, config?: AxiosRequestConfig): Promise<AppApiResponse>;
 
   deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+};
 
-} & Record<string, ((...args: any) => Promise<AppApiResponse>)>
+export type StubSchemaContext = HelpersStubSchema
+  & Record<string, ((...args: any) => Promise<AppApiResponse>)>
   & Record<string, Record<string, ((...args: any) => Promise<AppApiResponse>)>>
   & Record<string, Record<string, Record<string, ((...args: any) => Promise<AppApiResponse>)>>>
 

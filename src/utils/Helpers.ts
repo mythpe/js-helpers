@@ -10,7 +10,7 @@ import { ComponentPublicInstance, nextTick, Ref } from 'vue'
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import lodash from 'lodash'
 import { scroll } from 'quasar'
-import { ConfigType, DownloadFromResponse, ParamsType, StubSchema, UrlType } from '../types'
+import { ConfigType, DownloadFromResponse, HelpersStubSchema, ParamsType, StubSchema, StubSchemaContext, UrlType } from '../types'
 
 export const Helpers = {
   appendArray (formData: FormData, values: File | Blob | Record<string, any> | any, name?: string | null | undefined) {
@@ -51,11 +51,9 @@ export const Helpers = {
     }
     return formData
   },
-  Stub (baseUrl: UrlType, axios: () => AxiosInstance): StubSchema {
+  Stub (baseUrl: UrlType, axios: () => AxiosInstance): HelpersStubSchema {
     const makeUrl = Helpers.StubUrl(baseUrl)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const methods: StubSchema = {
+    const methods: HelpersStubSchema = {
       async index (config?: ConfigType) {
         const u = makeUrl()
         return axios().get(u, config)
@@ -117,9 +115,7 @@ export const Helpers = {
         const u = makeUrl('DestroyAll')
         return axios().post(u, { ids: (ids || []) }, config)
       },
-      getUploadAttachmentsUrl (id: UrlType) {
-        return makeUrl(`${id}/Attachment/Upload`)
-      },
+      getUploadAttachmentsUrl: (id: UrlType) => makeUrl(`${id}/Attachment/Upload`),
       async uploadAttachments (id: UrlType, data: Record<string, any>, config?: AxiosRequestConfig) {
         const _url = makeUrl(`${id}/Attachment/Upload`)
         // if (typeof data === 'boolean') {
