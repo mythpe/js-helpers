@@ -10,15 +10,15 @@
   <template v-if="item !== undefined && index !== undefined">
     <template
       v-for="(contextmenuItem,i) in items"
-      :key="i"
+      :key="`MDtContextmenuItems-i${i}`"
     >
       <MDtBtn
         v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(item,index) : contextmenuItem.showIf"
         :[contextmenuItem.name]="!0"
         :label="contextmenuItem.label !== undefined ? __(contextmenuItem.label || contextmenuItem.name) : undefined"
-        :list-item="displayMode==='item'"
+        :list-item="displayMode === 'item'"
         :tooltip="contextmenuItem.tooltip !== undefined ? contextmenuItem.tooltip : (contextmenuItem.label === undefined ? contextmenuItem.name : undefined)"
-        v-bind="{...($myth.options.dt?.contextmenu?.btn||{}),...(contextmenuItem.attr||{}),...$attrs}"
+        v-bind="{...$myth.options.dt?.contextmenu?.btn,...contextmenuItem.attr,...$attrs}"
         @click="contextmenuItem.click ? contextmenuItem.click(item,index) : undefined"
       />
     </template>
