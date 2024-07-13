@@ -856,15 +856,13 @@ const logoutDatatable = () => {
  */
 const contextmenu = ref(!1)
 const onRowContextmenu = (e: MouseEvent | Event, row: MDtItem, index: number) => {
+  e.preventDefault?.()
+  e.stopImmediatePropagation?.()
   dialogs.item = row
   dialogs.index = index
-  nextTick(() => {
-    setTimeout(() => {
-      if (isGrid.value) {
-        contextmenu.value = !0
-      }
-    }, 90)
-  })
+  if (isGrid.value) {
+    contextmenu.value = !0
+  }
 }
 const contextmenuItemsProp = computed(() => props.contextItems)
 const contextmenuItems = computed<any>(() => ([
@@ -1098,6 +1096,7 @@ defineExpose({
                       <div>
                         <MDtBtn
                           icon="ion-ios-more"
+                          flat
                           @click="onRowContextmenu($event,iTempProps.row,iTempProps.rowIndex)"
                         />
                       </div>
