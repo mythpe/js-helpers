@@ -42,7 +42,7 @@ export type ColStyleType =
 export type MContainerProps = {
   readonly dense?: boolean | undefined;
   readonly fluid?: boolean | undefined;
-} & Record<string, unknown>;
+} & Record<string, any>;
 
 export type MContainerSlots = {
   default?: () => VNode[];

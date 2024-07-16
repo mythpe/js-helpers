@@ -13,7 +13,6 @@
     :initial-errors="errors"
     :initial-values="form"
     as="div"
-    class="m--form"
     v-bind="$attrs"
   >
     <form
