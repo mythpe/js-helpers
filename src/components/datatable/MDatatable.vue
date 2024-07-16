@@ -1141,7 +1141,12 @@ defineExpose({
                         </template>
                         <template v-else>
                           <div class="m--datatable-card-value">
-                            {{ col.value }}
+                            <slot
+                              :name="`card-cell-${col.name}`"
+                              v-bind="iTempProps"
+                            >
+                              {{ col.value }}
+                            </slot>
                           </div>
                         </template>
                       </MCol>
