@@ -113,6 +113,7 @@ export interface MInputProps extends Omit<QInputProps, 'rules' | 'modelValue' | 
   viewMode?: boolean | undefined;
   viewModeValue?: any | undefined;
   autocomplete?: string | boolean | undefined;
+  topLabel?: boolean | undefined;
 }
 
 export interface MInputSlots extends QInputSlots {
@@ -248,6 +249,7 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
    */
   viewMode?: boolean | undefined;
   viewModeValue?: any | undefined;
+  topLabel?: boolean | undefined;
 }
 
 export interface MSelectSlots extends QSelectSlots {

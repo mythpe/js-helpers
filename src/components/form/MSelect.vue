@@ -6,6 +6,157 @@
   - Github: https://github.com/mythpe
   -->
 
+<script lang="ts" setup>
+import { Field as VeeField } from 'vee-validate'
+import { computed, defineProps, ref, watch } from 'vue'
+import useInputProps from '../../composition/useInputProps'
+import { ColStyleType } from '../grid/models'
+import { MSelectProps } from './models'
+import { QFieldSlots, QSelectSlots } from 'quasar'
+
+interface Props {
+  auto?: boolean;
+  col?: ColStyleType;
+  xs?: ColStyleType;
+  sm?: ColStyleType;
+  md?: ColStyleType;
+  lg?: ColStyleType;
+  xl?: ColStyleType;
+  behavior?: MSelectProps['behavior'];
+  name: MSelectProps['name'];
+  label?: MSelectProps['label'];
+  placeholder?: MSelectProps['placeholder'];
+  stackLabel?: MSelectProps['stackLabel'];
+  required?: MSelectProps['required'];
+  hideRequired?: MSelectProps['hideRequired'];
+  rules?: MSelectProps['rules'];
+  errors?: MSelectProps['errors'];
+  modelValue: MSelectProps['modelValue'];
+  clearable?: MSelectProps['clearable'];
+  options: MSelectProps['options'];
+  optionLabel?: MSelectProps['optionLabel'];
+  optionValue?: MSelectProps['optionValue'];
+  emitValue?: MSelectProps['emitValue'];
+  mapOptions?: MSelectProps['mapOptions'];
+  useInput?: MSelectProps['useInput'];
+  search?: MSelectProps['search'];
+  timeout?: MSelectProps['timeout'];
+  autoSearch?: MSelectProps['autoSearch'];
+  loading?: MSelectProps['loading'];
+  noFilter?: MSelectProps['noFilter'];
+  viewMode?: MSelectProps['viewMode'];
+  viewModeValue?: MSelectProps['viewModeValue'];
+  multiple?: MSelectProps['multiple'];
+  topLabel?: MSelectProps['topLabel'];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  auto: undefined,
+  col: undefined,
+  xs: undefined,
+  sm: undefined,
+  md: undefined,
+  lg: undefined,
+  xl: undefined,
+  behavior: undefined,
+  name: () => '',
+  label: undefined,
+  placeholder: undefined,
+  stackLabel: undefined,
+  required: undefined,
+  hideRequired: undefined,
+  rules: undefined,
+  errors: undefined,
+  modelValue: undefined,
+  clearable: undefined,
+  options: () => ([]),
+  optionLabel: () => 'label',
+  optionValue: () => 'value',
+  useInput: () => !0,
+  emitValue: () => !0,
+  mapOptions: () => !0,
+  search: undefined,
+  timeout: () => 300,
+  autoSearch: () => !1,
+  loading: () => !1,
+  noFilter: () => !1,
+  viewMode: () => !1,
+  viewModeValue: undefined,
+  multiple: undefined,
+  topLabel: undefined
+})
+type Events = {
+  (e: 'update:modelValue', value: any): void;
+  (e: 'search', value: any): void;
+}
+const emit = defineEmits<Events>()
+const veeFieldRef = ref()
+const selectRef = ref()
+const inputValue = computed({
+  get: () => props.modelValue,
+  set: v => emit('update:modelValue', v)
+})
+const errorMessageField = ref<string | undefined>(undefined)
+const { getRules, getLabel, getPlaceholder } = useInputProps(props, { choose: !0 })
+const originalOptions = computed<any>(() => props.options)
+const noFilterProp = computed<any>(() => props.noFilter !== !1)
+const searchInput = ref('')
+const getOptions = computed(() => {
+  if (searchInput.value && searchInput.value.length > 0 && noFilterProp.value !== !0) {
+    return originalOptions.value.filter((v: any) => {
+      if (typeof v === 'string' || typeof v === 'number') {
+        return v.toString().toLowerCase().indexOf(searchInput.value) > -1
+      }
+      let labelKey = 'label'
+      if (props.optionLabel) {
+        labelKey = typeof props.optionLabel === 'function' ? props.optionLabel(v) : props.optionLabel
+      }
+      let valueKey = 'value'
+      if (props.optionValue) {
+        valueKey = typeof props.optionValue === 'function' ? props.optionValue(v) : props.optionValue
+      }
+      return v[labelKey]?.toString().toLowerCase().indexOf(searchInput.value) > -1 || v[valueKey]?.toString().toLowerCase().indexOf(searchInput.value) > -1
+    })
+  }
+  return originalOptions.value
+})
+const filterFn = (val: any, update: any) => {
+  if (!val && searchInput.value === val) {
+    update()
+    return
+  }
+  update(() => {
+    searchInput.value = val.toString()
+  })
+  // setTimeout(() => {
+  // }, props.timeout || 60)
+}
+const updateFieldValue = (v?: any) => {
+  inputValue.value = v
+}
+const useInputProp = computed(() => props.useInput)
+const updateModelValue = (v?: any) => {
+  inputValue.value = v
+  if (useInputProp.value) {
+    veeFieldRef.value.handleChange(v)
+  }
+}
+const onDoneOptions = () => {
+  selectRef.value?.updateInputValue('', !0)
+  selectRef.value?.hidePopup()
+}
+// const createValue = (val: any, done: any) => {
+//   if (val.length > 0) {
+//     console.log(val)
+//     // done(val, 'add-unique')
+//   }
+// }
+watch(() => searchInput.value, v => {
+  emit('search', v)
+})
+defineExpose({ searchInput })
+</script>
+
 <template>
   <MCol
     :auto="auto"
@@ -17,10 +168,16 @@
     :xs="xs"
   >
     <template v-if="viewMode">
+      <div
+        v-if="topLabel || $myth.options.select?.topLabel"
+        class="m--input__top-label"
+      >
+        {{ getLabel }}
+      </div>
       <q-field
-        :label="getLabel"
+        :label="(topLabel || $myth.options.select?.topLabel) ? undefined : getLabel"
         :placeholder="getPlaceholder"
-        v-bind="{...$myth.options.select,...$myth.options.field,...$attrs, stackLabel: !0}"
+        v-bind="{...$myth.options.select as any,...$myth.options.field,...$attrs, stackLabel: !0}"
       >
         <template #control>
           <div
@@ -46,12 +203,18 @@
       :is="useInput ? 'label' : VeeField"
       v-else
       v-slot="fieldProps"
-      :model-value="inputValue"
+      :model-value="useInput ? undefined : inputValue"
       :name="useInput ? undefined : name"
       :rules="getRules"
-      v-bind="$attrs"
+      v-bind="useInput ? undefined : $attrs"
       @update:model-value="updateFieldValue"
     >
+      <div
+        v-if="topLabel || $myth.options.select?.topLabel"
+        class="m--input__top-label"
+      >
+        {{ getLabel }}
+      </div>
       <q-select
         ref="selectRef"
         :behavior="$q.platform.is.ios === !0 ? 'dialog' : behavior"
@@ -59,7 +222,7 @@
         :emit-value="emitValue"
         :error="(fieldProps||{errors:[]}).errors.length > 0 || Boolean(errorMessageField)"
         :error-message="(fieldProps||{errorMessage:undefined}).errorMessage || errorMessageField"
-        :label="getLabel"
+        :label="(topLabel || $myth.options.select?.topLabel) ? undefined : getLabel"
         :loading="loading"
         :map-options="mapOptions"
         :model-value="inputValue"
@@ -158,155 +321,6 @@
     </VeeField>
   </MCol>
 </template>
-
-<script lang="ts" setup>
-import { Field as VeeField } from 'vee-validate'
-import { computed, defineProps, ref, watch } from 'vue'
-import useInputProps from '../../composition/useInputProps'
-import { ColStyleType } from '../grid/models'
-import { MSelectProps } from './models'
-import { QFieldSlots, QSelectSlots } from 'quasar'
-
-interface Props {
-  auto?: boolean;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  behavior?: MSelectProps['behavior'];
-  name: MSelectProps['name'];
-  label?: MSelectProps['label'];
-  placeholder?: MSelectProps['placeholder'];
-  stackLabel?: MSelectProps['stackLabel'];
-  required?: MSelectProps['required'];
-  hideRequired?: MSelectProps['hideRequired'];
-  rules?: MSelectProps['rules'];
-  errors?: MSelectProps['errors'];
-  modelValue: MSelectProps['modelValue'];
-  clearable?: MSelectProps['clearable'];
-  options: MSelectProps['options'];
-  optionLabel?: MSelectProps['optionLabel'];
-  optionValue?: MSelectProps['optionValue'];
-  emitValue?: MSelectProps['emitValue'];
-  mapOptions?: MSelectProps['mapOptions'];
-  useInput?: MSelectProps['useInput'];
-  search?: MSelectProps['search'];
-  timeout?: MSelectProps['timeout'];
-  autoSearch?: MSelectProps['autoSearch'];
-  loading?: MSelectProps['loading'];
-  noFilter?: MSelectProps['noFilter'];
-  viewMode?: MSelectProps['viewMode'];
-  viewModeValue?: MSelectProps['viewModeValue'];
-  multiple?: MSelectProps['multiple'];
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  auto: undefined,
-  col: undefined,
-  xs: undefined,
-  sm: undefined,
-  md: undefined,
-  lg: undefined,
-  xl: undefined,
-  behavior: undefined,
-  name: () => '',
-  label: undefined,
-  placeholder: undefined,
-  stackLabel: undefined,
-  required: undefined,
-  hideRequired: undefined,
-  rules: undefined,
-  errors: undefined,
-  modelValue: undefined,
-  clearable: undefined,
-  options: () => ([]),
-  optionLabel: () => 'label',
-  optionValue: () => 'value',
-  useInput: () => !0,
-  emitValue: () => !0,
-  mapOptions: () => !0,
-  search: undefined,
-  timeout: () => 300,
-  autoSearch: () => !1,
-  loading: () => !1,
-  noFilter: () => !1,
-  viewMode: () => !1,
-  viewModeValue: undefined,
-  multiple: undefined
-})
-type Events = {
-  (e: 'update:modelValue', value: any): void;
-  (e: 'search', value: any): void;
-}
-const emit = defineEmits<Events>()
-const veeFieldRef = ref()
-const selectRef = ref()
-const inputValue = computed({
-  get: () => props.modelValue,
-  set: v => emit('update:modelValue', v)
-})
-const errorMessageField = ref<string | undefined>(undefined)
-const { getRules, getLabel, getPlaceholder } = useInputProps(props, { choose: !0 })
-const originalOptions = computed<any>(() => props.options)
-const noFilterProp = computed<any>(() => props.noFilter !== !1)
-const searchInput = ref('')
-const getOptions = computed(() => {
-  if (searchInput.value && searchInput.value.length > 0 && noFilterProp.value !== !0) {
-    return originalOptions.value.filter((v: any) => {
-      if (typeof v === 'string' || typeof v === 'number') {
-        return v.toString().toLowerCase().indexOf(searchInput.value) > -1
-      }
-      let labelKey = 'label'
-      if (props.optionLabel) {
-        labelKey = typeof props.optionLabel === 'function' ? props.optionLabel(v) : props.optionLabel
-      }
-      let valueKey = 'value'
-      if (props.optionValue) {
-        valueKey = typeof props.optionValue === 'function' ? props.optionValue(v) : props.optionValue
-      }
-      return v[labelKey]?.toString().toLowerCase().indexOf(searchInput.value) > -1 || v[valueKey]?.toString().toLowerCase().indexOf(searchInput.value) > -1
-    })
-  }
-  return originalOptions.value
-})
-const filterFn = (val: any, update: any) => {
-  if (!val && searchInput.value === val) {
-    update()
-    return
-  }
-  update(() => {
-    searchInput.value = val.toString()
-  })
-  // setTimeout(() => {
-  // }, props.timeout || 60)
-}
-const updateFieldValue = (v?: any) => {
-  inputValue.value = v
-}
-const useInputProp = computed(() => props.useInput)
-const updateModelValue = (v?: any) => {
-  inputValue.value = v
-  if (useInputProp.value) {
-    veeFieldRef.value.handleChange(v)
-  }
-}
-const onDoneOptions = () => {
-  selectRef.value?.updateInputValue('', !0)
-  selectRef.value?.hidePopup()
-}
-// const createValue = (val: any, done: any) => {
-//   if (val.length > 0) {
-//     console.log(val)
-//     // done(val, 'add-unique')
-//   }
-// }
-watch(() => searchInput.value, v => {
-  emit('search', v)
-})
-defineExpose({ searchInput })
-</script>
 
 <script lang="ts">
 export default {

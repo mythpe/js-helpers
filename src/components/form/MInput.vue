@@ -36,6 +36,7 @@ interface Props {
   viewMode?: MInputProps['viewMode'];
   viewModeValue?: MInputProps['viewModeValue'];
   autocomplete?: MInputProps['autocomplete'];
+  topLabel?: MInputProps['topLabel'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -61,7 +62,8 @@ const props = withDefaults(defineProps<Props>(), {
   viewMode: () => !1,
   viewModeValue: undefined,
   autocompleteAttribute: undefined,
-  autocomplete: undefined
+  autocomplete: undefined,
+  topLabel: undefined
 })
 type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
@@ -98,8 +100,14 @@ const getAutocompleteAttribute = computed(() => {
     :xs="xs"
   >
     <template v-if="viewMode">
+      <div
+        v-if="topLabel || $myth.options.input?.topLabel"
+        class="m--input__top-label"
+      >
+        {{ getLabel }}
+      </div>
       <q-field
-        :label="getLabel"
+        :label="(topLabel || $myth.options.input?.topLabel) ? undefined : getLabel"
         :placeholder="getPlaceholder"
         v-bind="{...$myth.options.input as any,...$myth.options.field as any,...$attrs, stackLabel: !0}"
       >
@@ -133,11 +141,17 @@ const getAutocompleteAttribute = computed(() => {
       :rules="getRules"
       v-bind="$attrs"
     >
+      <div
+        v-if="topLabel || $myth.options.input?.topLabel"
+        class="m--input__top-label"
+      >
+        {{ getLabel }}
+      </div>
       <q-input
         :autocomplete="getAutocompleteAttribute"
         :error="fieldScope.errors.length > 0"
         :error-message="fieldScope.errorMessage"
-        :label="getLabel"
+        :label="(topLabel || $myth.options.input?.topLabel) ? undefined : getLabel"
         :model-value="inputValue"
         :placeholder="getPlaceholder"
         v-bind="{...$myth.options.input as any,...$attrs,...fieldScope.field,stackLabel}"

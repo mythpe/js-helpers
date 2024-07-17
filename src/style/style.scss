@@ -35,10 +35,16 @@ $text-dark-color: #ffffff !default;
 }
 
 $m-space-base: $space-base !default;
+$container-padding: $space-base !default;
+$row-margins: .5;
 $container-fluid-width: 1024px !default;
 .m--container__fluid {
   max-width: $container-fluid-width !important;
   margin: auto !important;
+}
+
+.m--input__top-label{
+  margin-bottom: 3px;
 }
 
 .m--row, .m--column, .m--flex {
@@ -48,12 +54,12 @@ $container-fluid-width: 1024px !default;
 
 .m--row + .m--row,
 .m--column + .m--column {
-  margin-top: $m-space-base * .5;
+  margin-top: $m-space-base * $row-margins;
 }
 
 .m--container {
   &:not(.m--container__dense):not(.dense) {
-    padding: $m-space-base;
+    padding: $container-padding;
   }
 }
 

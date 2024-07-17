@@ -110,7 +110,7 @@ import MDtContextmenuItems from 'components/datatable/MDtContextmenuItems.vue'
 import { MTypingStringProps, MTypingStringSlots } from 'app/src'
 import { MTransitionProps } from 'components/transition/models'
 
-export interface MythOptionsConfig extends Record<string | number | symbol, any> {
+export type MythOptionsConfig = {
   google?: {
     apiKey: string;
     // eslint-disable-next-line no-undef
@@ -195,7 +195,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
   date?: Partial<MDateProps>;
   time?: Partial<MTimeProps>;
   pickerBtn?: Partial<MBtnProps>;
-  select?: Partial<QSelectProps>;
+  select?: Partial<MSelectProps>;
   checkbox?: Partial<MCheckboxProps>;
   editor?: Partial<MEditorProps>;
   radio?: Partial<MRadioProps>;
@@ -226,7 +226,7 @@ export interface MythOptionsConfig extends Record<string | number | symbol, any>
 
 export type MythApiAxiosType = Partial<AxiosInstance>
 
-export interface MythApiConfig {
+export type MythApiConfig = {
   baseUrl: string;
   axios: MythApiAxiosType;
   services: MythApiServicesSchema
