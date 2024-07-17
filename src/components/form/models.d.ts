@@ -97,7 +97,7 @@ export interface MBtnSlots extends QBtnSlots {
 
 export type InputsRules = string | string[] | Record<string, any> | null | undefined;
 
-export interface MInputProps extends Omit<QInputProps, 'rules' | 'modelValue' | 'errors'>, MColProps {
+export type MInputProps = Omit<QInputProps, 'rules' | 'modelValue' | 'errors'> & MColProps & {
   placeholder?: string | undefined;
   hidePlaceholder?: boolean | undefined;
   required?: boolean | undefined;

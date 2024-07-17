@@ -13,7 +13,7 @@ import { MInputProps } from './models'
 import { QFieldSlots, QInputSlots } from 'quasar'
 import lodash from 'lodash'
 
-interface Props {
+type Props = {
   name?: MInputProps['name'];
   auto?: MInputProps['auto'];
   col?: MInputProps['col'];
