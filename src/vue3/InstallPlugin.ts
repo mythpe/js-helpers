@@ -302,7 +302,8 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
     },
     quasarNotifyOptions (opts: QNotifyCreateOptions | string): QNotifyCreateOptions {
       return {
-        ...(mythOptions.value.notify || {}),
+        badgeColor: 'primary',
+        ...mythOptions.value.notify,
         message: typeof opts === 'string' ? opts : opts.message,
         ...(typeof opts !== 'string' ? opts : {})
       }
