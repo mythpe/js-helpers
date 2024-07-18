@@ -38,46 +38,45 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
     return (meta.value.current_page || 0) < (meta.value.last_page || 0)
   })
   const myth = useMyth()
-  const fetch = (extraConfig: AxiosRequestConfig = {}) => {
-    return new Promise<Record<string, any>>((resolve, reject) => {
-      if (fetching.value || !canLoadMore.value) {
-        resolve({})
-        return
+
+  const fetch = (extraConfig: AxiosRequestConfig = {}) => new Promise<Record<string, any>>((resolve, reject) => {
+    if (fetching.value || !canLoadMore.value) {
+      resolve({})
+      return
+    }
+    fetching.value = !0
+    const config = {
+      ...(axiosConfig),
+      ...(extraConfig),
+      params: {
+        ...(axiosConfig?.params || {}),
+        ...(extraConfig?.params || {}),
+        itemsPerPage: perPage.value,
+        page: page.value,
+        search: params.search,
+        filter: params.filter
       }
-      fetching.value = !0
-      const config = {
-        ...(axiosConfig),
-        ...(extraConfig),
-        params: {
-          ...(axiosConfig?.params || {}),
-          ...(extraConfig?.params || {}),
-          itemsPerPage: perPage.value,
-          page: page.value,
-          search: params.search,
-          filter: params.filter
+    }
+    const f = opts?.method ? myth.services[name][opts.method] : (opts?.isPanel ? myth.services[name].index : myth.services[name].staticIndex)
+    return f(config)
+      .then((res) => {
+        const { _data, _meta } = res
+        models.value.push(...(_data || []) as any)
+        meta.value = _meta || { ...defMeta }
+        page.value = _meta?.current_page ?? 0
+        resolve(res)
+        if (opts?.onSuccess) {
+          opts?.onSuccess(res)
         }
-      }
-      const f = opts?.method ? myth.services[name][opts.method] : (opts?.isPanel ? myth.services[name].index : myth.services[name].staticIndex)
-      return f(config)
-        .then((res) => {
-          const { _data, _meta } = res
-          models.value.push(...(_data || []) as any)
-          meta.value = _meta || { ...defMeta }
-          page.value = _meta?.current_page ?? 0
-          resolve(res)
-          if (opts?.onSuccess) {
-            opts?.onSuccess(res)
-          }
-        })
-        .catch((e: any) => reject(e))
-        .finally(() => {
-          fetching.value = !1
-          if (!fetched.value) {
-            fetched.value = !0
-          }
-        })
-    })
-  }
+      })
+      .catch((e: any) => reject(e))
+      .finally(() => {
+        fetching.value = !1
+        if (!fetched.value) {
+          fetched.value = !0
+        }
+      })
+  })
   const reset = () => {
     models.value = []
     fetched.value = !1
