@@ -885,7 +885,10 @@ const contextmenuItems = computed<any>(() => ([
     label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.destroy' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => onDeleteItem(item, index),
     showIf: hasDestroyBtn.value,
-    order: 100
+    order: 100,
+    attr: {
+      color: 'negative'
+    }
   },
   ...(contextmenuItemsProp.value || [])
 ].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))))
@@ -1068,6 +1071,7 @@ defineExpose({
         :visible-columns="visibleHeaders"
         card-container-class="m--datatable-container"
         table-class="m--datatable-container"
+        table-header-class=""
         v-bind="{
           virtualScroll: !0,
           wrapCells:!0,
@@ -1077,7 +1081,6 @@ defineExpose({
           dense: dense === undefined ? $myth.options.dt?.props?.dense : dense,
           flat: flat === undefined ? $myth.options.dt?.props?.flat : flat,
         }"
-        table-header-class=""
         @request="fetchDatatableItems"
         @virtual-scroll="endReach ? onScroll : undefined"
         @row-contextmenu="onRowContextmenu"
@@ -1514,9 +1517,9 @@ defineExpose({
                       v-if="tableOptions.selected.length > 1 ? (hasDestroyBtn && multiDestroy) : hasDestroyBtn"
                       key="destroy-dt-selection-btn"
                       :disable="!hasSelectedItem || tableOptions.loading"
+                      color="negative"
                       destroy
                       icon="ion-ios-trash"
-                      color="negative"
                       v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
                       @click="deleteSelectionItem()"
                     />
