@@ -48,6 +48,7 @@ interface Props {
   viewModeValue?: MSelectProps['viewModeValue'];
   multiple?: MSelectProps['multiple'];
   topLabel?: MSelectProps['topLabel'];
+  useChips?: MSelectProps['useChips'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -83,7 +84,8 @@ const props = withDefaults(defineProps<Props>(), {
   viewMode: () => !1,
   viewModeValue: undefined,
   multiple: undefined,
-  topLabel: undefined
+  topLabel: undefined,
+  useChips: undefined
 })
 type Events = {
   (e: 'update:modelValue', value: any): void;
@@ -233,7 +235,14 @@ defineExpose({ searchInput })
         :placeholder="useInput && !modelValue ? getPlaceholder : placeholder"
         :stack-label="stackLabel"
         :use-input="useInput ? ( multiple ? useInput : !modelValue) : useInput"
-        v-bind="{...($myth.options.select||{}),...($attrs || {}),...(fieldProps||{field:{}}).field}"
+        v-bind="{
+          ...$myth.options.select,
+          ...$attrs,
+          ...(fieldProps||{field:{}}).field,
+          useChips: $myth.options.select?.useChips === !0 && !multiple ? !1 : (
+            useChips !== undefined ? useChips : ( $myth.options?.select?.useChips !== undefined ? $myth.options?.select?.useChips : useChips )
+          )
+        }"
         @filter="filterFn"
         @update:model-value="updateModelValue"
       >
