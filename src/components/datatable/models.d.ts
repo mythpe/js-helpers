@@ -11,6 +11,7 @@ import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
 import { ComputedRef, MaybeRef, Ref, UnwrapNestedRefs, UnwrapRef, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
 import { AxiosMetaResponse, StubSchema } from '../../types'
+import { RouteLocationRaw } from 'vue-router'
 
 export interface MDtItem extends GenericFormValues {
   id: string | number;
@@ -214,11 +215,11 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
   hideUpdateBtn?: boolean;
   hideShowBtn?: boolean;
   hideDestroyBtn?: boolean;
-  storeRoute?: string;
+  storeRoute?: string | RouteLocationRaw;
   storeQueryParams?: boolean;
-  updateRoute?: string;
+  updateRoute?: string | RouteLocationRaw;
   updateQueryParams?: boolean;
-  showRoute?: string;
+  showRoute?: string | RouteLocationRaw;
   showQueryParams?: boolean;
   mouse?: boolean;
   noRefreshBtn?: boolean;

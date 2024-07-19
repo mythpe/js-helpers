@@ -576,7 +576,11 @@ const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
     return
   }
   if (props.showRoute) {
-    await router.push({ name: props.showRoute, params: { id: item.value.id }, query: route.query })
+    if (typeof props.showRoute === 'string') {
+      await router.push({ name: props.showRoute, params: { id: item.value.id }, query: route.query })
+    } else {
+      await router.push({ ...props.showRoute, query: { ...route.query, ...props.showRoute.query } })
+    }
     return
   }
   if (loading.value) {
@@ -623,7 +627,11 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
     return
   }
   if (updateRouteProp.value) {
-    await router.push({ name: updateRouteProp.value, params: { id: item.value.id }, query: route.query })
+    if (typeof updateRouteProp.value === 'string') {
+      await router.push({ name: updateRouteProp.value, params: { id: item.value.id }, query: route.query })
+    } else {
+      await router.push({ ...updateRouteProp.value, query: { ...route.query, ...updateRouteProp.value.query } })
+    }
     return
   }
   if (loading.value) {
@@ -660,7 +668,11 @@ const openCreateDialog = async (dtItem?: MDtItem) => {
     return
   }
   if (props.storeRoute) {
-    await router.push({ name: props.storeRoute, query: route.query })
+    if (typeof props.storeRoute === 'string') {
+      await router.push({ name: props.storeRoute, query: route.query })
+    } else {
+      await router.push({ ...props.storeRoute, query: { ...route.query, ...props.storeRoute.query } })
+    }
     return
   }
   const item = { ...defaultItem.value, ...dtItem }
