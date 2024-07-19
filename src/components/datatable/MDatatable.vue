@@ -340,7 +340,6 @@ const refreshNoUpdate = async (done?: () => void) => {
   pagination.value.page = 1
   pagination.value.rowsNumber = 0
   getRows.value = []
-
   nextTick(() => {
     fetchDatatableItems({
       pagination: pagination.value,
@@ -440,6 +439,7 @@ const fetchDatatableItems = async (opts: FetchRowsArgs = {}) => {
   }
   if (tableOptions.loading || !serviceName.value) return
   tableOptions.loading = !0
+  tableOptions.selected = []
   nextTick(() => {
     const params = getDatatableParams(opts)
     const requestWith = getRequestWith('withIndex')
@@ -966,7 +966,11 @@ const getShowSelection = computed<boolean | undefined>(() => {
   }
   return props.showSelection
 })
-
+const defaultTopBtnProps: any = {
+  dense: !0,
+  flat: !0,
+  fabMini: !0
+}
 defineExpose({
   resetDialogs,
   tableOptions,
@@ -1004,7 +1008,12 @@ defineExpose({
 
 <template>
   <div
-    :class="{ 'm--datatable-component': !0, 'm--datatable-component__fixed': fixed === undefined ? ( $myth.options.dt?.props?.fixed === undefined ? undefined : $myth.options.dt?.props?.fixed) : fixed }"
+    :class="{
+      'm--datatable-component': !0,
+      'm--datatable-component__fixed': fixed === undefined ? ( $myth.options.dt?.props?.fixed === undefined ? undefined : $myth.options.dt?.props?.fixed) : fixed,
+      'has-fab': hasAddBtn && (noAddBtnFab ? !1 : $myth.options.dt?.addBtn?.noFab !== !0),
+      '__to-small': $q.screen.height < 900
+    }"
   >
     <MModalMenu
       v-model="contextmenu"
@@ -1060,12 +1069,15 @@ defineExpose({
         card-container-class="m--datatable-container"
         table-class="m--datatable-container"
         v-bind="{
+          virtualScroll: !0,
+          wrapCells:!0,
           ...$myth.options.dt?.props,
           ...$attrs,
           bordered: bordered === undefined ? $myth.options.dt?.props?.bordered : bordered,
           dense: dense === undefined ? $myth.options.dt?.props?.dense : dense,
           flat: flat === undefined ? $myth.options.dt?.props?.flat : flat,
         }"
+        table-header-class=""
         @request="fetchDatatableItems"
         @virtual-scroll="endReach ? onScroll : undefined"
         @row-contextmenu="onRowContextmenu"
@@ -1095,8 +1107,8 @@ defineExpose({
                       </div>
                       <div>
                         <MDtBtn
-                          icon="ion-ios-more"
                           flat
+                          icon="ion-ios-more"
                           @click="onRowContextmenu($event,iTempProps.row,iTempProps.rowIndex)"
                         />
                       </div>
@@ -1159,7 +1171,7 @@ defineExpose({
         </template>
 
         <template #top>
-          <div class="col-12">
+          <MCol col="12">
             <!--<q-page-scroller
               :offset="[0,0]"
               :scroll-offset="50"
@@ -1193,7 +1205,7 @@ defineExpose({
                   v-if="!hideSearch"
                   v-model="tableOptions.search"
                   :debounce="searchDebounce"
-                  :dense="dense === undefined ? $myth.options.dt?.props?.dense : dense"
+                  :dense="dense === undefined ? ($myth.options.dt?.props?.dense !== undefined ? $myth.options.dt?.props?.dense : !0) : dense"
                   :placeholder="searchPlaceholder"
                   autocomplete="none"
                   col="12"
@@ -1231,8 +1243,9 @@ defineExpose({
                       v-bind="$myth.options.dt?.searchInput?.menuBtn"
                     >
                       <MModalMenu
+                        :offset="[10,10]"
                         no-close-btn
-                        v-bind="$myth.options.dt?.searchInput?.menuProps"
+                        v-bind="$myth.options.dt?.searchInput?.menuProps as any"
                       >
                         <q-toolbar>
                           <q-toolbar-title>
@@ -1289,10 +1302,11 @@ defineExpose({
                     :disable="tableOptions.loading"
                     icon="ion-ios-options"
                     tooltip="myth.datatable.hints.more"
-                    v-bind="$myth.options.dt?.buttons?.more"
+                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.more}"
                   >
                     <MModalMenu
-                      v-bind="$myth.options.dt?.buttons?.moreMenu"
+                      :offset="[10,10]"
+                      v-bind="$myth.options.dt?.buttons?.moreMenu as any"
                     >
                       <q-list
                         style="min-width: 250px"
@@ -1392,18 +1406,18 @@ defineExpose({
                       </q-list>
                     </MModalMenu>
                   </MDtBtn>
+
                   <!-- Filter dialog -->
                   <MDtBtn
                     v-if="hasFilterDialog"
                     key="filter-selection-btn"
                     icon="o_filter_alt"
                     tooltip="myth.datatable.hints.filter"
-                    v-bind="$myth.options.dt?.buttons?.filter"
+                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.filter}"
                     @click="openFilterDialog()"
                   >
                     <MModalMenu
                       no-close-btn
-                      persistent
                       position="top"
                       v-bind="$myth.options.dt?.filterDialogProps"
                     >
@@ -1463,7 +1477,7 @@ defineExpose({
                     :disable="tableOptions.loading"
                     icon="ion-ios-refresh"
                     tooltip="myth.datatable.hints.refresh"
-                    v-bind="$myth.options.dt?.buttons?.refresh"
+                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.refresh}"
                     @click="refreshNoUpdate()"
                   />
                   <!--Fullscreen-->
@@ -1473,7 +1487,7 @@ defineExpose({
                     :disable="tableOptions.loading"
                     :icon="tableOptions.fullscreen ? 'ion-ios-contract' : 'ion-ios-desktop'"
                     :tooltip="`myth.datatable.${tableOptions.fullscreen ? 'exitFullscreen' : 'fullscreen'}`"
-                    v-bind="$myth.options.dt?.buttons?.fullscreen"
+                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.fullscreen}"
                     @click="tableOptions.fullscreen = !tableOptions.fullscreen"
                   />
 
@@ -1484,7 +1498,7 @@ defineExpose({
                       :disable="tableOptions.loading"
                       icon="ion-ios-create"
                       update
-                      v-bind="$myth.options.dt?.topSelection?.btn"
+                      v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
                       @click="openUpdateDialogNoIndex(tableOptions.selected[0])"
                     />
                     <MDtBtn
@@ -1493,7 +1507,7 @@ defineExpose({
                       :disable="tableOptions.loading"
                       icon="ion-ios-eye"
                       show
-                      v-bind="$myth.options.dt?.topSelection?.btn"
+                      v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
                       @click="openShowDialogNoIndex(tableOptions.selected[0])"
                     />
                     <MDtBtn
@@ -1502,7 +1516,8 @@ defineExpose({
                       :disable="!hasSelectedItem || tableOptions.loading"
                       destroy
                       icon="ion-ios-trash"
-                      v-bind="$myth.options.dt?.topSelection?.btn"
+                      color="negative"
+                      v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
                       @click="deleteSelectionItem()"
                     />
                     <template
@@ -1512,7 +1527,7 @@ defineExpose({
                       <MDtBtn
                         v-if="(typeof contextBtn.showIf === 'function' ? contextBtn.showIf(tableOptions.selected[0],0) : contextBtn.showIf) && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
                         :tooltip="__(contextBtn.tooltip || contextBtn.name)"
-                        v-bind="{...($myth.options.dt?.topSelection?.btn||{}),...contextBtn,...(contextBtn.attr||{})}"
+                        v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn,...contextBtn,...contextBtn.attr}"
                         @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
                       />
                     </template>
@@ -1621,7 +1636,7 @@ defineExpose({
                 </MRow>
               </MTransition>
             </MContainer>
-          </div>
+          </MCol>
         </template>
 
         <template
@@ -1629,7 +1644,7 @@ defineExpose({
           #bottom
         >
           <q-space />
-          <div v-text="__('replace.from_name', { from: pagination.rowsNumber, name: getRows.length })" />
+          <div v-text="__('replace.from_to', { from: pagination.rowsNumber, to: getRows.length })" />
         </template>
 
         <template
@@ -1913,7 +1928,7 @@ defineExpose({
       <q-btn
         color="primary"
         fab
-        icon="add"
+        icon="ion-ios-add"
         v-bind="$myth.options.dt?.fabBtn?.buttonProps"
         @click="openCreateDialog()"
       >
@@ -1956,24 +1971,27 @@ export default {
     thead tr:first-child th
       background: var(--q-dark-page)
 
-.m--datatable-component.m--datatable-component__fixed
-  .m--datatable:not(.m--datatable-grid)
-    max-height: 80vh
+.m--datatable-component
+  &__fixed
+    margin-bottom: 10rem
 
-    thead tr th
-      position: sticky
-      z-index: 1
+    .m--datatable:not(.m--datatable-grid)
+      max-height: 80vh
 
-    thead tr:first-child th
-      top: 0
+      thead tr th
+        position: sticky
+        z-index: 1
 
-.m--datatable:not(.m--datatable-grid).q-table--dense
-  &.q-table--loading thead tr:last-child th
-    top: 26px
+      thead tr:first-child th
+        top: 0
 
-.m--datatable:not(.m--datatable-grid):not(.q-table--dense)
-  &.q-table--loading thead tr:last-child th
-    top: 49px
+    .m--datatable:not(.m--datatable-grid).q-table--dense
+      &.q-table--loading thead tr:last-child th
+        top: 26px
+
+      .m--datatable:not(.m--datatable-grid):not(.q-table--dense)
+        &.q-table--loading thead tr:last-child th
+          top: 55px
 
 .m--dialog-card
   .q-card__actions
