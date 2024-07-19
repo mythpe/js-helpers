@@ -1014,8 +1014,8 @@ defineExpose({
     :class="{
       'm--datatable-component': !0,
       'm--datatable-component__fixed': fixed === undefined ? ( $myth.options.dt?.props?.fixed === undefined ? undefined : $myth.options.dt?.props?.fixed) : fixed,
-      'has-fab': hasAddBtn && (noAddBtnFab ? !1 : $myth.options.dt?.addBtn?.noFab !== !0),
-      '__to-small': $q.screen.height < 900
+      'm--datatable-component__too_small': $q.screen.height < 900,
+      'm--datatable-component__fab': hasAddBtn && (noAddBtnFab ? !1 : $myth.options.dt?.addBtn?.noFab !== !0)
     }"
   >
     <MModalMenu
@@ -1975,6 +1975,9 @@ export default {
       background: var(--q-dark-page)
 
 .m--datatable-component
+  &__fab
+    margin-bottom: 12rem
+
   &__fixed
     margin-bottom: 10rem
 
