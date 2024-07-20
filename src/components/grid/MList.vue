@@ -162,7 +162,7 @@
 <script lang="ts" setup>
 
 import { computed, defineEmits, nextTick, ref, watch } from 'vue'
-import { useModels } from '../../composition'
+import { useModels } from '../../composables'
 import { AxiosDataRow } from '../../types'
 import MNoResultImg from './MNoResultImg.vue'
 import { MListProps } from './models'

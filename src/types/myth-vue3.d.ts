@@ -93,7 +93,7 @@ import {
   MUploaderSlots
 } from '../components'
 import { I18n } from 'vue-i18n'
-import { ComputedRef, Ref, TransitionProps, UnwrapNestedRefs } from 'vue'
+import { ComputedRef, TransitionProps } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import {
   MythApiServicesSchema,
@@ -306,7 +306,7 @@ declare module '@vue/runtime-core' {
     MCol: GlobalComponentConstructor<MColProps, MColSlots>;
     MColumn: GlobalComponentConstructor<MColumnProps, MColumnSlots>;
     MContainer: GlobalComponentConstructor<MContainerProps, MContainerSlots>;
-    MDraggable: GlobalComponentConstructor<MDraggableProps, MDraggableSlots>;
+    // MDraggable: GlobalComponentConstructor<MDraggableProps, MDraggableSlots>;
     MList: GlobalComponentConstructor<MListProps, MListSlots>;
     MNoResultImg: GlobalComponentConstructor<MNoResultImgProps, MNoResultImgSlots>;
     MRow: GlobalComponentConstructor<MRowProps, MRowSlots>;

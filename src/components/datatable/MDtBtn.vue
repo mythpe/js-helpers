@@ -136,11 +136,11 @@ const getColor = computed<string | undefined>(() => {
   <q-btn
     v-else
     :color="getColor"
+    :dense="dense !== undefined ? dense : label === undefined"
+    :fab-mini="fabMini !== undefined ? fabMini : label === undefined"
     :icon="getIcon"
     :label="label !== undefined ? __(label) : label"
     :round="round !== undefined ? round : label === undefined"
-    :fab-mini="fabMini !== undefined ? fabMini : label === undefined"
-    :dense="dense !== undefined ? dense : label === undefined"
     v-bind="{...$myth.options.dt?.btn,...$attrs}"
     @click="$emit('click',$event)"
   >

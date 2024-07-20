@@ -13,7 +13,7 @@ import inflection from 'lodash-inflection'
 _.mixin(inflection)
 
 export * from './components'
-export * from './composition'
+export * from './composables'
 export * from './utils'
 export * from './vue3'
 

@@ -9,12 +9,12 @@
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref, watch } from 'vue'
-import useInputProps from '../../composition/useInputProps'
+import { useInputProps } from '../../composables'
 import { ColStyleType } from '../grid/models'
 import { MSelectProps } from './models'
 import { QFieldSlots, QSelectSlots } from 'quasar'
 
-interface Props {
+type Props = {
   auto?: boolean;
   col?: ColStyleType;
   xs?: ColStyleType;
@@ -99,7 +99,7 @@ const inputValue = computed({
   set: v => emit('update:modelValue', v)
 })
 const errorMessageField = ref<string | undefined>(undefined)
-const { getRules, getLabel, getPlaceholder } = useInputProps(props, { choose: !0 })
+const { getRules, getLabel, getPlaceholder } = useInputProps(() => props, { choose: !0 })
 const originalOptions = computed<any>(() => props.options)
 const noFilterProp = computed<any>(() => props.noFilter !== !1)
 const searchInput = ref('')

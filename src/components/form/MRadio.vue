@@ -63,7 +63,7 @@
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineEmits, defineProps } from 'vue'
-import useInputProps from '../../composition/useInputProps'
+import { useInputProps } from '../../composables'
 import { MRadioProps } from './models'
 
 interface Props {
@@ -107,7 +107,7 @@ const inputValue = computed({
   get: () => props.modelValue,
   set: value => emit('update:modelValue', value)
 })
-const { getRules, getLabel, getPlaceholder } = useInputProps(props)
+const { getRules, getLabel, getPlaceholder } = useInputProps(() => props)
 
 </script>
 

@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 
-import { useAcceptProp } from '../../composition/useAcceptProp'
+import { useAcceptProp } from '../../composables'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { ColStyleType } from '../grid/models'
 
@@ -181,7 +181,7 @@ export default {
       <MTransition>
         <MCol
           v-if="label"
-          col="auto"
+          key="label"
         >
           <div :class="`text-h6 q-px-sm rounded-borders q-mb-sm ${hasErrors ? 'text-negative' : ''}`">
             {{ label }}
@@ -191,84 +191,86 @@ export default {
             >*</span>
           </div>
         </MCol>
-      </MTransition>
-      <MCol
-        :class="`rounded-borders q-mb-sm ${hasErrors ? 'q-pa-xs bg-negative' : ''}`"
-        col="auto"
-      >
-        <q-avatar
-          :color="hasErrors ? 'negative' : ((!isLoaded || !hasSrc || isFile) ? 'primary' : undefined)"
-          :icon="isFile ? 'o_description' : undefined"
-          :rounded="rounded === undefined ? !!hasSrc : rounded"
-          :size="size"
-          text-color="white"
-        >
-          <q-img
-            v-if="hasSrc && !isFile"
-            :fit="fit"
-            :height="size"
-            :src="blobUrl || urlValue"
-            ratio="1"
-            @error="isLoaded = !0"
-            @load="isLoaded = !0"
-          >
-            <template #loading>
-              <div class="text-white">
-                <q-spinner-ios />
-              </div>
-            </template>
-          </q-img>
-          <div
-            v-if="getAvatarText && !hasSrc"
-            class="text-white text-h3"
-            v-text="getAvatarText"
-          />
-        </q-avatar>
-      </MCol>
-      <MCol col="auto">
-        <MBtn
-          :color="!hasSrc ? 'positive' : 'secondary'"
-          :disable="!isLoaded && !!urlValue"
-          @click="onClick"
-        >
-          <span v-if="clearable && hasSrc">{{ __('remove') }}</span>
-          <span v-else-if="!clearable && hasSrc">{{ __('change') }}</span>
-          <span v-else>{{ __('choose') }}</span>
-        </MBtn>
-      </MCol>
-      <MFadeTransition>
         <MCol
+          key="avatar"
+          :class="`rounded-borders q-mb-sm ${hasErrors ? 'q-pa-xs bg-negative' : ''}`"
+        >
+          <q-avatar
+            :color="hasErrors ? 'negative' : ((!isLoaded || !hasSrc || isFile) ? 'primary' : undefined)"
+            :icon="isFile ? 'o_description' : undefined"
+            :rounded="rounded === undefined ? !!hasSrc : rounded"
+            :size="size"
+            text-color="white"
+          >
+            <q-img
+              v-if="hasSrc && !isFile"
+              :fit="fit"
+              :height="size"
+              :src="blobUrl || urlValue"
+              ratio="1"
+              @error="isLoaded = !0"
+              @load="isLoaded = !0"
+            >
+              <template #loading>
+                <div class="text-white">
+                  <q-spinner-ios />
+                </div>
+              </template>
+            </q-img>
+            <div
+              v-if="getAvatarText && !hasSrc"
+              class="text-white text-h3"
+              v-text="getAvatarText"
+            />
+          </q-avatar>
+        </MCol>
+        <MCol key="btn">
+          <MBtn
+            :color="!hasSrc ? 'positive' : 'secondary'"
+            :disable="!isLoaded && !!urlValue"
+            @click="onClick"
+          >
+            <span v-if="clearable && hasSrc">{{ __('remove') }}</span>
+            <span v-else-if="!clearable && hasSrc">{{ __('change') }}</span>
+            <span v-else>{{ __('choose') }}</span>
+          </MBtn>
+        </MCol>
+        <MCol
+          key="errors"
           v-if="errors && errors[name]"
           class="q-mt-sm"
-          col="12"
         >
           <span class="text-body2 text-negative">{{ typeof errors[name] === 'string' ? errors[name] : errors[name][0] }}</span>
         </MCol>
-      </MFadeTransition>
-      <MFile
-        ref="blobRef"
-        v-model="blobValue"
-        :accept="accepts.join(',')"
-        :clearable="clearable"
-        :errors="errorsProp"
-        :name="name"
-        class="hidden"
-      />
-      <VeeField
-        ref="veeFieldRemovedValue"
-        v-model="removedValue"
-        :name="`${name}_removed`"
-        :value="!0"
-        class="hidden"
-        type="checkbox"
-      />
-      <VeeField
-        ref="veeFieldUrlValue"
-        v-model="urlValue"
-        :name="`${name}_url`"
-        class="hidden"
-        type="textarea"
-      />
+        <MFile
+          key="file"
+          ref="blobRef"
+          v-model="blobValue"
+          :accept="accepts.join(',')"
+          :clearable="clearable"
+          :errors="errorsProp"
+          :name="name"
+          class="hidden"
+        />
+        <VeeField
+          key="removed"
+          ref="veeFieldRemovedValue"
+          v-model="removedValue"
+          :name="`${name}_removed`"
+          :value="!0"
+          class="hidden"
+          type="checkbox"
+        />
+        <VeeField
+          key="url"
+          ref="veeFieldUrlValue"
+          v-model="urlValue"
+          :name="`${name}_url`"
+          class="hidden"
+          type="textarea"
+        />
+      </MTransition>
+
       <slot />
     </MColumn>
   </MCol>

@@ -78,7 +78,7 @@
 import { useMyth } from '../../vue3'
 import { Field as VeeField } from 'vee-validate'
 import { computed } from 'vue'
-import useInputProps from '../../composition/useInputProps'
+import { useInputProps } from '../../composables'
 
 import { MToggleProps } from './models'
 
@@ -133,7 +133,7 @@ const props = withDefaults(defineProps<Props>(), {
   toggleIndeterminate: !1,
   statusLabels: !1
 })
-const { getRules } = useInputProps(props)
+const { getRules } = useInputProps(() => props)
 const { __ } = useMyth()
 type Events = {
   (e: 'update:modelValue', value: any): void;

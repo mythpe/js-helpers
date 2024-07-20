@@ -8,7 +8,7 @@
 
 import { App, defineAsyncComponent } from 'vue'
 
-export const initComponents = (app:App) => {
+export const initComponents = (app: App) => {
   // Datatable
   app.component('MDatatable', defineAsyncComponent(() => import('../components/datatable/MDatatable.vue')))
   app.component('MDtAvatar', defineAsyncComponent(() => import('../components/datatable/MDtAvatar.vue')))
@@ -44,7 +44,7 @@ export const initComponents = (app:App) => {
   app.component('MCol', defineAsyncComponent(() => import('../components/grid/MCol.vue')))
   app.component('MColumn', defineAsyncComponent(() => import('../components/grid/MColumn.vue')))
   app.component('MContainer', defineAsyncComponent(() => import('../components/grid/MContainer.vue')))
-  app.component('MDraggable', defineAsyncComponent(() => import('../components/grid/MDraggable.vue')))
+  // app.component('MDraggable', defineAsyncComponent(() => import('../components/grid/MDraggable.vue')))
   app.component('MList', defineAsyncComponent(() => import('../components/grid/MList.vue')))
   app.component('MNoResultImg', defineAsyncComponent(() => import('../components/grid/MNoResultImg.vue')))
   app.component('MRow', defineAsyncComponent(() => import('../components/grid/MRow.vue')))
@@ -61,5 +61,4 @@ export const initComponents = (app:App) => {
 
   // Typography
   app.component('MTypingString', defineAsyncComponent(() => import('../components/typography/MTypingString.vue')))
-  return {}
 }

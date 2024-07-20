@@ -6,7 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { DialogChainObject, QNotifyCreateOptions, QTableProps } from 'quasar'
 import { QNotifyUpdateOptions } from 'quasar/dist/types/api'
 import { ApiServiceParams } from '../components'
@@ -103,6 +103,7 @@ export type AxiosMetaResponse = {
   total: number | null;
   [key: string | number]: any;
 };
+
 export type AxiosDataRow = {
   id: string | number;
   value: string | number;
@@ -119,6 +120,8 @@ export type MainAxiosAppResponse = {
   _success: boolean;
   _errors: AxiosErrorsResponse;
 }
+
+export type AppApiResponseErrors = AxiosError<MainAxiosAppResponse>;
 export type AppApiResponse = AxiosResponse<AxiosDataResponse> & MainAxiosAppResponse
 export type UrlType = string | number | any;
 export type ParamsType = Record<string, any> | FormData | object

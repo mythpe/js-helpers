@@ -9,10 +9,9 @@
 <script lang="ts" setup>
 
 import { QFieldSlots, QFile } from 'quasar'
-import { useAcceptProp } from '../../composition/useAcceptProp'
+import { useAcceptProp, useInputProps } from '../../composables'
 import { Field as VeeField } from 'vee-validate'
-import { computed, defineProps, nextTick, reactive, ref } from 'vue'
-import useInputProps from '../../composition/useInputProps'
+import { defineProps, ref } from 'vue'
 import { MFileProps } from './models'
 
 interface Props {
@@ -91,18 +90,19 @@ type Events = {
   (e: 'update:modelValue', value: any | undefined): void;
 }
 const emit = defineEmits<Events>()
-const { getRules, getLabel, getPlaceholder } = useInputProps(props)
+const { getRules, getLabel, getPlaceholder } = useInputProps(() => props)
 const { accepts } = useAcceptProp(props)
 const fileInput = ref<InstanceType<typeof QFile>>()
-const inputValue = computed({
-  get: () => props.modelValue,
-  set: (v) => {
-    emit('update:modelValue', v)
-    nextTick(() => {
-      fileInput.value?.blur()
-    })
-  }
-})
+// const inputValue = computed({
+//   get: () => props.modelValue,
+//   set: (v) => {
+//     emit('update:modelValue', v)
+//     nextTick(() => {
+//       fileInput.value?.blur()
+//     })
+//   }
+// })
+const inputValue = defineModel({ required: !0 })
 const pickFiles = (...args: any) => fileInput.value?.pickFiles(...args)
 const removeAtIndex = (index: number) => fileInput.value?.removeAtIndex(index)
 

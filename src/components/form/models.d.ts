@@ -291,6 +291,10 @@ export interface MCheckboxProps extends QCheckboxProps {
   noLabel?: boolean;
   required?: boolean;
   rules?: InputsRules;
+  hideRequired?: boolean;
+  viewMode?: boolean;
+  placeholder?: any;
+  errors?: Record<string, string[]>;
 }
 
 export interface MCheckboxSlots extends QCheckboxSlots {
@@ -329,6 +333,10 @@ export interface MToggleProps extends MColProps, Omit<QToggleProps, 'modelValue'
   statusLabels?: boolean | undefined;
   rules?: InputsRules;
   required?: boolean;
+  hideRequired?: boolean;
+  viewMode?: boolean;
+  placeholder?: any;
+  errors?: Record<string, string[]>;
 }
 
 export interface MToggleSlots extends QToggleSlots {
@@ -566,6 +574,9 @@ export interface MEditorProps extends Omit<QEditorProps, 'modelValue'>, MColProp
   hint?: string;
   rules?: InputsRules;
   required?: boolean;
+  hideRequired?: boolean;
+  viewMode?: boolean;
+  errors?: Record<string, string[]>;
 }
 
 export interface MEditorSlots extends QEditorSlots {
@@ -583,6 +594,10 @@ export interface MRadioProps extends Omit<QRadioProps, 'name' | 'modelValue' | '
   noLabel?: boolean;
   required?: boolean;
   rules?: InputsRules;
+  hideRequired?: boolean;
+  viewMode?: boolean;
+  placeholder?: any;
+  errors?: Record<string, string[]>;
 }
 
 export interface MRadioSlots extends QRadioSlots {

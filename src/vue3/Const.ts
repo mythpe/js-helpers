@@ -6,4 +6,4 @@
  * Github: https://github.com/mythpe
  */
 
-export const INJECT_KEY = Symbol('The Plugin Key of myth.')
+export const INJECT_KEY = 'myth'

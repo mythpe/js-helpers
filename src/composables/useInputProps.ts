@@ -19,13 +19,12 @@ type PropsList =
   | MSelectProps
   | MToggleProps
 
-type Args = MaybeRef<Partial<PropsList>> | Partial<PropsList> | Record<string, any>;
+type Args = MaybeRef<PropsList> | Record<string, any>;
 
-export default function useInputProps (Props: Args, Opts?: MaybeRef<{ choose?: boolean }>) {
-  const opts = toValue(Opts || {})
+export const useInputProps = (Props: Args, Opts: MaybeRef<{ choose?: boolean }> = {}) => {
   const props = toValue(Props)
+  const opts = toValue(Opts)
   const { __ } = useMyth()
-
   const getRules = computed<string | undefined>(() => {
     let rules = props.rules || []
 
@@ -36,10 +35,10 @@ export default function useInputProps (Props: Args, Opts?: MaybeRef<{ choose?: b
     if (props.required) {
       rules.push('required')
     }
-    if (props.email) {
+    if ('email' in props && props.email) {
       rules.push('email')
     }
-    if (props.mobile !== undefined && props.mobile !== null) {
+    if ('mobile' in props && props.mobile !== undefined && props.mobile !== null) {
       const defLen = 10
       if (typeof props.mobile === 'boolean') {
         props.mobile && rules.push(`digits:${defLen}`)
@@ -64,7 +63,7 @@ export default function useInputProps (Props: Args, Opts?: MaybeRef<{ choose?: b
     return props.label
   })
   const getPlaceholder = computed<string | undefined>(() => {
-    if (props.hidePlaceholder) {
+    if ('hidePlaceholder' in props && props.hidePlaceholder) {
       return props.placeholder !== undefined ? (__(props.placeholder) || undefined) : undefined
     }
     const k = props.placeholder === undefined ? (props.label !== undefined ? props.label : props.name) : props.placeholder

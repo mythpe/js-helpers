@@ -68,7 +68,7 @@
 <script lang="ts" setup>
 import { useQuasar } from 'quasar'
 import { computed } from 'vue'
-import useInputProps from '../../composition/useInputProps'
+import { useInputProps } from '../../composables'
 import { Field as VeeField } from 'vee-validate'
 import { MEditorProps } from './models'
 
@@ -225,7 +225,7 @@ const inputValue = computed({
   set: value => emit('update:modelValue', value)
 })
 
-const { getRules, getLabel, inputErrors } = useInputProps(props)
+const { getRules, getLabel, inputErrors } = useInputProps(() => props)
 </script>
 
 <script lang="ts">

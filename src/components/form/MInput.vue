@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 import { computed, defineProps } from 'vue'
 import { Field as VeeField } from 'vee-validate'
-import useInputProps from '../../composition/useInputProps'
+import { useInputProps } from '../../composables'
 import { MInputProps } from './models'
 import { QFieldSlots, QInputSlots } from 'quasar'
 import lodash from 'lodash'
@@ -32,13 +32,12 @@ type Props = {
   mobile?: MInputProps['mobile'];
   rules?: MInputProps['rules'];
   errors?: MInputProps['errors'];
-  modelValue?: MInputProps['modelValue'];
+  modelValue: MInputProps['modelValue'];
   viewMode?: MInputProps['viewMode'];
   viewModeValue?: MInputProps['viewModeValue'];
   autocomplete?: MInputProps['autocomplete'];
   topLabel?: MInputProps['topLabel'];
 }
-
 const props = withDefaults(defineProps<Props>(), {
   name: () => '',
   label: undefined,
@@ -61,19 +60,19 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
-  autocompleteAttribute: undefined,
   autocomplete: undefined,
   topLabel: undefined
 })
 type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
 }
-const emit = defineEmits<EmitsTypes>()
-const inputValue = computed({
-  get: () => props.modelValue,
-  set: value => emit('update:modelValue', value)
-})
-const { getRules, getLabel, getPlaceholder } = useInputProps(props)
+defineEmits<EmitsTypes>()
+// const inputValue = computed({
+//   get: () => props.modelValue,
+//   set: value => emit('update:modelValue', value)
+// })
+const inputValue = defineModel({ required: !0 })
+const { getRules, getLabel, getPlaceholder } = useInputProps(() => props)
 const getAutocompleteAttribute = computed(() => {
   if (props.autocomplete !== undefined) {
     if (props.autocomplete === !0 || props.autocomplete === '') {
@@ -83,9 +82,8 @@ const getAutocompleteAttribute = computed(() => {
     } else if (props.autocomplete.length > 0) {
       return props.autocomplete
     }
-    return props.autocomplete
   }
-  return undefined
+  return props.autocomplete
 })
 </script>
 

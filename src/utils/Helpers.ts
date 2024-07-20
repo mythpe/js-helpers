@@ -10,7 +10,7 @@ import { ComponentPublicInstance, nextTick, Ref } from 'vue'
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import lodash from 'lodash'
 import { scroll } from 'quasar'
-import { ConfigType, DownloadFromResponse, HelpersStubSchema, ParamsType, StubSchema, StubSchemaContext, UrlType } from '../types'
+import { ConfigType, DownloadFromResponse, HelpersStubSchema, ParamsType, UrlType } from '../types'
 
 export const Helpers = {
   appendArray (formData: FormData, values: File | Blob | Record<string, any> | any, name?: string | null | undefined) {

@@ -9,7 +9,7 @@
 import { QList, QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
 import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
-import { useAcceptProp } from '../../composition/useAcceptProp'
+import { useAcceptProp } from '../../composables'
 import { useMyth } from '../../vue3'
 import { ColStyleType } from '../grid/models'
 import { MUploaderMediaItem, MUploaderProps, MUploaderXhrInfo } from './models'

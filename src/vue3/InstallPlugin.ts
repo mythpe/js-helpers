@@ -24,12 +24,49 @@ import lodash from 'lodash'
 import { copyToClipboard, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
 import { initComponents } from './Component'
-import { VueI18n } from 'vue-i18n'
+import { useI18n, VueI18n } from 'vue-i18n'
+
+export const useStrTranslate = (string: string | { text: string; } | any, ...args: any[]) => {
+  const defaultValue = ''
+  if (!string) {
+    return string
+  }
+  const useI18nGlobal = useI18n({ useScope: 'global' })
+  const { t, te } = useI18nGlobal
+
+  const key = typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
+  if (!key) {
+    return defaultValue
+  }
+  let transKey: string
+  if (te) {
+    if (te((transKey = `attributes.${key}`)) && lodash.isString(t(transKey))) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return t(transKey, ...args)
+    }
+
+    if (te((transKey = `choice.${key}`)) && lodash.isString(t(transKey))) {
+      args = args || [2]
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return t(transKey, ...args)
+    }
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (te(key) && lodash.isString(t(key))) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return t(key, ...args)
+    }
+  }
+  return string
+}
 
 export default async function installPlugin (app: App, pluginOptions: InstallPluginOptions) {
   const opts = reactive(pluginOptions)
   const { api, i18n, options } = toRefs(opts)
-
   const helpers = {
     storage: {
       /**
@@ -246,44 +283,45 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
      * @param string
      * @param args
      */
-    __ (string: string | { text: string } | any, ...args: any): string {
-      const defaultValue = ''
-      if (!string) return string
-
-      const { t, te } = i18n.value?.global
-      const key = string && typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
-      if (!key) {
-        return defaultValue
-      }
-      let transKey: string
-      if (te) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        if (te((transKey = `attributes.${key}`)) && lodash.isString(t(transKey))) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          return t(transKey, ...args)
-        }
-
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        if (te((transKey = `choice.${key}`)) && lodash.isString(t(transKey))) {
-          args = args || [2]
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          return t(transKey, ...args)
-        }
-
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        if (te(key) && lodash.isString(t(key))) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          return t(key, ...args)
-        }
-      }
-      return string
-    },
+    // __ (string: string | { text: string } | any, ...args: any): string {
+    //   const defaultValue = ''
+    //   if (!string) return string
+    //
+    //   const { t, te } = i18n.value?.global
+    //   const key = string && typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
+    //   if (!key) {
+    //     return defaultValue
+    //   }
+    //   let transKey: string
+    //   if (te) {
+    //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //     // @ts-ignore
+    //     if (te((transKey = `attributes.${key}`)) && lodash.isString(t(transKey))) {
+    //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //       // @ts-ignore
+    //       return t(transKey, ...args)
+    //     }
+    //
+    //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //     // @ts-ignore
+    //     if (te((transKey = `choice.${key}`)) && lodash.isString(t(transKey))) {
+    //       args = args || [2]
+    //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //       // @ts-ignore
+    //       return t(transKey, ...args)
+    //     }
+    //
+    //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //     // @ts-ignore
+    //     if (te(key) && lodash.isString(t(key))) {
+    //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //       // @ts-ignore
+    //       return t(key, ...args)
+    //     }
+    //   }
+    //   return string
+    // },
+    __: useStrTranslate,
     /**
      * Copy text
      * @param text
@@ -350,7 +388,6 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
       })
     }
   }
-
   const isSmall = computed(() => Screen.lt.md)
   const popupBreakpoint = computed(() => isSmall.value ? 800 : 450)
   const r = reactive({
@@ -390,7 +427,6 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   app.config.globalProperties.$myth = r
-
   app.config.globalProperties.openWindow = function (url?: string | URL, target?: string, features?: string): Window | null {
     return window.open(url, target, features)
   }
@@ -403,8 +439,6 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
   initComponents(app)
 }
 
-export const useMyth = <T extends UseMythVue = UseMythVue> (): T => {
-  return inject<T>(INJECT_KEY) as T
-}
+export const useMyth = () => inject<UseMythVue>(INJECT_KEY) as UseMythVue
 
 export { installPlugin }

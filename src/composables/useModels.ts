@@ -6,18 +6,38 @@
  * Github: https://github.com/mythpe
  */
 
-import { computed, nextTick, onMounted, reactive, Ref, ref, watch } from 'vue'
+import {
+  computed,
+  ComputedRef,
+  MaybeRefOrGetter,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  reactive,
+  Ref,
+  ref,
+  toRefs,
+  toValue,
+  watch,
+  watchEffect
+} from 'vue'
 import { AxiosRequestConfig } from 'axios'
 import { useMyth } from '../vue3'
-import { AppApiResponse, AxiosDataRow, AxiosMetaResponse, UseModelsOptions as Options, UseModelsOptionsArg } from '../types'
+import { AppApiResponse, AppApiResponseErrors, AxiosDataRow, AxiosMetaResponse, UseModelOptions, UseModelsOptions as Options } from '../types'
 
 const itemsPerPage = 50
 type Item = AxiosDataRow & object
 
-export function useModels<T extends Partial<Item> = Item> (name: string, options?: Options, search?: string | Ref<string>, filter?: Record<string, any>, config?: AxiosRequestConfig | undefined) {
-  const opts = reactive<UseModelsOptionsArg | Record<string, any>>(options || {})
-  const params = reactive({ search, filter })
-  const axiosConfig = reactive<AxiosRequestConfig>(config || {})
+export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<string>, options?: Options, search?: string | Ref<string>, filter?: Record<string, any>, config?: AxiosRequestConfig | undefined) {
+  const { name, options: opts, params, axiosConfig } = toRefs(reactive({
+    name: toValue(n),
+    options: toValue(options),
+    params: computed(() => ({ search: toValue(search), filter: toValue(filter) })),
+    axiosConfig: computed(() => toValue(config))
+  }))
+  // const opts = reactive<UseModelsOptionsArg | Record<string, any>>(options || {})
+  // const params = reactive({ search, filter })
+  // const axiosConfig = reactive<AxiosRequestConfig>(config || {})
   const models = ref<T[]>([])
   const defMeta = {
     per_page: 0,
@@ -28,8 +48,8 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
   const meta = ref<AxiosMetaResponse>({ ...defMeta })
   const fetching = ref(!1)
   const fetched = ref(!1)
-  const perPage = ref(axiosConfig?.params?.itemsPerPage || itemsPerPage)
-  const page = ref(axiosConfig?.params?.page || 0)
+  const perPage = ref(axiosConfig.value?.params?.itemsPerPage || itemsPerPage)
+  const page = ref(axiosConfig.value?.params?.page || 0)
   const canLoadMore = computed(() => {
     if (!fetched.value) {
       return !0
@@ -49,24 +69,24 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
       ...(axiosConfig),
       ...(extraConfig),
       params: {
-        ...(axiosConfig?.params || {}),
+        ...(axiosConfig.value?.params || {}),
         ...(extraConfig?.params || {}),
         itemsPerPage: perPage.value,
         page: page.value,
-        search: params.search,
-        filter: params.filter
+        search: params.value.search,
+        filter: params.value.filter
       }
     }
-    const f = opts?.method ? myth.services[name][opts.method] : (opts?.isPanel ? myth.services[name].index : myth.services[name].staticIndex)
+    const f: any = opts.value?.method ? myth.services[name.value][opts.value.method] : (opts.value?.isPanel ? myth.services[name.value].index : myth.services[name.value].staticIndex)
     return f(config)
-      .then((res) => {
+      .then((res: any) => {
         const { _data, _meta } = res
         models.value.push(...(_data || []) as any)
         meta.value = _meta || { ...defMeta }
         page.value = _meta?.current_page ?? 0
         resolve(res)
-        if (opts?.onSuccess) {
-          opts?.onSuccess(res)
+        if (opts.value?.onSuccess) {
+          opts.value?.onSuccess(res)
         }
       })
       .catch((e: any) => reject(e))
@@ -99,11 +119,11 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
   }
   const beginningFetch = (config: AxiosRequestConfig = {}) => {
     reset()
-    if (opts.qInfiniteScroll) {
+    if (opts.value?.qInfiniteScroll) {
       return new Promise(resolve => {
-        opts.qInfiniteScroll.reset()
+        opts.value?.qInfiniteScroll?.reset()
         nextTick(() => {
-          opts.qInfiniteScroll.trigger()
+          opts.value?.qInfiniteScroll?.trigger()
         })
         resolve({})
       })
@@ -112,7 +132,7 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
   }
   try {
     onMounted(() => {
-      !opts?.lazy && nextPage()
+      !opts.value?.lazy && nextPage()
     })
   } catch (e) {
     console.log(e)
@@ -135,8 +155,12 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
   const removeItem = (item: Item) => {
     models.value = models.value.filter(e => e.value !== item.value)
   }
-  watch(() => params.search, () => onSearch())
-
+  const un = watch(() => params.value.search, () => onSearch())
+  onUnmounted(() => {
+    if (un) {
+      un()
+    }
+  })
   return {
     models,
     meta,
@@ -155,45 +179,61 @@ export function useModels<T extends Partial<Item> = Item> (name: string, options
   }
 }
 
-export function useModel<T extends Partial<Item> = Item> (name: string, id: any, opts?: Options, config?: AxiosRequestConfig | undefined) {
+type R<T = any> = MaybeRefOrGetter<T> | ComputedRef<T>
+export const useModel = <T extends Partial<Item> = Item> (
+  name: R<string>,
+  id: R,
+  opt: R<UseModelOptions>
+) => {
   const api = useMyth()
   const model = ref<T>({} as T)
   const fetching = ref(!1)
   const fetched = ref(!1)
-  const args = reactive({ id, model, name, opts, config })
+  const options = toValue<UseModelOptions>(opt)
+  const method = toValue(options?.method)
+  const isPanel = toValue(options?.isPanel)
+  const timeout = options?.timeout
+
   const fetch = () => {
+    const n = toValue(name)
+    const mid = toValue(id)
     return new Promise<AppApiResponse | any>((resolve, reject) => {
-      if (fetching.value) {
+      console.log(fetching.value)
+      if (fetching.value || !n || !mid) {
         resolve({})
         return
       }
-      fetching.value = !0
-      const m = args.opts?.method ? api.services[args.name][args.opts.method] : api.services[args.name][!args.opts?.isPanel ? 'staticShow' : 'show']
-      return m(args.id, args.config)
-        .then((r) => {
+      console.log(234)
+      const m: any = method ? api.services[n][method] : api.services[n][!isPanel ? 'staticShow' : 'show']
+      return m(mid, options.config)
+        .then((r: Item) => {
           const { _data } = r
+          console.log(_data)
           model.value = (_data as any)
           resolve(r)
-          if (args.opts?.onSuccess) {
-            args.opts?.onSuccess(r)
-          }
+          options?.onSuccess?.(r)
           return r
         })
-        .catch(e => {
+        .catch((e: AppApiResponseErrors) => {
           reject(e)
         })
         .finally(() => {
           if (!fetched.value) {
             fetched.value = !0
           }
-          setTimeout(() => {
-            fetching.value = !1
-          }, args.opts?.timeout !== undefined ? args.opts?.timeout : 100)
+          fetching.value = !1
+          console.log('finally')
+          // setTimeout(() => {
+          // }, timeout !== undefined ? timeout : 100)
         })
     })
   }
-  !args.opts?.lazy && onMounted(() => {
-    args.id && fetch()
+  watchEffect(() => {
+    // fetching.value = !0
+    fetch()
   })
-  return { model, fetching, fetch, fetched }
+  // !args.opts?.lazy && onMounted(() => {
+  //   args.id && fetch()
+  // })
+  return toRefs(reactive({ model, fetching, fetch, fetched }))
 }

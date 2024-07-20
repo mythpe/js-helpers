@@ -49,7 +49,7 @@
 // }
 
 
-.m__transition__fade-move, /* apply transition to moving elements */
+.m__transition__fade-move,
 .m__transition__fade-enter-active,
 .m__transition__fade-leave-active {
   transition: all 0.5s ease;
@@ -61,8 +61,6 @@
   transform: translateX(30px);
 }
 
-/* ensure leaving items are taken out of layout flow so that moving
-   animations can be calculated correctly. */
 .m__transition__fade-leave-active {
   position: absolute;
 }

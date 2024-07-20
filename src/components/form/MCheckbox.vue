@@ -68,10 +68,10 @@
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineEmits, defineProps } from 'vue'
-import useInputProps from '../../composition/useInputProps'
+import { useInputProps } from '../../composables'
 import { MCheckboxProps } from './models'
 
-interface Props {
+type Props = {
   auto?: MCheckboxProps['auto'];
   col?: MCheckboxProps['col'];
   xs?: MCheckboxProps['xs'];
@@ -112,7 +112,7 @@ const inputValue = computed({
   get: () => props.modelValue,
   set: value => emit('update:modelValue', value)
 })
-const { getRules, getLabel, getPlaceholder } = useInputProps(props)
+const { getRules, getLabel, getPlaceholder } = useInputProps(() => props)
 
 </script>
 

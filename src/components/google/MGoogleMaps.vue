@@ -12,7 +12,17 @@ import { computed, ref, watch } from 'vue'
 import { GoogleMap, Marker } from 'vue3-google-map'
 import { useGeolocation } from '../../vue3'
 import { ColStyleType } from '../grid/models'
-import { CoordsType, GeocoderResult, GoogleGeocoder, GoogleMapsApi, GoogleMapsMVCObject, GooglePlacesService, MapCoordsClick, MGoogleMapsMarkerProp, PlaceResult } from './models'
+import {
+  CoordsType,
+  GeocoderResult,
+  GoogleGeocoder,
+  GoogleMapsApi,
+  GoogleMapsMVCObject,
+  GooglePlacesService,
+  MapCoordsClick,
+  MGoogleMapsMarkerProp,
+  PlaceResult
+} from './models'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
