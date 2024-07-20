@@ -6,9 +6,9 @@
  * Github: https://github.com/mythpe
  */
 
-import { App, computed, defineAsyncComponent, inject, reactive } from 'vue'
+import { App, computed, inject, reactive, toRefs } from 'vue'
 import {
-  MythPluginOptionsType,
+  InstallPluginOptions,
   ParseHeaderOptions,
   ParseHeadersHeaderAgr,
   ParseHeadersType,
@@ -23,22 +23,13 @@ import { Dates, Helpers, Str } from '../utils'
 import lodash from 'lodash'
 import { copyToClipboard, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
+import { initComponents } from './Component'
 import { VueI18n } from 'vue-i18n'
 
-/**
- * Install Plugin
- * @param app
- * @param i18n
- * @param api
- * @param options
- */
-export default async function installPlugin (app: App, { i18n, api, options = {} }: MythPluginOptionsType) {
-  options = options || {}
-  const apiBaseUrl = computed(() => api.baseUrl)
-  const apiAxios = computed(() => api.axios)
-  const apiServices = computed(() => api.services)
-  const baseI18n = computed(() => i18n)
-  const mythOptions = computed(() => options)
+export default async function installPlugin (app: App, pluginOptions: InstallPluginOptions) {
+  const opts = reactive(pluginOptions)
+  const { api, i18n, options } = toRefs(opts)
+
   const helpers = {
     storage: {
       /**
@@ -95,7 +86,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
         lodash.snakeCase(singular)
       ]))
 
-      const { t, te, tc } = baseI18n.value?.global as VueI18n
+      const { t, te } = i18n.value.global as VueI18n
       let str = null
       let k: string
 
@@ -171,7 +162,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       }
 
       const result: ParseHeadersType[] = []
-      const { t, te } = baseI18n.value?.global
+      const { t, te } = i18n.value?.global
       headers.forEach((elm: string | ParseHeadersType) => {
         if (typeof elm !== 'string' && !elm?.name) return elm
         const isString = typeof elm === 'string'
@@ -259,7 +250,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       const defaultValue = ''
       if (!string) return string
 
-      const { t, te } = baseI18n.value?.global
+      const { t, te } = i18n.value?.global
       const key = string && typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
       if (!key) {
         return defaultValue
@@ -304,7 +295,7 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
       return {
         badgeColor: 'primary',
         progress: !0,
-        ...mythOptions.value.notify,
+        ...options.value.notify as any,
         message: typeof opts === 'string' ? opts : opts.message,
         ...(typeof opts !== 'string' ? opts : {})
       }
@@ -313,20 +304,19 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
     alertSuccess: (message: string) => helpers.alertMessage({ type: 'positive', message }),
     alertError: (message: string) => helpers.alertMessage({ type: 'negative', message }),
     confirmMessage (message?: string, title?: string, opts?: QDialogOptions): Vue3MConfirmMessage {
-      const { t } = baseI18n.value?.global
-      const options = mythOptions.value
+      const { t } = i18n.value?.global
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title = title || t('messages.are_you_sure') || ''
       message = message || ''
       opts = opts || {}
       const buttonsProps = {
-        ...(options?.button || {}),
-        ...(options?.confirmDialog?.buttons || {})
+        ...(options.value.button || {}),
+        ...(options.value.confirmDialog?.buttons || {})
       }
-      const okProps = options?.confirmDialog?.okProps || {}
-      const cancelProps = options?.confirmDialog?.cancelProps || {}
-      const dialogProps = options?.confirmDialog?.props || {}
+      const okProps = options.value.confirmDialog?.okProps || {}
+      const cancelProps = options.value.confirmDialog?.cancelProps || {}
+      const dialogProps = options.value.confirmDialog?.props || {} as any
       dialogProps.transitionShow = dialogProps.transitionShow || 'jump-down'
       dialogProps.transitionHide = dialogProps.transitionHide || 'jump-up'
       dialogProps.class = ('m--confirm ') + (dialogProps.class || '')
@@ -339,37 +329,36 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           label: t(cancelProps?.label || 'no'),
-          ...buttonsProps,
+          ...buttonsProps as any,
           flat: !0,
           unelevated: !0,
-          ...cancelProps
+          ...cancelProps as any
         },
         ok: {
           color: okProps.color || 'negative',
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           label: t(okProps?.label || 'yes'),
-          ...buttonsProps,
+          ...buttonsProps as any,
           flat: !0,
           unelevated: !0,
-          ...okProps
+          ...okProps as any
         },
         persistent: !0,
-        ...dialogProps,
-        ...opts
+        ...dialogProps as any,
+        ...opts as any
       })
     }
   }
 
   const isSmall = computed(() => Screen.lt.md)
   const popupBreakpoint = computed(() => isSmall.value ? 800 : 450)
-
-  const r = reactive<UseMythVue>({
-    i18n: baseI18n.value,
-    baseUrl: apiBaseUrl.value,
-    axios: apiAxios.value,
-    services: apiServices.value,
-    options: mythOptions.value,
+  const r = reactive({
+    i18n: i18n.value,
+    baseUrl: api.value.baseUrl,
+    axios: api.value.axios,
+    services: api.value.services,
+    options: options.value,
     str: Str,
     dates: Dates,
     helpers: Helpers,
@@ -397,7 +386,6 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
     },
     ...helpers
   })
-
   app.provide(INJECT_KEY, r)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -412,63 +400,11 @@ export default async function installPlugin (app: App, { i18n, api, options = {}
   app.config.globalProperties.getPageTitle = function (number?: number | string, route?: RouteLocationNormalizedLoaded): string {
     return this.$myth.getPageTitle(route || this.$route, number)
   }
-
-  // Datatable
-  app.component('MDatatable', defineAsyncComponent(() => import('../components/datatable/MDatatable.vue')))
-  app.component('MDtAvatar', defineAsyncComponent(() => import('../components/datatable/MDtAvatar.vue')))
-  app.component('MDtBtn', defineAsyncComponent(() => import('../components/datatable/MDtBtn.vue')))
-
-  // Form
-  app.component('MAvatarViewer', defineAsyncComponent(() => import('../components/form/MAvatarViewer.vue')))
-  app.component('MAxios', defineAsyncComponent(() => import('../components/form/MAxios.vue')))
-  app.component('MBtn', defineAsyncComponent(() => import('../components/form/MBtn.vue')))
-  app.component('MCheckbox', defineAsyncComponent(() => import('../components/form/MCheckbox.vue')))
-  app.component('MRadio', defineAsyncComponent(() => import('../components/form/MRadio.vue')))
-  app.component('MDate', defineAsyncComponent(() => import('../components/form/MDate.vue')))
-  app.component('MEditor', defineAsyncComponent(() => import('../components/form/MEditor.vue')))
-  app.component('MEmail', defineAsyncComponent(() => import('../components/form/MEmail.vue')))
-  app.component('MFile', defineAsyncComponent(() => import('../components/form/MFile.vue')))
-  app.component('MForm', defineAsyncComponent(() => import('../components/form/MForm.vue')))
-  app.component('MInput', defineAsyncComponent(() => import('../components/form/MInput.vue')))
-  app.component('MMobile', defineAsyncComponent(() => import('../components/form/MMobile.vue')))
-  app.component('MOtp', defineAsyncComponent(() => import('../components/form/MOtp.vue')))
-  app.component('MPassword', defineAsyncComponent(() => import('../components/form/MPassword.vue')))
-  app.component('MPicker', defineAsyncComponent(() => import('../components/form/MPicker.vue')))
-  app.component('MSelect', defineAsyncComponent(() => import('../components/form/MSelect.vue')))
-  app.component('MTime', defineAsyncComponent(() => import('../components/form/MTime.vue')))
-  app.component('MToggle', defineAsyncComponent(() => import('../components/form/MToggle.vue')))
-  app.component('MUploader', defineAsyncComponent(() => import('../components/form/MUploader.vue')))
-
-  // Google maps
-  app.component('MGoogleMaps', defineAsyncComponent(() => import('../components/google/MGoogleMaps.vue')))
-
-  // Grid
-  app.component('MBlock', defineAsyncComponent(() => import('../components/grid/MBlock.vue')))
-  app.component('MCard', defineAsyncComponent(() => import('../components/grid/MCard.vue')))
-  app.component('MCol', defineAsyncComponent(() => import('../components/grid/MCol.vue')))
-  app.component('MColumn', defineAsyncComponent(() => import('../components/grid/MColumn.vue')))
-  app.component('MContainer', defineAsyncComponent(() => import('../components/grid/MContainer.vue')))
-  app.component('MDraggable', defineAsyncComponent(() => import('../components/grid/MDraggable.vue')))
-  app.component('MList', defineAsyncComponent(() => import('../components/grid/MList.vue')))
-  app.component('MNoResultImg', defineAsyncComponent(() => import('../components/grid/MNoResultImg.vue')))
-  app.component('MRow', defineAsyncComponent(() => import('../components/grid/MRow.vue')))
-
-  // Modal
-  app.component('MDialog', defineAsyncComponent(() => import('../components/modal/MDialog.vue')))
-  app.component('MModalMenu', defineAsyncComponent(() => import('../components/modal/MModalMenu.vue')))
-  app.component('MTooltip', defineAsyncComponent(() => import('../components/modal/MTooltip.vue')))
-
-  // Transition
-  app.component('MTransition', defineAsyncComponent(() => import('../components/transition/MTransition.vue')))
-  app.component('MFadeTransition', defineAsyncComponent(() => import('../components/transition/MFadeTransition.vue')))
-  app.component('MFadeXTransition', defineAsyncComponent(() => import('../components/transition/MFadeXTransition.vue')))
-
-  // Typography
-  app.component('MTypingString', defineAsyncComponent(() => import('../components/typography/MTypingString.vue')))
+  initComponents(app)
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-export const useMyth = <T extends UseMythVue = UseMythVue> (): T => inject<T>(INJECT_KEY)
+export const useMyth = <T extends UseMythVue = UseMythVue> (): T => {
+  return inject<T>(INJECT_KEY) as T
+}
 
 export { installPlugin }

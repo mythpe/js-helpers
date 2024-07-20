@@ -23,7 +23,6 @@ import {
   QNotifyCreateOptions,
   QPageStickyProps,
   QPopupProxyProps,
-  QSelectProps,
   QTooltipProps
 } from 'quasar'
 import {
@@ -94,7 +93,7 @@ import {
   MUploaderSlots
 } from '../components'
 import { I18n } from 'vue-i18n'
-import { ComputedRef, TransitionProps } from 'vue'
+import { ComputedRef, Ref, TransitionProps, UnwrapNestedRefs } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import {
   MythApiServicesSchema,
@@ -233,12 +232,6 @@ export type MythApiConfig = {
 }
 
 export type MythI18nType = I18n;
-
-export type MythPluginOptionsType = {
-  i18n: MythI18nType;
-  api: MythApiConfig;
-  options: MythOptionsConfig;
-}
 
 export type UseMythVue = {
   i18n: MythI18nType;

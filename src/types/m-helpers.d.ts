@@ -109,8 +109,8 @@ export type AxiosDataRow = {
   label?: string;
   [key: string | number]: any;
 };
-export type AxiosDataResponse = AxiosDataRow & AxiosDataRow[];
-export type AxiosErrorResponse = Record<string, any>;
+export type AxiosDataResponse = AxiosDataRow | AxiosDataRow[];
+export type AxiosErrorResponse = Record<string, string[]>;
 export type AxiosErrorsResponse = AxiosErrorResponse[];
 export type MainAxiosAppResponse = {
   _data: AxiosDataResponse;
