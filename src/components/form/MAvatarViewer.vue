@@ -236,8 +236,8 @@ export default {
           </MBtn>
         </MCol>
         <MCol
-          key="errors"
           v-if="errors && errors[name]"
+          key="errors"
           class="q-mt-sm"
         >
           <span class="text-body2 text-negative">{{ typeof errors[name] === 'string' ? errors[name] : errors[name][0] }}</span>

@@ -12,14 +12,6 @@ import { AxiosRequestConfig } from 'axios'
 
 export type UseModelsOptionsArg = {
   lazy?: boolean;
-  isPanel?: boolean;
-  method?: string;
-  timeout?: number | undefined;
-  qInfiniteScroll?: Ref<QInfiniteScroll | undefined>;
-  onSuccess?: (data: any) => void;
-}
-export type UseModelOptions = {
-  lazy?: boolean;
   isPanel?: MaybeRefOrGetter<boolean>;
   method?: MaybeRefOrGetter<string>;
   timeout?: number;
@@ -28,4 +20,14 @@ export type UseModelOptions = {
   onError?: (e: any) => void;
   config?: MaybeRefOrGetter<AxiosRequestConfig>
 }
+// export type UseModelOptions = {
+//   lazy?: boolean;
+//   isPanel?: MaybeRefOrGetter<boolean>;
+//   method?: MaybeRefOrGetter<string>;
+//   timeout?: number;
+//   qInfiniteScroll?: Ref<QInfiniteScroll | undefined>;
+//   onSuccess?: (data: any) => void;
+//   onError?: (e: any) => void;
+//   config?: MaybeRefOrGetter<AxiosRequestConfig>
+// }
 export type UseModelsOptions = UnwrapNestedRefs<UseModelsOptionsArg> | Ref<UseModelsOptionsArg> | UseModelsOptionsArg

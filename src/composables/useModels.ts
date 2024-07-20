@@ -6,24 +6,10 @@
  * Github: https://github.com/mythpe
  */
 
-import {
-  computed,
-  ComputedRef,
-  MaybeRefOrGetter,
-  nextTick,
-  onMounted,
-  onUnmounted,
-  reactive,
-  Ref,
-  ref,
-  toRefs,
-  toValue,
-  watch,
-  watchEffect
-} from 'vue'
+import { computed, ComputedRef, MaybeRefOrGetter, nextTick, onMounted, onUnmounted, reactive, Ref, ref, toRefs, toValue, watch } from 'vue'
 import { AxiosRequestConfig } from 'axios'
 import { useMyth } from '../vue3'
-import { AppApiResponse, AppApiResponseErrors, AxiosDataRow, AxiosMetaResponse, UseModelOptions, UseModelsOptions as Options } from '../types'
+import { AppApiResponse, AxiosDataRow, AxiosMetaResponse, UseModelsOptions as Options } from '../types'
 
 const itemsPerPage = 50
 type Item = AxiosDataRow & object
@@ -77,7 +63,7 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
         filter: params.value.filter
       }
     }
-    const f: any = opts.value?.method ? myth.services[name.value][opts.value.method] : (opts.value?.isPanel ? myth.services[name.value].index : myth.services[name.value].staticIndex)
+    const f: any = opts.value?.method ? myth.services[name.value][toValue(opts.value.method)] : (opts.value?.isPanel ? myth.services[name.value].index : myth.services[name.value].staticIndex)
     return f(config)
       .then((res: any) => {
         const { _data, _meta } = res
@@ -180,60 +166,56 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
 }
 
 type R<T = any> = MaybeRefOrGetter<T> | ComputedRef<T>
-export const useModel = <T extends Partial<Item> = Item> (
-  name: R<string>,
-  id: R,
-  opt: R<UseModelOptions>
-) => {
+
+export function useModel<T extends Partial<Item> = Item> (name: string, id: any, opts: Options = {}) {
   const api = useMyth()
   const model = ref<T>({} as T)
-  const fetching = ref(!1)
+  const fetching = ref(!0)
   const fetched = ref(!1)
-  const options = toValue<UseModelOptions>(opt)
-  const method = toValue(options?.method)
-  const isPanel = toValue(options?.isPanel)
-  const timeout = options?.timeout
-
-  const fetch = () => {
-    const n = toValue(name)
-    const mid = toValue(id)
-    return new Promise<AppApiResponse | any>((resolve, reject) => {
-      console.log(fetching.value)
-      if (fetching.value || !n || !mid) {
-        resolve({})
-        return
-      }
-      console.log(234)
-      const m: any = method ? api.services[n][method] : api.services[n][!isPanel ? 'staticShow' : 'show']
-      return m(mid, options.config)
-        .then((r: Item) => {
-          const { _data } = r
-          console.log(_data)
-          model.value = (_data as any)
-          resolve(r)
-          options?.onSuccess?.(r)
-          return r
-        })
-        .catch((e: AppApiResponseErrors) => {
-          reject(e)
-        })
-        .finally(() => {
-          if (!fetched.value) {
-            fetched.value = !0
+  const args = reactive({ id, model, name, opts })
+  const fetch = () => new Promise<AppApiResponse | any>((resolve, reject) => {
+    if ((fetching.value && fetched.value) || !args.id) {
+      resolve({})
+      return
+    }
+    if (!fetching.value) {
+      fetching.value = !0
+    }
+    const m = args.opts?.method ? api.services[args.name][toValue(args.opts.method)] : api.services[args.name][!args.opts?.isPanel ? 'staticShow' : 'show']
+    return m(args.id, toValue(args.opts?.config))
+      .then((r) => {
+        const { _data } = r
+        model.value = (_data as any)
+        resolve(r)
+        if (args.opts?.onSuccess) {
+          args.opts?.onSuccess(r)
+        }
+        return r
+      })
+      .catch(e => {
+        args.opts?.onError?.(e)
+        reject(e)
+      })
+      .finally(() => {
+        if (!fetched.value) {
+          fetched.value = !0
+        }
+        setTimeout(() => {
+          if (fetching.value) {
+            fetching.value = !1
           }
-          fetching.value = !1
-          console.log('finally')
-          // setTimeout(() => {
-          // }, timeout !== undefined ? timeout : 100)
-        })
-    })
-  }
-  watchEffect(() => {
-    // fetching.value = !0
+        }, args.opts?.timeout !== undefined ? args.opts?.timeout : 100)
+      })
+  })
+  !args.opts?.lazy && onMounted(() => {
     fetch()
   })
-  // !args.opts?.lazy && onMounted(() => {
-  //   args.id && fetch()
-  // })
-  return toRefs(reactive({ model, fetching, fetch, fetched }))
+  // !args.opts?.lazy && watchEffect(() => args.id && fetch())
+  const un = watch([() => args.name, () => args.id, () => args.opts.config], () => {
+    fetch()
+  }, { deep: !0 })
+  onUnmounted(() => {
+    un?.()
+  })
+  return { model, fetching, fetch, fetched }
 }

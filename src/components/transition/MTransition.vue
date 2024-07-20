@@ -8,7 +8,6 @@
 
 <script lang="ts" setup>
 import { MTransitionProps } from './models'
-import gsap from 'gsap'
 
 interface Props {
   enterIn?: MTransitionProps['enterIn'];
@@ -21,42 +20,40 @@ withDefaults(defineProps<Props>(), {
   enterOut: () => 'fadeOut',
   slow: () => !0
 })
-
-function onBeforeEnter (el: any) {
-  el.style.opacity = 0
-  el.style.height = 0
-}
-
-function onEnter (el: any, done: any) {
-  gsap.to(el, {
-    opacity: 1,
-    height: '1.6em',
-    delay: el.dataset.index * 0.2,
-    onComplete: done
-  })
-}
-
-function onLeave (el: any, done: any) {
-  gsap.to(el, {
-    opacity: 0,
-    height: 0,
-    delay: el.dataset.index * 0.15,
-    onComplete: done
-  })
-}
+// const def = ref({})
+//
+// function onBeforeEnter (el: any) {
+//   def.value = el.style
+//   el.style.opacity = 0
+//   el.style.height = 0
+// }
+//
+// function onEnter (el: any, done: any) {
+//   gsap.to(el, {
+//     opacity: 1,
+//     height: '100%',
+//     delay: el.dataset.index * 0.2,
+//     onComplete: done
+//   })
+// }
+//
+// function onLeave (el: any, done: any) {
+//   gsap.to(el, {
+//     opacity: 0,
+//     height: 0,
+//     delay: el.dataset.index * 0.15,
+//     onComplete: done
+//   })
+// }
 </script>
 
 <template>
   <TransitionGroup
-    :css="!1"
     :enter-active-class="`animated ${enterIn} ${slow ? 'slow' : ''}`"
     :leave-active-class="`animated ${enterOut} ${slow ? 'slow' : ''}`"
     appear
     name="m__transition__fade"
     v-bind="$attrs"
-    @enter="onEnter"
-    @leave="onLeave"
-    @before-enter="onBeforeEnter"
   >
     <slot />
   </TransitionGroup>

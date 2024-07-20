@@ -51,7 +51,6 @@ import {
   MDialogProps,
   MDialogSlots,
   MDraggableProps,
-  MDraggableSlots,
   MDtAvatarProps,
   MDtAvatarSlots,
   MDtBtnProps,
