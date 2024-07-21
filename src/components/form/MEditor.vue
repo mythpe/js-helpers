@@ -42,6 +42,22 @@
       :rules="getRules"
       v-bind="$attrs"
     >
+      <slot name="top-label">
+        <div
+          v-if="topLabel || $myth.options.editor?.topLabel"
+          class="m--input__top-label"
+        >
+          {{ getLabel }}
+        </div>
+      </slot>
+      <slot name="caption">
+        <div
+          v-if="!!caption"
+          class="m--input__caption"
+        >
+          {{ __(caption) }}
+        </div>
+      </slot>
       <q-editor
         :_definitions="{..._definitions,...$myth.options.editor?.definitions}"
         :dense="dense !== undefined ? dense : $q.screen.lt.md"
@@ -88,6 +104,8 @@ interface Props {
   dense?: MEditorProps['dense'];
   toolbar?: MEditorProps['toolbar'];
   fonts?: MEditorProps['fonts'];
+  topLabel?: MEditorProps['topLabel'];
+  caption?: MEditorProps['caption'];
 }
 
 const $q = useQuasar()
@@ -212,7 +230,9 @@ const props = withDefaults(defineProps<Props>(), {
   hint: undefined,
   dense: undefined,
   toolbar: undefined,
-  fonts: undefined
+  fonts: undefined,
+  topLabel: undefined,
+  caption: undefined
 })
 
 type EmitsTypes = {

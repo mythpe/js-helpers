@@ -114,6 +114,7 @@ export type MInputProps = Omit<QInputProps, 'rules' | 'modelValue' | 'errors'> &
   viewModeValue?: any | undefined;
   autocomplete?: string | boolean | undefined;
   topLabel?: boolean | undefined;
+  caption?: string | null | undefined;
 }
 
 export interface MInputSlots extends QInputSlots {
@@ -121,6 +122,8 @@ export interface MInputSlots extends QInputSlots {
    * Field main content
    */
   default: () => VNode[];
+  'top-label': () => VNode[];
+  caption: () => VNode[];
 }
 
 export interface MFileProps extends MColProps, Omit<QFileProps, 'rules'> {
@@ -160,6 +163,8 @@ export interface MFileProps extends MColProps, Omit<QFileProps, 'rules'> {
    */
   viewMode?: boolean | undefined;
   viewModeValue?: any | undefined;
+  topLabel?: boolean | undefined;
+  caption?: string | null | undefined;
 }
 
 export interface MFileSlots extends QFileSlots {
@@ -167,6 +172,8 @@ export interface MFileSlots extends QFileSlots {
    * Field main content
    */
   default: () => VNode[];
+  'top-label': () => VNode[];
+  caption: () => VNode[];
 }
 
 export interface MPickerProps extends Omit<MInputProps, 'modelValue' | 'type'>, Omit<QDateProps, 'modelValue' | 'options'>, Omit<QTimeProps, 'modelValue'> {
@@ -250,6 +257,7 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
   viewMode?: boolean | undefined;
   viewModeValue?: any | undefined;
   topLabel?: boolean | undefined;
+  caption?: string | null | undefined;
 }
 
 export interface MSelectSlots extends QSelectSlots {
@@ -257,6 +265,8 @@ export interface MSelectSlots extends QSelectSlots {
    * Field main content
    */
   default: () => VNode[];
+  'top-label': () => VNode[];
+  caption: () => VNode[];
 }
 
 export interface MAxiosProps extends Omit<MSelectProps, 'options' | 'modelValue'> {
@@ -577,6 +587,8 @@ export interface MEditorProps extends Omit<QEditorProps, 'modelValue'>, MColProp
   hideRequired?: boolean;
   viewMode?: boolean;
   errors?: Record<string, string[]>;
+  topLabel?: boolean | undefined;
+  caption?: string | null | undefined;
 }
 
 export interface MEditorSlots extends QEditorSlots {

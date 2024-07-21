@@ -35,88 +35,105 @@
         </template>
       </MInput>
     </template>
-    <MInput
-      v-else
-      ref="inputRef"
-      v-model="inputValue"
-      :disable="disable"
-      :mask="mask"
-      :readonly="readonly"
-      v-bind="$attrs"
-    >
-      <template
-        v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
-        :key="slot"
-        #[slot]
-      >
-        <slot :name="slot" />
-      </template>
-      <template #append>
-        <q-btn
-          v-if="!disable&&!readonly"
-          :icon="isDate ? 'event' : 'access_time'"
-          flat
-          round
-          v-bind="{...btnProps,...$myth.options?.pickerBtn}"
+    <template v-else>
+      <slot name="top-label">
+        <div
+          v-if="topLabel || $myth.options.file?.topLabel"
+          class="m--input__top-label"
         >
-          <q-popup-proxy
-            cover
-            persistent
-            transition-hide="scale"
-            transition-show="scale"
-            @before-show="onBeforeShow()"
-            @before-hide="onBeforeHide()"
+          {{ getLabel }}
+        </div>
+      </slot>
+      <slot name="caption">
+        <div
+          v-if="!!caption"
+          class="m--input__caption"
+        >
+          {{ __(caption) }}
+        </div>
+      </slot>
+      <MInput
+        ref="inputRef"
+        v-model="inputValue"
+        :disable="disable"
+        :mask="mask"
+        :readonly="readonly"
+        v-bind="$attrs"
+      >
+        <template
+          v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
+          :key="slot"
+          #[slot]
+        >
+          <slot :name="slot" />
+        </template>
+        <template #append>
+          <q-btn
+            v-if="!disable&&!readonly"
+            :icon="isDate ? 'event' : 'access_time'"
+            flat
+            round
+            v-bind="{...btnProps,...$myth.options?.pickerBtn}"
           >
-            <q-date
-              v-if="isDate"
-              v-model="dateRef"
-              :mask="format"
-              :multiple="multiple"
-              :range="range"
-              today-btn
-              v-bind="{...$myth.options.date,...$attrs}"
+            <q-popup-proxy
+              cover
+              persistent
+              transition-hide="scale"
+              transition-show="scale"
+              @before-show="onBeforeShow()"
+              @before-hide="onBeforeHide()"
             >
-              <div class="row items-center justify-end">
-                <MBtn
-                  v-close-popup
-                  :label="__('close')"
-                  color="negative"
-                  flat
-                />
-                <MBtn
-                  v-close-popup
-                  :label="__('save')"
-                  flat
-                  @click="saveDialog()"
-                />
-              </div>
-            </q-date>
-            <q-time
-              v-else
-              v-model="dateRef"
-              :mask="format"
-              now-btn
-              v-bind="{...$myth.options.time,...$attrs}"
-            >
-              <div class="row items-center justify-end">
-                <MBtn
-                  v-close-popup
-                  :label="__('close')"
-                  color="negative"
-                  flat
-                />
-                <MBtn
-                  v-close-popup
-                  :label="__('save')"
-                  flat
-                  @click="saveDialog()"
-                />
-              </div>
-            </q-time>
-          </q-popup-proxy>
-        </q-btn>
-      </template>
-    </MInput>
+              <q-date
+                v-if="isDate"
+                v-model="dateRef"
+                :mask="format"
+                :multiple="multiple"
+                :range="range"
+                today-btn
+                v-bind="{...$myth.options.date as any,...$attrs}"
+              >
+                <div class="row items-center justify-end">
+                  <MBtn
+                    v-close-popup
+                    :label="__('close')"
+                    color="negative"
+                    flat
+                  />
+                  <MBtn
+                    v-close-popup
+                    :label="__('save')"
+                    flat
+                    @click="saveDialog()"
+                  />
+                </div>
+              </q-date>
+              <q-time
+                v-else
+                v-model="dateRef"
+                :mask="format"
+                now-btn
+                v-bind="{...$myth.options.time,...$attrs}"
+              >
+                <div class="row items-center justify-end">
+                  <MBtn
+                    v-close-popup
+                    :label="__('close')"
+                    color="negative"
+                    flat
+                  />
+                  <MBtn
+                    v-close-popup
+                    :label="__('save')"
+                    flat
+                    @click="saveDialog()"
+                  />
+                </div>
+              </q-time>
+            </q-popup-proxy>
+          </q-btn>
+        </template>
+      </MInput>
+    </template>
   </MCol>
 </template>
 

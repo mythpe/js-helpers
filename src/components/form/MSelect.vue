@@ -48,6 +48,7 @@ type Props = {
   viewModeValue?: MSelectProps['viewModeValue'];
   multiple?: MSelectProps['multiple'];
   topLabel?: MSelectProps['topLabel'];
+  caption?: MSelectProps['caption'];
   useChips?: MSelectProps['useChips'];
 }
 
@@ -85,6 +86,7 @@ const props = withDefaults(defineProps<Props>(), {
   viewModeValue: undefined,
   multiple: undefined,
   topLabel: undefined,
+  caption: undefined,
   useChips: undefined
 })
 type Events = {
@@ -211,12 +213,22 @@ defineExpose({ searchInput })
       v-bind="useInput ? undefined : $attrs"
       @update:model-value="updateFieldValue"
     >
-      <div
-        v-if="topLabel || $myth.options.select?.topLabel"
-        class="m--input__top-label"
-      >
-        {{ getLabel }}
-      </div>
+      <slot name="top-label">
+        <div
+          v-if="topLabel || $myth.options.select?.topLabel"
+          class="m--input__top-label"
+        >
+          {{ getLabel }}
+        </div>
+      </slot>
+      <slot name="caption">
+        <div
+          v-if="!!caption"
+          class="m--input__caption"
+        >
+          {{ __(caption) }}
+        </div>
+      </slot>
       <q-select
         ref="selectRef"
         :behavior="$q.platform.is.ios === !0 ? 'dialog' : behavior"
@@ -239,8 +251,10 @@ defineExpose({ searchInput })
           ...$myth.options.select,
           ...$attrs,
           ...(fieldProps||{field:{}}).field,
-          useChips: $myth.options.select?.useChips === !0 && !multiple ? !1 : (
-            useChips !== undefined ? useChips : ( $myth.options?.select?.useChips !== undefined ? $myth.options?.select?.useChips : useChips )
+          useChips: useChips !== undefined ? useChips : (
+            $myth.options?.select?.useChips !== undefined ? (
+              $myth.options.select.useChips && !multiple ? !1 : $myth.options.select.useChips
+            ) : useChips
           )
         }"
         @filter="filterFn"

@@ -48,6 +48,8 @@ interface Props {
   modelValue: MFileProps['modelValue'];
   viewMode?: MFileProps['viewMode'];
   viewModeValue?: MFileProps['viewModeValue'];
+  topLabel?: MFileProps['topLabel'];
+  caption?: MFileProps['caption'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -83,13 +85,15 @@ const props = withDefaults(defineProps<Props>(), {
   errors: () => ({}),
   modelValue: undefined,
   viewMode: undefined,
-  viewModeValue: undefined
+  viewModeValue: undefined,
+  topLabel: undefined,
+  caption: undefined
 })
 
 type Events = {
   (e: 'update:modelValue', value: any | undefined): void;
 }
-const emit = defineEmits<Events>()
+defineEmits<Events>()
 const { getRules, getLabel, getPlaceholder } = useInputProps(() => props)
 const { accepts } = useAcceptProp(props)
 const fileInput = ref<InstanceType<typeof QFile>>()
@@ -166,6 +170,22 @@ export default {
       :rules="getRules"
       v-bind="$attrs"
     >
+      <slot name="top-label">
+        <div
+          v-if="topLabel || $myth.options.file?.topLabel"
+          class="m--input__top-label"
+        >
+          {{ getLabel }}
+        </div>
+      </slot>
+      <slot name="caption">
+        <div
+          v-if="!!caption"
+          class="m--input__caption"
+        >
+          {{ __(caption) }}
+        </div>
+      </slot>
       <q-file
         ref="fileInput"
         :accept="accepts.join(',')"
