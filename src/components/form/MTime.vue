@@ -17,26 +17,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits } from 'vue'
-import { MTimeProps } from './models'
 
-interface Props {
-  modelValue: MTimeProps['modelValue'];
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  modelValue: undefined
-})
-
-interface Emits {
-  (e: 'update:modelValue', value: any): void
-}
-
-const emit = defineEmits<Emits>()
-const inputValue = computed({
-  get: () => props.modelValue,
-  set: v => emit('update:modelValue', v)
-})
+const inputValue = defineModel({ required: !0 })
 
 </script>
 

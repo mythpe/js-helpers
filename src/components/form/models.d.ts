@@ -188,6 +188,8 @@ export interface MPickerSlots extends MInputSlots {
    * Field main content
    */
   default: () => VNode[];
+  'top-label': () => VNode[];
+  caption: () => VNode[];
 }
 
 export interface MDateProps extends MPickerProps {

@@ -69,10 +69,6 @@ type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
 }
 defineEmits<EmitsTypes>()
-// const inputValue = computed({
-//   get: () => props.modelValue,
-//   set: value => emit('update:modelValue', value)
-// })
 const inputValue = defineModel({ required: !0 })
 const { getRules, getLabel, getPlaceholder } = useInputProps(() => props)
 const getAutocompleteAttribute = computed(() => {
