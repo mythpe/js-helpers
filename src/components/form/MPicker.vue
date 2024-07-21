@@ -139,7 +139,7 @@
 
 <script lang="ts" setup>
 import { computed, defineEmits, ref } from 'vue'
-import { MInputSlots, MPickerProps } from './models'
+import { MInputProps, MInputSlots, MPickerProps } from './models'
 
 interface Props {
   auto?: MPickerProps['auto'];
@@ -158,6 +158,8 @@ interface Props {
   disable?: MPickerProps['disable'];
   viewMode?: MPickerProps['viewMode'];
   viewModeValue?: MPickerProps['viewModeValue'];
+  topLabel?: MPickerProps['topLabel'];
+  caption?: MPickerProps['caption'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -176,7 +178,9 @@ const props = withDefaults(defineProps<Props>(), {
   readonly: undefined,
   disable: undefined,
   viewMode: () => !1,
-  viewModeValue: undefined
+  viewModeValue: undefined,
+  topLabel: undefined,
+  caption: undefined
 })
 
 interface Emits {
