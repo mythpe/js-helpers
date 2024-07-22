@@ -68,22 +68,6 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
   const opts = reactive(pluginOptions)
   const { api, i18n, options } = toRefs(opts)
   const helpers = {
-    storage: {
-      /**
-       * Set item in storage
-       * @param key Entry key
-       * @param value Entry value
-       */
-      set: (key: string, value: | Date | RegExp | number | boolean | ((...params: readonly any[]) => any) | any | readonly any[] | string | null) => {
-        LocalStorage.set(key, value)
-      },
-      get<T extends WebStorageGetMethodReturnType = WebStorageGetMethodReturnType> (key: string) {
-        return LocalStorage.getItem<T>(key)
-      },
-      remove (key: string) {
-        return LocalStorage.remove(key)
-      }
-    },
     getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string {
       number = number || 2
       number = parseInt(number.toString())
