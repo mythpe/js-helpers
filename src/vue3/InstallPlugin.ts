@@ -23,7 +23,7 @@ import { Dates, Helpers, Str } from '../utils'
 import lodash from 'lodash'
 import { copyToClipboard, Dialog, Notify, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { initComponents } from './Component'
-import { useI18n, VueI18n } from 'vue-i18n'
+import { VueI18n } from 'vue-i18n'
 
 export const useStrTranslate = (i18n: any, string: string | { text: string; } | any, ...args: any[]) => {
   const defaultValue = ''
@@ -304,10 +304,7 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
     //   }
     //   return string
     // },
-    __: (string: string | { text: string; } | any, ...args: any[]) => {
-      const i = useI18n({ useScope: 'global' })
-      return useStrTranslate(i, string, ...args)
-    },
+    __: (string: string | { text: string; } | any, ...args: any[]) => useStrTranslate(i18n.value.global, string, ...args),
     /**
      * Copy text
      * @param text

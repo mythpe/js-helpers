@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { computed, defineEmits, nextTick, onMounted, reactive, ref, toRef, useSlots, watch } from 'vue'
-import { is as quasarHelpers, QTableSlots, useQuasar } from 'quasar'
+import { is as quasarHelpers, QTable, QTableSlots, useQuasar } from 'quasar'
 import lodash from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
 import {
@@ -97,6 +97,7 @@ interface Props {
   flat?: MDatatableProps['flat'];
   rows?: MDatatableProps['rows'];
   fixed?: MDatatableProps['fixed'];
+  avatarMode?: MDatatableProps['avatarMode'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -151,7 +152,8 @@ const props = withDefaults(defineProps<Props>(), {
   dense: undefined,
   bordered: undefined,
   flat: undefined,
-  fixed: undefined
+  fixed: undefined,
+  avatarMode: () => 'image'
 })
 
 interface Emits {
@@ -651,7 +653,7 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
       dialogs.item = _data
       dialogs.index = index
       if (_data && (index || index === 0)) {
-        getRows.value[index] = { ..._data }
+        getRows.value[index] = { ..._data } as any
       }
       setTimeout(() => (dialogs.form = !0), openDialogTimeout)
     })
@@ -869,7 +871,7 @@ const logoutDatatable = () => {
 const contextmenu = ref(!1)
 const onRowContextmenu = (e: MouseEvent | Event, row: MDtItem, index: number) => {
   e.preventDefault?.()
-  e.stopImmediatePropagation?.()
+  // e.stopImmediatePropagation?.()
   dialogs.item = row
   dialogs.index = index
   if (isGrid.value) {
@@ -986,6 +988,7 @@ const defaultTopBtnProps: any = {
   flat: !0,
   fabMini: !0
 }
+const table = ref<InstanceType<typeof QTable>>()
 defineExpose({
   resetDialogs,
   tableOptions,
@@ -1019,6 +1022,16 @@ defineExpose({
   openImageDialog,
   closeImageDialog
 })
+
+const getProp = computed(() => (k: keyof Props) => {
+  if (props[k] !== undefined) {
+    return props[k]
+  }
+  if (myth.options.dt?.props?.[k] !== undefined) {
+    return myth.options.dt?.props?.[k]
+  }
+  return props[k]
+})
 </script>
 
 <template>
@@ -1030,36 +1043,40 @@ defineExpose({
       'm--datatable-component__fab': hasAddBtn && (noAddBtnFab ? !1 : $myth.options.dt?.addBtn?.noFab !== !0)
     }"
   >
+    <!-- Context Menu -->
     <MModalMenu
       v-model="contextmenu"
-      class="shadow-1"
+      class="shadow-6 relative-position"
       context-menu
       touch-position
       v-bind="$myth.options.dt?.contextmenu?.menu"
       @before-hide="resetDialogs()"
     >
-      <q-list
-        v-if="dialogs.item"
-        :separator="!$myth.tools.isSmall"
-        style="min-width: 280px;"
-        v-bind="$myth.options.dt?.contextmenu?.list"
-      >
-        <template
-          v-for="(contextmenuItem,i) in contextmenuItems"
-          :key="i"
+      <div>
+        <q-list
+          v-if="dialogs.item"
+          :separator="!$myth.tools.isSmall"
+          style="min-width: 280px;"
+          v-bind="$myth.options.dt?.contextmenu?.list"
         >
-          <MDtBtn
-            v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
-            :[contextmenuItem.name]="!0"
-            :dense="dense === undefined ? $myth.options.dt?.props?.dense : dense"
-            :label="contextmenuItem.contextLabel !== undefined ? (contextmenuItem.contextLabel === null ? undefined : __(contextmenuItem.contextLabel)) : __(contextmenuItem.label || contextmenuItem.name) "
-            list-item
-            v-bind="{...$myth.options.dt?.contextmenu?.listItem,...contextmenuItem.attr}"
-            @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
-          />
-        </template>
-      </q-list>
+          <template
+            v-for="(contextmenuItem,i) in contextmenuItems"
+            :key="i"
+          >
+            <MDtBtn
+              v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
+              :[contextmenuItem.name]="!0"
+              :dense="dense === undefined ? $myth.options.dt?.props?.dense : dense"
+              :label="contextmenuItem.contextLabel !== undefined ? (contextmenuItem.contextLabel === null ? undefined : __(contextmenuItem.contextLabel)) : __(contextmenuItem.label || contextmenuItem.name) "
+              list-item
+              v-bind="{...$myth.options.dt?.contextmenu?.listItem,...contextmenuItem.attr}"
+              @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
+            />
+          </template>
+        </q-list>
+      </div>
     </MModalMenu>
+
     <q-pull-to-refresh
       :no-mouse="mouse"
       color="primary"
@@ -1083,7 +1100,6 @@ defineExpose({
         :visible-columns="visibleHeaders"
         card-container-class="m--datatable-container"
         table-class="m--datatable-container"
-        table-header-class=""
         v-bind="{
           virtualScroll: !0,
           wrapCells:!0,
@@ -1151,8 +1167,10 @@ defineExpose({
                         :class="`overflow-hidden ${col.name === controlKey ? 'text-right col-12 q-pb-xs' : ''}`"
                       >
                         <template v-if="col.field.slice(-4) === '_url' || col.field.slice(-10) === '_image_url'">
-                          <MDtBtn
+                          <q-btn
                             :src="col.value"
+                            fab-mini
+                            flat
                             icon="ion-ios-eye"
                             @click="openImageDialog(col.value)"
                           />
@@ -1205,17 +1223,15 @@ defineExpose({
                 class="items-center"
                 col
               >
-                <MTransition>
-                  <MCol
-                    v-if="!!title"
-                    col="12"
-                  >
-                    <div
-                      class="text-h5 bordered-bottom"
-                      v-text="title"
-                    />
-                  </MCol>
-                </MTransition>
+                <MCol
+                  v-if="!!title"
+                  col="12"
+                >
+                  <div
+                    class="text-h5 bordered-bottom"
+                    v-text="title"
+                  />
+                </MCol>
                 <MInput
                   v-if="!hideSearch"
                   v-model="tableOptions.search"
@@ -1309,245 +1325,243 @@ defineExpose({
 
               <!--Buttons-->
               <MRow class="row q-gutter-x-sm q-gutter-xs-y-sm items-center justify-between">
-                <MTransition>
-                  <!--More Menu-->
-                  <MDtBtn
-                    v-if="hasMenu"
-                    key="more-selection-btn"
-                    :disable="tableOptions.loading"
-                    icon="ion-ios-options"
-                    tooltip="myth.datatable.hints.more"
-                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.more}"
+                <!--More Menu-->
+                <MDtBtn
+                  v-if="hasMenu"
+                  key="more-selection-btn"
+                  :disable="tableOptions.loading"
+                  icon="ion-ios-options"
+                  tooltip="myth.datatable.hints.more"
+                  v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.more}"
+                >
+                  <MModalMenu
+                    :offset="[10,10]"
+                    v-bind="$myth.options.dt?.buttons?.moreMenu as any"
                   >
-                    <MModalMenu
-                      :offset="[10,10]"
-                      v-bind="$myth.options.dt?.buttons?.moreMenu as any"
+                    <q-list
+                      style="min-width: 250px"
+                      v-bind="$myth.options.dt?.buttons?.moreList"
                     >
-                      <q-list
-                        style="min-width: 250px"
-                        v-bind="$myth.options.dt?.buttons?.moreList"
+                      <!-- Add Btn -->
+                      <q-item
+                        v-if="hasAddBtn && (noAddBtnList ? !1 : $myth.options.dt?.addBtn?.noList !== !0)"
+                        v-close-popup
+                        clickable
+                        v-bind="$myth.options.dt?.buttons?.moreItem"
+                        @click="openCreateDialog()"
                       >
-                        <!-- Add Btn -->
-                        <q-item
-                          v-if="hasAddBtn && (noAddBtnList ? !1 : $myth.options.dt?.addBtn?.noList !== !0)"
-                          v-close-popup
-                          clickable
-                          v-bind="$myth.options.dt?.buttons?.moreItem"
-                          @click="openCreateDialog()"
-                        >
-                          <q-item-section thumbnail>
-                            <q-icon
-                              color="primary"
-                              name="add"
-                              right
-                              size="xs"
+                        <q-item-section thumbnail>
+                          <q-icon
+                            color="primary"
+                            name="add"
+                            right
+                            size="xs"
+                          />
+                        </q-item-section>
+                        <q-item-section>
+                          <span> {{ getFormTitle }}</span>
+                        </q-item-section>
+                      </q-item>
+                      <q-item
+                        v-if="pdf"
+                        v-close-popup
+                        clickable
+                        v-bind="$myth.options.dt?.buttons?.moreItem"
+                        @click="exportData('pdf')"
+                      >
+                        <q-item-section thumbnail>
+                          <q-icon
+                            color="red"
+                            name="fa-solid fa-file-pdf"
+                            right
+                            size="xs"
+                          />
+                        </q-item-section>
+                        <q-item-section>
+                          <span>
+                            {{ __('myth.titles.exportPdf') }}
+                            <q-badge
+                              v-if="tableOptions.selected.length > 1"
+                              :label="tableOptions.selected.length"
+                              align="top"
+                              rounded
                             />
-                          </q-item-section>
-                          <q-item-section>
-                            <span> {{ getFormTitle }}</span>
-                          </q-item-section>
-                        </q-item>
-                        <q-item
-                          v-if="pdf"
-                          v-close-popup
-                          clickable
-                          v-bind="$myth.options.dt?.buttons?.moreItem"
-                          @click="exportData('pdf')"
-                        >
-                          <q-item-section thumbnail>
-                            <q-icon
-                              color="red"
-                              name="fa-solid fa-file-pdf"
-                              right
-                              size="xs"
+                          </span>
+                        </q-item-section>
+                      </q-item>
+                      <q-item
+                        v-if="excel"
+                        v-close-popup
+                        clickable
+                        v-bind="$myth.options.dt?.buttons?.moreItem"
+                        @click="exportData('excel')"
+                      >
+                        <q-item-section thumbnail>
+                          <q-icon
+                            color="green"
+                            name="fa-solid fa-file-excel"
+                            right
+                            size="xs"
+                          />
+                        </q-item-section>
+                        <q-item-section>
+                          <span>
+                            {{ __('myth.titles.exportExcel') }}
+                            <q-badge
+                              v-if="tableOptions.selected.length>1"
+                              :label="tableOptions.selected.length"
+                              align="top"
+                              rounded
                             />
-                          </q-item-section>
-                          <q-item-section>
-                            <span>
-                              {{ __('myth.titles.exportPdf') }}
-                              <q-badge
-                                v-if="tableOptions.selected.length > 1"
-                                :label="tableOptions.selected.length"
-                                align="top"
-                                rounded
-                              />
-                            </span>
-                          </q-item-section>
-                        </q-item>
-                        <q-item
-                          v-if="excel"
-                          v-close-popup
-                          clickable
-                          v-bind="$myth.options.dt?.buttons?.moreItem"
-                          @click="exportData('excel')"
-                        >
-                          <q-item-section thumbnail>
-                            <q-icon
-                              color="green"
-                              name="fa-solid fa-file-excel"
-                              right
-                              size="xs"
-                            />
-                          </q-item-section>
-                          <q-item-section>
-                            <span>
-                              {{ __('myth.titles.exportExcel') }}
-                              <q-badge
-                                v-if="tableOptions.selected.length>1"
-                                :label="tableOptions.selected.length"
-                                align="top"
-                                rounded
-                              />
-                            </span>
-                          </q-item-section>
-                        </q-item>
-                        <q-item
-                          v-if="!noFullscreen"
-                          v-close-popup
-                          clickable
-                          v-bind="$myth.options.dt?.buttons?.moreItem"
-                          @click="tableOptions.fullscreen = !tableOptions.fullscreen"
-                        >
-                          <q-item-section thumbnail>
-                            <q-icon
-                              :name="tableOptions.fullscreen ? 'ion-ios-contract' : 'ion-ios-desktop'"
-                              right
-                            />
-                          </q-item-section>
-                          <q-item-section>
-                            <q-item-label>{{ __('myth.datatable.' + (tableOptions.fullscreen ? 'exitFullscreen' : 'fullscreen')) }}</q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
-                    </MModalMenu>
-                  </MDtBtn>
+                          </span>
+                        </q-item-section>
+                      </q-item>
+                      <q-item
+                        v-if="!noFullscreen"
+                        v-close-popup
+                        clickable
+                        v-bind="$myth.options.dt?.buttons?.moreItem"
+                        @click="tableOptions.fullscreen = !tableOptions.fullscreen"
+                      >
+                        <q-item-section thumbnail>
+                          <q-icon
+                            :name="tableOptions.fullscreen ? 'ion-ios-contract' : 'ion-ios-desktop'"
+                            right
+                          />
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label>{{ __('myth.datatable.' + (tableOptions.fullscreen ? 'exitFullscreen' : 'fullscreen')) }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </MModalMenu>
+                </MDtBtn>
 
-                  <!-- Filter dialog -->
-                  <MDtBtn
-                    v-if="hasFilterDialog"
-                    key="filter-selection-btn"
-                    icon="o_filter_alt"
-                    tooltip="myth.datatable.hints.filter"
-                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.filter}"
-                    @click="openFilterDialog()"
+                <!-- Filter dialog -->
+                <MDtBtn
+                  v-if="hasFilterDialog"
+                  key="filter-selection-btn"
+                  icon="o_filter_alt"
+                  tooltip="myth.datatable.hints.filter"
+                  v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.filter}"
+                  @click="openFilterDialog()"
+                >
+                  <MModalMenu
+                    no-close-btn
+                    position="top"
+                    v-bind="$myth.options.dt?.filterDialogProps"
                   >
-                    <MModalMenu
-                      no-close-btn
-                      position="top"
-                      v-bind="$myth.options.dt?.filterDialogProps"
+                    <q-card
+                      :style="$q.screen.gt.sm?`width: ${Math.ceil($q.screen.width/2)}px` : undefined"
+                      flat
+                      square
                     >
-                      <q-card
-                        :style="$q.screen.gt.sm?`width: ${Math.ceil($q.screen.width/2)}px` : undefined"
-                        flat
-                        square
-                      >
-                        <MContainer class="q-pa-md">
-                          <q-toolbar :class="{'q-pa-none': $q.screen.lt.md}">
-                            <q-toolbar-title>
-                              {{ __('myth.datatable.filter.title') }}
-                            </q-toolbar-title>
-                          </q-toolbar>
-                          <q-separator />
-                          <MRow class="items-center">
-                            <MCol col="12">
-                              <MContainer class="q-pa-md">
-                                <slot
-                                  :filter="tableOptions.tempFilter"
-                                  name="filter"
-                                />
-                              </MContainer>
-                            </MCol>
-                            <MCol
-                              class="q-pt-lg"
-                              col="12"
-                            >
-                              <MRow class="justify-between">
-                                <MBtn
-                                  v-close-popup
-                                  :label="__('myth.datatable.filter.cancel')"
-                                  color="negative"
-                                  flat
-                                  v-bind="$myth.options.dt?.dialogButtonsProps"
-                                  @click="closeFilterDialog"
-                                />
-                                <MBtn
-                                  v-close-popup
-                                  :label="__('myth.datatable.filter.save')"
-                                  color="positive"
-                                  flat
-                                  v-bind="$myth.options.dt?.dialogButtonsProps"
-                                  @click="saveFilterDialog"
-                                />
-                              </MRow>
-                            </MCol>
-                          </MRow>
-                        </MContainer>
-                      </q-card>
-                    </MModalMenu>
-                  </MDtBtn>
-                  <!--Refresh-->
-                  <MDtBtn
-                    v-if="!noRefreshBtn"
-                    key="refresh-selection-btn"
-                    :disable="tableOptions.loading"
-                    icon="ion-ios-refresh"
-                    tooltip="myth.datatable.hints.refresh"
-                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.refresh}"
-                    @click="refreshNoUpdate()"
-                  />
-                  <!--Fullscreen-->
-                  <MDtBtn
-                    v-if="!noFullscreen"
-                    key="fullscreen-selection-btn"
-                    :disable="tableOptions.loading"
-                    :icon="tableOptions.fullscreen ? 'ion-ios-contract' : 'ion-ios-desktop'"
-                    :tooltip="`myth.datatable.${tableOptions.fullscreen ? 'exitFullscreen' : 'fullscreen'}`"
-                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.fullscreen}"
-                    @click="tableOptions.fullscreen = !tableOptions.fullscreen"
-                  />
+                      <MContainer class="q-pa-md">
+                        <q-toolbar :class="{'q-pa-none': $q.screen.lt.md}">
+                          <q-toolbar-title>
+                            {{ __('myth.datatable.filter.title') }}
+                          </q-toolbar-title>
+                        </q-toolbar>
+                        <q-separator />
+                        <MRow class="items-center">
+                          <MCol col="12">
+                            <MContainer class="q-pa-md">
+                              <slot
+                                :filter="tableOptions.tempFilter"
+                                name="filter"
+                              />
+                            </MContainer>
+                          </MCol>
+                          <MCol
+                            class="q-pt-lg"
+                            col="12"
+                          >
+                            <MRow class="justify-between">
+                              <MBtn
+                                v-close-popup
+                                :label="__('myth.datatable.filter.cancel')"
+                                color="negative"
+                                flat
+                                v-bind="$myth.options.dt?.dialogButtonsProps"
+                                @click="closeFilterDialog"
+                              />
+                              <MBtn
+                                v-close-popup
+                                :label="__('myth.datatable.filter.save')"
+                                color="positive"
+                                flat
+                                v-bind="$myth.options.dt?.dialogButtonsProps"
+                                @click="saveFilterDialog"
+                              />
+                            </MRow>
+                          </MCol>
+                        </MRow>
+                      </MContainer>
+                    </q-card>
+                  </MModalMenu>
+                </MDtBtn>
+                <!--Refresh-->
+                <MDtBtn
+                  v-if="!noRefreshBtn"
+                  key="refresh-selection-btn"
+                  :disable="tableOptions.loading"
+                  icon="ion-ios-refresh"
+                  tooltip="myth.datatable.hints.refresh"
+                  v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.refresh}"
+                  @click="refreshNoUpdate()"
+                />
+                <!--Fullscreen-->
+                <MDtBtn
+                  v-if="!noFullscreen"
+                  key="fullscreen-selection-btn"
+                  :disable="tableOptions.loading"
+                  :icon="tableOptions.fullscreen ? 'ion-ios-contract' : 'ion-ios-desktop'"
+                  :tooltip="`myth.datatable.${tableOptions.fullscreen ? 'exitFullscreen' : 'fullscreen'}`"
+                  v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.fullscreen}"
+                  @click="tableOptions.fullscreen = !tableOptions.fullscreen"
+                />
 
-                  <template v-if="hasSelectedItem">
+                <template v-if="hasSelectedItem">
+                  <MDtBtn
+                    v-if="hasUpdateBtn && isSingleSelectedItem"
+                    key="update-dt-selection-btn"
+                    :disable="tableOptions.loading"
+                    icon="ion-ios-create"
+                    update
+                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
+                    @click="openUpdateDialogNoIndex(tableOptions.selected[0])"
+                  />
+                  <MDtBtn
+                    v-if="hasShowBtn && isSingleSelectedItem"
+                    key="show-dt-selection-btn"
+                    :disable="tableOptions.loading"
+                    icon="ion-ios-eye"
+                    show
+                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
+                    @click="openShowDialogNoIndex(tableOptions.selected[0])"
+                  />
+                  <MDtBtn
+                    v-if="tableOptions.selected.length > 1 ? (hasDestroyBtn && multiDestroy) : hasDestroyBtn"
+                    key="destroy-dt-selection-btn"
+                    :disable="!hasSelectedItem || tableOptions.loading"
+                    color="negative"
+                    destroy
+                    icon="ion-ios-trash"
+                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
+                    @click="deleteSelectionItem()"
+                  />
+                  <template
+                    v-for="(contextBtn,i) in contextItems"
+                    :key="`top-s-${i}`"
+                  >
                     <MDtBtn
-                      v-if="hasUpdateBtn && isSingleSelectedItem"
-                      key="update-dt-selection-btn"
-                      :disable="tableOptions.loading"
-                      icon="ion-ios-create"
-                      update
-                      v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
-                      @click="openUpdateDialogNoIndex(tableOptions.selected[0])"
+                      v-if="(typeof contextBtn.showIf === 'function' ? contextBtn.showIf(tableOptions.selected[0],0) : contextBtn.showIf) && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
+                      :tooltip="__(contextBtn.tooltip || contextBtn.name)"
+                      v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn,...contextBtn,...contextBtn.attr}"
+                      @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
                     />
-                    <MDtBtn
-                      v-if="hasShowBtn && isSingleSelectedItem"
-                      key="show-dt-selection-btn"
-                      :disable="tableOptions.loading"
-                      icon="ion-ios-eye"
-                      show
-                      v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
-                      @click="openShowDialogNoIndex(tableOptions.selected[0])"
-                    />
-                    <MDtBtn
-                      v-if="tableOptions.selected.length > 1 ? (hasDestroyBtn && multiDestroy) : hasDestroyBtn"
-                      key="destroy-dt-selection-btn"
-                      :disable="!hasSelectedItem || tableOptions.loading"
-                      color="negative"
-                      destroy
-                      icon="ion-ios-trash"
-                      v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
-                      @click="deleteSelectionItem()"
-                    />
-                    <template
-                      v-for="(contextBtn,i) in contextItems"
-                      :key="`top-s-${i}`"
-                    >
-                      <MDtBtn
-                        v-if="(typeof contextBtn.showIf === 'function' ? contextBtn.showIf(tableOptions.selected[0],0) : contextBtn.showIf) && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
-                        :tooltip="__(contextBtn.tooltip || contextBtn.name)"
-                        v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn,...contextBtn,...contextBtn.attr}"
-                        @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
-                      />
-                    </template>
                   </template>
-                </MTransition>
+                </template>
 
                 <q-space />
                 <!-- Add Btn -->
@@ -1561,95 +1575,89 @@ defineExpose({
               </MRow>
 
               <!-- Manage Columns -->
-              <MTransition>
-                <MRow
-                  v-if="manageColumns"
-                  class="items-center"
+              <MRow
+                v-if="manageColumns"
+                class="items-center"
+              >
+                <q-list
+                  bordered
+                  class="rounded-borders col-12"
                 >
-                  <q-list
-                    bordered
-                    class="rounded-borders col-12"
+                  <q-expansion-item
+                    :caption="visibleHeaders.length.toString()"
+                    :label="__('myth.datatable.columnsToShow')"
+                    expand-separator
+                    icon="list"
                   >
-                    <q-expansion-item
-                      :caption="visibleHeaders.length.toString()"
-                      :label="__('myth.datatable.columnsToShow')"
-                      expand-separator
-                      icon="list"
-                    >
-                      <q-card>
-                        <q-card-section>
-                          <template
-                            v-for="h in getHeaders"
-                            :key="h.name"
-                          >
-                            <q-checkbox
-                              v-model="visibleHeaders"
-                              :disable="visibleHeaders.length < 2 && visibleHeaders.indexOf(h.name) !== -1"
-                              :label="h.label"
-                              :val="h.name"
-                            />
-                          </template>
-                        </q-card-section>
-                      </q-card>
-                    </q-expansion-item>
-                  </q-list>
-                </MRow>
-              </MTransition>
+                    <q-card>
+                      <q-card-section>
+                        <template
+                          v-for="h in getHeaders"
+                          :key="h.name"
+                        >
+                          <q-checkbox
+                            v-model="visibleHeaders"
+                            :disable="visibleHeaders.length < 2 && visibleHeaders.indexOf(h.name) !== -1"
+                            :label="h.label"
+                            :val="h.name"
+                          />
+                        </template>
+                      </q-card-section>
+                    </q-card>
+                  </q-expansion-item>
+                </q-list>
+              </MRow>
 
               <!-- Filter Row -->
-              <MTransition>
-                <MRow
-                  v-if="Object.values(tableOptions.filter).filter(e => e !== undefined && e !== null).length > 0"
-                  class="items-center"
+              <MRow
+                v-if="Object.values(tableOptions.filter).filter(e => e !== undefined && e !== null).length > 0"
+                class="items-center"
+              >
+                <MCol col="auto">
+                  <span class="text-subtitle1 q-mr-sm">{{ __('myth.datatable.filteredBy') }}</span>
+                </MCol>
+                <template
+                  v-for="(filterValue,filterKey) in tableOptions.filter"
+                  :key="`filter-${filterKey}`"
                 >
-                  <MCol col="auto">
-                    <span class="text-subtitle1 q-mr-sm">{{ __('myth.datatable.filteredBy') }}</span>
-                  </MCol>
-                  <template
-                    v-for="(filterValue,filterKey) in tableOptions.filter"
-                    :key="`filter-${filterKey}`"
+                  <MCol
+                    v-if="filterValue !== null && filterValue !== undefined"
+                    col="auto"
                   >
-                    <MCol
-                      v-if="filterValue !== null && filterValue !== undefined"
-                      col="auto"
+                    <q-chip
+                      class="q-pr-md"
+                      clickable
+                      color="primary"
+                      icon-remove="clear"
+                      outline
+                      removable
+                      @click="openFilterDialog()"
+                      @remove="onRemoveFilter(filterKey)"
                     >
-                      <q-chip
-                        class="q-pr-md"
-                        clickable
-                        color="primary"
-                        icon-remove="clear"
-                        outline
-                        removable
-                        @click="openFilterDialog()"
-                        @remove="onRemoveFilter(filterKey)"
-                      >
-                        <span>{{ getHeaders.find(e => e.name === filterKey)?.label || __(`attributes.${filterKey}`) }}</span>
-                        <span v-if="typeof filterValue === 'boolean'">: {{ __(filterValue ? 'yes' : 'no') }}</span>
-                        <span v-else-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
-                        <span v-else-if="lodash.isArray(filterValue) && !quasarHelpers.object(filterValue[0])">: {{ filterValue.join(', ') }}</span>
-                        <span v-else-if="lodash.isArray(filterValue) && quasarHelpers.object(filterValue[0])">: {{
-                          filterValue.map(e => e.label).join(', ')
-                        }}</span>
-                        <span v-else-if="quasarHelpers.object(filterValue) && filterValue.label">: {{ filterValue.label }}</span>
-                      </q-chip>
-                    </MCol>
-                  </template>
-                </MRow>
-              </MTransition>
+                      <span>{{ getHeaders.find(e => e.name === filterKey)?.label || __(`attributes.${filterKey}`) }}</span>
+                      <span v-if="typeof filterValue === 'boolean'">: {{ __(filterValue ? 'yes' : 'no') }}</span>
+                      <span v-else-if="typeof filterValue === 'string'">: {{ filterValue }}</span>
+                      <span v-else-if="lodash.isArray(filterValue) && !quasarHelpers.object(filterValue[0])">: {{ filterValue.join(', ') }}</span>
+                      <span v-else-if="lodash.isArray(filterValue) && quasarHelpers.object(filterValue[0])">: {{
+                        filterValue.map(e => e.label).join(', ')
+                      }}</span>
+                      <span v-else-if="quasarHelpers.object(filterValue) && filterValue.label">: {{ filterValue.label }}</span>
+                    </q-chip>
+                  </MCol>
+                </template>
+              </MRow>
 
               <!-- Selection Row -->
-              <MTransition>
-                <MRow
-                  v-if="Boolean($slots.selection)"
-                  class="items-center q-gutter-xs"
-                  style="min-height: 38px"
-                >
-                  <slot
-                    :dt="datatableItemsScope"
-                    name="selection"
-                  />
-                </MRow>
-              </MTransition>
+              <MRow
+                v-if="Boolean($slots.selection)"
+                class="items-center q-gutter-xs"
+                style="min-height: 38px"
+              >
+                <slot
+                  :dt="datatableItemsScope"
+                  name="selection"
+                />
+              </MRow>
             </MContainer>
           </MCol>
         </template>
@@ -1684,31 +1692,68 @@ defineExpose({
 
         <template #body-cell-avatar_url="bCAProps">
           <q-td :props="bCAProps">
-            <MDtBtn
-              v-if="bCAProps.row.avatar_url"
-              :src="bCAProps.row.avatar_url"
-              icon="ion-ios-eye"
-              @click="openImageDialog(bCAProps.row.avatar_url)"
-            >
-              <q-tooltip class="m--dt-btn-tooltip">
-                {{ __('myth.titles.show') }}
-              </q-tooltip>
-            </MDtBtn>
+            <template v-if="getProp('avatarMode') === 'icon'">
+              <q-btn
+                v-if="bCAProps.row.avatar_url"
+                :src="bCAProps.row.avatar_url"
+                dense
+                fab-mini
+                flat
+                icon="ion-ios-eye"
+                @click="openImageDialog(bCAProps.row.avatar_url)"
+              >
+                <q-tooltip class="m--dt-btn-tooltip">
+                  {{ __('myth.titles.show') }}
+                </q-tooltip>
+              </q-btn>
+            </template>
+            <template v-else-if="getProp('avatarMode') === 'image'">
+              <q-img
+                v-if="bCAProps.row.avatar_url"
+                :src="bCAProps.row.avatar_url"
+                class="cursor-pointer"
+                fit="contain"
+                style="width: 32px; height: 32px"
+                @click="openImageDialog(bCAProps.row.avatar_url)"
+              >
+                <q-tooltip class="m--dt-btn-tooltip">
+                  {{ __('myth.titles.show') }}
+                </q-tooltip>
+              </q-img>
+            </template>
           </q-td>
         </template>
-
-        <template #body-cell-avatar="bDAProps2">
-          <q-td :props="bDAProps2">
-            <MDtBtn
-              v-if="bDAProps2.row.avatar"
-              :src="bDAProps2.row.avatar"
-              icon="ion-ios-eye"
-              @click="openImageDialog(bDAProps2.row.avatar)"
-            >
-              <q-tooltip class="m--dt-btn-tooltip">
-                {{ __('myth.titles.show') }}
-              </q-tooltip>
-            </MDtBtn>
+        <template #body-cell-avatar="bCAProps2">
+          <q-td :props="bCAProps2">
+            <template v-if="getProp('avatarMode') === 'icon'">
+              <q-btn
+                v-if="bCAProps2.row.avatar"
+                :src="bCAProps2.row.avatar"
+                dense
+                fab-mini
+                flat
+                icon="ion-ios-eye"
+                @click="openImageDialog(bCAProps2.row.avatar)"
+              >
+                <q-tooltip class="m--dt-btn-tooltip">
+                  {{ __('myth.titles.show') }}
+                </q-tooltip>
+              </q-btn>
+            </template>
+            <template v-else-if="getProp('avatarMode') === 'image'">
+              <q-img
+                v-if="bCAProps2.row.avatar"
+                :src="bCAProps2.row.avatar"
+                class="cursor-pointer"
+                fit="contain"
+                style="width: 32px; height: 32px"
+                @click="openImageDialog(bCAProps2.row.avatar)"
+              >
+                <q-tooltip class="m--dt-btn-tooltip">
+                  {{ __('myth.titles.show') }}
+                </q-tooltip>
+              </q-img>
+            </template>
           </q-td>
         </template>
 
@@ -1933,6 +1978,7 @@ defineExpose({
         </div>
       </q-card>
     </MDialog>
+
     <!-- Add Btn -->
     <q-page-sticky
       v-if="hasAddBtn && (noAddBtnFab ? !1 : $myth.options.dt?.addBtn?.noFab !== !0)"
@@ -1996,12 +2042,12 @@ export default {
     .m--datatable:not(.m--datatable-grid)
       max-height: 80vh
 
-      thead tr th
-        position: sticky
-        z-index: 1
+    thead tr th
+      position: sticky
+      z-index: 1
 
-      thead tr:first-child th
-        top: 0
+    thead tr:first-child th
+      top: 0
 
     .m--datatable:not(.m--datatable-grid).q-table--dense
       &.q-table--loading thead tr:last-child th
@@ -2017,7 +2063,6 @@ export default {
       padding: 4px 16px !important
 
 .m--datatable-component
-
   .q-table__bottom
     justify-content: start !important
 

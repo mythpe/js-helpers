@@ -265,6 +265,7 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
    * Set datatable to fixed view
    */
   fixed?: boolean;
+  avatarMode?: 'icon' | 'image';
 }
 
 export interface MDtAvatarProps extends QAvatarProps {
