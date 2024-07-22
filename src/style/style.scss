@@ -35,7 +35,7 @@ $text-dark-color: #ffffff !default;
 }
 
 $m-space-base: $space-base !default;
-$container-padding: $space-base !default;
+$container-padding: $m-space-base * .5 !default;
 $row-margins: .5;
 $container-fluid-width: 1024px !default;
 .m--container__fluid {
