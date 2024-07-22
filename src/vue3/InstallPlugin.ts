@@ -21,18 +21,17 @@ import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { INJECT_KEY } from './Const'
 import { Dates, Helpers, Str } from '../utils'
 import lodash from 'lodash'
-import { copyToClipboard, Dialog, LocalStorage, Notify, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
-import { WebStorageGetMethodReturnType } from 'quasar/dist/types/api/web-storage'
+import { copyToClipboard, Dialog, Notify, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { initComponents } from './Component'
 import { useI18n, VueI18n } from 'vue-i18n'
 
-export const useStrTranslate = (string: string | { text: string; } | any, ...args: any[]) => {
+export const useStrTranslate = (i18n: any, string: string | { text: string; } | any, ...args: any[]) => {
   const defaultValue = ''
   if (!string) {
     return string
   }
-  const useI18nGlobal = useI18n({ useScope: 'global' })
-  const { t, te } = useI18nGlobal
+  // const useI18nGlobal = useI18n({ useScope: 'global' })
+  const { t, te } = i18n
 
   const key = typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
   if (!key) {
@@ -305,7 +304,10 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
     //   }
     //   return string
     // },
-    __: useStrTranslate,
+    __: (string: string | { text: string; } | any, ...args: any[]) => {
+      const i = useI18n({ useScope: 'global' })
+      return useStrTranslate(i, string, ...args)
+    },
     /**
      * Copy text
      * @param text
@@ -415,7 +417,7 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
     return window.open(url, target, features)
   }
   app.config.globalProperties.__ = function (string: string | { text: string } | any, ...args: any): string {
-    return this.$myth.__(string, ...args)
+    return useStrTranslate({ t: this.$t, te: this.$te }, string, ...args)
   }
   app.config.globalProperties.getPageTitle = function (number?: number | string, route?: RouteLocationNormalizedLoaded): string {
     return this.$myth.getPageTitle(route || this.$route, number)
@@ -423,6 +425,6 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
   initComponents(app)
 }
 
-export const useMyth = () => inject<UseMythVue>(INJECT_KEY) as UseMythVue
+export const useMyth = () => inject<UseMythVue>(INJECT_KEY, {} as UseMythVue) as UseMythVue
 
 export { installPlugin }
