@@ -96,10 +96,7 @@ type Events = {
 const emit = defineEmits<Events>()
 const veeFieldRef = ref()
 const selectRef = ref()
-const inputValue = computed({
-  get: () => props.modelValue,
-  set: v => emit('update:modelValue', v)
-})
+const inputValue = defineModel({ required: !0, default: undefined })
 const errorMessageField = ref<string | undefined>(undefined)
 const { getRules, getLabel, getPlaceholder } = useInputProps(() => props, { choose: !0 })
 const originalOptions = computed<any>(() => props.options)
@@ -140,10 +137,13 @@ const updateFieldValue = (v?: any) => {
 }
 const useInputProp = computed(() => props.useInput)
 const updateModelValue = (v?: any) => {
-  inputValue.value = v
-  if (useInputProp.value) {
-    veeFieldRef.value.handleChange(v)
-  }
+  // console.log(useInputProp.value, veeFieldRef.value?.handleChange)
+  veeFieldRef.value?.handleChange(v)
+  // if (!useInputProp.value) {
+  // veeFieldRef.value?.handleChange(v)
+  // } else {
+  // inputValue.value = v
+  // }
 }
 const onDoneOptions = () => {
   selectRef.value?.updateInputValue('', !0)
@@ -204,8 +204,9 @@ defineExpose({ searchInput })
       </q-field>
     </template>
     <component
-      :is="useInput ? 'label' : VeeField"
+      :is="useInputProp ? 'label' : VeeField"
       v-else
+      :ref="useInputProp ? undefined : `veeFieldRef`"
       v-slot="fieldProps"
       :model-value="useInput ? undefined : inputValue"
       :name="useInput ? undefined : name"
@@ -324,11 +325,10 @@ defineExpose({ searchInput })
           />
         </template>
       </q-select>
-      <slot
-        v-bind="fieldProps||{}"
-      />
+      <slot v-bind="fieldProps||{}" />
     </component>
     <VeeField
+      v-if="useInputProp"
       ref="veeFieldRef"
       v-model="inputValue"
       :label="label ? __(label) : name"

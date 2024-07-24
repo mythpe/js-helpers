@@ -234,6 +234,7 @@ export default {
           />
         </template>
       </q-file>
+      <slot name="bottom" />
     </VeeField>
   </MCol>
 </template>

@@ -75,10 +75,11 @@ const getOptionLabel = computed<MAxiosProps['optionLabel']>(() => {
   }
   return props.optionLabel
 })
-const model = computed({
-  get: () => props.modelValue,
-  set: (v) => emit('update:modelValue', v)
-})
+// const model = computed({
+//   get: () => props.modelValue,
+//   set: (v) => emit('update:modelValue', v)
+// })
+const model = defineModel({ required: !0, default: undefined })
 const $myth = useMyth()
 const autoProps = computed(() => props.autoSearch)
 const paramsProps = computed(() => props.params)

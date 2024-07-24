@@ -174,6 +174,7 @@ export interface MFileSlots extends QFileSlots {
   default: () => VNode[];
   'top-label': () => VNode[];
   caption: () => VNode[];
+  bottom: () => VNode[];
 }
 
 export interface MPickerProps extends Omit<MInputProps, 'modelValue' | 'type'>, Omit<QDateProps, 'modelValue' | 'options'>, Omit<QTimeProps, 'modelValue'> {
@@ -589,7 +590,6 @@ export interface MEditorProps extends Omit<QEditorProps, 'modelValue'>, MColProp
   hideRequired?: boolean;
   viewMode?: boolean;
   errors?: Record<string, string[]>;
-  topLabel?: boolean | undefined;
   caption?: string | null | undefined;
 }
 
@@ -598,6 +598,9 @@ export interface MEditorSlots extends QEditorSlots {
    * Editor default slot
    */
   default: () => VNode[];
+  label: () => VNode[];
+  caption: () => VNode[];
+  hint: () => VNode[];
 }
 
 export interface MRadioProps extends Omit<QRadioProps, 'name' | 'modelValue' | 'val' | 'label'>, MColProps {

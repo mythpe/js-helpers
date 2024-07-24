@@ -38,13 +38,16 @@ $m-space-base: $space-base !default;
 $container-padding: $m-space-base * .5 !default;
 $row-margins: .5;
 $container-fluid-width: 1024px !default;
+$m--select__popup__height: 250px !default;
+
 .m--container__fluid {
   max-width: $container-fluid-width !important;
   margin: auto !important;
 }
 
 .m--input__top-label,
-.m--input__caption {
+.m--input__caption,
+.m--input__hint {
   margin-bottom: 3px;
 }
 
@@ -62,6 +65,10 @@ $container-fluid-width: 1024px !default;
   &:not(.m--container__dense):not(.dense) {
     padding: $container-padding;
   }
+}
+
+.m--select__popup__content {
+  max-height: $m--select__popup__height !important;
 }
 
 .flex-break {
@@ -86,10 +93,24 @@ $container-fluid-width: 1024px !default;
   }
 }
 
-$directions: ('rtl': rtl, 'ltr': ltr);
-@each $name, $value in $directions {
-  .#{$name} {
-    direction: map.get($directions, $value) !important;
+
+.ltr {
+  html[dir=rtl] & {
+    direction: rtl;
+  }
+
+  html[dir=ltr] & {
+    direction: ltr;
+  }
+}
+
+.rtl {
+  html[dir=rtl] & {
+    direction: ltr;
+  }
+
+  html[dir=ltr] & {
+    direction: rtl;
   }
 }
 
@@ -134,10 +155,14 @@ $maxes: ('width', 'height') !default;
   }
 }
 
-.pre {
+pre {
   max-width: 100%;
   white-space-collapse: preserve-breaks;
   white-space: pre-line;
+
+  html[dir=rtl] & {
+    direction: rtl;
+  }
 }
 
 $alignsX: ('top', 'bottom') !default;

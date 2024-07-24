@@ -16,23 +16,6 @@
     :sm="sm"
     :xs="xs"
   >
-    <div
-      v-if="!!getLabel || !!hint"
-      class="q-mb-md"
-    >
-      <div
-        v-if="!!getLabel "
-        class="text-body1"
-      >
-        {{ getLabel }}
-      </div>
-      <div
-        v-if="!!hint"
-        class="text-caption"
-      >
-        {{ hint }}
-      </div>
-    </div>
     <VeeField
       ref="veeFieldRef"
       v-slot="fieldScope"
@@ -42,9 +25,9 @@
       :rules="getRules"
       v-bind="$attrs"
     >
-      <slot name="top-label">
+      <slot name="label">
         <div
-          v-if="topLabel || $myth.options.editor?.topLabel"
+          v-if="!!getLabel"
           class="m--input__top-label"
         >
           {{ getLabel }}
@@ -56,6 +39,14 @@
           class="m--input__caption"
         >
           {{ __(caption) }}
+        </div>
+      </slot>
+      <slot name="hint">
+        <div
+          v-if="!!hint"
+          class="m--input__hint"
+        >
+          {{ __(hint) }}
         </div>
       </slot>
       <q-editor
@@ -104,7 +95,6 @@ interface Props {
   dense?: MEditorProps['dense'];
   toolbar?: MEditorProps['toolbar'];
   fonts?: MEditorProps['fonts'];
-  topLabel?: MEditorProps['topLabel'];
   caption?: MEditorProps['caption'];
 }
 
@@ -231,7 +221,6 @@ const props = withDefaults(defineProps<Props>(), {
   dense: undefined,
   toolbar: undefined,
   fonts: undefined,
-  topLabel: undefined,
   caption: undefined
 })
 
