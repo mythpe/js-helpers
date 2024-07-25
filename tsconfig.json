@@ -5,8 +5,26 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "composite": false,
-    "types": [
-      "vite/client"
-    ]
-  }
+    "paths": {
+      "src/*": ["src/*"],
+      "app/*": ["*"],
+      "components/*": ["src/components/*"],
+      "layouts/*": ["src/layouts/*"],
+      "pages/*": ["src/pages/*"],
+      "assets/*": ["src/assets/*"],
+      "boot/*": ["src/boot/*"],
+      "stores/*": ["src/stores/*"],
+      "utils/*": ["src/utils/*"]
+    },
+    "types": ["vite/client"]
+  },
+  "exclude": [
+    "./dist",
+    "./.quasar",
+    "./node_modules",
+    "./src-pwa",
+    "./src-capacitor",
+    "./src-cordova",
+    "./quasar.config.*.temporary.compiled*"
+  ]
 }

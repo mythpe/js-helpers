@@ -36,7 +36,7 @@ interface Props {
   attributeName?: MAxiosProps['attributeName'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const pp = withDefaults(defineProps<Props>(), {
   stackLabel: undefined,
   label: undefined,
   placeholder: undefined,
@@ -65,27 +65,24 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 const q = useQuasar()
+const myth = useMyth()
 const loading = ref<boolean>(!1)
 const items = ref<any[]>([])
-const serviceProp = computed<MAxiosProps['service']>(() => props.service)
+const serviceProp = computed<MAxiosProps['service']>(() => pp.service)
+const props = computed(() => ({ ...myth.options.select, ...pp }))
 const getOptionLabel = computed<MAxiosProps['optionLabel']>(() => {
-  if (!props.optionLabel) {
+  if (!props.value.optionLabel) {
     const qLocale = q.lang.isoName.slice(0, 2)?.toLowerCase() || 'ar'
-    return qLocale ? `${props.attributeName}_${qLocale}` : props.optionLabel
+    return qLocale ? `${props.value.attributeName}_${qLocale}` : props.value.optionLabel
   }
-  return props.optionLabel
+  return props.value.optionLabel
 })
-// const model = computed({
-//   get: () => props.modelValue,
-//   set: (v) => emit('update:modelValue', v)
-// })
 const model = defineModel({ required: !0, default: undefined })
-const $myth = useMyth()
-const autoProps = computed(() => props.autoSearch)
-const paramsProps = computed(() => props.params)
-const requestWithProps = computed(() => props.requestWith)
-const guestProps = computed(() => props.guest !== !1)
-const viewModeProp = computed(() => props.viewMode)
+const autoProps = computed(() => props.value.autoSearch)
+const paramsProps = computed(() => props.value.params)
+const requestWithProps = computed(() => props.value.requestWith)
+const guestProps = computed(() => props.value.guest !== !1)
+const viewModeProp = computed(() => props.value.viewMode)
 
 const mSelectRef = ref<any>()
 const searchInput = ref<any>()
@@ -93,7 +90,7 @@ const prepare = async () => {
   if (!serviceProp.value || loading.value) {
     return
   }
-  const method = typeof serviceProp.value === 'string' ? (guestProps.value ? $myth.services[serviceProp.value].staticIndex : $myth.services[serviceProp.value].index) : serviceProp.value
+  const method = typeof serviceProp.value === 'string' ? (guestProps.value ? myth.services[serviceProp.value].staticIndex : myth.services[serviceProp.value].index) : serviceProp.value
 
   if (!method) {
     throw Error(`No service: ${serviceProp.value}`)
@@ -129,7 +126,7 @@ const onSearchInput = (v: any) => {
     if (!autoProps.value || loading.value) {
       return
     }
-    if ((!v || v?.length < 2) && !props.iniData) {
+    if ((!v || v?.length < 2) && !props.value.iniData) {
       items.value = []
       emit('update:items', [])
       return
@@ -138,27 +135,27 @@ const onSearchInput = (v: any) => {
   })
 }
 const currentItem = computed(() => {
-  if (!props.modelValue) {
+  if (!props.value.modelValue) {
     return null
   }
-  const v = typeof props.modelValue === 'object' ? props.modelValue[props.optionValue as any || 'value'] : props.modelValue
-  return items.value.find((e: any) => parseInt(e[props.optionValue as any || 'value'] as any) === parseInt(v))
+  const v = typeof props.value.modelValue === 'object' ? props.value.modelValue[props.value.optionValue as any || 'value'] : props.value.modelValue
+  return items.value.find((e: any) => parseInt(e[props.value.optionValue as any || 'value'] as any) === parseInt(v))
 })
 
 onBeforeMount(() => {
   if (viewModeProp.value) {
     return
   }
-  items.value = props.options || []
+  items.value = props.value.options || []
 })
-watch(() => props.options, (v) => {
+watch(() => props.value.options, (v) => {
   items.value = v || []
 })
 onMounted(() => {
   if (viewModeProp.value) {
     return
   }
-  (props.iniData || !props.autoSearch) && prepare()
+  (props.value.iniData || !props.value.autoSearch) && prepare()
 })
 
 defineExpose({
@@ -193,14 +190,14 @@ defineExpose({
     v-bind="$attrs"
     @search="onSearchInput"
   >
-    <template
-      v-if="loading"
-      #selected-item
-    >
-      <div>
-        <q-spinner />
-      </div>
-    </template>
+    <!--<template-->
+    <!--  v-if="loading"-->
+    <!--  #selected-item-->
+    <!--&gt;-->
+    <!--  <div>-->
+    <!--    <q-spinner />-->
+    <!--  </div>-->
+    <!--</template>-->
     <template
       v-for="(_,slot) in ($slots as Readonly<MSelectSlots>)"
       :key="slot"

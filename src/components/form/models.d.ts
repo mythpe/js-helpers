@@ -279,6 +279,9 @@ export interface MAxiosProps extends Omit<MSelectProps, 'options' | 'modelValue'
   service: ((config?: AxiosRequestConfig) => Promise<any>) | string;
   params?: Record<string, any> | undefined;
   guest?: boolean | undefined;
+  /**
+   *  The name of the attribute to be used as a label
+   */
   attributeName?: string;
 }
 

@@ -13,6 +13,7 @@ import { useInputProps } from '../../composables'
 import { ColStyleType } from '../grid/models'
 import { MSelectProps } from './models'
 import { QFieldSlots, QSelectSlots } from 'quasar'
+import { useMyth } from '../../vue3'
 
 type Props = {
   auto?: boolean;
@@ -98,23 +99,24 @@ const veeFieldRef = ref()
 const selectRef = ref()
 const inputValue = defineModel({ required: !0, default: undefined })
 const errorMessageField = ref<string | undefined>(undefined)
-const { getRules, getLabel, getPlaceholder } = useInputProps(() => props, { choose: !0 })
+const myth = useMyth()
+const myProps = computed(() => ({ ...myth.options.select, ...props }))
+const { getRules, getLabel, getPlaceholder } = useInputProps(() => myProps.value, { choose: !0 })
 const originalOptions = computed<any>(() => props.options)
-const noFilterProp = computed<any>(() => props.noFilter !== !1)
 const searchInput = ref('')
 const getOptions = computed(() => {
-  if (searchInput.value && searchInput.value.length > 0 && noFilterProp.value !== !0) {
+  if (searchInput.value?.length > 0 && myProps.value.noFilter !== !0) {
     return originalOptions.value.filter((v: any) => {
       if (typeof v === 'string' || typeof v === 'number') {
         return v.toString().toLowerCase().indexOf(searchInput.value) > -1
       }
       let labelKey = 'label'
-      if (props.optionLabel) {
-        labelKey = typeof props.optionLabel === 'function' ? props.optionLabel(v) : props.optionLabel
+      if (myProps.value.optionLabel) {
+        labelKey = typeof myProps.value.optionLabel === 'function' ? myProps.value.optionLabel(v) : myProps.value.optionLabel
       }
       let valueKey = 'value'
-      if (props.optionValue) {
-        valueKey = typeof props.optionValue === 'function' ? props.optionValue(v) : props.optionValue
+      if (myProps.value.optionValue) {
+        valueKey = typeof myProps.value.optionValue === 'function' ? myProps.value.optionValue(v) : myProps.value.optionValue
       }
       return v[labelKey]?.toString().toLowerCase().indexOf(searchInput.value) > -1 || v[valueKey]?.toString().toLowerCase().indexOf(searchInput.value) > -1
     })
@@ -129,13 +131,10 @@ const filterFn = (val: any, update: any) => {
   update(() => {
     searchInput.value = val.toString()
   })
-  // setTimeout(() => {
-  // }, props.timeout || 60)
 }
 const updateFieldValue = (v?: any) => {
   inputValue.value = v
 }
-const useInputProp = computed(() => props.useInput)
 const updateModelValue = (v?: any) => {
   // console.log(useInputProp.value, veeFieldRef.value?.handleChange)
   veeFieldRef.value?.handleChange(v)
@@ -149,16 +148,10 @@ const onDoneOptions = () => {
   selectRef.value?.updateInputValue('', !0)
   selectRef.value?.hidePopup()
 }
-// const createValue = (val: any, done: any) => {
-//   if (val.length > 0) {
-//     console.log(val)
-//     // done(val, 'add-unique')
-//   }
-// }
 watch(() => searchInput.value, v => {
   emit('search', v)
 })
-defineExpose({ searchInput })
+defineExpose({ searchInput, veeFieldRef, selectRef, updateModelValue, updateFieldValue, onDoneOptions, errorMessageField, filterFn })
 </script>
 
 <template>
@@ -204,9 +197,9 @@ defineExpose({ searchInput })
       </q-field>
     </template>
     <component
-      :is="useInputProp ? 'label' : VeeField"
+      :is="myProps.useInput ? 'label' : VeeField"
       v-else
-      :ref="useInputProp ? undefined : `veeFieldRef`"
+      :ref="myProps.useInput ? undefined : `veeFieldRef`"
       v-slot="fieldProps"
       :model-value="useInput ? undefined : inputValue"
       :name="useInput ? undefined : name"
@@ -245,7 +238,7 @@ defineExpose({ searchInput })
         :option-label="optionLabel"
         :option-value="optionValue"
         :options="getOptions"
-        :placeholder="useInput && !modelValue ? getPlaceholder : placeholder"
+        :placeholder="useInput && !modelValue?.length ? getPlaceholder : placeholder"
         :stack-label="stackLabel"
         :use-input="useInput ? ( multiple ? useInput : !modelValue) : useInput"
         v-bind="{
@@ -263,7 +256,7 @@ defineExpose({ searchInput })
       >
         <template #no-option>
           <slot name="no-option">
-            <q-item>
+            <q-item :dense="myProps.optionsDense">
               <q-item-section avatar>
                 <template v-if="autoSearch && searchInput?.length > 0">
                   <q-icon
@@ -281,9 +274,7 @@ defineExpose({ searchInput })
                   <q-icon name="o_info" />
                 </template>
               </q-item-section>
-              <q-item-section
-                class="text-italic text-grey"
-              >
+              <q-item-section>
                 <template v-if="autoSearch && searchInput?.length > 0">
                   {{ __('myth.select.noData') }}
                 </template>
@@ -328,7 +319,7 @@ defineExpose({ searchInput })
       <slot v-bind="fieldProps||{}" />
     </component>
     <VeeField
-      v-if="useInputProp"
+      v-if="myProps.useInput"
       ref="veeFieldRef"
       v-model="inputValue"
       :label="label ? __(label) : name"
