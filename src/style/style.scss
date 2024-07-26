@@ -155,10 +155,13 @@ $maxes: ('width', 'height') !default;
   }
 }
 
-pre {
-  max-width: 100%;
+.pre-text {
   white-space-collapse: preserve-breaks;
   white-space: pre-line;
+}
+
+pre {
+  max-width: 100%;
 
   html[dir=rtl] & {
     direction: rtl;

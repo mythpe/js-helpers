@@ -181,6 +181,25 @@ export const Str = {
     }
     const breakTag = (isXhtml || typeof isXhtml === 'undefined') ? '<br />' : '<br>'
     return str.toString().replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, `$1${breakTag}$2`)
+  },
+  prettyPrint (string: any) {
+    const jsonLine = /^( *)("[\w]+": )?("[^"]*"|[\w.+-]*)?([,[{])?$/mg
+    return JSON.stringify(string, null, 3)
+      .replace(/&/g, '&amp;').replace(/\\"/g, '&quot;')
+      .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(jsonLine, (match, pIndent, pKey, pVal, pEnd) => {
+        const key = '<span class="json-key" style="color: brown">'
+        const val = '<span class="json-value" style="color: navy">'
+        const str = '<span class="json-string" style="color: olive">'
+        let r = pIndent || ''
+        if (pKey) {
+          r = r + key + pKey.replace(/[": ]/g, '') + '</span>: '
+        }
+        if (pVal) {
+          r = r + (pVal[0] === '"' ? str : val) + pVal + '</span>'
+        }
+        return r + (pEnd || '')
+      })
   }
 }
 
