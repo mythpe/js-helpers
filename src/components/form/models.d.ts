@@ -261,6 +261,7 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
   viewModeValue?: any | undefined;
   topLabel?: boolean | undefined;
   caption?: string | null | undefined;
+  hideEmptyList?: boolean | undefined;
 }
 
 export interface MSelectSlots extends QSelectSlots {

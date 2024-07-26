@@ -34,7 +34,7 @@ type Props = {
   errors?: MSelectProps['errors'];
   modelValue: MSelectProps['modelValue'];
   clearable?: MSelectProps['clearable'];
-  options: MSelectProps['options'];
+  options?: MSelectProps['options'];
   optionLabel?: MSelectProps['optionLabel'];
   optionValue?: MSelectProps['optionValue'];
   emitValue?: MSelectProps['emitValue'];
@@ -51,6 +51,8 @@ type Props = {
   topLabel?: MSelectProps['topLabel'];
   caption?: MSelectProps['caption'];
   useChips?: MSelectProps['useChips'];
+  hint?: MSelectProps['hint'];
+  hideEmptyList?: MSelectProps['hideEmptyList'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -88,7 +90,9 @@ const props = withDefaults(defineProps<Props>(), {
   multiple: undefined,
   topLabel: undefined,
   caption: undefined,
-  useChips: undefined
+  useChips: undefined,
+  hint: undefined,
+  hideEmptyList: () => !1
 })
 type Events = {
   (e: 'update:modelValue', value: any): void;
@@ -102,7 +106,7 @@ const errorMessageField = ref<string | undefined>(undefined)
 const myth = useMyth()
 const myProps = computed(() => ({ ...myth.options.select, ...props }))
 const { getRules, getLabel, getPlaceholder } = useInputProps(() => myProps.value, { choose: !0 })
-const originalOptions = computed<any>(() => props.options)
+const originalOptions = computed<any[]>(() => props.options)
 const searchInput = ref('')
 const getOptions = computed(() => {
   if (searchInput.value?.length > 0 && myProps.value.noFilter !== !0) {
@@ -230,6 +234,7 @@ defineExpose({ searchInput, veeFieldRef, selectRef, updateModelValue, updateFiel
         :emit-value="emitValue"
         :error="(fieldProps||{errors:[]}).errors.length > 0 || Boolean(errorMessageField)"
         :error-message="(fieldProps||{errorMessage:undefined}).errorMessage || errorMessageField"
+        :hint="hint ? __(hint) : hint"
         :label="(topLabel || $myth.options.select?.topLabel) ? undefined : getLabel"
         :loading="loading"
         :map-options="mapOptions"
@@ -256,7 +261,10 @@ defineExpose({ searchInput, veeFieldRef, selectRef, updateModelValue, updateFiel
       >
         <template #no-option>
           <slot name="no-option">
-            <q-item :dense="myProps.optionsDense">
+            <q-item
+              v-if="!hideEmptyList"
+              :dense="myProps.optionsDense"
+            >
               <q-item-section avatar>
                 <template v-if="autoSearch && searchInput?.length > 0">
                   <q-icon

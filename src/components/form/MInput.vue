@@ -38,6 +38,7 @@ type Props = {
   autocomplete?: MInputProps['autocomplete'];
   topLabel?: MInputProps['topLabel'];
   caption?: MInputProps['caption'];
+  hint?: MInputProps['hint'];
 }
 const props = withDefaults(defineProps<Props>(), {
   name: () => '',
@@ -63,7 +64,8 @@ const props = withDefaults(defineProps<Props>(), {
   viewModeValue: undefined,
   autocomplete: undefined,
   topLabel: undefined,
-  caption: undefined
+  caption: undefined,
+  hint: undefined
 })
 type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
@@ -96,12 +98,13 @@ const getAutocompleteAttribute = computed(() => {
     :xs="xs"
   >
     <template v-if="viewMode">
-      <div
+      <label
         v-if="topLabel || $myth.options.input?.topLabel"
+        :for="name"
         class="m--input__top-label"
       >
         {{ getLabel }}
-      </div>
+      </label>
       <q-field
         :label="(topLabel || $myth.options.input?.topLabel) ? undefined : getLabel"
         :placeholder="getPlaceholder"
@@ -154,6 +157,7 @@ const getAutocompleteAttribute = computed(() => {
         </div>
       </slot>
       <q-input
+        :hint="hint ? __(hint) : hint"
         :autocomplete="getAutocompleteAttribute"
         :error="fieldScope.errors.length > 0"
         :error-message="fieldScope.errorMessage"
