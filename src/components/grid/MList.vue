@@ -163,7 +163,7 @@
 
 import { computed, defineEmits, nextTick, ref, watch } from 'vue'
 import { useModels } from '../../composables'
-import { AxiosDataRow } from '../../types'
+import { ApiModel } from '../../types'
 import MNoResultImg from './MNoResultImg.vue'
 import { MListProps } from './models'
 
@@ -202,7 +202,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 interface Emits {
-  (e: 'update:models', value: AxiosDataRow[]): void;
+  (e: 'update:models', value: ApiModel[]): void;
 
   (e: 'update:search', value: string | null): void;
 }
@@ -238,7 +238,7 @@ const {
   onSearch,
   onLoad,
   removeItem
-} = useModels<AxiosDataRow>(nameProp.value, getOptions.value, searchModel, getFilter, axiosConfigProps.value)
+} = useModels<ApiModel>(nameProp.value, getOptions.value, searchModel, getFilter, axiosConfigProps.value)
 
 watch(() => models.value, v => {
   emit('update:models', v)

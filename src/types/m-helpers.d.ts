@@ -94,74 +94,96 @@ export type ParseHeadersHeaderAgr = ParseHeadersType[] | string[] | any[]
 
 // Axios
 type Generic = Record<string | number | symbol, any>;
-export type AxiosMetaResponse = {
+
+export type ApiMetaInterface = {
   // server current page
   current_page: number | null;
   // server last page
   last_page: number | null;
   // server total items
   total: number | null;
-  [key: string | number]: any;
+  [K: any]: any;
 };
+export type ApiErrorInterface = Record<string, string[]>;
+export type ApiErrorsInterface = ApiErrorInterface[];
 
-export type AxiosDataRow = {
+export type ApiModel<T extends Generic = Generic> = {
   id: string | number;
   value: string | number;
   label?: string;
-  [key: string | number]: any;
+  [K: keyof T]: any;
 };
-export type AxiosDataResponse = AxiosDataRow | AxiosDataRow[];
-export type AxiosErrorResponse = Record<string, string[]>;
-export type AxiosErrorsResponse = AxiosErrorResponse[];
-export type MainAxiosAppResponse = {
-  _data: AxiosDataResponse;
-  _message: string | null;
-  _meta: AxiosMetaResponse;
-  _success: boolean;
-  _errors: AxiosErrorsResponse;
+
+type ResponseAsMain = {
+  success: boolean;
+  errors: ApiErrorsInterface;
+  message: string;
 }
 
-export type AppApiResponseErrors = AxiosError<MainAxiosAppResponse>;
-export type AppApiResponse = AxiosResponse<AxiosDataResponse> & MainAxiosAppResponse
+type ResponseAsModel<T = any> = ResponseAsMain & {
+  data: ApiModel<T>
+}
+type ResponseAsList<T = any> = ResponseAsMain & {
+  data: ResponseAsModel<T>[];
+  links: {
+    first: string;
+    last: string;
+    prev: string | null;
+    next: string | null;
+  }
+  meta: ApiMetaInterface;
+}
+type ResponseDataType = ResponseAsList | ResponseAsModel
+export type ApiFulfilledResponse = AxiosResponse<ResponseDataType>
+export type ApiErrorResponse = AxiosError<ResponseDataType>;
+
+export type ApiInterface<D> = ApiFulfilledResponse & {
+  _data: ResponseDataType;
+  _message: ResponseAsMain['message'];
+  _meta: ResponseAsList['meta'];
+  _success: ResponseAsMain['success'];
+  _errors: ResponseAsMain['errors'];
+}
+
 export type UrlType = string | number | any;
 export type ParamsType = Record<string, any> | FormData | object
-export type ConfigType = AxiosRequestConfig<AppApiResponse> & Partial<{
+export type ConfigType = AxiosRequestConfig<ApiInterface> & Partial<{
   params: Partial<ApiServiceParams> & Generic
 }>
 export type HelpersStubSchema = {
 
-  index (config?: ConfigType): Promise<AppApiResponse>;
+  index (config?: ConfigType): Promise<ResponseDataType>;
 
-  staticIndex (config?: ConfigType): Promise<AppApiResponse>;
+  staticIndex (config?: ConfigType): Promise<ApiInterface>;
 
-  export (data?: ParamsType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+  export (data?: ParamsType, config?: AxiosRequestConfig): Promise<ApiInterface>;
 
-  store (data?: ParamsType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+  store (data?: ParamsType, config?: AxiosRequestConfig): Promise<ApiInterface>;
 
-  show (id: UrlType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+  show (id: UrlType, config?: AxiosRequestConfig): Promise<ApiInterface>;
 
-  staticShow (id: UrlType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+  staticShow (id: UrlType, config?: AxiosRequestConfig): Promise<ApiInterface>;
 
-  update (id: UrlType, data?: ParamsType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+  update (id: UrlType, data?: ParamsType, config?: AxiosRequestConfig): Promise<ApiInterface>;
 
-  destroy (id: UrlType, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+  destroy (id: UrlType, config?: AxiosRequestConfig): Promise<ApiInterface>;
 
-  destroyAll (ids?: UrlType[], config?: AxiosRequestConfig): Promise<AppApiResponse>;
+  destroyAll (ids?: UrlType[], config?: AxiosRequestConfig): Promise<ApiInterface>;
 
   getUploadAttachmentsUrl (id: UrlType): string;
 
-  uploadAttachments (id: UrlType, data: Generic, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+  uploadAttachments (id: UrlType, data: Generic, config?: AxiosRequestConfig): Promise<ApiInterface>;
 
-  deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig): Promise<AppApiResponse>;
+  deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig): Promise<ApiInterface>;
 };
 
 export type StubSchemaContext = HelpersStubSchema
-  & Record<string, ((...args: any) => Promise<AppApiResponse>)>
-  & Record<string, Record<string, ((...args: any) => Promise<AppApiResponse>)>>
-  & Record<string, Record<string, Record<string, ((...args: any) => Promise<AppApiResponse>)>>>
+  & Record<string, ((...args: any) => Promise<ApiInterface>)>
+  & Record<string, Record<string, ((...args: any) => Promise<ApiInterface>)>>
+  & Record<string, Record<string, Record<string, ((...args: any) => Promise<ApiInterface>)>>>
 
 export type StubSchema = StubSchemaContext
-  & ((...args: any) => Promise<AppApiResponse>)
+  & ((...args: any) => Promise<ApiInterface>)
   & string
   & Record<string, StubSchemaContext>
 
@@ -177,4 +199,8 @@ export type Vue3MConfirmMessage = DialogChainObject
 export type DownloadFromResponse = {
   status: boolean;
   response: AxiosResponse;
+}
+
+declare module 'axios' {
+  type AxiosResponse = ApiInterface;
 }

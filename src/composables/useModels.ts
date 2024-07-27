@@ -6,15 +6,15 @@
  * Github: https://github.com/mythpe
  */
 
-import { computed, ComputedRef, MaybeRefOrGetter, nextTick, onMounted, onUnmounted, reactive, Ref, ref, toRefs, toValue, watch } from 'vue'
-import { AxiosRequestConfig } from 'axios'
+import { computed, MaybeRefOrGetter, nextTick, onMounted, onUnmounted, reactive, Ref, ref, toRefs, toValue, watch } from 'vue'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useMyth } from '../vue3'
-import { AppApiResponse, AxiosDataRow, AxiosMetaResponse, UseModelsOptions as Options } from '../types'
+import { ApiMetaInterface, ApiModel, UseModelsOptions as Options } from '../types'
 
 const itemsPerPage = 50
-type Item = AxiosDataRow & object
+type Item = ApiModel & object
 
-export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<string>, options?: Options, search?: string | Ref<string>, filter?: Record<string, any>, config?: AxiosRequestConfig | undefined) {
+export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<string>, options?: Options<T>, search?: string | Ref<string>, filter?: Record<string, any>, config?: AxiosRequestConfig | undefined) {
   const { name, options: opts, params, axiosConfig } = toRefs(reactive({
     name: toValue(n),
     options: toValue(options),
@@ -31,7 +31,7 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
     current_page: 0,
     last_page: 0
   }
-  const meta = ref<AxiosMetaResponse>({ ...defMeta })
+  const meta = ref<ApiMetaInterface>({ ...defMeta })
   const fetching = ref(!1)
   const fetched = ref(!1)
   const perPage = ref(axiosConfig.value?.params?.itemsPerPage || itemsPerPage)
@@ -165,17 +165,17 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
   }
 }
 
-type R<T = any> = MaybeRefOrGetter<T> | ComputedRef<T>
+type ItemModel = ApiModel & object
 
-export function useModel<T extends Partial<Item> = Item> (name: string, id: any, opts: Options = {}) {
+export function useModel<T extends Partial<ItemModel> = ItemModel> (name: string, id: any, opts: Options<T> = {}) {
   const api = useMyth()
   const model = ref<T>({} as T)
   const fetching = ref(!0)
   const fetched = ref(!1)
   const args = reactive({ id, model, name, opts })
-  const fetch = () => new Promise<AppApiResponse | any>((resolve, reject) => {
+  const fetch = () => new Promise<AxiosResponse<T>>((resolve, reject) => {
     if ((fetching.value && fetched.value) || !args.id) {
-      resolve({})
+      resolve({} as any)
       return
     }
     if (!fetching.value) {

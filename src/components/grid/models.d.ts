@@ -7,7 +7,7 @@
  */
 
 import { VNode } from 'vue'
-import { AxiosDataRow } from '../../types'
+import { ApiModel } from '../../types'
 import { AxiosRequestConfig } from 'axios'
 import { QBtnProps, QCardProps, QImgProps, QImgSlots } from 'quasar'
 
@@ -131,9 +131,9 @@ export type MListProps = MColProps & {
   axiosConfig?: AxiosRequestConfig;
   backRoute?: boolean | null | undefined;
 }
-type MListScopes = { models: AxiosDataRow[], filter: MListProps['filter'], search: MListProps['search'] }
+type MListScopes = { models: ApiModel[], filter: MListProps['filter'], search: MListProps['search'] }
 export type MListSlots = {
-  default: (scope: { item: AxiosDataRow, index: number } & MListScopes) => VNode[];
+  default: (scope: { item: ApiModel, index: number } & MListScopes) => VNode[];
   top: (scope: MListScopes) => VNode[];
   noResult: (scope: MListScopes) => VNode[];
   noData: (scope: MListScopes) => VNode[];

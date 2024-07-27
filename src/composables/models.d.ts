@@ -8,26 +8,17 @@
 
 import { QInfiniteScroll } from 'quasar'
 import { MaybeRefOrGetter, Ref, UnwrapNestedRefs } from 'vue'
-import { AxiosRequestConfig } from 'axios'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { ApiErrorResponse, ApiInterface } from 'src/types'
 
-export type UseModelsOptionsArg = {
+export type UseModelsOptionsArg<T extends ApiInterface = ApiInterface> = {
   lazy?: boolean;
   isPanel?: MaybeRefOrGetter<boolean>;
   method?: MaybeRefOrGetter<string>;
   timeout?: number;
   qInfiniteScroll?: Ref<QInfiniteScroll | undefined>;
-  onSuccess?: (data: any) => void;
-  onError?: (e: any) => void;
+  onSuccess?: (data: AxiosResponse<T>) => void;
+  onError?: (e: ApiErrorResponse) => void;
   config?: MaybeRefOrGetter<AxiosRequestConfig>
 }
-// export type UseModelOptions = {
-//   lazy?: boolean;
-//   isPanel?: MaybeRefOrGetter<boolean>;
-//   method?: MaybeRefOrGetter<string>;
-//   timeout?: number;
-//   qInfiniteScroll?: Ref<QInfiniteScroll | undefined>;
-//   onSuccess?: (data: any) => void;
-//   onError?: (e: any) => void;
-//   config?: MaybeRefOrGetter<AxiosRequestConfig>
-// }
-export type UseModelsOptions = UnwrapNestedRefs<UseModelsOptionsArg> | Ref<UseModelsOptionsArg> | UseModelsOptionsArg
+export type UseModelsOptions<T> = UnwrapNestedRefs<UseModelsOptionsArg<T>> | Ref<UseModelsOptionsArg<T>> | UseModelsOptionsArg<T>

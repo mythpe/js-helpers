@@ -10,7 +10,7 @@ import { AxiosResponse } from 'axios'
 import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
 import { ComputedRef, MaybeRef, Ref, UnwrapNestedRefs, UnwrapRef, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
-import { AxiosMetaResponse, StubSchema } from '../../types'
+import { ApiMetaInterface, StubSchema } from '../../types'
 import { RouteLocationRaw } from 'vue-router'
 
 export interface MDtItem extends GenericFormValues {
@@ -72,7 +72,7 @@ export interface ApiServiceParams {
 
 export type MDtMythApiServicesSchema = StubSchema;
 
-export type MDatatableMetaServer = AxiosMetaResponse
+export type MDatatableMetaServer = ApiMetaInterface
 
 export type MDatatableOptions = {
   // Table has action like : delete, update, etc...

@@ -141,12 +141,13 @@ const getAutocompleteAttribute = computed(() => {
       v-bind="$attrs"
     >
       <slot name="top-label">
-        <div
+        <label
           v-if="topLabel || $myth.options.input?.topLabel"
+          :for="name"
           class="m--input__top-label"
         >
           {{ getLabel }}
-        </div>
+        </label>
       </slot>
       <slot name="caption">
         <div
@@ -157,10 +158,10 @@ const getAutocompleteAttribute = computed(() => {
         </div>
       </slot>
       <q-input
-        :hint="hint ? __(hint) : hint"
         :autocomplete="getAutocompleteAttribute"
         :error="fieldScope.errors.length > 0"
         :error-message="fieldScope.errorMessage"
+        :hint="hint ? __(hint) : hint"
         :label="(topLabel || $myth.options.input?.topLabel) ? undefined : getLabel"
         :model-value="inputValue"
         :placeholder="getPlaceholder"
