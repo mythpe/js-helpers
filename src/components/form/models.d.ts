@@ -228,7 +228,6 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
   rules?: InputsRules;
   errors?: Record<string, string[]>;
   modelValue: any;
-  options: any[];
   /**
    * Property of option which holds the 'value'; If using a function then for best performance, reference it from your scope and do not define it inline
    * Default value: value

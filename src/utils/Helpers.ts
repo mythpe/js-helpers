@@ -6,11 +6,12 @@
  * Github: https://github.com/mythpe
  */
 
-import { ComponentPublicInstance, nextTick, Ref } from 'vue'
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import lodash from 'lodash'
 import { scroll } from 'quasar'
 import { ConfigType, DownloadFromResponse, HelpersStubSchema, ParamsType, UrlType } from '../types'
+import { nextTick } from 'vue'
+import { off } from 'process'
 
 export const Helpers = {
   appendArray (formData: FormData, values: File | Blob | Record<string, any> | any, name?: string | null | undefined) {
@@ -216,36 +217,31 @@ export const Helpers = {
       }
     })
   },
-  async scrollToElement (el: Element | Window | HTMLElement | string, opt?: {
-    target?:
-      | Element
-      | Window
-      | any
-      | Ref<ComponentPublicInstance | undefined>;
-    duration?: number;
-  }) {
-    const { getScrollTarget, setVerticalScrollPosition } = scroll
-    const scrollTo: any = typeof el === 'string' ? document.querySelector(el) : el
+  async scrollToElement (el: HTMLElement | string, opt?: { target?: HTMLElement, duration?: number; }) {
+    await nextTick()
+    const { getScrollTarget, setVerticalScrollPosition, getVerticalScrollPosition, getScrollHeight } = scroll
+    const scrollTo = typeof el === 'string' ? document.querySelector(el) as HTMLElement : el
     if (!scrollTo) {
       return
     }
-    const t = opt?.target || window.document.body
-    const target = getScrollTarget(t)
-    let offset = 0
-    try {
-      let parent: any = scrollTo
-      do {
-        offset += parent?.offsetTop || 0
-        parent = parent.offsetParent
-      } while (parent?.offsetParent)
-    } catch (e) {
-      console.log(e)
-      offset = scrollTo?.offsetTop || 0
-    }
-    const duration = opt?.duration || 500
-    nextTick(() => {
-      setVerticalScrollPosition(target, offset - 50, duration)
-    })
+    await nextTick()
+    const target = getScrollTarget(opt?.target || window.document.documentElement)
+    // let offset = 0
+    // try {
+    //   let parent = scrollTo
+    //   do {
+    //     // console.log(parent.getBoundingClientRect().top)
+    //     offset += parent?.offsetTop || 0
+    //     parent = parent.offsetParent as HTMLElement
+    //   } while (parent?.offsetParent)
+    // } catch (e) {
+    //   offset = scrollTo?.offsetTop || 0
+    // }
+    // offset = scrollTo.getBoundingClientRect().top
+    const currentScroll = getVerticalScrollPosition(target)
+    const offset = currentScroll + scrollTo.getBoundingClientRect().top
+    const duration = opt?.duration || 1000
+    setVerticalScrollPosition(target, offset - 100, duration)
   },
   async scrollToElementFromErrors (errors?: any, elm?: any) {
     if (!errors) {
@@ -253,7 +249,7 @@ export const Helpers = {
     }
     if (Object.keys(errors).length > 0) {
       const k = Object.keys(errors)[0]
-      this.scrollToElement(elm || `[name='${k}']`)
+      await this.scrollToElement(elm || `[name='${k}']`)
     }
   },
   makeUrl (path: string) {
