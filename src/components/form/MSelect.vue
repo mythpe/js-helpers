@@ -104,9 +104,9 @@ const selectRef = ref()
 const inputValue = defineModel({ required: !0, default: undefined })
 const errorMessageField = ref<string | undefined>(undefined)
 const myth = useMyth()
-const myProps = computed(() => ({ ...myth.options.select, ...props }))
-const { getRules, getLabel, getPlaceholder } = useInputProps(() => myProps.value, { choose: !0 })
-const originalOptions = computed<any[]>(() => props.options)
+const myProps = computed(() => ({ ...props, ...myth.options.select }))
+const { getRules, getLabel, getPlaceholder } = useInputProps(() => props, { choose: !0 })
+const originalOptions = computed(() => props.options ?? [])
 const searchInput = ref('')
 const getOptions = computed(() => {
   if (searchInput.value?.length > 0 && myProps.value.noFilter !== !0) {
