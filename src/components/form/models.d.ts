@@ -432,7 +432,7 @@ export type MAvatarViewerProps = QAvatarProps & MColProps & {
   /**
    * List of errors contains prop name { [name]: ['error1','error2']}
    */
-  errors?: FormErrorsContext;
+  errors?: Record<string, string[] | string | undefined>;
   /**
    * Model of the component;
    * Must be FileList or Array if using 'multiple' prop;

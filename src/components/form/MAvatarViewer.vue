@@ -13,7 +13,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { ColStyleType } from '../grid/models'
 
 import MFile from './MFile.vue'
-import { FormErrorsContext, MAvatarViewerModelValue, MAvatarViewerProps } from './models'
+import { MAvatarViewerModelValue, MAvatarViewerProps } from './models'
 import { Field as VeeField } from 'vee-validate'
 
 interface Props {
@@ -75,12 +75,25 @@ const { accepts } = useAcceptProp(props)
 
 const modelValue = defineModel<MAvatarViewerModelValue>({ required: true })
 const url = defineModel<string>('url', { required: false, type: String })
-const errors = defineModel<FormErrorsContext>('errors', { required: true, default: () => ({}) })
+const errors = defineModel<MAvatarViewerProps['errors']>('errors', { required: true, default: () => ({}) })
+const getErrors = computed<Record<string, string[]> | undefined>(() => {
+  if (errors.value?.[props.name]) {
+    if (typeof errors.value[props.name] === 'string') {
+      return {
+        [props.name]: [
+          errors.value[props.name] as string
+        ]
+      }
+    }
+    return errors.value as Record<string, string[]>
+  }
+  return undefined
+})
 const removed = defineModel<boolean>('removed')
 
 const blobRef = ref<typeof MFile | null | undefined>()
 
-const hasErrors = computed(() => (errors.value?.[props.name as string] ?? []).length > 0)
+const hasErrors = computed(() => (errors.value?.[props.name] ?? []).length > 0)
 
 const veeFieldRemovedValue = ref<InstanceType<typeof VeeField>>()
 const veeFieldUrlValue = ref<InstanceType<typeof VeeField>>()
@@ -126,7 +139,6 @@ const onClearInput = () => {
     veeFieldRemovedValue.value?.reset({ value: !0 })
   })
 }
-
 onBeforeUnmount(() => {
   revoke()
   blobRef.value?.removeAtIndex(0)
@@ -230,11 +242,11 @@ export default {
           />
         </div>
         <div
-          v-if="hasErrors"
+          v-if="!!errors"
           key="errors"
           class="q-mb-sm"
         >
-          <span class="text-body2 text-negative">{{ typeof errors[name] === 'string' ? errors[name] : errors[name][0] }}</span>
+          <span class="text-body2 text-negative">{{ typeof errors[name] === 'string' ? errors[name] : errors[name]?.[0] }}</span>
         </div>
         <MFile
           key="file"
@@ -242,7 +254,7 @@ export default {
           v-model="modelValue"
           :accept="accepts.join(',')"
           :clearable="clearable"
-          :errors="errors"
+          :errors="getErrors"
           :name="name"
           class="hidden"
         />

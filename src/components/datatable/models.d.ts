@@ -230,9 +230,9 @@ export type MDatatableProps<I extends GenericFormValues = GenericFormValues> = O
   multiSelection?: boolean;
   multiDestroy?: boolean;
   rowsPerPageOptions?: (string | number)[];
-  ignoreKeys?: string[] | ((from: any) => any);
+  ignoreKeys?: string[] | ((form: Record<string, any>) => string[]);
   manageColumns?: boolean;
-  visibleColumns?: string[];
+  visibleColumns?: (string | null | undefined)[];
   searchColumns?: string[];
   /**
    * Show Add btn top of table,
