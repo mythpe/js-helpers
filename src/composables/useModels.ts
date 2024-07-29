@@ -9,7 +9,7 @@
 import { computed, MaybeRefOrGetter, nextTick, onMounted, onUnmounted, reactive, Ref, ref, toRefs, toValue, watch } from 'vue'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useMyth } from '../vue3'
-import { ApiMetaInterface, ApiModel, UseModelsOptions as Options } from '../types'
+import { ApiFulfilledResponse, ApiMetaInterface, ApiModel, UseModelsOptions as Options } from '../types'
 
 const itemsPerPage = 50
 type Item = ApiModel & object
@@ -173,7 +173,7 @@ export function useModel<T extends Partial<ItemModel> = ItemModel> (name: string
   const fetching = ref(!0)
   const fetched = ref(!1)
   const args = reactive({ id, model, name, opts })
-  const fetch = () => new Promise<AxiosResponse<T>>((resolve, reject) => {
+  const fetch = () => new Promise<AxiosResponse<T> | ApiFulfilledResponse>((resolve, reject) => {
     if ((fetching.value && fetched.value) || !args.id) {
       resolve({} as any)
       return
@@ -188,7 +188,7 @@ export function useModel<T extends Partial<ItemModel> = ItemModel> (name: string
         model.value = (_data as any)
         resolve(r)
         if (args.opts?.onSuccess) {
-          args.opts?.onSuccess(r)
+          args.opts?.onSuccess(r as any)
         }
         return r
       })

@@ -134,7 +134,7 @@ type ResponseAsList<T = any> = ResponseAsMain & {
   }
   meta: ApiMetaInterface;
 }
-type ResponseDataType = ResponseAsList | ResponseAsModel
+type ResponseDataType = ResponseAsList | ResponseAsModel | object
 export type ApiFulfilledResponse = AxiosResponse<ResponseDataType>
 export type ApiErrorResponse = AxiosError<ResponseDataType>;
 
