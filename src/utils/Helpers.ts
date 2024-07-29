@@ -11,7 +11,6 @@ import lodash from 'lodash'
 import { scroll } from 'quasar'
 import { ConfigType, DownloadFromResponse, HelpersStubSchema, ParamsType, UrlType } from '../types'
 import { nextTick } from 'vue'
-import { off } from 'process'
 
 export const Helpers = {
   appendArray (formData: FormData, values: File | Blob | Record<string, any> | any, name?: string | null | undefined) {
@@ -238,17 +237,50 @@ export const Helpers = {
     //   offset = scrollTo?.offsetTop || 0
     // }
     // offset = scrollTo.getBoundingClientRect().top
-    const currentScroll = getVerticalScrollPosition(target)
-    const offset = currentScroll + scrollTo.getBoundingClientRect().top
+    const current = getVerticalScrollPosition(target)
+    // const offset = scrollTo.getBoundingClientRect().top
     const duration = opt?.duration || 1000
-    setVerticalScrollPosition(target, offset - 100, duration)
+
+    let offset = 0
+    try {
+      let parent = scrollTo
+      do {
+        // console.log(parent.getBoundingClientRect().top)
+        offset = parent.getBoundingClientRect().top
+        if (offset === 0 && !parent.parentElement) {
+          offset = parent.scrollTop
+          break
+        } else if (offset !== 0 && parent.parentElement) {
+          break
+        }
+        parent = parent.parentElement as HTMLElement
+      } while (parent)
+    } catch (e) {
+      offset = scrollTo?.offsetTop || 0
+    }
+    // const position = offset
+    // if (offset > current) {
+    //   position = (current - offset) + current
+    // } else if (offset < current) {
+    //   position = current + offset
+    // }
+    // console.log({
+    //   target,
+    //   scrollTo,
+    //   position,
+    //   offset,
+    //   current
+    // })
+    setVerticalScrollPosition(target, (offset + current) - 100, duration)
   },
-  async scrollToElementFromErrors (errors?: any, elm?: any) {
+  async scrollToElementFromErrors (errors?: Record<number, string[]>, elm?: any) {
     if (!errors) {
       return
     }
-    if (Object.keys(errors).length > 0) {
+    const list = Object.values(errors).filter(e => !!e && e?.length > 0)
+    if (list.length > 0) {
       const k = Object.keys(errors)[0]
+      // console.log(elm || `[name='${k}']`)
       await this.scrollToElement(elm || `[name='${k}']`)
     }
   },

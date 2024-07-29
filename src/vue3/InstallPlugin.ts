@@ -9,9 +9,9 @@
 import { App, computed, inject, reactive, toRefs } from 'vue'
 import {
   InstallPluginOptions,
+  MDtColumn,
+  MDtHeadersParameter,
   ParseHeaderOptions,
-  ParseHeadersHeaderAgr,
-  ParseHeadersType,
   UseMythVue,
   Vue3MAlertMessage,
   Vue3MAlertMessageOptions,
@@ -162,14 +162,14 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
      * @param headers
      * @param options
      */
-    parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[] {
+    parseHeaders (headers: MDtHeadersParameter, options: ParseHeaderOptions = {}): MDtColumn[] {
       const defaultOptions: Partial<ParseHeaderOptions> = {
         controlKey: 'control',
         controlStyle: 'max-width: 150px',
-        align: 'center',
-        sortable: !0
+        align: 'center'
+        // sortable: !0
       }
-      const opts = options || { ...defaultOptions }
+      const opts = { ...defaultOptions, ...options }
       let control: string | undefined = defaultOptions.controlKey
       let controlStyle: string | undefined = defaultOptions.controlStyle
       if (opts.controlKey) {
@@ -181,24 +181,19 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
         delete opts.controlStyle
       }
 
-      const result: ParseHeadersType[] = []
+      const result: MDtColumn[] = []
       const { t, te } = i18n.value?.global
-      headers.forEach((elm: string | ParseHeadersType) => {
+      headers.forEach((elm: string | MDtColumn | undefined) => {
         if (typeof elm !== 'string' && !elm?.name) return elm
-        const isString = typeof elm === 'string'
-
         // Todo: will do this
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        let item: ParseHeadersType = isString ? {
-          name: elm,
-          label: elm,
-          field: elm
+        let item: MDtColumn = typeof elm === 'string' ? {
+          name: elm as string,
+          label: elm as string,
+          field: elm as string
         } : { ...elm }
         item.name = item.name ?? ''
         item.label = (item.label === undefined || item.label === null) ? item.name : item.label
         item.field = (item.field === undefined || item.field === null) ? item.name : item.field
-
         item = {
           ...item,
           name: Str.strBefore(Str.strBefore(item.name), 'ToString'),
@@ -253,12 +248,15 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
           opts.classes += (opts.classes ? ' ' : '') + 'm--control-cell'
         }
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         item = { ...opts, ...item }
+        if (item.sortable === undefined && (options?.noSort ?? []).length > 0 && options?.noSort?.includes(item.name)) {
+          item.sortable = !1
+        } else if (item.sortable === undefined) {
+          item.sortable = !0
+        }
         result.push(item)
       })
-      return result
+      return lodash.uniqBy(result, (e: MDtColumn) => e.name)
     },
     /**
      * Customized helper to get attribute name

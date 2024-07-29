@@ -206,7 +206,7 @@ defineExpose({ searchInput, veeFieldRef, selectRef, updateModelValue, updateFiel
       :ref="myProps.useInput ? undefined : `veeFieldRef`"
       v-slot="fieldProps"
       :model-value="useInput ? undefined : inputValue"
-      :name="useInput ? undefined : name"
+      :name="name"
       :rules="getRules"
       v-bind="useInput ? undefined : $attrs"
       @update:model-value="updateFieldValue"

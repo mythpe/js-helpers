@@ -13,7 +13,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { ColStyleType } from '../grid/models'
 
 import MFile from './MFile.vue'
-import { MAvatarViewerProps } from './models'
+import { FormErrorsContext, MAvatarViewerModelValue, MAvatarViewerProps } from './models'
 import { Field as VeeField } from 'vee-validate'
 
 interface Props {
@@ -35,11 +35,11 @@ interface Props {
   clearable?: MAvatarViewerProps['clearable'];
   label?: MAvatarViewerProps['label'];
   rounded?: MAvatarViewerProps['rounded'];
-  errors: MAvatarViewerProps['errors'];
   name?: MAvatarViewerProps['name'];
-  modelValue?: MAvatarViewerProps['modelValue'];
-  url?: MAvatarViewerProps['url'];
-  removed?: MAvatarViewerProps['removed'];
+  caption?: MAvatarViewerProps['caption'];
+  captionProps?: MAvatarViewerProps['captionProps'];
+  hint?: MAvatarViewerProps['hint'];
+  hintProps?: MAvatarViewerProps['hintProps'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -61,45 +61,29 @@ const props = withDefaults(defineProps<Props>(), {
   clearable: undefined,
   label: undefined,
   rounded: undefined,
-  errors: () => ({}),
-  modelValue: undefined,
-  name: () => 'avatar',
-  url: undefined,
-  removed: undefined
+  name: 'avatar',
+  hint: undefined,
+  hintProps: undefined,
+  caption: undefined,
+  captionProps: undefined
 })
-
 type Events = {
   (e: 'click', evt?: Event): void;
-  (e: 'update:errors', value: MAvatarViewerProps['errors']): void;
-  (e: 'update:modelValue', value: MAvatarViewerProps['modelValue']): void;
-  (e: 'update:url', value: MAvatarViewerProps['url']): void;
-  (e: 'update:removed', value: MAvatarViewerProps['removed']): void;
 }
 const emit = defineEmits<Events>()
 const { accepts } = useAcceptProp(props)
-const errorsProp = computed<MAvatarViewerProps['errors']>({
-  get: () => props.errors,
-  set: v => emit('update:errors', v)
-})
-const hasErrors = computed(() => Boolean(errorsProp.value && errorsProp.value[props.name]))
 
-const blobRef = ref<typeof MFile>()
-const blobValue = computed<File | null | undefined>({
-  get: () => props.modelValue,
-  set: v => emit('update:modelValue', v)
-})
+const modelValue = defineModel<MAvatarViewerModelValue>({ required: true })
+const url = defineModel<string>('url', { required: false, type: String })
+const errors = defineModel<FormErrorsContext>('errors', { required: true, default: () => ({}) })
+const removed = defineModel<boolean>('removed')
+
+const blobRef = ref<typeof MFile | null | undefined>()
+
+const hasErrors = computed(() => (errors.value?.[props.name as string] ?? []).length > 0)
 
 const veeFieldRemovedValue = ref<InstanceType<typeof VeeField>>()
-const removedValue = computed<any>({
-  get: () => props.removed,
-  set: v => emit('update:removed', v)
-})
-
 const veeFieldUrlValue = ref<InstanceType<typeof VeeField>>()
-const urlValue = computed<MAvatarViewerProps['url']>({
-  get: () => props.url,
-  set: v => emit('update:url', v)
-})
 
 /** Blob file to url helpers */
 const blobUrl = ref<string | undefined>()
@@ -116,35 +100,31 @@ const toUrl = (data?: any) => {
   return blobUrl
 }
 /** Blob file to url helpers */
+const hasSrc = computed(() => !!modelValue.value || !!url.value)
 
-const hasSrc = computed(() => {
-  // return props.modelValue && (Boolean(props.modelValue[props.name]) || Boolean(props.modelValue[props.url]))
-  return Boolean(blobValue.value) || Boolean(urlValue.value)
-})
 /** Check if blob value is a File & not image */
 const isFile = computed(() => {
-  if (!(blobValue.value instanceof File)) {
+  if (!(modelValue.value instanceof File)) {
     return !1
   }
-  return blobValue.value instanceof File && blobValue.value?.type.slice(0, 6) !== 'image/'
+  return modelValue.value instanceof File && modelValue.value?.type.slice(0, 6) !== 'image/'
 })
 const getAvatarText = computed(() => props.avatarText ? props.avatarText.slice(0, 1).toUpperCase() : undefined)
 const onClick = (e?: Event) => {
-  if (props.clearable && (hasSrc.value)) {
+  errors.value = {}
+  if (props.clearable && hasSrc.value) {
     onClearInput()
     return
   }
-  if (blobRef.value) {
-    blobRef.value?.pickFiles()
-  }
+  blobRef.value?.pickFiles()
   nextTick(() => emit('click', e))
 }
 const onClearInput = () => {
   blobRef.value?.removeAtIndex(0)
-  nextTick(() => veeFieldUrlValue.value?.reset({ value: undefined }))
-  setTimeout(() => {
-    nextTick(() => veeFieldRemovedValue.value?.reset({ value: !0 }))
-  }, 60)
+  nextTick(() => {
+    veeFieldUrlValue.value?.reset({ value: undefined })
+    veeFieldRemovedValue.value?.reset({ value: !0 })
+  })
 }
 
 onBeforeUnmount(() => {
@@ -152,10 +132,10 @@ onBeforeUnmount(() => {
   blobRef.value?.removeAtIndex(0)
   veeFieldRemovedValue.value?.reset({ value: undefined })
 })
-watch(() => blobValue.value, (v) => {
+watch(() => modelValue.value, (v) => {
   if (v instanceof File) {
     toUrl(v)
-    errorsProp.value = {}
+    errors.value = {}
   }
 })
 </script>
@@ -179,7 +159,7 @@ export default {
   >
     <MColumn class="items-center">
       <MTransition>
-        <MCol
+        <div
           v-if="label"
           key="label"
         >
@@ -190,15 +170,29 @@ export default {
               class="text-negative"
             >*</span>
           </div>
-        </MCol>
-        <MCol
+        </div>
+        <slot name="hint">
+          <div
+            v-if="!!hint"
+            key="hint"
+            class="m--input__hint"
+            v-bind="hintProps"
+          >
+            <q-icon
+              left
+              name="ion-help-circle-outline"
+            />
+            <span>{{ __(hint) }}</span>
+          </div>
+        </slot>
+        <div
           key="avatar"
           :class="`rounded-borders q-mb-sm ${hasErrors ? 'q-pa-xs bg-negative' : ''}`"
         >
           <q-avatar
             :color="hasErrors ? 'negative' : ((!isLoaded || !hasSrc || isFile) ? 'primary' : undefined)"
             :icon="isFile ? 'o_description' : undefined"
-            :rounded="rounded === undefined ? !!hasSrc : rounded"
+            :rounded="rounded === undefined ? hasSrc : rounded"
             :size="size"
             text-color="white"
           >
@@ -206,7 +200,7 @@ export default {
               v-if="hasSrc && !isFile"
               :fit="fit"
               :height="size"
-              :src="blobUrl || urlValue"
+              :src="blobUrl || url"
               ratio="1"
               @error="isLoaded = !0"
               @load="isLoaded = !0"
@@ -223,39 +217,39 @@ export default {
               v-text="getAvatarText"
             />
           </q-avatar>
-        </MCol>
-        <MCol key="btn">
+        </div>
+        <div
+          key="btn"
+          class="q-mb-sm"
+        >
           <MBtn
             :color="!hasSrc ? 'positive' : 'secondary'"
-            :disable="!isLoaded && !!urlValue"
+            :disable="!isLoaded && !!url"
+            :label="__( clearable && hasSrc ? 'remove' : ( !clearable && hasSrc ? 'change' : 'choose') )"
             @click="onClick"
-          >
-            <span v-if="clearable && hasSrc">{{ __('remove') }}</span>
-            <span v-else-if="!clearable && hasSrc">{{ __('change') }}</span>
-            <span v-else>{{ __('choose') }}</span>
-          </MBtn>
-        </MCol>
-        <MCol
-          v-if="errors && errors[name]"
+          />
+        </div>
+        <div
+          v-if="hasErrors"
           key="errors"
-          class="q-mt-sm"
+          class="q-mb-sm"
         >
           <span class="text-body2 text-negative">{{ typeof errors[name] === 'string' ? errors[name] : errors[name][0] }}</span>
-        </MCol>
+        </div>
         <MFile
           key="file"
           ref="blobRef"
-          v-model="blobValue"
+          v-model="modelValue"
           :accept="accepts.join(',')"
           :clearable="clearable"
-          :errors="errorsProp"
+          :errors="errors"
           :name="name"
           class="hidden"
         />
         <VeeField
           key="removed"
           ref="veeFieldRemovedValue"
-          v-model="removedValue"
+          v-model="removed"
           :name="`${name}_removed`"
           :value="!0"
           class="hidden"
@@ -264,13 +258,21 @@ export default {
         <VeeField
           key="url"
           ref="veeFieldUrlValue"
-          v-model="urlValue"
+          v-model="url"
           :name="`${name}_url`"
           class="hidden"
           type="textarea"
         />
       </MTransition>
-
+      <slot name="caption">
+        <div
+          v-if="!!caption"
+          class="m--input__caption"
+          v-bind="captionProps"
+        >
+          {{ __(caption) }}
+        </div>
+      </slot>
       <slot />
     </MColumn>
   </MCol>

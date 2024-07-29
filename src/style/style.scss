@@ -39,6 +39,7 @@ $container-padding: $m-space-base * .5 !default;
 $row-margins: .5;
 $container-fluid-width: 1024px !default;
 $m--select__popup__height: 250px !default;
+$m--input-helpers-margin: 5px !default;
 
 .m--container__fluid {
   max-width: $container-fluid-width !important;
@@ -46,9 +47,16 @@ $m--select__popup__height: 250px !default;
 }
 
 .m--input__top-label,
-.m--input__caption,
 .m--input__hint {
-  margin-bottom: 3px;
+  margin-bottom: $m--input-helpers-margin;
+}
+
+.m--input__caption {
+  margin-bottom: $m--input-helpers-margin;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  letter-spacing: 0.03333em;
 }
 
 .m--row, .m--column, .m--flex {

@@ -97,7 +97,9 @@ interface Props {
   flat?: MDatatableProps['flat'];
   rows?: MDatatableProps['rows'];
   fixed?: MDatatableProps['fixed'];
-  avatarMode?: MDatatableProps['avatarMode'];
+  imageColumns?: MDatatableProps['imageColumns'];
+  imageMode?: MDatatableProps['imageMode'];
+  imageSize?: MDatatableProps['imageSize'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -153,7 +155,9 @@ const props = withDefaults(defineProps<Props>(), {
   bordered: undefined,
   flat: undefined,
   fixed: undefined,
-  avatarMode: () => 'image'
+  imageColumns: () => ([]),
+  imageMode: () => 'image',
+  imageSize: () => '35px'
 })
 
 interface Emits {
@@ -215,7 +219,7 @@ const resetDialogs = () => {
 
 /** --- */
 const headersProp = computed(() => props.headers)
-const getHeaders = computed<any[]>(() => myth.parseHeaders(headersProp.value) || [])
+const getHeaders = computed<any[]>(() => myth.parseHeaders(headersProp.value, reactive({ noSort: props.imageColumns })) || [])
 const visibleColumnsProp = computed(() => props.visibleColumns)
 const visibleHeaders = ref(myth.parseHeaders(visibleColumnsProp.value || headersProp.value).map(e => e.name))
 /** --- */
@@ -1689,65 +1693,36 @@ const getProp = computed(() => (k: keyof Props) => {
             </q-td>
           </slot>
         </template>
-
-        <template #body-cell-avatar_url="bCAProps">
-          <q-td :props="bCAProps">
-            <template v-if="getProp('avatarMode') === 'icon'">
+        <template
+          v-for="c in imageColumns"
+          :key="`a-c-${c}`"
+          #[`body-cell-${c}`]="colProps"
+        >
+          <q-td :props="colProps">
+            <template v-if="getProp('imageMode') === 'icon'">
               <q-btn
-                v-if="bCAProps.row.avatar_url"
-                :src="bCAProps.row.avatar_url"
+                v-if="colProps.row[c]"
+                :src="colProps.row[c]"
                 dense
                 fab-mini
                 flat
                 icon="ion-ios-eye"
-                @click="openImageDialog(bCAProps.row.avatar_url)"
+                @click="openImageDialog(colProps.row[c])"
               >
                 <q-tooltip class="m--dt-btn-tooltip">
                   {{ __('myth.titles.show') }}
                 </q-tooltip>
               </q-btn>
             </template>
-            <template v-else-if="getProp('avatarMode') === 'image'">
+            <template v-else-if="getProp('imageMode') === 'image'">
               <q-img
-                v-if="bCAProps.row.avatar_url"
-                :src="bCAProps.row.avatar_url"
+                v-if="colProps.row[c]"
+                :src="colProps.row[c]"
+                :style="`width: ${getProp('imageSize')}; height: ${getProp('imageSize')}`"
                 class="cursor-pointer"
                 fit="contain"
-                style="width: 32px; height: 32px"
-                @click="openImageDialog(bCAProps.row.avatar_url)"
-              >
-                <q-tooltip class="m--dt-btn-tooltip">
-                  {{ __('myth.titles.show') }}
-                </q-tooltip>
-              </q-img>
-            </template>
-          </q-td>
-        </template>
-        <template #body-cell-avatar="bCAProps2">
-          <q-td :props="bCAProps2">
-            <template v-if="getProp('avatarMode') === 'icon'">
-              <q-btn
-                v-if="bCAProps2.row.avatar"
-                :src="bCAProps2.row.avatar"
-                dense
-                fab-mini
-                flat
-                icon="ion-ios-eye"
-                @click="openImageDialog(bCAProps2.row.avatar)"
-              >
-                <q-tooltip class="m--dt-btn-tooltip">
-                  {{ __('myth.titles.show') }}
-                </q-tooltip>
-              </q-btn>
-            </template>
-            <template v-else-if="getProp('avatarMode') === 'image'">
-              <q-img
-                v-if="bCAProps2.row.avatar"
-                :src="bCAProps2.row.avatar"
-                class="cursor-pointer"
-                fit="contain"
-                style="width: 32px; height: 32px"
-                @click="openImageDialog(bCAProps2.row.avatar)"
+                no-spinner
+                @click="openImageDialog(colProps.row[c])"
               >
                 <q-tooltip class="m--dt-btn-tooltip">
                   {{ __('myth.titles.show') }}

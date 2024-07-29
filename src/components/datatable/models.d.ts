@@ -13,8 +13,9 @@ import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../f
 import { ApiMetaInterface, StubSchema } from '../../types'
 import { RouteLocationRaw } from 'vue-router'
 
-export interface MDtItem extends GenericFormValues {
-  id: string | number;
+export type MDtItem<T extends object = Record<keyof T, any>> = T & {
+  id?: string | number | null;
+  [K: keyof T]: any;
 }
 
 export type MDtItemIndex = number;
@@ -193,10 +194,10 @@ export type MDtServiceNameStringProp = string
 export type MDtRequestParamsCallbackProp = (params: ApiServiceParams) => Partial<GenericFormValues>
 export type MDtRequestParamsObjectProp = Partial<GenericFormValues>
 
-export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPageOptions' | 'visibleColumns'> {
+export type MDatatableProps<I extends GenericFormValues = GenericFormValues> = Omit<QTableProps, 'rows' | 'rowsPerPageOptions' | 'visibleColumns'> & {
   rows?: any[];
   controlKey?: string;
-  defaultItem?: Partial<MDtItem> & Record<string, any>;
+  defaultItem?: Partial<MDtItem<I>>
   contextItems?: GenericMDtBtn[];
   hideAutoMessage?: boolean;
   headers: string[] | Partial<QTableProps['columns']>[] | any[];
@@ -265,7 +266,19 @@ export interface MDatatableProps extends Omit<QTableProps, 'rows' | 'rowsPerPage
    * Set datatable to fixed view
    */
   fixed?: boolean;
-  avatarMode?: 'icon' | 'image';
+  /**
+   * Names of image columns in the table.
+   */
+  imageColumns?: string[];
+  /**
+   * How to display image button in table.
+   */
+  imageMode?: 'icon' | 'image';
+  /**
+   * Image size in display
+   */
+  imageSize?: string;
+
 }
 
 export interface MDtAvatarProps extends QAvatarProps {

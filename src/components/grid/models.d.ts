@@ -12,7 +12,6 @@ import { AxiosRequestConfig } from 'axios'
 import { QBtnProps, QCardProps, QImgProps, QImgSlots } from 'quasar'
 
 export type ColStyleType =
-  | 'auto'
   | '1'
   | '2'
   | '3'
@@ -25,18 +24,11 @@ export type ColStyleType =
   | '10'
   | '11'
   | '12'
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 7
-  | 8
-  | 9
-  | 10
-  | 11
-  | 12
+  | 'auto'
+  | 'grow'
+  | 'shrink'
+  | boolean
+  | null
   | undefined
 
 export type MContainerProps = {

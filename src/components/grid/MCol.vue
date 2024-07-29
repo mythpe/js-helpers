@@ -6,21 +6,13 @@
   - Github: https://github.com/mythpe
   -->
 
-<template>
-  <div
-    :class="classes"
-    v-bind="{...$myth.options.col,...$attrs}"
-  >
-    <slot />
-  </div>
-</template>
-
 <script
   lang="ts"
   setup
 >
 import { computed } from 'vue'
 import { ColStyleType } from './models'
+import lodash from 'lodash'
 
 interface Props {
   auto?: boolean
@@ -42,12 +34,18 @@ const props = withDefaults(defineProps<Props>(), {
   xl: undefined
 })
 const classes = computed(() => {
-  const list = ['m--col']
-  if (props.auto) {
+  const list: string[] = ['m--col']
+  if (props.auto === !0) {
     list.push('col-auto')
   }
 
-  if (props.col) {
+  if (props.col === !0) {
+    list.push('col')
+  } else if (props.col === 'grow') {
+    list.push('col-grow')
+  } else if (props.col === 'shrink') {
+    list.push('col-shrink')
+  } else if (typeof props.col === 'string') {
     if (props.col?.toString()?.trim()?.length > 0) {
       if (list.indexOf(`col-${props.col}`) === -1) {
         list.push(`col-${props.col}`)
@@ -70,15 +68,25 @@ const classes = computed(() => {
   }
 
   if (list.indexOf('col') === -1 || list.length === 1) {
-    list.push('col')
+    if (props.col !== !1 && !props.auto) {
+      list.push('col')
+    }
   }
-  return list
+  return lodash.uniq(list)
 })
 </script>
 
 <script lang="ts">
 export default {
-  name: 'MCol',
-  inheritAttrs: !1
+  name: 'MCol'
 }
 </script>
+
+<template>
+  <div
+    :class="classes"
+    v-bind="$myth.options.col"
+  >
+    <slot />
+  </div>
+</template>

@@ -95,10 +95,9 @@ import { I18n } from 'vue-i18n'
 import { ComputedRef, TransitionProps } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import {
-  MythApiServicesSchema,
   ParseHeaderOptions,
-  ParseHeadersHeaderAgr,
-  ParseHeadersType,
+  MDtHeadersParameter,
+  MDtColumn,
   Vue3MAlertMessage,
   Vue3MAlertMessageOptions,
   Vue3MConfirmMessage
@@ -107,6 +106,7 @@ import { Dates, Helpers, Str } from '../utils'
 import MDtContextmenuItems from 'components/datatable/MDtContextmenuItems.vue'
 import { MTypingStringProps, MTypingStringSlots } from 'app/src'
 import { MTransitionProps } from 'components/transition/models'
+import { MythApiServicesSchema } from './api-helpers'
 
 export type MythOptionsConfig = {
   google?: {
@@ -264,7 +264,7 @@ export type UseMythVue = {
     }
   },
   getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string;
-  parseHeaders (headers: ParseHeadersHeaderAgr, options?: ParseHeaderOptions): ParseHeadersType[];
+  parseHeaders (headers: MDtHeadersParameter, options?: ParseHeaderOptions): MDtColumn[];
   __ (string: string | { text: string } | any, ...args: any[]): string;
   copyText (text: string | any): Promise<void>;
   quasarNotifyOptions (opts: QNotifyCreateOptions | string): QNotifyCreateOptions;

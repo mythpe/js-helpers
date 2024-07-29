@@ -36,7 +36,11 @@ import type { FormActions, FormContext, FormMeta, Path, SubmissionHandler } from
 import { Ref, UnwrapRef, VNode } from 'vue'
 import { ColStyleType, MColProps } from '../grid/models'
 
-export declare type GenericFormValues = Record<any, unknown>;
+export declare type GenericFormValues = Record<any, any>;
+
+export type InputErrorsContext = string[];
+
+export type FormErrorsContext = Record<string, InputErrorsContext>;
 
 export interface VeeFormFormMeta {
   touched: boolean;
@@ -385,16 +389,28 @@ export interface MFormProps {
   formProps?: Record<string, any>;
 }
 
-export type MAvatarViewerItem = Record<string, string | File | any> | any
+export type MAvatarViewerModelValue = File | null | undefined;
 
-export interface MAvatarViewerProps extends QAvatarProps, MColProps {
+export type MAvatarViewerProps = QAvatarProps & MColProps & {
   /**
    * Comma separated list of unique file type specifiers. Maps to 'accept' attribute of native input type=file element
    */
   accept?: string;
+  /**
+   * Add accept file type.
+   */
   images?: boolean;
+  /**
+   * Add accept video type.
+   */
   video?: boolean;
+  /**
+   * Add accept pdf type.
+   */
   pdf?: boolean;
+  /**
+   * Add accept excel type.
+   */
   excel?: boolean;
   /**
    * Show text if no image
@@ -416,13 +432,13 @@ export interface MAvatarViewerProps extends QAvatarProps, MColProps {
   /**
    * List of errors contains prop name { [name]: ['error1','error2']}
    */
-  errors?: Record<string, string[]>;
+  errors?: FormErrorsContext;
   /**
    * Model of the component;
    * Must be FileList or Array if using 'multiple' prop;
    * Either use this property (along with a listener for 'update:modelValue' event) OR use v-model directive
    */
-  modelValue?: MAvatarViewerItem;
+  modelValue?: MAvatarViewerModelValue;
   /**
    * The name of the file for the image used and the field.
    * Example: name='avatar' { avatar: https://4myth.com, avatarBlob: Blob, avatarRemoved: !0 | !1 }
@@ -438,6 +454,13 @@ export interface MAvatarViewerProps extends QAvatarProps, MColProps {
    * (along with a listener for 'update:removed' event) OR use v-model directive
    */
   removed?: boolean;
+  /**
+   * Input hint.
+   */
+  hint?: string;
+  hintProps?: Record<string, any>;
+  caption?: string;
+  captionProps?: Record<string, any>;
 }
 
 export interface MAvatarViewerSlots extends QAvatarSlots {
@@ -445,6 +468,7 @@ export interface MAvatarViewerSlots extends QAvatarSlots {
    * Field main content
    */
   default: () => VNode[];
+  hint: () => VNode[];
 }
 
 export type MUploaderMediaItem = {
