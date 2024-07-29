@@ -165,7 +165,7 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
   }
 }
 
-type ItemModel = ApiModel & object
+type ItemModel = ApiModel | object
 
 export function useModel<T extends Partial<ItemModel> = ItemModel> (name: string, id: any, opts: Options<T> = {}) {
   const api = useMyth()
