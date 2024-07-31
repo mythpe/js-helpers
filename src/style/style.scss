@@ -122,7 +122,7 @@ $m--input-helpers-margin: 5px !default;
   }
 }
 
-$text-decorations: ('none': none, 'overline': overline, 'underline': overline, 'line-through': line-through);
+$text-decorations: ('none': none, 'overline': overline, 'underline': underline, 'line-through': line-through);
 @each $name, $value in $text-decorations {
   .text-decoration-#{$name} {
     text-decoration: map.get($text-decorations, $value) !important;
