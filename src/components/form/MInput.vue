@@ -13,6 +13,7 @@ import { MInputProps } from './models'
 import { QFieldSlots, QInputSlots } from 'quasar'
 import lodash from 'lodash'
 import InputLabel from './InputLabel.vue'
+import { useMyth } from 'app/src'
 
 type Props = {
   name?: MInputProps['name'];
@@ -72,7 +73,7 @@ type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
 }
 defineEmits<EmitsTypes>()
-const inputValue = defineModel({ required: !0 })
+const inputValue = defineModel({ required: !0, default: '' })
 const { getRules, getLabel, getPlaceholder } = useInputProps(() => props)
 const getAutocompleteAttribute = computed(() => {
   if (props.autocomplete !== undefined) {
@@ -85,6 +86,15 @@ const getAutocompleteAttribute = computed(() => {
     }
   }
   return props.autocomplete
+})
+const { options: { input: mythOptions } } = useMyth()
+const hasTopLabel = computed(() => {
+  if (props.topLabel !== undefined) {
+    return props.topLabel
+  } else if (mythOptions?.topLabel !== undefined) {
+    return mythOptions?.topLabel
+  }
+  return props.topLabel
 })
 </script>
 
@@ -100,7 +110,7 @@ const getAutocompleteAttribute = computed(() => {
   >
     <template v-if="viewMode">
       <InputLabel
-        v-if="topLabel || $myth.options.input?.topLabel"
+        v-if="hasTopLabel"
         :for="name"
       >
         {{ getLabel }}
@@ -142,7 +152,7 @@ const getAutocompleteAttribute = computed(() => {
     >
       <slot name="top-label">
         <InputLabel
-          v-if="topLabel || $myth.options.input?.topLabel"
+          v-if="hasTopLabel"
           :for="name"
         >
           {{ getLabel }}

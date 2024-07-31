@@ -153,6 +153,17 @@ const onDoneOptions = () => {
   selectRef.value?.updateInputValue('', !0)
   selectRef.value?.hidePopup()
 }
+
+const { options: { select: mythOptions } } = useMyth()
+const hasTopLabel = computed(() => {
+  if (props.topLabel !== undefined) {
+    return props.topLabel
+  } else if (mythOptions?.topLabel !== undefined) {
+    return mythOptions?.topLabel
+  }
+  return props.topLabel
+})
+
 watch(() => searchInput.value, v => {
   emit('search', v)
 })
@@ -171,13 +182,13 @@ defineExpose({ searchInput, veeFieldRef, selectRef, updateModelValue, updateFiel
   >
     <template v-if="viewMode">
       <InputLabel
-        v-if="topLabel || $myth.options.select?.topLabel"
+        v-if="hasTopLabel"
         :for="name"
       >
         {{ getLabel }}
       </InputLabel>
       <q-field
-        :label="(topLabel || $myth.options.select?.topLabel) ? undefined : getLabel"
+        :label="hasTopLabel ? undefined : getLabel"
         :placeholder="getPlaceholder"
         v-bind="{...$myth.options.select as any,...$myth.options.field,...$attrs, stackLabel: !0}"
       >
@@ -214,7 +225,7 @@ defineExpose({ searchInput, veeFieldRef, selectRef, updateModelValue, updateFiel
     >
       <slot name="top-label">
         <InputLabel
-          v-if="topLabel || $myth.options.select?.topLabel"
+          v-if="hasTopLabel"
           :for="name"
         >
           {{ getLabel }}

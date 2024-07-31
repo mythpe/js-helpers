@@ -11,9 +11,10 @@
 import { QFieldSlots, QFile } from 'quasar'
 import { useAcceptProp, useInputProps } from '../../composables'
 import { Field as VeeField } from 'vee-validate'
-import { defineProps, ref } from 'vue'
+import { computed, defineProps, ref } from 'vue'
 import { MFileProps } from './models'
 import InputLabel from './InputLabel.vue'
+import { useMyth } from 'app/src'
 
 interface Props {
   auto?: MFileProps['auto'];
@@ -111,6 +112,16 @@ const inputValue = defineModel({ required: !0 })
 const pickFiles = (...args: any) => fileInput.value?.pickFiles(...args)
 const removeAtIndex = (index: number) => fileInput.value?.removeAtIndex(index)
 
+const { options: { file: mythOptions } } = useMyth()
+const hasTopLabel = computed(() => {
+  if (props.topLabel !== undefined) {
+    return props.topLabel
+  } else if (mythOptions?.topLabel !== undefined) {
+    return mythOptions?.topLabel
+  }
+  return props.topLabel
+})
+
 defineExpose({
   fileInput,
   pickFiles,
@@ -138,7 +149,7 @@ export default {
   >
     <template v-if="viewMode">
       <InputLabel
-        v-if="topLabel || $myth.options.file?.topLabel"
+        v-if="hasTopLabel"
         :for="name"
       >
         {{ getLabel }}
@@ -179,7 +190,7 @@ export default {
     >
       <slot name="top-label">
         <InputLabel
-          v-if="topLabel || $myth.options.file?.topLabel"
+          v-if="hasTopLabel"
           :for="name"
         >
           {{ getLabel }}
