@@ -14,7 +14,7 @@ import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref } from 'vue'
 import { MFileProps } from './models'
 import InputLabel from './InputLabel.vue'
-import { useMyth } from 'app/src'
+import { useMyth } from '../../vue3'
 
 interface Props {
   auto?: MFileProps['auto'];

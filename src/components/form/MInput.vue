@@ -13,7 +13,7 @@ import { MInputProps } from './models'
 import { QFieldSlots, QInputSlots } from 'quasar'
 import lodash from 'lodash'
 import InputLabel from './InputLabel.vue'
-import { useMyth } from 'app/src'
+import { useMyth } from '../../vue3'
 
 type Props = {
   name?: MInputProps['name'];
