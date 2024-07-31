@@ -14,7 +14,7 @@ import { ColStyleType } from '../grid/models'
 import { MSelectProps } from './models'
 import { QFieldSlots, QSelectSlots } from 'quasar'
 import { useMyth } from '../../vue3'
-import InputLabel from 'components/form/InputLabel.vue'
+import InputLabel from './InputLabel.vue'
 
 type Props = {
   auto?: boolean;

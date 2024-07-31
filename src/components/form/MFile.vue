@@ -13,7 +13,7 @@ import { useAcceptProp, useInputProps } from '../../composables'
 import { Field as VeeField } from 'vee-validate'
 import { defineProps, ref } from 'vue'
 import { MFileProps } from './models'
-import InputLabel from 'components/form/InputLabel.vue'
+import InputLabel from './InputLabel.vue'
 
 interface Props {
   auto?: MFileProps['auto'];
