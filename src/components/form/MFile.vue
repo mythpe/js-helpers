@@ -13,6 +13,7 @@ import { useAcceptProp, useInputProps } from '../../composables'
 import { Field as VeeField } from 'vee-validate'
 import { defineProps, ref } from 'vue'
 import { MFileProps } from './models'
+import InputLabel from 'components/form/InputLabel.vue'
 
 interface Props {
   auto?: MFileProps['auto'];
@@ -136,10 +137,16 @@ export default {
     :xs="xs"
   >
     <template v-if="viewMode">
+      <InputLabel
+        v-if="topLabel || $myth.options.file?.topLabel"
+        :for="name"
+      >
+        {{ getLabel }}
+      </InputLabel>
       <q-field
-        :label="getLabel"
+        :label="(topLabel || $myth.options.file?.topLabel) ? undefined : getLabel"
         :placeholder="getPlaceholder"
-        v-bind="{...($myth.options.input as any),...$myth.options.field,...$attrs, stackLabel: !0}"
+        v-bind="{...$myth.options.input as any,...$myth.options.field as any,...$attrs, stackLabel: !0}"
       >
         <template #control>
           <div
@@ -171,12 +178,12 @@ export default {
       v-bind="$attrs"
     >
       <slot name="top-label">
-        <div
+        <InputLabel
           v-if="topLabel || $myth.options.file?.topLabel"
-          class="m--input__top-label"
+          :for="name"
         >
           {{ getLabel }}
-        </div>
+        </InputLabel>
       </slot>
       <slot name="caption">
         <div

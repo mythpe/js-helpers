@@ -14,6 +14,7 @@ import { ColStyleType } from '../grid/models'
 import { MSelectProps } from './models'
 import { QFieldSlots, QSelectSlots } from 'quasar'
 import { useMyth } from '../../vue3'
+import InputLabel from 'components/form/InputLabel.vue'
 
 type Props = {
   auto?: boolean;
@@ -169,12 +170,12 @@ defineExpose({ searchInput, veeFieldRef, selectRef, updateModelValue, updateFiel
     :xs="xs"
   >
     <template v-if="viewMode">
-      <div
+      <InputLabel
         v-if="topLabel || $myth.options.select?.topLabel"
-        class="m--input__top-label"
+        :for="name"
       >
         {{ getLabel }}
-      </div>
+      </InputLabel>
       <q-field
         :label="(topLabel || $myth.options.select?.topLabel) ? undefined : getLabel"
         :placeholder="getPlaceholder"
@@ -212,12 +213,12 @@ defineExpose({ searchInput, veeFieldRef, selectRef, updateModelValue, updateFiel
       @update:model-value="updateFieldValue"
     >
       <slot name="top-label">
-        <div
+        <InputLabel
           v-if="topLabel || $myth.options.select?.topLabel"
-          class="m--input__top-label"
+          :for="name"
         >
           {{ getLabel }}
-        </div>
+        </InputLabel>
       </slot>
       <slot name="caption">
         <div

@@ -12,6 +12,7 @@ import { useInputProps } from '../../composables'
 import { MInputProps } from './models'
 import { QFieldSlots, QInputSlots } from 'quasar'
 import lodash from 'lodash'
+import InputLabel from './InputLabel.vue'
 
 type Props = {
   name?: MInputProps['name'];
@@ -98,13 +99,12 @@ const getAutocompleteAttribute = computed(() => {
     :xs="xs"
   >
     <template v-if="viewMode">
-      <label
+      <InputLabel
         v-if="topLabel || $myth.options.input?.topLabel"
         :for="name"
-        class="m--input__top-label"
       >
         {{ getLabel }}
-      </label>
+      </InputLabel>
       <q-field
         :label="(topLabel || $myth.options.input?.topLabel) ? undefined : getLabel"
         :placeholder="getPlaceholder"
@@ -141,13 +141,12 @@ const getAutocompleteAttribute = computed(() => {
       v-bind="$attrs"
     >
       <slot name="top-label">
-        <label
+        <InputLabel
           v-if="topLabel || $myth.options.input?.topLabel"
           :for="name"
-          class="m--input__top-label"
         >
           {{ getLabel }}
-        </label>
+        </InputLabel>
       </slot>
       <slot name="caption">
         <div
