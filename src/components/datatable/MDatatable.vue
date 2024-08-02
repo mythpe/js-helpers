@@ -193,17 +193,17 @@ const filterDialogModel = ref(!1)
 const showDialogModel = ref(!1)
 const formDialogModel = ref(!1)
 const isUpdateDialog = ref(!1)
-const itemDialog = ref<MDtItem | undefined>(undefined)
-const itemIndexDialog = ref<MDtItemIndex | undefined>()
-const errorsDialog = ref<any>({})
+const dialogItem = ref<MDtItem | undefined>(undefined)
+const dialogItemIndex = ref<MDtItemIndex | undefined>()
+const dialogErrors = ref<any>({})
 const dialogs = reactive<MDatatableDialogsOptions>({
   filter: filterDialogModel,
   show: showDialogModel,
   form: formDialogModel,
   isUpdate: isUpdateDialog,
-  item: itemDialog,
-  index: itemIndexDialog,
-  errors: errorsDialog
+  item: dialogItem,
+  index: dialogItemIndex,
+  errors: dialogErrors
 })
 const resetDialogs = () => {
   dialogs.filter = !1
@@ -338,7 +338,7 @@ const loadMore = () => {
     })
   })
 }
-const refreshNoUpdate = async (done?: () => void) => {
+const refreshNoUpdate = (done?: () => void) => {
   if (contextmenu.value) {
     contextmenu.value = !1
   }
@@ -439,7 +439,7 @@ const getDatatableParams = ({ pagination, filter }: FetchRowsArgs = {}, merge: P
   }
   return { ...params, ...merge }
 }
-const fetchDatatableItems = async (opts: FetchRowsArgs = {}) => {
+const fetchDatatableItems = (opts: FetchRowsArgs = {}) => {
   if (props.endReach && tableOptions.meta.last_page && tableOptions.pagination.page >= tableOptions.meta.last_page) {
     return
   }
@@ -454,7 +454,7 @@ const fetchDatatableItems = async (opts: FetchRowsArgs = {}) => {
     }
     // console.log({ params })
     getMythApiServicesSchema().index({ params })
-      .then((result) => {
+      .then((result: any) => {
         const { _data, _meta } = result
         pagination.value = {
           page: parseInt((_meta?.current_page || 1).toString()) || 1,
@@ -685,10 +685,8 @@ const openCreateDialog = async (dtItem?: MDtItem) => {
   isUpdateMode.value = !1
   dialogs.item = { ...item } as MDtItem
   dialogs.index = undefined
-  // console.log(item)
-  nextTick(() => {
-    setTimeout(() => (dialogs.form = !0), openDialogTimeout)
-  })
+  await nextTick()
+  setTimeout(() => (dialogs.form = !0), openDialogTimeout)
 }
 const closeFormDialog = () => {
   dialogs.form = !1
@@ -706,7 +704,7 @@ const updateDatatableItem = (i: MDtItem, index?: MDtItemIndex) => {
     getRows.value[index] = item.value
   }
   if (item.value && !index) {
-    const findIndex = getRows.value.findIndex(e => parseInt(e.id?.toString()) === parseInt(item.value.id.toString()))
+    const findIndex = getRows.value.findIndex(e => parseInt(e.id?.toString?.() ?? '') === parseInt(item.value?.id?.toString?.() ?? ''))
     getRows.value[findIndex] = item.value
     // const r = [...getRows.value]
     // r[parseInt(findIndex.toString())] = item
@@ -718,11 +716,11 @@ const updateDatatableItem = (i: MDtItem, index?: MDtItemIndex) => {
 }
 const removeDtItem = (i: MDtItem | number) => {
   const item = toRef<MDtItem | number>(i)
-  const id: string | number = typeof item.value !== 'object' ? item.value : item.value.id
+  const id: string | number = typeof item.value !== 'object' ? item.value : item.value.id as string
   if (typeof item.value !== 'object') {
     getRows.value = getRows.value.filter((e, i) => i !== id)
   } else {
-    getRows.value = getRows.value.filter((e) => parseInt(e.id?.toString()) !== parseInt(id.toString()))
+    getRows.value = getRows.value.filter((e) => parseInt(e.id?.toString() ?? '') !== parseInt(id.toString()))
   }
 }
 const ignoreKeysProps = computed(() => props.ignoreKeys)
@@ -776,10 +774,11 @@ const defaultSubmitItem = async (_form: Record<string, any>) => {
       if (isUpdateMode.value) {
         _data && updateDatatableItem(_data, dialogs.index)
       } else {
-        nextTick(() => refresh())
-        // emit('itemCreated', { item: _data })
+        await nextTick()
+        refresh()
       }
-      nextTick(() => closeFormDialog())
+      await nextTick()
+      closeFormDialog()
     }
   } catch (e: any) {
     const { _message, _errors } = e || {}
@@ -813,9 +812,8 @@ const onDeleteItem = (i: MDtItem, index: number) => {
       e?._message && myth.alertError(e._message)
     } finally {
       loading.value = !1
-      nextTick(() => {
-        selected.value = []
-      })
+      await nextTick()
+      selected.value = []
     }
   }).onDismiss(() => {
     tableOptions.hasAction = !1
@@ -827,8 +825,8 @@ const deleteSelectionItem = () => {
     return
   }
   if (tableOptions.selected.length === 1) {
-    const dtItem: MDtItem = tableOptions.selected[0]
-    const index = getRows.value.findIndex((e: any) => parseInt(e.id) === parseInt(dtItem.id.toString()))
+    const dtItem = tableOptions.selected[0] as MDtItem
+    const index = getRows.value.findIndex((e: any) => parseInt(e.id) === parseInt(dtItem?.id?.toString() || ''))
     return onDeleteItem(dtItem, index)
   }
   if (!props.multiDestroy) {
@@ -849,9 +847,8 @@ const deleteSelectionItem = () => {
       e?._message && myth.alertError(e._message)
     } finally {
       loading.value = !1
-      nextTick(() => {
-        selected.value = []
-      })
+      await nextTick()
+      selected.value = []
     }
     // console.log(item)
   }).onDismiss(() => {
@@ -961,7 +958,7 @@ watch(formDialogModel, (v) => {
     dialogs.errors = {}
   }
 })
-const datatableItemsScope = computed(() => ({
+const datatableItemsScope = reactive({
   openShowDialog,
   openShowDialogNoIndex,
   closeShowDialog,
@@ -980,7 +977,8 @@ const datatableItemsScope = computed(() => ({
   imageDialog,
   openImageDialog,
   closeImageDialog
-}))
+})
+
 const getShowSelection = computed<boolean | undefined>(() => {
   if (props.hideSelection) {
     return !1
@@ -1170,14 +1168,43 @@ const getProp = computed(() => (k: keyof Props) => {
                         :auto="col.name !== controlKey"
                         :class="`overflow-hidden ${col.name === controlKey ? 'text-right col-12 q-pb-xs' : ''}`"
                       >
-                        <template v-if="col.field.slice(-4) === '_url' || col.field.slice(-10) === '_image_url'">
-                          <q-btn
-                            :src="col.value"
-                            fab-mini
-                            flat
-                            icon="ion-ios-eye"
-                            @click="openImageDialog(col.value)"
-                          />
+                        <template v-if="imageColumns?.indexOf(col.name) !== -1">
+                          <template v-if="getProp('imageMode') === 'icon'">
+                            <q-btn
+                              v-if="!!col.value"
+                              dense
+                              fab-mini
+                              flat
+                              icon="ion-ios-eye"
+                              @click="openImageDialog(col.value)"
+                            >
+                              <q-tooltip class="m--dt-btn-tooltip">
+                                {{ __('myth.titles.show') }}
+                              </q-tooltip>
+                            </q-btn>
+                          </template>
+                          <template v-else-if="getProp('imageMode') === 'image'">
+                            <q-img
+                              v-if="col.value"
+                              :src="col.value"
+                              :style="`width: ${getProp('imageSize')}; height: ${getProp('imageSize')}`"
+                              class="cursor-pointer"
+                              fit="contain"
+                              no-spinner
+                              @click="openImageDialog(col.value)"
+                            >
+                              <q-tooltip class="m--dt-btn-tooltip">
+                                {{ __('myth.titles.show') }}
+                              </q-tooltip>
+                            </q-img>
+                          </template>
+                          <!--<q-btn-->
+                          <!--  :src="col.value"-->
+                          <!--  fab-mini-->
+                          <!--  flat-->
+                          <!--  icon="ion-ios-eye"-->
+                          <!--  @click="openImageDialog(col.value)"-->
+                          <!--/>-->
                         </template>
                         <template v-else-if="col.name === controlKey">
                           <div class="row q-gutter-xs">
@@ -1207,35 +1234,36 @@ const getProp = computed(() => (k: keyof Props) => {
           </slot>
         </template>
 
-        <template #top>
+        <template #top="topSlotProps">
           <MCol col="12">
-            <!--<q-page-scroller
-              :offset="[0,0]"
-              :scroll-offset="50"
-              position="top-left"
-              style="z-index: 1001"
-              expand
-            >
-              <div
-                style="min-height: 76px;"
-                class="bg-black"
-              >
-              </div>
-            </q-page-scroller>-->
-            <MContainer>
+            <MContainer class="no-padding">
+              <slot
+                :dt="datatableItemsScope"
+                :index="dialogItemIndex"
+                :item="dialogItem"
+                name="top"
+                v-bind="topSlotProps"
+              />
               <MRow
                 class="items-center"
                 col
               >
-                <MCol
-                  v-if="!!title"
-                  col="12"
+                <slot
+                  :dt="datatableItemsScope"
+                  :index="dialogItemIndex"
+                  :item="dialogItem"
+                  name="title"
                 >
-                  <div
-                    class="text-h5 bordered-bottom"
-                    v-text="title"
-                  />
-                </MCol>
+                  <MCol
+                    v-if="!!title"
+                    col="12"
+                  >
+                    <div
+                      class="text-h5 bordered-bottom"
+                      v-text="title"
+                    />
+                  </MCol>
+                </slot>
                 <MInput
                   v-if="!hideSearch"
                   v-model="tableOptions.search"
@@ -1588,10 +1616,10 @@ const getProp = computed(() => (k: keyof Props) => {
                   class="rounded-borders col-12"
                 >
                   <q-expansion-item
-                    :caption="visibleHeaders.length.toString()"
+                    :caption="__('myth.datatable.columnsToShowCaption')"
                     :label="__('myth.datatable.columnsToShow')"
                     expand-separator
-                    icon="list"
+                    icon="ion-ios-list"
                   >
                     <q-card>
                       <q-card-section>
@@ -1653,7 +1681,7 @@ const getProp = computed(() => (k: keyof Props) => {
 
               <!-- Selection Row -->
               <MRow
-                v-if="Boolean($slots.selection)"
+                v-if="!!$slots.selection"
                 class="items-center q-gutter-xs"
                 style="min-height: 38px"
               >
@@ -1738,7 +1766,7 @@ const getProp = computed(() => (k: keyof Props) => {
           #[slotName]="inputSlot"
         >
           <slot
-            v-if="inputSlot"
+            v-if="inputSlot && (slotName as any) !== 'default'"
             :dt="datatableItemsScope"
             :name="slotName"
             v-bind="inputSlot || {}"
@@ -1818,24 +1846,43 @@ const getProp = computed(() => (k: keyof Props) => {
         <q-card class="m--dialog-card">
           <q-card-section ref="formTitle">
             <q-toolbar :class="{'q-pa-none': $q.screen.lt.md}">
-              <q-toolbar-title>
-                <template v-if="tableOptions.loading && !dialogs.item">
-                  <q-skeleton width="200px" />
-                </template>
-                <template v-else>
-                  <q-btn
-                    :icon="`ion-ios-arrow-${$q.lang.rtl ? 'forward' : 'back'}`"
-                    fab-mini
-                    flat
-                    @click="closeFormDialog"
-                  >
-                    <q-tooltip class="m--dt-btn-tooltip">
-                      {{ __('myth.titles.back') }}
-                    </q-tooltip>
-                  </q-btn>
-                  {{ getFormTitle }}
-                </template>
-              </q-toolbar-title>
+              <slot
+                :dt="datatableItemsScope"
+                :index="dialogItemIndex"
+                :item="dialogItem"
+                name="form-title-left"
+              />
+              <slot
+                :dt="datatableItemsScope"
+                :index="dialogItemIndex"
+                :item="dialogItem"
+                name="form-title"
+              >
+                <q-toolbar-title>
+                  <template v-if="tableOptions.loading && !dialogs.item">
+                    <q-skeleton width="200px" />
+                  </template>
+                  <template v-else>
+                    <q-btn
+                      :icon="`ion-ios-arrow-${$q.lang.rtl ? 'forward' : 'back'}`"
+                      fab-mini
+                      flat
+                      @click="closeFormDialog"
+                    >
+                      <q-tooltip class="m--dt-btn-tooltip">
+                        {{ __('myth.titles.back') }}
+                      </q-tooltip>
+                    </q-btn>
+                    {{ getFormTitle }}
+                  </template>
+                </q-toolbar-title>
+              </slot>
+              <slot
+                :dt="datatableItemsScope"
+                :index="dialogItemIndex"
+                :item="dialogItem"
+                name="form-title-right"
+              />
             </q-toolbar>
           </q-card-section>
           <q-separator />
@@ -2008,6 +2055,11 @@ export default {
       background: var(--q-dark-page)
 
 .m--datatable-component
+  .m--datatable.m--datatable-grid
+    .q-table__top
+      padding-left: 0
+      padding-right: 0
+
   &__fab
     margin-bottom: 12rem
 
@@ -2032,12 +2084,6 @@ export default {
         &.q-table--loading thead tr:last-child th
           top: 55px
 
-.m--dialog-card
-  .q-card__actions
-    .q-btn
-      padding: 4px 16px !important
-
-.m--datatable-component
   .q-table__bottom
     justify-content: start !important
 
@@ -2057,6 +2103,11 @@ export default {
       width: auto
       min-width: 0
       max-width: 100%
+
+.m--dialog-card
+  .q-card__actions
+    .q-btn
+      padding: 4px 16px !important
 
 .grid-style-transition
   transition: transform .28s, background-color .28s

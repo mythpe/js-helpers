@@ -14,7 +14,7 @@ import { ApiMetaInterface, StubSchema } from '../../types'
 import { RouteLocationRaw } from 'vue-router'
 
 export type MDtItem<T extends object = Record<keyof T, any>> = T & {
-  id?: string | number | null;
+  id: string | number;
   [K: keyof T]: any;
 }
 
@@ -152,7 +152,6 @@ export type MDatatableScope = {
   imageDialog: UnwrapNestedRefs<{ value: boolean, src?: string, asAttachment?: boolean }>;
   openImageDialog: (src: string, opts?: { asAttachment?: boolean }) => void;
   closeImageDialog: () => void;
-
 }
 
 export type GenericMDtBtn = Record<string, any> & {
@@ -166,9 +165,11 @@ export type GenericMDtBtn = Record<string, any> & {
   order?: number;
   attr?: Partial<MDtBtnProps> & Partial<{ icon?: string; textColor?: string; color?: string; }>;
 }
-
-export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-cell-${string}`> {
-  'top-right': ((scope: { tableOptions: UnwrapNestedTableOptionsType, paginationOptions: MDatatablePagination }) => VNode[]);
+type TopSlots = { dt: MDatatableScope; item: MDtItem, index: MDtItemIndex | undefined }
+export interface MDatatableSlots extends Omit<QTableSlots, `body-cell-${string}`> {
+  // top: (scope: QTableSlots['top'] &TopSlots) => VNode[];
+  // 'top-right': (scope: QTableSlots['top-right'] & TopSlots) => VNode[];
+  // 'top-left': (scope: QTableSlots['top-left'] & TopSlots) => VNode[];
 
   tools: ((scope: { dt: MDatatableScope, }) => VNode[]);
 
@@ -182,11 +183,7 @@ export interface MDatatableSlots extends Omit<QTableSlots, 'top-right' | `body-c
 
   'form-actions': ((scope: MDatatableScope & { item: MDtItem, index: MDtItemIndex, form: VeeFieldFormScope, }) => VNode[]);
 
-  /**
-   * Slot to define how a specific column cell looks like; replace '[name]' with column name (from columns definition object)
-   * @param scope
-   */
-  [key: `body-cell-${string}`]: ((scope: Parameters<QTableSlots['body-cell']>[0] & { dt: MDatatableScope, }) => VNode[]);
+  [K: `body-cell-${string}`]: ((scope: Parameters<QTableSlots['body-cell']>[0] & { dt: MDatatableScope }) => VNode[]);
 }
 
 export type MDtServiceNameCallbackProp = (() => Record<string, (() => Promise<AxiosResponse>)>)
