@@ -166,6 +166,7 @@ export type GenericMDtBtn = Record<string, any> & {
   attr?: Partial<MDtBtnProps> & Partial<{ icon?: string; textColor?: string; color?: string; }>;
 }
 type TopSlots = { dt: MDatatableScope; item: MDtItem, index: MDtItemIndex | undefined }
+
 export interface MDatatableSlots extends Omit<QTableSlots, `body-cell-${string}`> {
   // top: (scope: QTableSlots['top'] &TopSlots) => VNode[];
   // 'top-right': (scope: QTableSlots['top-right'] & TopSlots) => VNode[];
@@ -227,9 +228,9 @@ export type MDatatableProps<I extends GenericFormValues = GenericFormValues> = O
   multiSelection?: boolean;
   multiDestroy?: boolean;
   rowsPerPageOptions?: (string | number)[];
-  ignoreKeys?: string[] | ((form: Record<string, any>) => string[]);
+  ignoreKeys?: string[] | ((form: Record<string, any>) => string[]) | any[];
   manageColumns?: boolean;
-  visibleColumns?: (string | null | undefined)[];
+  visibleColumns?: (string | null | undefined)[] | any[];
   searchColumns?: string[];
   /**
    * Show Add btn top of table,
@@ -266,7 +267,7 @@ export type MDatatableProps<I extends GenericFormValues = GenericFormValues> = O
   /**
    * Names of image columns in the table.
    */
-  imageColumns?: string[];
+  imageColumns?: string[] | any[];
   /**
    * How to display image button in table.
    */
