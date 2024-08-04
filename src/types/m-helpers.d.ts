@@ -94,7 +94,7 @@ export type MDtColumn = QTableProps['columns'][number]
 export type MDtHeadersParameter = MDtColumn[] | (keyof MDatatableProps['defaultItem'])[]
 
 // Axios
-type Generic = Record<string | number | symbol, any>;
+type Generic = Record<any, any>;
 
 export type ApiMetaInterface = {
   // server current page
@@ -113,18 +113,19 @@ export type ApiModel<T extends Generic = Generic> = {
   value: string | number;
   label?: string;
   [K: keyof T]: any;
+  [s: string]: any;
 };
 
-type ResponseAsMain = {
+type ResponseAsMain = Generic & {
   success: boolean;
   errors: ApiErrorsInterface;
   message: string;
 }
 
-type ResponseAsModel<T = any> = ResponseAsMain & {
+type ResponseAsModel<T extends Generic = Generic> = ResponseAsMain & {
   data: ApiModel<T>
 }
-type ResponseAsList<T = any> = ResponseAsMain & {
+type ResponseAsList<T extends Generic = Generic> = ResponseAsMain & {
   data: ResponseAsModel<T>[];
   links: {
     first: string;
@@ -134,7 +135,7 @@ type ResponseAsList<T = any> = ResponseAsMain & {
   }
   meta: ApiMetaInterface;
 }
-type ResponseDataType = ResponseAsList | ResponseAsModel | object
+type ResponseDataType = ResponseAsList | ResponseAsModel | Generic;
 export type ApiFulfilledResponse = AxiosResponse<ResponseDataType>
 export type ApiErrorResponse = AxiosError<ResponseDataType>;
 
