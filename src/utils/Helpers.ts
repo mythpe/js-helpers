@@ -177,16 +177,24 @@ export const Helpers = {
             resolvePromise(response)
             return
           }
-          const a = window.open(url, 'AppWindow')
-          if (!a) {
-            rejectPromise({ code: 'window_blocked' })
-          } else {
-            resolvePromise(response)
-          }
+          const elm = document.createElement('a')
+          elm.setAttribute('href', url)
+          elm.setAttribute('target', '_blank')
+          document.body.appendChild(elm)
+          elm.click()
+
+          resolvePromise(response)
+
+          // const a = window.open(url, 'AppWindow')
+          // if (!a) {
+          //   rejectPromise({ code: 'window_blocked' })
+          // } else {
+          //   resolvePromise(response)
+          // }
           return
         }
-
-        const name = (response.headers['content-disposition'] || '').name.split('filename=').pop().replace(/^"+|"+$/g, '')
+        console.log(response.headers)
+        const name = (response.headers['content-disposition'] || '').split('filename=').pop().replace(/^"+|"+$/g, '')
         if (!name) {
           rejectPromise({ code: 'no_file_name' })
           return

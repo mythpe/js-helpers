@@ -30,6 +30,7 @@ import { useMyth } from '../../vue3'
 import { useI18n } from 'vue-i18n'
 import MDtContextmenuItems from './MDtContextmenuItems.vue'
 import MDtBtn from './MDtBtn.vue'
+import { AxiosRequestConfig } from 'axios'
 
 const initPaginationOptions: MDatatablePagination = {
   sortBy: undefined,
@@ -505,30 +506,86 @@ const exportData = (type: MDtExportOptions) => {
     if (tableOptions.selected.length > 0) {
       data.ids = tableOptions.selected.map((e: any) => e.id)
     }
-    try {
-      const response = await getMythApiServicesSchema().export(data)
-      await myth.helpers.downloadFromResponse(response)
-    } catch (e: any) {
-      if (e?.code === 'window_blocked') {
-        myth.alertError(t('messages.window_blocked'))
-      } else if (e?._message) {
-        myth.alertError(e._message)
-      } else if (e?.message) {
-        myth.alertError(e.message)
-      } else {
-        myth.alertError(t('messages.error'))
-      }
-    } finally {
-      loading.value = !1
+    // console.log(3)
+    const config :AxiosRequestConfig = {}
+    if (!props.exportToUrl) {
+      config.responseType = 'blob'
+      config.withCredentials = !0
     }
+    getMythApiServicesSchema().export(data, config)
+      .then((response) => {
+        console.log(response)
+        if (!props.exportToUrl) {
+          myth.helpers.downloadFromResponse(response)
+            .catch(e => {
+              console.log(e)
+              if (e?.code === 'window_blocked') {
+                myth.alertError(t('messages.window_blocked'))
+              } else if (e?._message) {
+                myth.alertError(e._message)
+              } else if (e?.message) {
+                myth.alertError(e.message)
+              } else {
+                myth.alertError(t(`messages.${e.code ?? 'error'}`))
+              }
+            })
+            .finally(() => {
+              loading.value = !1
+            })
+          return
+        }
+        const { _success, _message, _data } = response || {}
+        if (_success) {
+          if (_data?.url) {
+            myth.helpers.downloadFromResponse(response)
+              .finally(() => {
+                loading.value = !1
+              })
+          } else {
+            loading.value = !1
+          }
+          if (_message) {
+            myth.alertSuccess(_message)
+          }
+        } else {
+          loading.value = !1
+        }
+        return response
+      })
+      .catch((e) => {
+        if (e?.code === 'window_blocked') {
+          myth.alertError(t('messages.window_blocked'))
+        } else if (e?._message) {
+          myth.alertError(e._message)
+        } else if (e?.message) {
+          myth.alertError(e.message)
+        } else {
+          myth.alertError(t('messages.error'))
+        }
+        loading.value = !1
+      })
+      // .finally(() => {
+      //   loading.value = !1
+      // })
+    // try {
+    //   const response = await getMythApiServicesSchema().export(data)
+    //   await myth.helpers.downloadFromResponse(response)
+    // } catch (e: any) {
+    //   if (e?.code === 'window_blocked') {
+    //     myth.alertError(t('messages.window_blocked'))
+    //   } else if (e?._message) {
+    //     myth.alertError(e._message)
+    //   } else if (e?.message) {
+    //     myth.alertError(e.message)
+    //   } else {
+    //     myth.alertError(t('messages.error'))
+    //   }
+    // } finally {
+    //   loading.value = !1
+    // }
   }
   if (!tableOptions.selected.length) {
-    myth.confirmMessage(t('messages.export_all')).onOk(() => {
-      ex()
-    })
-    // if (confirm(t('messages.export_all'))) {
-    //   ex()
-    // }
+    myth.confirmMessage(t('messages.export_all')).onOk(() => ex())
   } else {
     ex()
   }
