@@ -10,7 +10,7 @@ import { AxiosResponse } from 'axios'
 import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
 import { ComputedRef, MaybeRef, Ref, UnwrapNestedRefs, UnwrapRef, VNode } from 'vue'
 import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
-import { ApiMetaInterface, StubSchema } from '../../types'
+import { ApiMetaInterface, Generic, StubSchema } from '../../types'
 import { RouteLocationRaw } from 'vue-router'
 
 export type MDtItem<T extends object = Record<keyof T, any>> = T & {
@@ -95,13 +95,13 @@ export type MDatatableOptions = {
   // Fullscreen of datatable
   fullscreen: Ref<boolean>;
 }
-
-export type MDatatableDialogsOptions = {
+type MDDIP<T extends Generic = Generic | any> = Partial<MDtItem> & Record<string, any> | T;
+export type MDatatableDialogsOptions<T extends MDDIP = MDDIP> = {
   filter: Ref<boolean>;
   show: Ref<boolean>;
   form: Ref<boolean>;
   isUpdate: Ref<boolean>;
-  item: Ref<Partial<MDtItem>> | MaybeRef<Partial<MDtItem>> | UnwrapRef<MDtItem> | Record<string, any> | undefined;
+  item: T | MaybeRef<MDDIP<T>> | UnwrapRef<MDDIP<T>> | Record<string, any> | undefined;
   index: Ref<MDtItemIndex | undefined>;
   errors: Record<string | number | symbol, string[]> | any;
 }
@@ -153,19 +153,19 @@ export type MDatatableScope = {
   openImageDialog: (src: string, opts?: { asAttachment?: boolean }) => void;
   closeImageDialog: () => void;
 }
-
-export type GenericMDtBtn = Record<string, any> & {
+type E = MDatatableDialogsOptions['item'];
+export type GenericMDtBtn<T extends E = E> = Record<string, any> & {
   name: string;
   label?: string;
   contextLabel?: string | null;
   tooltip?: string;
-  click?: (item: UnwrapRef<MDatatableDialogsOptions['item']>, index: UnwrapRef<MDatatableDialogsOptions['index']>) => void;
-  multiClick?: (items: MDtItem[]) => void;
+  click?: (item: UnwrapRef<T> | Ref<T> | T, index: UnwrapRef<MDatatableDialogsOptions['index']>) => void;
+  multiClick?: (items: T[]) => void;
   showIf?: boolean | ((item: UnwrapRef<MDatatableDialogsOptions['item']>, index: UnwrapRef<MDatatableDialogsOptions['index']>) => boolean);
   order?: number;
   attr?: Partial<MDtBtnProps> & Partial<{ icon?: string; textColor?: string; color?: string; }>;
 }
-type TopSlots = { dt: MDatatableScope; item: MDtItem, index: MDtItemIndex | undefined }
+// type TopSlots = { dt: MDatatableScope; item: MDtItem, index: MDtItemIndex | undefined }
 
 export interface MDatatableSlots extends Omit<QTableSlots, `body-cell-${string}`> {
   // top: (scope: QTableSlots['top'] &TopSlots) => VNode[];
