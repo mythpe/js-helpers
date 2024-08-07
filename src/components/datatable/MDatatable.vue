@@ -27,7 +27,6 @@ import {
   MDtMythApiServicesSchema
 } from './models'
 import { useMyth } from '../../vue3'
-import { useI18n } from 'vue-i18n'
 import MDtContextmenuItems from './MDtContextmenuItems.vue'
 import MDtBtn from './MDtBtn.vue'
 import { AxiosRequestConfig } from 'axios'
@@ -56,7 +55,7 @@ interface Props {
   requestParams?: MDatatableProps['requestParams'];
   pdf?: MDatatableProps['pdf'];
   excel?: MDatatableProps['excel'];
-  exportToUrl?: MDatatableProps['exportToUrl'];
+  exportUrl?: MDatatableProps['exportUrl'];
   hideSearch?: MDatatableProps['hideSearch'];
   searchDebounce?: MDatatableProps['searchDebounce'];
   withIndex?: MDatatableProps['withIndex'];
@@ -115,7 +114,7 @@ const props = withDefaults(defineProps<Props>(), {
   requestParams: undefined,
   pdf: undefined,
   excel: undefined,
-  exportToUrl: undefined,
+  exportUrl: undefined,
   hideSearch: undefined,
   searchDebounce: () => 600,
   withIndex: undefined,
@@ -175,17 +174,24 @@ const router = useRouter()
 const route = useRoute()
 const $q = useQuasar()
 const serviceName = computed(() => props.serviceName)
-const exportToUrlProp = computed(() => {
-  if (props.exportToUrl !== undefined) {
-    return props.exportToUrl
+const exportToBlob = computed(() => {
+  if (props.exportUrl === undefined && myth.options.dt?.props?.exportUrl === undefined) {
+    return !0
   }
-  if (myth.options.dt?.props?.exportToUrl !== undefined) {
-    return myth.options.dt.props.exportToUrl
+  const t = props.exportUrl === undefined ? myth.options.dt?.props?.exportUrl : props.exportUrl
+  if (t !== undefined) {
+    if (t.toString() === 'true' || t.toString() === '') {
+      return !1
+    }
+    if (t.toString() === 'pdf') {
+      return 'excel'
+    }
+    if (t.toString() === 'excel') {
+      return 'pdf'
+    }
   }
-
-  return props.exportToUrl
+  return !0
 })
-const { t } = useI18n({ useScope: 'global' })
 // Prevent user from back
 /* router.beforeResolve(() => {
   if (dialogs.filter) {
@@ -506,13 +512,14 @@ const exportData = (type: MDtExportOptions) => {
   }
   const ex = async () => {
     loading.value = !0
+    const toBLob = exportToBlob.value === !0 || exportToBlob.value === type
     const data = getDatatableParams({
       pagination: tableOptions.pagination,
       filter: tableOptions.search
     }, {
       indexType: type,
       fdt: 'e',
-      toUrl: exportToUrlProp.value,
+      toUrl: toBLob === !0 ? !1 : exportToBlob.value !== type,
       headerItems: getHeaders.value.filter(e => e?.field !== props.controlKey && visibleHeaders.value.indexOf(e.name) !== -1)
     })
     if (tableOptions.selected.length > 0) {
@@ -520,19 +527,18 @@ const exportData = (type: MDtExportOptions) => {
     }
     // console.log(3)
     const config: AxiosRequestConfig = {}
-    if (!exportToUrlProp.value) {
+    if (toBLob) {
       config.responseType = 'blob'
-      config.withCredentials = !0
     }
-
+    console.log(config)
     getMythApiServicesSchema().export(data, config)
       .then(async (response) => {
-        const { _message, _success } = response || {}
+        const { _message } = response || {}
         _message && (myth.alertSuccess(_message))
         try {
           await myth.helpers.downloadFromResponse(response)
         } catch (e: DownloadFromResponseError | any) {
-          if (_success) {
+          if (response.status === 200 && response.headers['content-type'] === 'application/json') {
             return response
           }
           if (e?.code) {

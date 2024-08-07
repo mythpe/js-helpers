@@ -66,7 +66,7 @@ export interface ApiServiceParams {
   page: number;
   sortBy?: string;
   sortDesc?: number;
-  toUrl?: boolean;
+  toUrl?: MDtExportOptions | boolean;
 
   [key: string]: any;
 }
@@ -165,6 +165,7 @@ export type GenericMDtBtn<T extends E = E> = Record<string, any> & {
   order?: number;
   attr?: Partial<MDtBtnProps> & Partial<{ icon?: string; textColor?: string; color?: string; }>;
 }
+
 // type TopSlots = { dt: MDatatableScope; item: MDtItem, index: MDtItemIndex | undefined }
 
 export interface MDatatableSlots extends Omit<QTableSlots, `body-cell-${string}`> {
@@ -203,7 +204,7 @@ export type MDatatableProps<I extends GenericFormValues = GenericFormValues> = O
   requestParams?: MDtRequestParamsObjectProp | MDtRequestParamsCallbackProp;
   pdf?: boolean;
   excel?: boolean;
-  exportToUrl?: boolean;
+  exportUrl?: MDtExportOptions | boolean;
   hideSearch?: boolean;
   searchDebounce?: string | number;
   withIndex?: string | string[];
