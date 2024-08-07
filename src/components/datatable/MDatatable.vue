@@ -530,7 +530,6 @@ const exportData = (type: MDtExportOptions) => {
     if (toBLob) {
       config.responseType = 'blob'
     }
-    console.log(config)
     getMythApiServicesSchema().export(data, config)
       .then(async (response) => {
         const { _message } = response || {}
