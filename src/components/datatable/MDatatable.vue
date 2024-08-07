@@ -246,7 +246,7 @@ const searchColumnsRef = ref<string[]>(myth.parseHeaders(searchColumnsProp.value
   e => e.name))
 const searchPlaceholder = computed<string>(() => {
   if (searchColumnsRef.value.length > 0) {
-    return t('myth.datatable.searchInputPlaceholder',
+    return __('myth.datatable.searchInputPlaceholder',
       { v: getHeaders.value.filter(e => e?.field !== props.controlKey && searchColumnsRef.value.indexOf(e.name) !== -1).map(e => e.label).join(', ') })
   }
   return 'myth.datatable.searchInput'
@@ -303,14 +303,14 @@ const hasSelectedItem = computed<boolean>(() => tableOptions.selected.length > 0
 const getShowTitle = computed(() => {
   if (serviceName.value && typeof serviceName.value !== 'function') {
     const c = myth.str.pascalCase(myth.str.pluralize(serviceName.value.split('/').pop()))
-    return t('replace.show_details', { name: t(`choice.${c}`, 1) })
+    return __('replace.show_details', { name: __(`choice.${c}`, 1) })
   }
-  return t('show_details')
+  return __('show_details')
 })
 const getFormTitle = computed(() => {
-  const name = serviceName.value && typeof serviceName.value !== 'function' ? t(`choice.${myth.str.pascalCase(myth.str.pluralize(serviceName.value.split(
+  const name = serviceName.value && typeof serviceName.value !== 'function' ? __(`choice.${myth.str.pascalCase(myth.str.pluralize(serviceName.value.split(
     '/').pop()))}`, 1) : ''
-  return t(`replace.${formMode.value}`, { name })
+  return __(`replace.${formMode.value}`, { name })
 })
 const defaultItem = computed(() => props.defaultItem)
 const isGrid = computed(() => {
@@ -550,25 +550,9 @@ const exportData = (type: MDtExportOptions) => {
       .finally(() => {
         loading.value = !1
       })
-    // try {
-    //   const response = await getMythApiServicesSchema().export(data)
-    //   await myth.helpers.downloadFromResponse(response)
-    // } catch (e: any) {
-    //   if (e?.code === 'window_blocked') {
-    //     myth.alertError(t('messages.window_blocked'))
-    //   } else if (e?._message) {
-    //     myth.alertError(e._message)
-    //   } else if (e?.message) {
-    //     myth.alertError(e.message)
-    //   } else {
-    //     myth.alertError(t('messages.error'))
-    //   }
-    // } finally {
-    //   loading.value = !1
-    // }
   }
   if (!tableOptions.selected.length) {
-    myth.confirmMessage(t('messages.export_all')).onOk(() => ex())
+    myth.confirmMessage(__('messages.export_all')).onOk(() => ex())
   } else {
     ex()
   }
@@ -685,9 +669,6 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
   }
   loading.value = !0
   isUpdateMode.value = !0
-  // nextTick(() => {
-  //   dialogs.form = !0
-  // })
   const params: any = { fdt }
   if (getRequestWith('withUpdate')) {
     params.requestWith = getRequestWith('withUpdate')
@@ -746,12 +727,6 @@ const updateDatatableItem = (i: MDtItem, index?: MDtItemIndex) => {
   if (item.value && !index) {
     const findIndex = getRows.value.findIndex(e => parseInt(e.id?.toString?.() ?? '') === parseInt(item.value?.id?.toString?.() ?? ''))
     getRows.value[findIndex] = item.value
-    // const r = [...getRows.value]
-    // r[parseInt(findIndex.toString())] = item
-    // getRows.value = []
-    // nextTick(() => {
-    //   getRows.value = [...r]
-    // })
   }
 }
 const removeDtItem = (i: MDtItem | number) => {
@@ -767,7 +742,6 @@ const ignoreKeysProps = computed(() => props.ignoreKeys)
 const defaultSubmitItem = async (_form: Record<string, any>) => {
   // let form = { ..._form, ...(dialogs.itemForm || {}) }
   let form = { ...(props.formModel ? props.formModel : _form) }
-  // console.log(form)
   if (loading.value) {
     return
   }
@@ -835,7 +809,7 @@ const onDeleteItem = (i: MDtItem, index: number) => {
     return
   }
   tableOptions.hasAction = !0
-  myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
+  myth.confirmMessage(__('messages.confirm_delete')).onOk(async () => {
     loading.value = !0
     try {
       const { _message, _success } = await getMythApiServicesSchema().destroy(item.value.id)
@@ -873,7 +847,7 @@ const deleteSelectionItem = () => {
     return
   }
   tableOptions.hasAction = !0
-  myth.confirmMessage(t('messages.confirm_delete')).onOk(async () => {
+  myth.confirmMessage(__('messages.confirm_delete')).onOk(async () => {
     loading.value = !0
     try {
       const { _message, _success } = await getMythApiServicesSchema().destroyAll(tableOptions.selected.map((e: MDtItem) => e.id))
@@ -890,7 +864,6 @@ const deleteSelectionItem = () => {
       await nextTick()
       selected.value = []
     }
-    // console.log(item)
   }).onDismiss(() => {
     tableOptions.hasAction = !1
   })
