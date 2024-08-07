@@ -77,7 +77,7 @@ const getOptionLabel = computed<MAxiosProps['optionLabel']>(() => {
   }
   return props.value.optionLabel
 })
-const model = defineModel({ required: !0, default: undefined })
+const model = defineModel<MAxiosProps['modelValue']>({ required: !0, default: undefined })
 const autoProps = computed(() => props.value.autoSearch)
 const paramsProps = computed(() => props.value.params)
 const requestWithProps = computed(() => props.value.requestWith)

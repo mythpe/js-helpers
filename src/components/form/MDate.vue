@@ -18,7 +18,9 @@
 
 <script lang="ts" setup>
 
-const inputValue = defineModel({ required: !0 })
+import { MDateProps } from './models'
+
+const inputValue = defineModel<MDateProps['modelValue']>({ required: !0 })
 
 </script>
 

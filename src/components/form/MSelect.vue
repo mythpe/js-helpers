@@ -102,7 +102,7 @@ type Events = {
 const emit = defineEmits<Events>()
 const veeFieldRef = ref()
 const selectRef = ref()
-const inputValue = defineModel({ required: !0, default: undefined })
+const inputValue = defineModel<MSelectProps['modelValue']>({ required: !0, default: undefined })
 const errorMessageField = ref<string | undefined>(undefined)
 const myth = useMyth()
 const myProps = computed(() => ({ ...props, ...myth.options.select }))

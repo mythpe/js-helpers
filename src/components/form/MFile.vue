@@ -108,7 +108,7 @@ const fileInput = ref<InstanceType<typeof QFile>>()
 //     })
 //   }
 // })
-const inputValue = defineModel({ required: !0 })
+const inputValue = defineModel<MFileProps['modelValue']>({ required: !0 })
 const pickFiles = (...args: any) => fileInput.value?.pickFiles(...args)
 const removeAtIndex = (index: number) => fileInput.value?.removeAtIndex(index)
 

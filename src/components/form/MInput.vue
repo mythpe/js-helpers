@@ -73,7 +73,7 @@ type EmitsTypes = {
   (e: 'update:modelValue', value: any): void
 }
 defineEmits<EmitsTypes>()
-const inputValue = defineModel({ required: !0, default: '' })
+const inputValue = defineModel<MInputProps['modelValue']>({ required: !0, default: '' })
 const { getRules, getLabel, getPlaceholder } = useInputProps(() => props)
 const getAutocompleteAttribute = computed(() => {
   if (props.autocomplete !== undefined) {

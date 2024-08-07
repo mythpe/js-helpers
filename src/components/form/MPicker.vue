@@ -56,7 +56,7 @@ const isDate = computed(() => props.type === 'date')
 const isRange = computed(() => props.range !== !1 && props.range !== undefined)
 const isMultiple = computed(() => props.multiple !== !1 && props.multiple !== undefined)
 
-const inputValue = defineModel({ required: !0 })
+const inputValue = defineModel<MPickerProps['modelValue']>({ required: !0 })
 
 const mask = computed(() => {
   if (isRange.value || isMultiple.value) {
