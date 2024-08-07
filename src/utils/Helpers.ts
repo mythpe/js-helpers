@@ -9,7 +9,7 @@
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import lodash from 'lodash'
 import { scroll } from 'quasar'
-import { ConfigType, DownloadFromResponse, HelpersStubSchema, ParamsType, UrlType } from '../types'
+import { ConfigType, DownloadFromResponse, DownloadFromResponseCode, HelpersStubSchema, ParamsType, UrlType } from '../types'
 import { nextTick } from 'vue'
 
 export const Helpers = {
@@ -162,7 +162,7 @@ export const Helpers = {
    */
   downloadFromResponse (response: any, callback?: ((url: string, response: any) => void)) {
     return new Promise<DownloadFromResponse>((resolve, reject) => {
-      const rejectPromise = (e?: any) => reject(e || { status: !1, code: 'none' })
+      const rejectPromise = (e?: {code: DownloadFromResponseCode}) => reject(e ?? { status: !1, code: 'unknown' })
       const resolvePromise = (response: DownloadFromResponse['response']) => resolve({ status: !0, response })
       try {
         if (!response) {
@@ -182,18 +182,10 @@ export const Helpers = {
           elm.setAttribute('target', '_blank')
           document.body.appendChild(elm)
           elm.click()
-
           resolvePromise(response)
-
-          // const a = window.open(url, 'AppWindow')
-          // if (!a) {
-          //   rejectPromise({ code: 'window_blocked' })
-          // } else {
-          //   resolvePromise(response)
-          // }
           return
         }
-        console.log(response.headers)
+
         const name = (response.headers['content-disposition'] || '').split('filename=').pop().replace(/^"+|"+$/g, '')
         if (!name) {
           rejectPromise({ code: 'no_file_name' })
@@ -216,17 +208,22 @@ export const Helpers = {
           try {
             document.body.removeChild(fileLink)
             URL.revokeObjectURL(fileURL)
-          } catch (e) {
+          } catch (e : any) {
+            console.log(e)
+            if (e?.message) {
+              alert(e.message)
+            }
           }
         }, 3000)
       } catch (e: any) {
+        console.log(e)
         rejectPromise(e)
       }
     })
   },
   async scrollToElement (el: HTMLElement | string, opt?: { target?: HTMLElement, duration?: number; }) {
     await nextTick()
-    const { getScrollTarget, setVerticalScrollPosition, getVerticalScrollPosition, getScrollHeight } = scroll
+    const { getScrollTarget, setVerticalScrollPosition, getVerticalScrollPosition } = scroll
     const scrollTo = typeof el === 'string' ? document.querySelector(el) as HTMLElement : el
     if (!scrollTo) {
       return

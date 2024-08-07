@@ -31,6 +31,7 @@ import { useI18n } from 'vue-i18n'
 import MDtContextmenuItems from './MDtContextmenuItems.vue'
 import MDtBtn from './MDtBtn.vue'
 import { AxiosRequestConfig } from 'axios'
+import { DownloadFromResponseError } from '../../types'
 
 const initPaginationOptions: MDatatablePagination = {
   sortBy: undefined,
@@ -114,7 +115,7 @@ const props = withDefaults(defineProps<Props>(), {
   requestParams: undefined,
   pdf: undefined,
   excel: undefined,
-  exportToUrl: () => !0,
+  exportToUrl: undefined,
   hideSearch: undefined,
   searchDebounce: () => 600,
   withIndex: undefined,
@@ -168,11 +169,22 @@ interface Emits {
 const emit = defineEmits<Emits>()
 
 const myth = useMyth()
+const { __ } = myth
 const slots = useSlots()
 const router = useRouter()
 const route = useRoute()
 const $q = useQuasar()
 const serviceName = computed(() => props.serviceName)
+const exportToUrlProp = computed(() => {
+  if (props.exportToUrl !== undefined) {
+    return props.exportToUrl
+  }
+  if (myth.options.dt?.props?.exportToUrl !== undefined) {
+    return myth.options.dt.props.exportToUrl
+  }
+
+  return props.exportToUrl
+})
 const { t } = useI18n({ useScope: 'global' })
 // Prevent user from back
 /* router.beforeResolve(() => {
@@ -189,7 +201,7 @@ const { t } = useI18n({ useScope: 'global' })
   return !hasAction.value
 }) */
 const getRows = ref<MDtItem[]>([])
-watch(getRows, (v) => emit('update:rows', v))
+watch(() => getRows.value, (v) => emit('update:rows', v))
 const filterDialogModel = ref(!1)
 const showDialogModel = ref(!1)
 const formDialogModel = ref(!1)
@@ -500,73 +512,44 @@ const exportData = (type: MDtExportOptions) => {
     }, {
       indexType: type,
       fdt: 'e',
-      toUrl: props.exportToUrl,
+      toUrl: exportToUrlProp.value,
       headerItems: getHeaders.value.filter(e => e?.field !== props.controlKey && visibleHeaders.value.indexOf(e.name) !== -1)
     })
     if (tableOptions.selected.length > 0) {
       data.ids = tableOptions.selected.map((e: any) => e.id)
     }
     // console.log(3)
-    const config :AxiosRequestConfig = {}
-    if (!props.exportToUrl) {
+    const config: AxiosRequestConfig = {}
+    if (!exportToUrlProp.value) {
       config.responseType = 'blob'
       config.withCredentials = !0
     }
+
     getMythApiServicesSchema().export(data, config)
-      .then((response) => {
-        console.log(response)
-        if (!props.exportToUrl) {
-          myth.helpers.downloadFromResponse(response)
-            .catch(e => {
-              console.log(e)
-              if (e?.code === 'window_blocked') {
-                myth.alertError(t('messages.window_blocked'))
-              } else if (e?._message) {
-                myth.alertError(e._message)
-              } else if (e?.message) {
-                myth.alertError(e.message)
-              } else {
-                myth.alertError(t(`messages.${e.code ?? 'error'}`))
-              }
-            })
-            .finally(() => {
-              loading.value = !1
-            })
-          return
-        }
-        const { _success, _message, _data } = response || {}
-        if (_success) {
-          if (_data?.url) {
-            myth.helpers.downloadFromResponse(response)
-              .finally(() => {
-                loading.value = !1
-              })
-          } else {
-            loading.value = !1
+      .then(async (response) => {
+        const { _message, _success } = response || {}
+        _message && (myth.alertSuccess(_message))
+        try {
+          await myth.helpers.downloadFromResponse(response)
+        } catch (e: DownloadFromResponseError | any) {
+          if (_success) {
+            return response
           }
-          if (_message) {
-            myth.alertSuccess(_message)
+          if (e?.code) {
+            myth.alertError(__(`messages.${e.code}`))
+          } else if (e?.message) {
+            myth.alertError(e.message)
           }
-        } else {
-          loading.value = !1
+          console.log(e)
         }
         return response
       })
       .catch((e) => {
-        if (e?.code === 'window_blocked') {
-          myth.alertError(t('messages.window_blocked'))
-        } else if (e?._message) {
-          myth.alertError(e._message)
-        } else if (e?.message) {
-          myth.alertError(e.message)
-        } else {
-          myth.alertError(t('messages.error'))
-        }
+        myth.alertError(e?._message || e?.message || 'Error')
+      })
+      .finally(() => {
         loading.value = !1
       })
-      // .finally(() => {
-      //   loading.value = !1
-      // })
     // try {
     //   const response = await getMythApiServicesSchema().export(data)
     //   await myth.helpers.downloadFromResponse(response)
