@@ -926,7 +926,12 @@ const contextmenuItems = computed<any>(() => ([
   {
     name: 'destroy',
     label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.destroy' : undefined,
-    click: (item: MDtItem, index: MDtItemIndex) => onDeleteItem(item, index),
+    click: (item: MDtItem, index: MDtItemIndex) => {
+      if (!tableOptions.selected.length) {
+        tableOptions.selected.push(item)
+      }
+      onDeleteItem(item, index)
+    },
     showIf: hasDestroyBtn.value,
     order: 100,
     attr: {
