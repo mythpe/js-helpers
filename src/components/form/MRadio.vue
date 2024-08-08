@@ -34,7 +34,7 @@
             v-bind="fieldProps"
           />
           <q-radio
-            :label="noLabel ? undefined : getLabel"
+            :label="noLabel ? undefined : (getLabel ?? undefined)"
             :model-value="modelValue"
             :placeholder="getPlaceholder"
             :val="val"
@@ -57,6 +57,7 @@
         />
       </MColumn>
     </VeeField>
+    <slot />
   </MCol>
 </template>
 

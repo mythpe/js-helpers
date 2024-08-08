@@ -357,6 +357,7 @@ export interface MToggleProps extends MColProps, Omit<QToggleProps, 'modelValue'
   viewMode?: boolean;
   placeholder?: any;
   errors?: Record<string, string[]>;
+  hint?: string;
 }
 
 export interface MToggleSlots extends QToggleSlots {
@@ -365,6 +366,7 @@ export interface MToggleSlots extends QToggleSlots {
   default: () => VNode[];
   after: (scope: VeeFieldFormScope) => VNode[];
   bottom: (scope: VeeFieldFormScope) => VNode[];
+  hint: () => VNode[];
 }
 
 type GenericObject = Record<string, any>;

@@ -899,47 +899,44 @@ const onRowContextmenu = (e: MouseEvent | Event, row: MDtItem, index: number) =>
 }
 const contextmenuItemsProp = computed(() => props.contextItems)
 const contextmenuItems = computed<any>(() => ([
+  ...(contextmenuItemsProp.value || []).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
   {
     name: 'show',
     label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.show' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => {
-      if (!tableOptions.selected.length) {
-        tableOptions.selected.push(item)
-      }
+      tableOptions.selected = [item]
       openShowDialog(item, index)
     },
     showIf: hasShowBtn.value,
-    order: 100
+    attr: {
+      color: 'secondary'
+    }
   },
   {
     name: 'update',
     label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.update' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => {
-      if (!tableOptions.selected.length) {
-        tableOptions.selected.push(item)
-      }
+      tableOptions.selected = [item]
       openUpdateDialog(item, index)
     },
     showIf: hasUpdateBtn.value,
-    order: 100
+    attr: {
+      color: 'secondary'
+    }
   },
   {
     name: 'destroy',
     label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.destroy' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => {
-      if (!tableOptions.selected.length) {
-        tableOptions.selected.push(item)
-      }
+      tableOptions.selected = [item]
       onDeleteItem(item, index)
     },
     showIf: hasDestroyBtn.value,
-    order: 100,
     attr: {
       color: 'negative'
     }
-  },
-  ...(contextmenuItemsProp.value || [])
-].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))))
+  }
+]))
 const endReach = computed<boolean>(() => Boolean(props.endReach))
 const rowsPerPageOptions = computed(() => props.rowsPerPageOptions)
 const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))

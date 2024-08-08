@@ -6,6 +6,93 @@
   - Github: https://github.com/mythpe
   -->
 
+<script lang="ts" setup>
+import { useMyth } from '../../vue3'
+import { Field as VeeField } from 'vee-validate'
+import { computed } from 'vue'
+import { useInputProps } from '../../composables'
+
+import { MToggleProps } from './models'
+
+interface Props {
+  auto?: MToggleProps['auto'];
+  col?: MToggleProps['col'];
+  xs?: MToggleProps['xs'];
+  sm?: MToggleProps['sm'];
+  md?: MToggleProps['md'];
+  lg?: MToggleProps['lg'];
+  xl?: MToggleProps['xl'];
+  borderless?: MToggleProps['borderless'];
+  clearable?: MToggleProps['clearable'];
+  dense?: MToggleProps['dense'];
+  modelValue?: MToggleProps['modelValue'];
+  val?: MToggleProps['val'];
+  name?: MToggleProps['name'];
+  label?: MToggleProps['label'];
+  activeLabel?: MToggleProps['activeLabel'];
+  inactiveLabel?: MToggleProps['inactiveLabel'];
+  trueValue?: MToggleProps['trueValue'];
+  falseValue?: MToggleProps['falseValue'];
+  color?: MToggleProps['color'];
+  checkedIcon?: MToggleProps['checkedIcon'];
+  uncheckedIcon?: MToggleProps['uncheckedIcon'];
+  toggleIndeterminate?: MToggleProps['toggleIndeterminate'];
+  statusLabels?: MToggleProps['statusLabels'];
+  hint?: MToggleProps['hint'];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  auto: undefined,
+  col: undefined,
+  xs: undefined,
+  sm: undefined,
+  md: undefined,
+  lg: undefined,
+  xl: undefined,
+  borderless: undefined,
+  clearable: undefined,
+  dense: undefined,
+  modelValue: undefined,
+  val: undefined,
+  name: () => '',
+  label: undefined,
+  activeLabel: 'yes',
+  inactiveLabel: 'no',
+  trueValue: !0,
+  falseValue: !1,
+  color: 'primary',
+  checkedIcon: 'check',
+  uncheckedIcon: 'cancel',
+  toggleIndeterminate: !1,
+  statusLabels: !1,
+  hint: undefined
+})
+const { getRules } = useInputProps(() => props)
+const { __ } = useMyth()
+type Events = {
+  (e: 'update:modelValue', value: any): void;
+}
+const emit = defineEmits<Events>()
+const inputValue = computed({
+  get: () => props.modelValue,
+  set: v => emit('update:modelValue', v)
+})
+
+const topLabel = computed<string | null>(() => __(props.label === undefined ? props.name : props.label) ?? null)
+
+const getLabel = computed<string | undefined>(() => {
+  const v = props.modelValue
+  if (v === props.trueValue) {
+    return __(props.statusLabels ? 'active' : props.activeLabel) || undefined
+  }
+  if (v === props.falseValue) {
+    return __(props.statusLabels ? 'inactive' : props.inactiveLabel) || undefined
+  }
+  return __('none') || undefined
+})
+
+</script>
+
 <template>
   <MCol
     :auto="auto"
@@ -54,6 +141,15 @@
           >
             <slot />
           </q-toggle>
+          <slot name="hint">
+            <div
+              v-if="!!hint"
+              class="text-caption"
+            >
+              <q-icon name="ion-ios-help-circle-outline" />
+              {{ __(hint) }}
+            </div>
+          </slot>
           <div
             v-if="fieldProps.errors.length > 0"
             class="text-caption text-negative"
@@ -73,91 +169,6 @@
     </VeeField>
   </MCol>
 </template>
-
-<script lang="ts" setup>
-import { useMyth } from '../../vue3'
-import { Field as VeeField } from 'vee-validate'
-import { computed } from 'vue'
-import { useInputProps } from '../../composables'
-
-import { MToggleProps } from './models'
-
-interface Props {
-  auto?: MToggleProps['auto'];
-  col?: MToggleProps['col'];
-  xs?: MToggleProps['xs'];
-  sm?: MToggleProps['sm'];
-  md?: MToggleProps['md'];
-  lg?: MToggleProps['lg'];
-  xl?: MToggleProps['xl'];
-  borderless?: MToggleProps['borderless'];
-  clearable?: MToggleProps['clearable'];
-  dense?: MToggleProps['dense'];
-  modelValue?: MToggleProps['modelValue'];
-  val?: MToggleProps['val'];
-  name?: MToggleProps['name'];
-  label?: MToggleProps['label'];
-  activeLabel?: MToggleProps['activeLabel'];
-  inactiveLabel?: MToggleProps['inactiveLabel'];
-  trueValue?: MToggleProps['trueValue'];
-  falseValue?: MToggleProps['falseValue'];
-  color?: MToggleProps['color'];
-  checkedIcon?: MToggleProps['checkedIcon'];
-  uncheckedIcon?: MToggleProps['uncheckedIcon'];
-  toggleIndeterminate?: MToggleProps['toggleIndeterminate'];
-  statusLabels?: MToggleProps['statusLabels'];
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  auto: undefined,
-  col: undefined,
-  xs: undefined,
-  sm: undefined,
-  md: undefined,
-  lg: undefined,
-  xl: undefined,
-  borderless: undefined,
-  clearable: undefined,
-  dense: undefined,
-  modelValue: undefined,
-  val: undefined,
-  name: () => '',
-  label: undefined,
-  activeLabel: 'yes',
-  inactiveLabel: 'no',
-  trueValue: !0,
-  falseValue: !1,
-  color: 'primary',
-  checkedIcon: 'check',
-  uncheckedIcon: 'cancel',
-  toggleIndeterminate: !1,
-  statusLabels: !1
-})
-const { getRules } = useInputProps(() => props)
-const { __ } = useMyth()
-type Events = {
-  (e: 'update:modelValue', value: any): void;
-}
-const emit = defineEmits<Events>()
-const inputValue = computed({
-  get: () => props.modelValue,
-  set: v => emit('update:modelValue', v)
-})
-
-const topLabel = computed<string | null>(() => __(props.label === undefined ? props.name : props.label) ?? null)
-
-const getLabel = computed<string | undefined>(() => {
-  const v = props.modelValue
-  if (v === props.trueValue) {
-    return __(props.statusLabels ? 'active' : props.activeLabel) || undefined
-  }
-  if (v === props.falseValue) {
-    return __(props.statusLabels ? 'inactive' : props.inactiveLabel) || undefined
-  }
-  return __('none') || undefined
-})
-
-</script>
 
 <script lang="ts">
 export default {
