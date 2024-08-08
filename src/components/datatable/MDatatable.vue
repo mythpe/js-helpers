@@ -903,7 +903,9 @@ const contextmenuItems = computed<any>(() => ([
     name: 'show',
     label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.show' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => {
-      tableOptions.selected.push(item)
+      if (!tableOptions.selected.length) {
+        tableOptions.selected.push(item)
+      }
       openShowDialog(item, index)
     },
     showIf: hasShowBtn.value,
@@ -913,7 +915,9 @@ const contextmenuItems = computed<any>(() => ([
     name: 'update',
     label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.update' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => {
-      tableOptions.selected.push(item)
+      if (!tableOptions.selected.length) {
+        tableOptions.selected.push(item)
+      }
       openUpdateDialog(item, index)
     },
     showIf: hasUpdateBtn.value,
