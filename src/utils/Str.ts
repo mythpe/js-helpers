@@ -102,8 +102,8 @@ export const Str = {
    * @param words
    * @param locale
    */
-  wordsWithoutThe<T> (words: string | null, locale: string): string | null | T {
-    if (words && locale === 'ar') {
+  wordsWithoutThe<T extends string = any> (words: any, locale: string): string | T {
+    if (words && locale?.toString()?.toLowerCase() === 'ar') {
       const e = words.split(' ')
       for (const i in e) {
         if (e[i].slice(0, 2) === 'ال') {
@@ -123,8 +123,8 @@ export const Str = {
    * @param words
    * @param locale
    */
-  wordsWithThe<T> (words: string | null, locale: string): string | null | T {
-    if (words && locale === 'ar') {
+  wordsWithThe<T extends string = any> (words: any, locale: string): string | T {
+    if (words && locale?.toString()?.toLowerCase() === 'ar') {
       let i
       const e = words.split(' ')
       if (e[e.length - 1].slice(0, 2) === 'ال') {
@@ -144,8 +144,8 @@ export const Str = {
    * @param words
    * @param locale
    */
-  wordsToSingle<T> (words: string | null, locale: string): string | null | T {
-    if (words && locale === 'ar') {
+  wordsToSingle<T extends string = any> (words: any, locale: string): string | T {
+    if (words && locale?.toString()?.toLowerCase() === 'ar') {
       let i
       const e = words.split(' ')
       for (i in e) {
@@ -175,12 +175,12 @@ export const Str = {
    * @param str
    * @param isXhtml
    */
-  nl2br (str: null | undefined | string | number, isXhtml: (boolean | null | undefined) = !1) {
+  nl2br<T extends string = any> (str: any, isXhtml: (boolean | null | undefined) = !1): string | T {
     if (!str) {
-      return ''
+      return str
     }
     const breakTag = (isXhtml || typeof isXhtml === 'undefined') ? '<br />' : '<br>'
-    return str.toString().replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, `$1${breakTag}$2`)
+    return str?.toString?.()?.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, `$1${breakTag}$2`) || str
   },
   prettyPrint (string: any) {
     const jsonLine = /^( *)("[\w]+": )?("[^"]*"|[\w.+-]*)?([,[{])?$/mg

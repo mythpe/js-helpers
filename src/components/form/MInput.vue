@@ -12,7 +12,7 @@ import { useInputProps } from '../../composables'
 import { MInputProps } from './models'
 import { QFieldSlots, QInputSlots } from 'quasar'
 import lodash from 'lodash'
-import InputLabel from './InputLabel.vue'
+import MInputLabel from './MInputLabel.vue'
 import { useMyth } from '../../vue3'
 
 type Props = {
@@ -109,12 +109,12 @@ const hasTopLabel = computed(() => {
     :xs="xs"
   >
     <template v-if="viewMode">
-      <InputLabel
+      <MInputLabel
         v-if="hasTopLabel"
         :for="name"
       >
         {{ getLabel }}
-      </InputLabel>
+      </MInputLabel>
       <q-field
         :label="(topLabel || $myth.options.input?.topLabel) ? undefined : getLabel"
         :placeholder="getPlaceholder"
@@ -151,12 +151,12 @@ const hasTopLabel = computed(() => {
       v-bind="$attrs"
     >
       <slot name="top-label">
-        <InputLabel
+        <MInputLabel
           v-if="hasTopLabel"
           :for="name"
         >
           {{ getLabel }}
-        </InputLabel>
+        </MInputLabel>
       </slot>
       <slot name="caption">
         <div

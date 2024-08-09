@@ -12,6 +12,8 @@ import { AxiosRequestConfig } from 'axios'
 import { QBtnProps, QCardProps, QImgProps, QImgSlots } from 'quasar'
 
 export type ColStyleType =
+  | boolean
+  | (string & (
   | '1'
   | '2'
   | '3'
@@ -24,12 +26,36 @@ export type ColStyleType =
   | '10'
   | '11'
   | '12'
+  ))
+  | (number & (
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  ))
   | 'auto'
   | 'grow'
   | 'shrink'
-  | boolean
   | null
   | undefined
+export type ViewModeProps = {
+  /**
+   * Set input to vie mode use q-field
+   */
+  viewMode?: boolean;
+  /**
+   * View Mode value for input or modelValue.
+   */
+  viewModeValue?: any;
+}
 
 export type MContainerProps = {
   readonly dense?: boolean | undefined;
@@ -102,13 +128,15 @@ export type MRowSlots = {
 }
 
 export type MColProps = {
-  auto?: boolean | undefined
-  col?: ColStyleType
-  xs?: ColStyleType
-  sm?: ColStyleType
-  md?: ColStyleType
-  lg?: ColStyleType
-  xl?: ColStyleType
+  auto?: boolean | undefined;
+  col?: ColStyleType;
+  noCol?: boolean;
+  xs?: ColStyleType;
+  sm?: ColStyleType;
+  md?: ColStyleType;
+  lg?: ColStyleType;
+  xl?: ColStyleType;
+  name?: string;
 }
 export type MColSlots = {
   default: () => VNode[];

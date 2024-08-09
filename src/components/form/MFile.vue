@@ -13,7 +13,7 @@ import { useAcceptProp, useInputProps } from '../../composables'
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineProps, ref } from 'vue'
 import { MFileProps } from './models'
-import InputLabel from './InputLabel.vue'
+import MInputLabel from './MInputLabel.vue'
 import { useMyth } from '../../vue3'
 
 interface Props {
@@ -148,12 +148,12 @@ export default {
     :xs="xs"
   >
     <template v-if="viewMode">
-      <InputLabel
+      <MInputLabel
         v-if="hasTopLabel"
         :for="name"
       >
         {{ getLabel }}
-      </InputLabel>
+      </MInputLabel>
       <q-field
         :label="(topLabel || $myth.options.file?.topLabel) ? undefined : getLabel"
         :placeholder="getPlaceholder"
@@ -189,12 +189,12 @@ export default {
       v-bind="$attrs"
     >
       <slot name="top-label">
-        <InputLabel
+        <MInputLabel
           v-if="hasTopLabel"
           :for="name"
         >
           {{ getLabel }}
-        </InputLabel>
+        </MInputLabel>
       </slot>
       <slot name="caption">
         <div

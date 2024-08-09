@@ -61,4 +61,11 @@ export const initComponents = (app: App) => {
 
   // Typography
   app.component('MTypingString', defineAsyncComponent(() => import('../components/typography/MTypingString.vue')))
+
+  // Helpers
+  app.component('MInputLabel', defineAsyncComponent(() => import('../components/form/MInputLabel.vue')))
+
+  // Inputs.
+  app.component('MyInput', defineAsyncComponent(() => import('../components/form/inputs/Input/MyInput.vue')))
+  app.component('MyRadio', defineAsyncComponent(() => import('../components/form/inputs/Radio/MyRadio.vue')))
 }

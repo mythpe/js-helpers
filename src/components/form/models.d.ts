@@ -34,7 +34,53 @@ import {
 } from 'quasar'
 import type { FormActions, FormContext, FormMeta, Path, SubmissionHandler } from 'vee-validate'
 import { Ref, UnwrapRef, VNode } from 'vue'
-import { ColStyleType, MColProps } from '../grid/models'
+import { ColStyleType, MColProps, ViewModeProps } from '../grid/models'
+export type InputHelpProps = {
+  /**
+   * Information text with Icon.
+   */
+  help?: string;
+  /**
+   * Auto help Icon.
+   */
+  helpIcon?: string;
+  /**
+   * Div Props of help.
+   */
+  helpProps?: Record<string, any>;
+}
+export type InputHelpSlots = {
+  /**
+   * VNode bottom of input & before 'bottom-input slot'.
+   */
+  'help': () => VNode[];
+}
+export type BaseInputsProps = ViewModeProps & MColProps & InputHelpProps & {
+//
+}
+
+export type BaseInputsSlots = InputHelpSlots & {
+  /**
+   * Field main content
+   */
+  default: () => VNode[];
+  /**
+   * VNode top of input & top of 'top label slot'.
+   */
+  'top-input': () => VNode[];
+  /**
+   * The label top on input
+   */
+  'top-label': () => VNode[];
+  /**
+   * VNode top of input & after top label.
+   */
+  caption: () => VNode[];
+  /**
+   * VNode bottom of input.
+   */
+  'bottom-input': () => VNode[];
+}
 
 export declare type GenericFormValues = Record<any, any>;
 
@@ -99,7 +145,7 @@ export interface MBtnSlots extends QBtnSlots {
   loading: () => VNode[];
 }
 
-export type InputsRules = string | string[] | Record<string, any> | null | undefined;
+export type InputsRules = string | string[] | Record<string, any> | undefined;
 
 export type MInputProps = Omit<QInputProps, 'rules' | 'modelValue' | 'errors'> & MColProps & {
   placeholder?: string | undefined;
@@ -315,6 +361,7 @@ export interface MCheckboxProps extends QCheckboxProps {
   viewMode?: boolean;
   placeholder?: any;
   errors?: Record<string, string[]>;
+  colProps?: MColProps;
 }
 
 export interface MCheckboxSlots extends QCheckboxSlots {
@@ -325,6 +372,8 @@ export interface MCheckboxSlots extends QCheckboxSlots {
   after: () => VNode[];
   afterField: () => VNode[];
   bottom: () => VNode[];
+  left: () => VNode[];
+  right: () => VNode[];
 }
 
 export interface MToggleProps extends MColProps, Omit<QToggleProps, 'modelValue'> {
@@ -644,6 +693,7 @@ export interface MRadioProps extends Omit<QRadioProps, 'name' | 'modelValue' | '
   viewMode?: boolean;
   placeholder?: any;
   errors?: Record<string, string[]>;
+  colProps?: MColProps;
 }
 
 export interface MRadioSlots extends QRadioSlots {
@@ -652,6 +702,8 @@ export interface MRadioSlots extends QRadioSlots {
   before: () => VNode[];
   after: () => VNode[];
   bottom: () => VNode[];
+  left: () => VNode[];
+  right: () => VNode[];
 }
 
 export interface MOtpProps extends Omit<QInputProps, 'modelValue'> {
@@ -672,5 +724,14 @@ export interface MOtpSlots extends QInputSlots {
   'after-all': () => VNode[];
   'after-input': () => VNode[];
 }
+
+export type MInputLabelProps = Record<string, any>;
+
+export interface MInputLabelSlots extends QInputSlots {
+  default: () => VNode[];
+}
+
+export * from './inputs/types.d'
+export * from './field/types.d'
 
 export {}

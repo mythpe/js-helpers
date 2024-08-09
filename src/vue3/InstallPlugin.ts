@@ -21,7 +21,7 @@ import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { INJECT_KEY } from './Const'
 import { Dates, Helpers, Str } from '../utils'
 import lodash from 'lodash'
-import { copyToClipboard, Dialog, Notify, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
+import { copyToClipboard, Dialog, Notify, openURL, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { initComponents } from './Component'
 import { VueI18n } from 'vue-i18n'
 
@@ -408,8 +408,12 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   app.config.globalProperties.$myth = r
-  app.config.globalProperties.openWindow = function (url?: string | URL, target?: string, features?: string): Window | null {
-    return window.open(url, target, features)
+  app.config.globalProperties.openWindow = function <F extends (...args: any[]) => any> (
+    url: string,
+    reject?: F,
+    windowFeatures?: object
+  ) {
+    openURL(url, reject, windowFeatures)
   }
   app.config.globalProperties.__ = function (string: string | { text: string } | any, ...args: any): string {
     return useStrTranslate({ t: this.$t, te: this.$te }, string, ...args)

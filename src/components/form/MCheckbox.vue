@@ -6,65 +6,6 @@
   - Github: https://github.com/mythpe
   -->
 
-<template>
-  <MCol
-    :auto="auto"
-    :class="$attrs.class"
-    :col="col"
-    :lg="lg"
-    :md="md"
-    :sm="sm"
-    :xs="xs"
-  >
-    <slot name="beforeField" />
-    <VeeField
-      v-slot="fieldProps"
-      v-model="inputValue"
-      :label="label ? __(label) : name"
-      :name="name"
-      :rules="getRules"
-      v-bind="$attrs"
-    >
-      <MColumn>
-        <slot
-          name="top"
-          v-bind="fieldProps"
-        />
-        <MCol auto>
-          <slot
-            name="before"
-            v-bind="fieldProps"
-          />
-          <q-checkbox
-            :label="noLabel ? undefined : getLabel"
-            :model-value="modelValue"
-            :placeholder="getPlaceholder"
-            :val="val"
-            v-bind="{...$myth.options.checkbox,...$attrs,...fieldProps.field}"
-          >
-            <slot />
-          </q-checkbox>
-          <div
-            v-if="fieldProps.errors.length > 0"
-            class="text-caption text-negative"
-          >
-            {{ fieldProps.errorMessage }}
-          </div>
-          <slot
-            name="after"
-            v-bind="fieldProps"
-          />
-        </MCol>
-        <slot
-          name="bottom"
-          v-bind="fieldProps"
-        />
-      </MColumn>
-    </VeeField>
-    <slot name="afterField" />
-  </MCol>
-</template>
-
 <script lang="ts" setup>
 import { Field as VeeField } from 'vee-validate'
 import { computed, defineEmits, defineProps } from 'vue'
@@ -85,6 +26,7 @@ type Props = {
   modelValue: MCheckboxProps['modelValue'];
   val?: MCheckboxProps['val'];
   required?: MCheckboxProps['required'];
+  colProps?: MCheckboxProps['colProps'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -100,7 +42,8 @@ const props = withDefaults(defineProps<Props>(), {
   noLabel: undefined,
   modelValue: undefined,
   val: undefined,
-  required: undefined
+  required: undefined,
+  colProps: undefined
 })
 
 interface Emits {
@@ -122,3 +65,68 @@ export default {
   inheritAttrs: !1
 }
 </script>
+
+<template>
+  <MCol
+    :auto="auto"
+    :class="$attrs.class"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :sm="sm"
+    :xs="xs"
+  >
+    <slot name="beforeField" />
+    <VeeField
+      v-slot="fieldProps"
+      v-model="inputValue"
+      :label="label ? __(label) : name"
+      :name="name"
+      :rules="getRules"
+      v-bind="$attrs"
+    >
+      <MRow>
+        <slot name="left" />
+        <MCol v-bind="colProps">
+          <MColumn>
+            <slot
+              name="top"
+              v-bind="fieldProps"
+            />
+            <MCol auto>
+              <slot
+                name="before"
+                v-bind="fieldProps"
+              />
+              <q-checkbox
+                :label="noLabel ? undefined : getLabel"
+                :model-value="modelValue"
+                :placeholder="getPlaceholder"
+                :val="val"
+                v-bind="{...$myth.options.checkbox,...$attrs,...fieldProps.field}"
+              >
+                <slot />
+              </q-checkbox>
+              <div
+                v-if="fieldProps.errors.length > 0"
+                class="text-caption text-negative"
+              >
+                {{ fieldProps.errorMessage }}
+              </div>
+              <slot
+                name="after"
+                v-bind="fieldProps"
+              />
+            </MCol>
+            <slot
+              name="bottom"
+              v-bind="fieldProps"
+            />
+          </MColumn>
+        </MCol>
+        <slot name="right" />
+      </MRow>
+    </VeeField>
+    <slot name="afterField" />
+  </MCol>
+</template>

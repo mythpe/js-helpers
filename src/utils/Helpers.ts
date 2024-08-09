@@ -53,7 +53,7 @@ export const Helpers = {
   },
   Stub (baseUrl: UrlType, axios: () => AxiosInstance): HelpersStubSchema {
     const makeUrl = Helpers.StubUrl(baseUrl)
-    const methods: HelpersStubSchema = {
+    return {
       async index (config?: ConfigType) {
         const u = makeUrl()
         return axios().get(u, config)
@@ -131,7 +131,6 @@ export const Helpers = {
         return axios().delete(_url, config)
       }
     }
-    return methods
   },
   StubUrl: (group?: UrlType): ((segments?: UrlType, parent?: UrlType) => string) => (
     segments?: UrlType,

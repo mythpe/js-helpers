@@ -11,22 +11,26 @@
   setup
 >
 import { computed } from 'vue'
-import { ColStyleType } from './models'
+import { MColProps } from './models'
 import lodash from 'lodash'
 
 interface Props {
-  auto?: boolean
-  col?: ColStyleType
-  xs?: ColStyleType
-  sm?: ColStyleType
-  md?: ColStyleType
-  lg?: ColStyleType
-  xl?: ColStyleType
+  name?: MColProps['name']
+  auto?: MColProps['auto']
+  col?: MColProps['col']
+  noCol?: MColProps['noCol']
+  xs?: MColProps['xs']
+  sm?: MColProps['sm']
+  md?: MColProps['md']
+  lg?: MColProps['lg']
+  xl?: MColProps['xl']
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  name: undefined,
   auto: undefined,
   col: undefined,
+  noCol: () => !1,
   xs: undefined,
   sm: undefined,
   md: undefined,
@@ -39,7 +43,7 @@ const classes = computed(() => {
     list.push('col-auto')
   }
 
-  if (props.col === !0) {
+  if ((props.col === !0 || props.col?.toString?.() === '') && !props.noCol) {
     list.push('col')
   } else if (props.col === 'grow') {
     list.push('col-grow')
@@ -53,12 +57,8 @@ const classes = computed(() => {
     }
   }
 
-  let k: keyof Props
-  for (k in props) {
+  for (const k in (['xs', 'sm', 'md', 'lg', 'xl'] as keyof Props)) {
     if (k) {
-      if (['col', 'auto'].indexOf(k) > -1) {
-        continue
-      }
       if (props[k] && typeof props[k] !== 'boolean') {
         if (list.indexOf(`col-${k}-${props[k]}`) === -1) {
           list.push(`col-${k}-${props[k]}`)
@@ -69,8 +69,13 @@ const classes = computed(() => {
 
   if (list.indexOf('col') === -1 || list.length === 1) {
     if (props.col !== !1 && !props.auto) {
-      list.push('col')
+      if (!props.noCol) {
+        list.push('col')
+      }
     }
+  }
+  if (props.name) {
+    list.push(`m--input__div__${props.name}`)
   }
   return lodash.uniq(list)
 })

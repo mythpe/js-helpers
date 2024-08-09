@@ -8,7 +8,7 @@
 
 import { AxiosInstance } from 'axios'
 import {
-  GlobalComponentConstructor,
+  GlobalComponentConstructor, openURL,
   QBtnProps,
   QCardProps,
   QDialogOptions,
@@ -94,17 +94,10 @@ import {
 import { I18n } from 'vue-i18n'
 import { ComputedRef, TransitionProps } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
-import {
-  ParseHeaderOptions,
-  MDtHeadersParameter,
-  MDtColumn,
-  Vue3MAlertMessage,
-  Vue3MAlertMessageOptions,
-  Vue3MConfirmMessage
-} from './m-helpers'
-import { Dates, Helpers, Str } from '../utils'
+import { MDtColumn, MDtHeadersParameter, ParseHeaderOptions, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
+import { Dates, Helpers, Str } from 'app/src/utils'
 import MDtContextmenuItems from 'components/datatable/MDtContextmenuItems.vue'
-import { MTypingStringProps, MTypingStringSlots } from 'app/src'
+import { MInputLabelProps, MInputLabelSlots, MTypingStringProps, MTypingStringSlots } from 'app/src'
 import { MTransitionProps } from 'components/transition/models'
 import { MythApiServicesSchema } from './api-helpers'
 
@@ -316,11 +309,12 @@ declare module '@vue/runtime-core' {
     MTooltip: GlobalComponentConstructor<MTooltipProps, MTooltipSlots>;
     MDialog: GlobalComponentConstructor<MDialogProps, MDialogSlots>;
     MTypingString: GlobalComponentConstructor<MTypingStringProps, MTypingStringSlots>;
+    MInputLabel: GlobalComponentConstructor<MInputLabelProps, MInputLabelSlots>;
   }
 
   interface ComponentCustomProperties {
     $myth: UseMythVue;
-    openWindow: typeof window.open;
+    openWindow: InstanceType<typeof openURL>;
     __: UseMythVue['__']
 
     getPageTitle (number?: number | string, route?: RouteLocationNormalizedLoaded): string;
