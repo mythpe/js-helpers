@@ -10,14 +10,13 @@
 
 import { useField } from 'vee-validate'
 import { MyInputProps as Props } from './models.d'
-import { computed, defineEmits, reactive, watch } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useInputs } from '../../../../composables'
 import { QField, QFieldSlots, QInput, QInputSlots } from 'quasar'
 
 type P = {
   auto?: Props['auto'];
   col?: Props['col'];
-  noCol?: Props['noCol'];
   xs?: Props['xs'];
   sm?: Props['sm'];
   md?: Props['md'];
@@ -26,18 +25,15 @@ type P = {
   help?: Props['help'];
   helpIcon?: Props['helpIcon'];
   helpProps?: Props['helpProps'];
-  name?: Props['name'];
+  name: Props['name'];
   label?: Props['label'];
   stackLabel?: Props['stackLabel'];
   placeholder?: Props['placeholder'];
   hidePlaceholder?: Props['hidePlaceholder'];
   required?: Props['required'];
   hideRequired?: Props['hideRequired'];
-  email?: Props['email'];
-  mobile?: Props['mobile'];
   rules?: Props['rules'];
   errors?: Props['errors'];
-  // modelValue: Props['modelValue'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
   autocomplete?: Props['autocomplete'];
@@ -49,7 +45,6 @@ type P = {
 const props = withDefaults(defineProps<P>(), {
   auto: undefined,
   col: undefined,
-  noCol: () => !1,
   xs: undefined,
   sm: undefined,
   md: undefined,
@@ -65,11 +60,8 @@ const props = withDefaults(defineProps<P>(), {
   hidePlaceholder: undefined,
   required: undefined,
   hideRequired: undefined,
-  email: undefined,
-  mobile: undefined,
   rules: undefined,
   errors: undefined,
-  // modelValue: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   autocomplete: undefined,
@@ -77,26 +69,24 @@ const props = withDefaults(defineProps<P>(), {
   caption: undefined,
   hint: undefined
 })
+defineModel<Props['modelValue']>({ required: !0, default: undefined })
 
-// interface Emits {
-// (e: 'update:modelValue', value: any): void
-// }
+const helper = useInputs<Omit<Props, 'modelValue'>>(() => props, 'input')
+const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, skipInputSlots: skips, inputProps } = helper
 
-// defineEmits<Emits>()
-const modelValue = defineModel<P['modelValue']>({ required: !0, default: undefined })
+const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), { syncVModel: !0 })
+const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
+const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
+const errorMessage = computed(() => getErrors.value[0] || undefined)
 
-// const fieldScope = { errors: [] }
-const fieldScope = reactive(useField(() => props.name, props.rules, { syncVModel: !0 }))
-const { value, errorMessage, errors: fieldErrors, name: fieldName, handleChange, handleBlur, handleReset } = fieldScope
-const vOn = {
-  'update:model-value': handleChange,
-  blur: handleBlur,
-  clear: handleReset
+const listeners = {
+  blur: (v: any) => handleBlur(v, !0),
+  'update:modelValue': (v: string) => handleChange(v, !!errorMessage.value)
 }
-const getErrors = computed(() => [...(props.errors || []), ...fieldErrors])
-
-const p = reactive(useInputs(() => props, { key: 'input' }))
-const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, skipInputSlots: skips } = p
+type Input = InstanceType<typeof QInput | typeof QField>
+const input = ref<Input | null>(null)
+const scopes = reactive(inputScope)
+defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
 </script>
 
 <script lang="ts">
@@ -112,19 +102,12 @@ export default {
     :col="col"
     :lg="lg"
     :md="md"
-    :name="name"
-    :no-col="noCol"
     :sm="sm"
     :xs="xs"
   >
-    <div>value: {{ value }}</div>
-    <div>fieldName: {{ fieldName }}</div>
-    <div>---</div>
-    <div>name: {{ name }}</div>
-    <div>modelValue: {{ modelValue }}</div>
     <slot
       name="top-input"
-      v-bind="fieldScope"
+      v-bind="inputScope"
     />
     <slot name="top-label">
       <MInputLabel
@@ -143,16 +126,17 @@ export default {
       </div>
     </slot>
     <component
+      ref="input"
       :is="viewMode ? QField : QInput"
-      :model-value="value"
+      v-model="value"
       :autocomplete="getAutocompleteAttribute"
-      :error="getErrors.length > 0"
+      :error="!!errorMessage"
       :error-message="errorMessage"
-      :hint="hint ? __(hint) : hint"
+      :hint="__(hint)"
       :label="hasTopLabel ? undefined : getLabel"
       :placeholder="getPlaceholder"
-      v-bind="{...$myth.options.input as any,...$attrs,stackLabel}"
-      v-on="vOn"
+      v-bind="{...$myth.options.input as any,...(viewMode?$myth.options.field:{}),...$attrs,...(viewMode ? {stackLabel: !0} : {stackLabel: inputProps.stackLabel})}"
+      v-on="listeners"
     >
       <template
         v-for="(_,slot) in ($slots as Readonly<QInputSlots>)"
@@ -160,7 +144,7 @@ export default {
         #[slot]
       >
         <slot
-          v-if="!skips.includes(slot)"
+          v-if="!viewMode && !skips.includes(slot)"
           :name="slot"
         />
       </template>
@@ -191,7 +175,7 @@ export default {
     </component>
     <slot
       name="help"
-      v-bind="fieldScope"
+      v-bind="inputScope"
     >
       <MRow
         v-if="!!help"
@@ -208,7 +192,7 @@ export default {
     </slot>
     <slot
       name="bottom-input"
-      v-bind="fieldScope"
+      v-bind="inputScope"
     />
   </MCol>
 </template>

@@ -9,33 +9,27 @@
 import { computed, MaybeRefOrGetter, ref, toValue } from 'vue'
 import lodash from 'lodash'
 import { useMyth } from '../vue3'
-import { MyInputProps } from 'app/src'
-import { MythOptionsConfig } from 'src/types'
+// import { MyInputProps } from 'app/src'
+import { MythOptionsConfig as MOC } from 'src/types'
+import { extend } from 'quasar'
 
-type G = Partial<MyInputProps> & { name: string; } & Record<string, any>;
+type G = { name: string; } & Record<string, any>;
 type OptsContext = {
   choose?: boolean;
-  key?: keyof MythOptionsConfig
+  // key: keyof MOC
 };
-export const useInputs = <P extends G = G> (Props: MaybeRefOrGetter<P>, Opts: MaybeRefOrGetter<OptsContext> = {}) => {
+export const useInputs = <P extends G = G> (Props: MaybeRefOrGetter<P>, key: keyof MOC, Opts: MaybeRefOrGetter<OptsContext> = {}) => {
   const { __ } = useMyth()
   const props = toValue<P>(Props)
   const opts = toValue<OptsContext>(Opts)
   const { options } = useMyth()
-  const inputOptions = computed(() => (k:keyof MythOptionsConfig) => options[k] || {})
-  // : { input: mythOptions }
-  const hasTopLabel = computed(() => {
-    if (props.topLabel !== undefined) {
-      return props.topLabel
-    } else if (opts.key && inputOptions.value(opts.key)?.topLabel !== undefined) {
-      return inputOptions.value(opts.key)?.topLabel
-    }
-    return props.topLabel
-  })
+  const inputOptions = computed(() => (k: keyof MOC) => options[k] || {})
+  const inputProps = computed<P>(() => extend(!0, {}, inputOptions.value(key), props))
+  const hasTopLabel = computed(() => inputProps.value.topLabel === !0)
+
   const getLabel = computed<string | undefined>(() => {
-    // return props.label === undefined ? props.name : props.label
     const k = props.label === undefined ? props.name : props.label
-    return __(k) || k
+    return k ? __(k) : undefined
     // if (k) {
     //   // let label =
     //   // if (label && hasRequired.value && !props.hideRequired && !props.viewMode) {
@@ -46,7 +40,7 @@ export const useInputs = <P extends G = G> (Props: MaybeRefOrGetter<P>, Opts: Ma
     // return label
   })
   const getPlaceholder = computed<string | undefined>(() => {
-    if (props.hidePlaceholder) {
+    if (inputProps.value.hidePlaceholder === !0) {
       return props.placeholder !== undefined ? (__(props.placeholder) || undefined) : undefined
     }
     const k = props.placeholder === undefined ? (props.label !== undefined ? props.label : props.name) : props.placeholder
@@ -98,6 +92,7 @@ export const useInputs = <P extends G = G> (Props: MaybeRefOrGetter<P>, Opts: Ma
     getLabel,
     getPlaceholder,
     getAutocompleteAttribute,
-    inputOptions
+    inputOptions,
+    inputProps
   }
 }

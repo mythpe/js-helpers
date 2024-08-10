@@ -130,13 +130,11 @@ export type MRowSlots = {
 export type MColProps = {
   auto?: boolean | undefined;
   col?: ColStyleType;
-  noCol?: boolean;
   xs?: ColStyleType;
   sm?: ColStyleType;
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
-  name?: string;
 }
 export type MColSlots = {
   default: () => VNode[];

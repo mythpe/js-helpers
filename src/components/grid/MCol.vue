@@ -18,7 +18,6 @@ interface Props {
   name?: MColProps['name']
   auto?: MColProps['auto']
   col?: MColProps['col']
-  noCol?: MColProps['noCol']
   xs?: MColProps['xs']
   sm?: MColProps['sm']
   md?: MColProps['md']
@@ -30,7 +29,6 @@ const props = withDefaults(defineProps<Props>(), {
   name: undefined,
   auto: undefined,
   col: undefined,
-  noCol: () => !1,
   xs: undefined,
   sm: undefined,
   md: undefined,
@@ -42,37 +40,26 @@ const classes = computed(() => {
   if (props.auto === !0) {
     list.push('col-auto')
   }
-
-  if ((props.col === !0 || props.col?.toString?.() === '') && !props.noCol) {
-    list.push('col')
-  } else if (props.col === 'grow') {
+  if (props.col === 'grow') {
     list.push('col-grow')
   } else if (props.col === 'shrink') {
     list.push('col-shrink')
   } else if (typeof props.col === 'string') {
-    if (props.col?.toString()?.trim()?.length > 0) {
-      if (list.indexOf(`col-${props.col}`) === -1) {
-        list.push(`col-${props.col}`)
+    if (props.col?.toString()?.trim()?.length > 0 && !list.includes(`col-${props.col}`)) {
+      list.push(`col-${props.col}`)
+    }
+  }
+
+  for (const k of (['xs', 'sm', 'md', 'lg', 'xl'] as (keyof Props)[])) {
+    if (props[k] && typeof props[k] !== 'boolean') {
+      if (!list.includes(`col-${k}-${props[k]}`)) {
+        list.push(`col-${k}-${props[k]}`)
       }
     }
   }
 
-  for (const k in (['xs', 'sm', 'md', 'lg', 'xl'] as keyof Props)) {
-    if (k) {
-      if (props[k] && typeof props[k] !== 'boolean') {
-        if (list.indexOf(`col-${k}-${props[k]}`) === -1) {
-          list.push(`col-${k}-${props[k]}`)
-        }
-      }
-    }
-  }
-
-  if (list.indexOf('col') === -1 || list.length === 1) {
-    if (props.col !== !1 && !props.auto) {
-      if (!props.noCol) {
-        list.push('col')
-      }
-    }
+  if (list.length === 1 && props.col !== !1) {
+    list.push('col')
   }
   if (props.name) {
     list.push(`m--input__div__${props.name}`)

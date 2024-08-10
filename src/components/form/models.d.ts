@@ -35,6 +35,11 @@ import {
 import type { FormActions, FormContext, FormMeta, Path, SubmissionHandler } from 'vee-validate'
 import { Ref, UnwrapRef, VNode } from 'vue'
 import { ColStyleType, MColProps, ViewModeProps } from '../grid/models'
+
+export type InputRulesContext = string | Record<string, any> | undefined;
+export type InputErrorsContext = string[];
+export type InputFormErrorsContext = Record<string, InputErrorsContext> | undefined;
+
 export type InputHelpProps = {
   /**
    * Information text with Icon.
@@ -55,9 +60,23 @@ export type InputHelpSlots = {
    */
   'help': () => VNode[];
 }
-export type BaseInputsProps = ViewModeProps & MColProps & InputHelpProps & {
-//
+
+export type BaseInputFormProps = {
+  name: string;
+  placeholder?: string | undefined;
+  hidePlaceholder?: boolean | undefined;
+  required?: boolean | undefined;
+  hideRequired?: boolean | undefined;
+  // email?: boolean | undefined;
+  // mobile?: boolean | string | number | undefined;
+  rules?: InputRulesContext;
+  errors?: InputErrorsContext;
+  formErrors?: InputFormErrorsContext;
+  autocomplete?: boolean | string | undefined;
+  topLabel?: boolean | undefined;
+  caption?: string | null | undefined;
 }
+export type BaseInputsProps = ViewModeProps & MColProps & InputHelpProps & BaseInputFormProps;
 
 export type BaseInputsSlots = InputHelpSlots & {
   /**
@@ -83,10 +102,6 @@ export type BaseInputsSlots = InputHelpSlots & {
 }
 
 export declare type GenericFormValues = Record<any, any>;
-
-export type InputErrorsContext = string[];
-
-export type FormErrorsContext = Record<string, InputErrorsContext>;
 
 export interface VeeFormFormMeta {
   touched: boolean;
@@ -145,16 +160,14 @@ export interface MBtnSlots extends QBtnSlots {
   loading: () => VNode[];
 }
 
-export type InputsRules = string | string[] | Record<string, any> | undefined;
-
-export type MInputProps = Omit<QInputProps, 'rules' | 'modelValue' | 'errors'> & MColProps & {
+export type MInputProps = Omit<QInputProps, 'rules' | 'modelValue'> & MColProps & {
   placeholder?: string | undefined;
   hidePlaceholder?: boolean | undefined;
   required?: boolean | undefined;
   hideRequired?: boolean | undefined;
   email?: boolean | undefined;
   mobile?: boolean | string | number | undefined;
-  rules?: InputsRules;
+  rules?: InputRulesContext;
   errors?: Record<string, string[]>;
   modelValue?: any;
   /**
@@ -205,7 +218,7 @@ export interface MFileProps extends MColProps, Omit<QFileProps, 'rules'> {
   email?: boolean | undefined;
   clearable?: boolean | undefined;
   loading?: boolean | undefined;
-  rules?: InputsRules;
+  rules?: InputRulesContext;
   errors?: Record<string, string[]>;
   modelValue: any;
   /**
@@ -275,7 +288,7 @@ export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
   placeholder?: any;
   required?: boolean | undefined;
   hideRequired?: boolean | undefined;
-  rules?: InputsRules;
+  rules?: InputRulesContext;
   errors?: Record<string, string[]>;
   modelValue: any;
   /**
@@ -356,7 +369,7 @@ export interface MCheckboxProps extends QCheckboxProps {
   label?: any;
   noLabel?: boolean;
   required?: boolean;
-  rules?: InputsRules;
+  rules?: InputRulesContext;
   hideRequired?: boolean;
   viewMode?: boolean;
   placeholder?: any;
@@ -400,7 +413,7 @@ export interface MToggleProps extends MColProps, Omit<QToggleProps, 'modelValue'
   uncheckedIcon?: string | undefined;
   toggleIndeterminate?: boolean | undefined;
   statusLabels?: boolean | undefined;
-  rules?: InputsRules;
+  rules?: InputRulesContext;
   required?: boolean;
   hideRequired?: boolean;
   viewMode?: boolean;
@@ -663,7 +676,7 @@ export interface MEditorProps extends Omit<QEditorProps, 'modelValue'>, MColProp
   name: string;
   label?: string;
   hint?: string;
-  rules?: InputsRules;
+  rules?: InputRulesContext;
   required?: boolean;
   hideRequired?: boolean;
   viewMode?: boolean;
@@ -688,7 +701,7 @@ export interface MRadioProps extends Omit<QRadioProps, 'name' | 'modelValue' | '
   label?: string | null | undefined;
   noLabel?: boolean;
   required?: boolean;
-  rules?: InputsRules;
+  rules?: InputRulesContext;
   hideRequired?: boolean;
   viewMode?: boolean;
   placeholder?: any;
@@ -732,6 +745,5 @@ export interface MInputLabelSlots extends QInputSlots {
 }
 
 export * from './inputs/types.d'
-export * from './field/types.d'
 
 export {}

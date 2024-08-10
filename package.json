@@ -1,6 +1,6 @@
 {
   "name": "@mythpe/js-helpers",
-  "version": "4.0.41",
+  "version": "4.0.42",
   "description": "Library of plugins & shortcuts that use JavaScript, also includes the Vue3 plugin with quasar apps",
   "author": "MyTh Ahmed Faiz",
   "email": "mythpe@gmail.com",
@@ -74,5 +74,6 @@
     "typescript": "~5.3.0",
     "vite-plugin-checker": "^0.6.4",
     "vue-tsc": "^1.8.27"
-  }
+  },
+  "packageManager": "yarn@4.4.0"
 }

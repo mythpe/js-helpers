@@ -8,5 +8,6 @@
 
 export * from './Input/models.d'
 export * from './Radio/models.d'
+export * from './Select/models.d'
 
 export {}
