@@ -60,11 +60,9 @@ export const initComponents = (app: App) => {
   app.component('MFadeXTransition', defineAsyncComponent(() => import('../components/transition/MFadeXTransition.vue')))
 
   // Typography
+  app.component('MHelpRow', defineAsyncComponent(() => import('../components/typography/MHelpRow.vue')))
   app.component('MTypingString', defineAsyncComponent(() => import('../components/typography/MTypingString.vue')))
 
   // Helpers
   app.component('MInputLabel', defineAsyncComponent(() => import('../components/form/MInputLabel.vue')))
-
-  // Inputs.
-  app.component('MyRadio', defineAsyncComponent(() => import('../components/form/inputs/Radio/MyRadio.vue')))
 }

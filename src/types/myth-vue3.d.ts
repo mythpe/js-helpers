@@ -1,5 +1,5 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
  * Website: https://www.4myth.com
@@ -8,7 +8,6 @@
 
 import { AxiosInstance } from 'axios'
 import {
-  GlobalComponentConstructor, openURL,
   QBtnProps,
   QCardProps,
   QDialogOptions,
@@ -25,80 +24,38 @@ import {
   QPopupProxyProps,
   QTooltipProps
 } from 'quasar'
+
 import {
-  MAvatarViewerProps,
-  MAvatarViewerSlots,
-  MAxiosProps,
-  MAxiosSlots,
   MBlockProps,
-  MBlockSlots,
   MBtnProps,
-  MBtnSlots,
   MCardProps,
-  MCardSlots,
   MCheckboxProps,
-  MCheckboxSlots,
   MColProps,
-  MColSlots,
   MColumnProps,
-  MColumnSlots,
   MContainerProps,
-  MContainerSlots,
   MDatatableProps,
-  MDatatableSlots,
   MDateProps,
-  MDateSlots,
-  MDialogProps,
-  MDialogSlots,
   MDraggableProps,
-  MDtAvatarProps,
-  MDtAvatarSlots,
   MDtBtnProps,
-  MDtBtnSlots,
   MEditorProps,
-  MEditorSlots,
   MFileProps,
-  MFileSlots,
-  MFormProps,
-  MFormSlots,
-  MGoogleMapsProps,
-  MGoogleMapsSlots,
+  MHelpRowProps,
   MInputProps,
-  MInputSlots,
-  MListProps,
-  MListSlots,
   MModalMenuProps,
-  MModalMenuSlots,
   MNoResultImgProps,
-  MNoResultImgSlots,
   MOtpProps,
-  MOtpSlots,
-  MPickerProps,
-  MPickerSlots,
   MRadioProps,
-  MRadioSlots,
   MRowProps,
-  MRowSlots,
   MSelectProps,
-  MSelectSlots,
   MTimeProps,
-  MTimeSlots,
   MToggleProps,
-  MToggleSlots,
-  MTooltipProps,
-  MTooltipSlots,
-  MTransitionsSlots,
-  MUploaderProps,
-  MUploaderSlots
+  MUploaderProps
 } from '../components'
 import { I18n } from 'vue-i18n'
-import { ComputedRef, TransitionProps } from 'vue'
+import { ComputedRef } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { MDtColumn, MDtHeadersParameter, ParseHeaderOptions, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
-import { Dates, Helpers, Str } from 'app/src/utils'
-import MDtContextmenuItems from 'components/datatable/MDtContextmenuItems.vue'
-import { MInputLabelProps, MInputLabelSlots, MPasswordProps, MTypingStringProps, MTypingStringSlots } from 'app/src'
-import { MTransitionProps } from 'components/transition/models'
+import { Dates, Helpers, Str } from '../utils'
 import { MythApiServicesSchema } from './api-helpers'
 
 export type MythOptionsConfig = {
@@ -132,11 +89,8 @@ export type MythOptionsConfig = {
       noFab?: boolean;
     },
     contextmenu?: {
-      props?: Partial<MDtContextmenuItems>;
-      menu?: Partial<QPopupProxyProps>;
+      menu?: Partial<MModalMenuProps>;
       list?: Partial<QListProps>;
-      listItem?: Partial<QItemProps>;
-      btn?: Partial<MDtBtnProps>;
       btnStyle?: {
         showLabel?: boolean;
         updateColor?: string;
@@ -213,6 +167,7 @@ export type MythOptionsConfig = {
   card?: Partial<MCardProps>;
   block?: Partial<MBlockProps>;
   typingString?: Partial<Omit<MTypingStringProps, 'string'>>;
+  helpRow?: Partial<Omit<MHelpRowProps, 'text'>>;
 }
 
 export type MythApiAxiosType = Partial<AxiosInstance>
@@ -266,4 +221,10 @@ export type UseMythVue = {
   alertError (message: string): Vue3MAlertMessage;
   confirmMessage (message?: string, title?: string, opts?: QDialogOptions): Vue3MConfirmMessage;
   [key: string]: any;
+}
+
+export type InstallPluginOptions = {
+  i18n: MythI18nType;
+  api: MythApiConfig;
+  options: MythOptionsConfig;
 }

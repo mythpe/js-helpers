@@ -1,5 +1,5 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
   - Website: https://www.4myth.com
@@ -1083,29 +1083,27 @@ const getProp = computed(() => (k: keyof Props) => {
       v-bind="$myth.options.dt?.contextmenu?.menu"
       @before-hide="resetDialogs()"
     >
-      <div>
-        <q-list
-          v-if="dialogs.item"
-          :separator="!$myth.tools.isSmall"
-          style="min-width: 280px;"
-          v-bind="$myth.options.dt?.contextmenu?.list"
+      <q-list
+        v-if="dialogs.item"
+        :separator="!$myth.tools.isSmall"
+        style="min-width: 280px;"
+        v-bind="$myth.options.dt?.contextmenu?.list"
+      >
+        <template
+          v-for="(contextmenuItem,i) in contextmenuItems"
+          :key="i"
         >
-          <template
-            v-for="(contextmenuItem,i) in contextmenuItems"
-            :key="i"
-          >
-            <MDtBtn
-              v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
-              :[contextmenuItem.name]="!0"
-              :dense="dense === undefined ? $myth.options.dt?.props?.dense : dense"
-              :label="contextmenuItem.contextLabel !== undefined ? (contextmenuItem.contextLabel === null ? undefined : __(contextmenuItem.contextLabel)) : __(contextmenuItem.label || contextmenuItem.name) "
-              list-item
-              v-bind="{...$myth.options.dt?.contextmenu?.listItem,...contextmenuItem.attr}"
-              @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
-            />
-          </template>
-        </q-list>
-      </div>
+          <MDtBtn
+            v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
+            :[contextmenuItem.name]="!0"
+            :dense="dense === undefined ? $myth.options.dt?.props?.dense : dense"
+            :label="contextmenuItem.contextLabel !== undefined ? (contextmenuItem.contextLabel === null ? undefined : __(contextmenuItem.contextLabel)) : __(contextmenuItem.label || contextmenuItem.name) "
+            list-item
+            v-bind="contextmenuItem.attr"
+            @click="contextmenuItem.click ? contextmenuItem.click(dialogs.item,dialogs.index) : undefined"
+          />
+        </template>
+      </q-list>
     </MModalMenu>
 
     <q-pull-to-refresh
@@ -1745,7 +1743,6 @@ const getProp = computed(() => (k: keyof Props) => {
                 :index="noBodyProps.rowIndex"
                 :item="noBodyProps.row"
                 :items="contextmenuItems"
-                v-bind="$myth.options.dt?.contextmenu?.props"
               />
             </q-td>
           </slot>

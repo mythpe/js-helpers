@@ -1,5 +1,5 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
   - Website: https://www.4myth.com
@@ -8,53 +8,43 @@
 
 <script lang="ts" setup>
 
-import { QFieldSlots, QFile } from 'quasar'
-import { useAcceptProp, useInputProps } from '../../composables'
-import { Field as VeeField } from 'vee-validate'
-import { computed, defineProps, ref } from 'vue'
-import { MFileProps } from './models'
-import MInputLabel from './MInputLabel.vue'
-import { useMyth } from '../../vue3'
+import { QField, QFile, QFileSlots } from 'quasar'
+import { useInputHelper } from '../../composables'
+import { useField } from 'vee-validate'
+import { computed, defineProps, reactive, ref } from 'vue'
+import { MFileProps as Props } from './models'
 
-interface Props {
-  auto?: MFileProps['auto'];
-  col?: MFileProps['col'];
-  xs?: MFileProps['xs'];
-  sm?: MFileProps['sm'];
-  md?: MFileProps['md'];
-  lg?: MFileProps['lg'];
-  xl?: MFileProps['xl'];
-  accept?: MFileProps['accept'];
-  images?: MFileProps['images'];
-  video?: MFileProps['video'];
-  pdf?: MFileProps['pdf'];
-  excel?: MFileProps['excel'];
-  outlined?: MFileProps['outlined'];
-  standout?: MFileProps['standout'];
-  borderless?: MFileProps['borderless'];
-  stackLabel?: MFileProps['stackLabel'];
-  filled?: MFileProps['filled'];
-  dense?: MFileProps['dense'];
-  hideBottomSpace?: MFileProps['hideBottomSpace'];
-  name: MFileProps['name'];
-  label?: MFileProps['label'];
-  placeholder?: MFileProps['placeholder'];
-  hidePlaceholder?: MFileProps['hidePlaceholder'];
-  required?: MFileProps['required'];
-  hideRequired?: MFileProps['hideRequired'];
-  email?: MFileProps['email'];
-  clearable?: MFileProps['clearable'];
-  loading?: MFileProps['loading'];
-  rules?: MFileProps['rules'];
-  errors?: MFileProps['errors'];
-  modelValue: MFileProps['modelValue'];
-  viewMode?: MFileProps['viewMode'];
-  viewModeValue?: MFileProps['viewModeValue'];
-  topLabel?: MFileProps['topLabel'];
-  caption?: MFileProps['caption'];
+interface P {
+  name: Props['name'];
+  auto?: Props['auto'];
+  col?: Props['col'];
+  xs?: Props['xs'];
+  sm?: Props['sm'];
+  md?: Props['md'];
+  lg?: Props['lg'];
+  xl?: Props['xl'];
+  modelValue: Props['modelValue'];
+  label?: Props['label'];
+  caption?: Props['caption'];
+  hint?: Props['hint'];
+  placeholder?: Props['placeholder'];
+  help?: Props['help'];
+  required?: Props['required'];
+  rules?: Props['rules'];
+  errors?: Props['errors'];
+  viewMode?: Props['viewMode'];
+  viewModeValue?: Props['viewModeValue'];
+  topLabel?: Props['topLabel'];
+
+  accept?: Props['accept'];
+  images?: Props['images'];
+  video?: Props['video'];
+  pdf?: Props['pdf'];
+  excel?: Props['excel'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<P>(), {
+  name: () => '',
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -62,71 +52,65 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
+  modelValue: undefined,
+  label: undefined,
+  caption: undefined,
+  hint: undefined,
+  placeholder: undefined,
+  help: undefined,
+  required: undefined,
+  rules: undefined,
+  errors: undefined,
+  viewMode: () => !1,
+  viewModeValue: undefined,
+  autocomplete: undefined,
+  topLabel: undefined,
   accept: undefined,
   images: undefined,
   video: undefined,
   pdf: undefined,
-  excel: undefined,
-  outlined: undefined,
-  standout: undefined,
-  borderless: undefined,
-  stackLabel: undefined,
-  filled: undefined,
-  dense: undefined,
-  hideBottomSpace: undefined,
-  name: () => '',
-  label: undefined,
-  placeholder: undefined,
-  hidePlaceholder: undefined,
-  required: undefined,
-  hideRequired: undefined,
-  email: undefined,
-  clearable: undefined,
-  loading: undefined,
-  rules: () => ([]),
-  errors: () => ({}),
-  modelValue: undefined,
-  viewMode: undefined,
-  viewModeValue: undefined,
-  topLabel: undefined,
-  caption: undefined
+  excel: undefined
 })
 
-type Events = {
-  (e: 'update:modelValue', value: any | undefined): void;
+const helper = useInputHelper<P>(() => props, 'file', { choose: !0 })
+const { hasTopLabel, getLabel, getPlaceholder, accepts } = helper
+
+const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
+  initialValue: props.modelValue,
+  syncVModel: !0
+})
+const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
+const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
+const errorMessage = computed(() => getErrors.value[0] || undefined)
+
+const listeners = {
+  focus: (v: Event) => handleBlur(v, !1),
+  blur: (v: Event) => handleBlur(v, !1),
+  'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
 }
-defineEmits<Events>()
-const { getRules, getLabel, getPlaceholder } = useInputProps(() => props)
-const { accepts } = useAcceptProp(props)
-const fileInput = ref<InstanceType<typeof QFile>>()
-// const inputValue = computed({
-//   get: () => props.modelValue,
-//   set: (v) => {
-//     emit('update:modelValue', v)
-//     nextTick(() => {
-//       fileInput.value?.blur()
-//     })
-//   }
-// })
-const inputValue = defineModel<MFileProps['modelValue']>({ required: !0 })
-const pickFiles = (...args: any) => fileInput.value?.pickFiles(...args)
-const removeAtIndex = (index: number) => fileInput.value?.removeAtIndex(index)
+const input = ref<InstanceType<typeof QFile | typeof QField> | null>(null)
+const scopes = reactive(inputScope)
 
-const { options: { file: mythOptions } } = useMyth()
-const hasTopLabel = computed(() => {
-  if (props.topLabel !== undefined) {
-    return props.topLabel
-  } else if (mythOptions?.topLabel !== undefined) {
-    return mythOptions?.topLabel
-  }
-  return props.topLabel
-})
-
-defineExpose({
-  fileInput,
+const pickFiles = (evt?: Event) => (input.value as QFile)?.pickFiles(evt)
+const addFiles = (files: readonly any[] | FileList) => (input.value as QFile)?.addFiles(files)
+const resetValidation = () => (input.value as QFile)?.resetValidation()
+const validate = (value?: any) => (input.value as QFile)?.validate(value)
+const focus = () => (input.value as QFile)?.focus()
+const blur = () => (input.value as QFile)?.blur()
+const removeAtIndex = (index: number) => (input.value as QFile)?.removeAtIndex(index)
+const removeFile = (index: number) => (input.value as QFile)?.removeAtIndex(index)
+const methods = {
   pickFiles,
-  removeAtIndex
-})
+  addFiles,
+  resetValidation,
+  validate,
+  focus,
+  blur,
+  removeAtIndex,
+  removeFile
+}
+
+defineExpose({ input, ...scopes, ...methods })
 
 </script>
 
@@ -144,115 +128,82 @@ export default {
     :col="col"
     :lg="lg"
     :md="md"
+    :name="name"
     :sm="sm"
     :xs="xs"
   >
-    <template v-if="viewMode">
+    <slot
+      name="top-input"
+      v-bind="inputScope"
+    />
+    <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
         :for="name"
       >
         {{ getLabel }}
       </MInputLabel>
-      <q-field
-        :label="(topLabel || $myth.options.file?.topLabel) ? undefined : getLabel"
-        :placeholder="getPlaceholder"
-        v-bind="{...$myth.options.input as any,...$myth.options.field as any,...$attrs, stackLabel: !0}"
+    </slot>
+    <slot name="caption">
+      <div
+        v-if="!!caption"
+        class="m--input__caption"
       >
-        <template #control>
+        {{ __(caption) }}
+      </div>
+    </slot>
+    <component
+      :is="viewMode ? QField : QFile"
+      ref="input"
+      v-model="value"
+      :accept="accepts.join(',')"
+      :error="!!errorMessage"
+      :error-message="errorMessage"
+      :hint="__(hint)"
+      :label="hasTopLabel ? getPlaceholder : getLabel"
+      v-bind="{ ...$myth.options.file as any,...( viewMode ? $myth.options.field : {} ), ...$attrs, ...( viewMode ? { stackLabel: !0 } : {} ) }"
+      v-on="listeners"
+    >
+      <template #prepend>
+        <slot name="prepend">
+          <q-icon
+            class="cursor-pointer"
+            name="ion-ios-attach"
+            @click="pickFiles($event)"
+          />
+        </slot>
+      </template>
+
+      <template
+        v-for="(_,slot) in ($slots as Readonly<QFileSlots>)"
+        :key="slot"
+        #[slot]
+      >
+        <slot :name="slot" />
+      </template>
+      <template
+        v-if="viewMode"
+        #control
+      >
+        <slot name="control">
           <div
             class="self-center full-width no-outline"
             tabindex="0"
           >
-            {{ viewModeValue || inputValue }}
+            {{ viewModeValue ?? value }}
           </div>
-        </template>
-        <template
-          v-for="(_,slot) in ($slots as Readonly<QFieldSlots>)"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            :name="slot"
-            v-bind="inputSlot || {}"
-          />
-        </template>
-      </q-field>
-    </template>
-    <VeeField
-      v-else
-      v-slot="fieldScope"
-      v-model="inputValue"
-      :label="label ? __(label) : name"
-      :name="name"
-      :rules="getRules"
-      v-bind="$attrs"
+        </slot>
+      </template>
+    </component>
+    <slot
+      name="help"
+      v-bind="inputScope"
     >
-      <slot name="top-label">
-        <MInputLabel
-          v-if="hasTopLabel"
-          :for="name"
-        >
-          {{ getLabel }}
-        </MInputLabel>
-      </slot>
-      <slot name="caption">
-        <div
-          v-if="!!caption"
-          class="m--input__caption"
-        >
-          {{ __(caption) }}
-        </div>
-      </slot>
-      <q-file
-        ref="fileInput"
-        :accept="accepts.join(',')"
-        :borderless="borderless"
-        :clearable="clearable"
-        :dense="dense"
-        :error="fieldScope.errors.length > 0"
-        :error-message="fieldScope.errorMessage"
-        :filled="filled"
-        :hide-bottom-space="hideBottomSpace"
-        :label="getLabel"
-        :loading="loading"
-        :model-value="fieldScope.value"
-        :name="name"
-        :outlined="outlined"
-        :placeholder="getPlaceholder"
-        :standout="standout"
-        v-bind="{...($myth.options.file as any),...$attrs,stackLabel}"
-        @blur="fieldScope.handleBlur"
-        @change="fieldScope.handleChange"
-        @clear="fieldScope.handleBlur"
-        @update:model-value="fieldScope.handleChange"
-      >
-        <template #prepend>
-          <slot name="prepend">
-            <q-icon
-              class="cursor-pointer"
-              name="ion-ios-attach"
-              @click="($refs.fileInput as QFile)?.pickFiles()"
-            />
-          </slot>
-        </template>
-        <template
-          v-for="(_,slot) in $slots"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            v-if="inputSlot"
-            :name="slot"
-            v-bind="inputSlot"
-          />
-          <slot
-            v-else
-            :name="slot"
-          />
-        </template>
-      </q-file>
-      <slot name="bottom" />
-    </VeeField>
+      <MHelpRow :text="help" />
+    </slot>
+    <slot
+      name="bottom-input"
+      v-bind="inputScope"
+    />
   </MCol>
 </template>

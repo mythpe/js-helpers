@@ -1,5 +1,5 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
   - Website: https://www.4myth.com
@@ -9,6 +9,7 @@
 <script lang="ts" setup>
 import { defineProps, ref } from 'vue'
 import { MInputSlots, MPasswordProps } from './models'
+import MInput from './MInput.vue'
 
 const inputType = ref<'text' | 'password'>('password')
 
@@ -24,6 +25,8 @@ withDefaults(defineProps<Props>(), {
 const togglePassword = () => {
   inputType.value = inputType.value === 'text' ? 'password' : 'text'
 }
+const input = ref<InstanceType<typeof MInput> | null>(null)
+defineExpose<{ input: typeof input }>({ input })
 </script>
 
 <script lang="ts">
@@ -35,6 +38,7 @@ export default {
 
 <template>
   <MInput
+    ref="input"
     :type="inputType"
     v-bind="$attrs"
   >
@@ -45,8 +49,8 @@ export default {
       <q-icon name="password" />
     </template>
     <template
-      #append
       v-if="!noToggle && !Boolean($slots.prepend)"
+      #append
     >
       <q-btn
         :icon="'ion-ios-eye' + (inputType !== 'password' ? '-off' : '')"

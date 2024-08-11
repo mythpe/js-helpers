@@ -1,5 +1,5 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
  * Website: https://www.4myth.com
@@ -8,7 +8,7 @@
 
 import { computed, MaybeRef, toValue } from 'vue'
 import { useMyth } from '../vue3'
-import { MCheckboxProps, MEditorProps, MFileProps, MInputProps, MRadioProps, MSelectProps, MToggleProps } from 'app/src'
+import { MCheckboxProps, MEditorProps, MFileProps, MInputProps, MRadioProps, MSelectProps, MToggleProps } from '../components'
 
 type PropsList =
   | MInputProps
@@ -63,9 +63,6 @@ export const useInputProps = (Props: Args, Opts: MaybeRef<{ choose?: boolean }> 
     return props.label
   })
   const getPlaceholder = computed<string | undefined>(() => {
-    if ('hidePlaceholder' in props && props.hidePlaceholder) {
-      return props.placeholder !== undefined ? (__(props.placeholder) || undefined) : undefined
-    }
     const k = props.placeholder === undefined ? (props.label !== undefined ? props.label : props.name) : props.placeholder
     if (k && props.placeholder === undefined) {
       return __(`replace.${opts?.choose ? 'choose' : 'enter'}`, { name: __(k) }) || props.placeholder

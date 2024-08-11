@@ -1,5 +1,5 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
   - Website: https://www.4myth.com
@@ -8,30 +8,28 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { MInputSlots, MPickerProps } from './models'
+import { MInputSlots, MPickerProps as Props } from './models'
+import MInput from './MInput.vue'
 
-interface Props {
-  auto?: MPickerProps['auto'];
-  col?: MPickerProps['col'];
-  xs?: MPickerProps['xs'];
-  sm?: MPickerProps['sm'];
-  md?: MPickerProps['md'];
-  lg?: MPickerProps['lg'];
-  xl?: MPickerProps['xl'];
-  type?: MPickerProps['type'];
-  range?: MPickerProps['range'];
-  multiple?: MPickerProps['multiple'];
-  btnProps?: MPickerProps['btnProps'];
-  readonly?: MPickerProps['readonly'];
-  disable?: MPickerProps['disable'];
-  viewMode?: MPickerProps['viewMode'];
-  viewModeValue?: MPickerProps['viewModeValue'];
-  topLabel?: MPickerProps['topLabel'];
-  caption?: MPickerProps['caption'];
-  modelValue: MPickerProps['modelValue'];
+interface P {
+  auto?: Props['auto'];
+  col?: Props['col'];
+  xs?: Props['xs'];
+  sm?: Props['sm'];
+  md?: Props['md'];
+  lg?: Props['lg'];
+  xl?: Props['xl'];
+  name: Props['name'];
+  type?: Props['type'];
+  range?: Props['range'];
+  multiple?: Props['multiple'];
+  btnProps?: Props['btnProps'];
+  readonly?: Props['readonly'];
+  disable?: Props['disable'];
+  viewMode?: Props['viewMode'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<P>(), {
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -39,27 +37,21 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  modelValue: undefined,
+  name: () => '',
   type: () => 'date',
   range: () => !1,
   multiple: () => !1,
   btnProps: undefined,
   readonly: undefined,
   disable: undefined,
-  viewMode: () => !1,
-  viewModeValue: undefined,
-  topLabel: undefined,
-  caption: undefined
+  viewMode: () => !1
 })
 
 const isDate = computed(() => props.type === 'date')
-const isRange = computed(() => props.range !== !1 && props.range !== undefined)
-const isMultiple = computed(() => props.multiple !== !1 && props.multiple !== undefined)
-
-const inputValue = defineModel<MPickerProps['modelValue']>({ required: !0 })
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
 
 const mask = computed(() => {
-  if (isRange.value || isMultiple.value) {
+  if (props.range || props.multiple) {
     return undefined
     // return isDate.value ? '####-##-## - ####-##-##' : '##:## - ##:##'
   }
@@ -67,9 +59,8 @@ const mask = computed(() => {
 })
 const format = computed(() => isDate.value ? 'YYYY-MM-DD' : 'HH:mm')
 const dateRef = ref()
-const inputRef = ref()
 const onBeforeShow = () => {
-  dateRef.value = inputValue.value ?? null
+  dateRef.value = modelValue.value || null
 }
 const onBeforeHide = () => {
   dateRef.value = null
@@ -85,74 +76,48 @@ const saveDialog = () => {
     }
     newVal = values
   }
-  inputValue.value = newVal
-  inputRef.value?.$refs?.veeFieldRef?.handleChange(newVal)
+  modelValue.value = newVal
 }
+
+const input = ref<InstanceType<typeof MInput> | null>(null)
+defineExpose<{ input: typeof input }>({ input })
 </script>
 
 <template>
-  <MCol
+  <MInput
+    ref="input"
+    v-model="modelValue"
     :auto="auto"
-    :class="$attrs.class"
     :col="col"
+    :disable="disable"
     :lg="lg"
+    :mask="mask"
     :md="md"
+    :name="name"
+    :readonly="readonly"
     :sm="sm"
+    :view-mode="viewMode"
     :xs="xs"
+    v-bind="$attrs"
   >
-    <template v-if="viewMode">
-      <MInput
-        v-model="inputValue"
-        :disable="disable"
-        :mask="mask"
-        :readonly="readonly"
-        :view-mode="viewMode"
-        :view-mode-value="viewModeValue"
-        v-bind="$attrs"
+    <template #append>
+      <q-btn
+        v-if="!disable && !readonly && !viewMode"
+        :icon="isDate ? 'ion-ios-calendar' : 'ion-ios-clock'"
+        flat
+        round
+        v-bind="{...btnProps, ...$myth.options?.pickerBtn}"
       >
-        <template
-          v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
-          :key="slot"
-          #[slot]
+        <q-popup-proxy
+          cover
+          no-shake
+          persistent
+          transition-hide="jump-down"
+          transition-show="jump-up"
+          @before-show="onBeforeShow()"
+          @before-hide="onBeforeHide()"
         >
-          <slot :name="slot" />
-        </template>
-      </MInput>
-    </template>
-    <MInput
-      v-else
-      ref="inputRef"
-      v-model="inputValue"
-      :caption="caption"
-      :disable="disable"
-      :mask="mask"
-      :readonly="readonly"
-      :top-label="topLabel"
-      v-bind="$attrs"
-    >
-      <template
-        v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
-        :key="slot"
-        #[slot]
-      >
-        <slot :name="slot" />
-      </template>
-      <template #append>
-        <q-btn
-          v-if="!disable&&!readonly"
-          :icon="isDate ? 'event' : 'access_time'"
-          flat
-          round
-          v-bind="{...btnProps,...$myth.options?.pickerBtn}"
-        >
-          <q-popup-proxy
-            cover
-            persistent
-            transition-hide="scale"
-            transition-show="scale"
-            @before-show="onBeforeShow()"
-            @before-hide="onBeforeHide()"
-          >
+          <q-card>
             <q-date
               v-if="isDate"
               v-model="dateRef"
@@ -160,7 +125,7 @@ const saveDialog = () => {
               :multiple="multiple"
               :range="range"
               today-btn
-              v-bind="{...$myth.options.date as any,...$attrs}"
+              v-bind="{...$myth.options.date as any, ...$attrs}"
             >
               <div class="row items-center justify-end">
                 <MBtn
@@ -182,7 +147,7 @@ const saveDialog = () => {
               v-model="dateRef"
               :mask="format"
               now-btn
-              v-bind="{...$myth.options.time,...$attrs}"
+              v-bind="{...$myth.options.time, ...$attrs}"
             >
               <div class="row items-center justify-end">
                 <MBtn
@@ -199,11 +164,19 @@ const saveDialog = () => {
                 />
               </div>
             </q-time>
-          </q-popup-proxy>
-        </q-btn>
-      </template>
-    </MInput>
-  </MCol>
+          </q-card>
+        </q-popup-proxy>
+      </q-btn>
+    </template>
+
+    <template
+      v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
+      :key="slot"
+      #[slot]
+    >
+      <slot :name="slot" />
+    </template>
+  </MInput>
 </template>
 
 <script lang="ts">

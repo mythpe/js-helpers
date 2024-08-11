@@ -1,102 +1,17 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
 
-<template>
-  <MCol
-    :auto="auto"
-    :class="$attrs.class"
-    :col="col"
-    :lg="lg"
-    :md="md"
-    :sm="sm"
-    :xs="xs"
-  >
-    <VeeField
-      ref="veeFieldRef"
-      v-slot="fieldScope"
-      v-model="inputValue"
-      :label="label ? __(label) : name"
-      :name="name"
-      :rules="getRules"
-      v-bind="$attrs"
-    >
-      <slot name="label">
-        <div
-          v-if="!!getLabel"
-          class="m--input__top-label"
-        >
-          {{ getLabel }}
-        </div>
-      </slot>
-      <slot name="caption">
-        <div
-          v-if="!!caption"
-          class="m--input__caption"
-        >
-          {{ __(caption) }}
-        </div>
-      </slot>
-      <slot name="hint">
-        <div
-          v-if="!!hint"
-          class="m--input__hint"
-        >
-          {{ __(hint) }}
-        </div>
-      </slot>
-      <q-editor
-        :_definitions="{..._definitions,...$myth.options.editor?.definitions}"
-        :dense="dense !== undefined ? dense : $q.screen.lt.md"
-        :fonts="fonts || _fonts"
-        :min-height="minHeight"
-        :model-value="inputValue"
-        :toolbar="toolbar || _toolbar"
-        v-bind="{...$myth.options.editor,...$attrs}"
-        @update:model-value="fieldScope.handleChange"
-      />
-    </VeeField>
-    <slot />
-    <MTransition>
-      <p
-        v-if="inputErrors.length > 0"
-        class="text-body2 text-negative"
-      >
-        {{ inputErrors[0] }}
-      </p>
-    </MTransition>
-  </MCol>
-</template>
-
 <script lang="ts" setup>
-import { useQuasar } from 'quasar'
-import { computed } from 'vue'
-import { useInputProps } from '../../composables'
-import { Field as VeeField } from 'vee-validate'
-import { MEditorProps } from './models'
-
-interface Props {
-  auto?: MEditorProps['auto'];
-  col?: MEditorProps['col'];
-  xs?: MEditorProps['xs'];
-  sm?: MEditorProps['sm'];
-  md?: MEditorProps['md'];
-  lg?: MEditorProps['lg'];
-  xl?: MEditorProps['xl'];
-  modelValue?: MEditorProps['modelValue'];
-  minHeight?: MEditorProps['minHeight'];
-  name: MEditorProps['name'];
-  label?: MEditorProps['label'];
-  hint?: MEditorProps['hint'];
-  dense?: MEditorProps['dense'];
-  toolbar?: MEditorProps['toolbar'];
-  fonts?: MEditorProps['fonts'];
-  caption?: MEditorProps['caption'];
-}
+import { QEditor, QField, useQuasar } from 'quasar'
+import { useInputHelper } from '../../composables'
+import { useField } from 'vee-validate'
+import { MEditorProps as Props } from './models'
+import { computed, reactive, ref } from 'vue'
 
 const $q = useQuasar()
 const _toolbar = [
@@ -205,7 +120,33 @@ const _definitions = {
     icon: 'colorize'
   }
 }
-const props = withDefaults(defineProps<Props>(), {
+
+interface P {
+  auto?: Props['auto'];
+  col?: Props['col'];
+  xs?: Props['xs'];
+  sm?: Props['sm'];
+  md?: Props['md'];
+  lg?: Props['lg'];
+  xl?: Props['xl'];
+  modelValue?: Props['modelValue'];
+  help?: Props['help'];
+  minHeight?: Props['minHeight'];
+  name: Props['name'];
+  label?: Props['label'];
+  hint?: Props['hint'];
+  dense?: Props['dense'];
+  toolbar?: Props['toolbar'];
+  fonts?: Props['fonts'];
+  caption?: Props['caption'];
+  rules?: Props['rules'];
+  errors?: Props['errors'];
+  viewMode?: Props['viewMode'];
+  placeholder?: Props['placeholder'];
+  topLabel?: Props['topLabel'];
+}
+
+const props = withDefaults(defineProps<P>(), {
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -214,27 +155,40 @@ const props = withDefaults(defineProps<Props>(), {
   lg: undefined,
   xl: undefined,
   modelValue: () => '',
-  minHeight: '10rem',
+  minHeight: () => '10rem',
   name: () => '',
   label: undefined,
   hint: undefined,
   dense: undefined,
   toolbar: undefined,
   fonts: undefined,
-  caption: undefined
+  caption: undefined,
+  rules: undefined,
+  errors: undefined,
+  placeholder: undefined,
+  topLabel: undefined,
+  viewMode: undefined
 })
 
-type EmitsTypes = {
-  (e: 'update:modelValue', value: any): void
+// defineModel<Props['modelValue']>({ required: !1, default: '' })
+const helper = useInputHelper<P>(() => props, 'editor')
+const { hasTopLabel, getLabel, getPlaceholder, inputProps } = helper
+
+const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
+  initialValue: props.modelValue,
+  syncVModel: !0
+})
+const { value, errors: fieldErrors, handleChange } = inputScope
+const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
+const errorMessage = computed(() => getErrors.value[0] || undefined)
+
+const listeners = {
+  'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
 }
-const emit = defineEmits<EmitsTypes>()
 
-const inputValue = computed({
-  get: () => props.modelValue || '',
-  set: value => emit('update:modelValue', value)
-})
-
-const { getRules, getLabel, inputErrors } = useInputProps(() => props)
+const input = ref<InstanceType<typeof QEditor | typeof QField> | null>(null)
+const scopes = reactive(inputScope)
+defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
 </script>
 
 <script lang="ts">
@@ -243,3 +197,74 @@ export default {
   inheritAttrs: !1
 }
 </script>
+
+<template>
+  <MCol
+    :auto="auto"
+    :class="$attrs.class"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :name="name"
+    :sm="sm"
+    :xs="xs"
+  >
+    <slot
+      name="top-input"
+      v-bind="inputScope"
+    />
+    <slot name="top-label">
+      <MInputLabel
+        v-if="hasTopLabel"
+        :for="name"
+      >
+        {{ getLabel }}
+      </MInputLabel>
+    </slot>
+    <slot name="caption">
+      <div
+        v-if="!!caption"
+        class="m--input__caption"
+      >
+        {{ __(caption) }}
+      </div>
+    </slot>
+    <slot
+      name="help"
+      v-bind="inputScope"
+    >
+      <MHelpRow :text="help" />
+    </slot>
+    <component
+      :is="viewMode ? QField : QEditor"
+      ref="input"
+      v-model="value"
+      :_definitions="{..._definitions,...$myth.options.editor?.definitions}"
+      :fonts="fonts || _fonts"
+      :label="hasTopLabel ? undefined : getLabel"
+      :min-height="minHeight"
+      :placeholder="getPlaceholder"
+      :toolbar="toolbar || _toolbar"
+      v-bind="{
+        ...$myth.options.editor,
+        ...( viewMode ? $myth.options.field : {} ),
+        ...$attrs,
+        ...( viewMode ? { stackLabel: !0 } : {} ),
+        dense: inputProps.dense !== undefined ? inputProps.dense : $q.screen.lt.lg
+      }"
+      v-on="listeners"
+    />
+    <slot
+      name="bottom-input"
+      v-bind="inputScope"
+    />
+    <MFadeXTransition>
+      <p
+        v-if="!!errorMessage"
+        class="text-body2 text-negative"
+      >
+        {{ errorMessage }}
+      </p>
+    </MFadeXTransition>
+  </MCol>
+</template>

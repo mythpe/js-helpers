@@ -12,6 +12,7 @@ import { MAxiosProps as Props } from './models.d'
 import { onMounted, ref, toValue } from 'vue'
 import { useMyth } from '../../vue3'
 import { QSelectSlots } from 'quasar'
+import MSelect from './MSelect.vue'
 
 type P = {
   name: Props['name'];
@@ -84,6 +85,9 @@ onMounted(() => {
   }
   prepare()
 })
+
+const input = ref<InstanceType<typeof MSelect> | null>(null)
+defineExpose<{ input: typeof input }>({ input })
 </script>
 
 <script lang="ts">
@@ -94,6 +98,7 @@ export default {
 
 <template>
   <MSelect
+    ref="input"
     v-model="modelValue"
     v-model:loading="loading"
     v-model:search="search"

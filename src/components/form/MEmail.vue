@@ -1,5 +1,5 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
   - Website: https://www.4myth.com
@@ -8,10 +8,16 @@
 
 <script lang="ts" setup>
 import { MInputSlots } from './models'
+import { ref } from 'vue'
+import MInput from './MInput.vue'
+
+const input = ref<InstanceType<typeof MInput> | null>(null)
+defineExpose<{ input: typeof input }>({ input })
 </script>
 
 <template>
   <MInput
+    ref="input"
     email
     type="email"
     v-bind="$attrs"

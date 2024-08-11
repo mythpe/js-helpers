@@ -6,17 +6,14 @@
  * Github: https://github.com/mythpe
  */
 
-import { computed, MaybeRefOrGetter, ref, toValue } from 'vue'
-import { extend } from 'quasar'
-import lodash from 'lodash'
 import { useMyth } from '../vue3'
-import { MythOptionsConfig as MOC } from 'src/types'
-// type Options = Exclude<MOC, 'google'>;
+import lodash from 'lodash'
+import { computed, MaybeRefOrGetter, ref, toValue } from 'vue'
+import { MythOptionsConfig as MOC } from '../types'
+import { extend } from 'quasar'
+
 type G = { name: string; } & Record<string, any>;
-type OptsContext = {
-  choose?: boolean;
-  // key: keyof MOC
-};
+type OptsContext = { choose?: boolean; };
 export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key: keyof MOC, Opts: MaybeRefOrGetter<OptsContext> = {}) => {
   const { __ } = useMyth()
   const props = toValue<P>(Props)
@@ -28,40 +25,27 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
 
   const getLabel = computed<string | undefined>(() => {
     const k = props.label === undefined ? props.name : props.label
-    return k ? __(k) : undefined
-    // if (k) {
-    //   // let label =
-    //   // if (label && hasRequired.value && !props.hideRequired && !props.viewMode) {
-    //   //   label = `${label} *`
-    //   // }
-    //   return __(k) || k
-    // }
-    // return label
+    return k ? (__(k) || undefined) : undefined
   })
   const getPlaceholder = computed<string | undefined>(() => {
-    if (inputProps.value.hidePlaceholder === !0) {
-      return props.placeholder !== undefined ? (__(props.placeholder) || undefined) : undefined
+    if (props.placeholder === undefined) {
+      const k = props.label !== undefined ? props.label : props.name
+      return __(`replace.${opts?.choose ? 'choose' : 'enter'}`, { name: __(k) })
     }
-    const k = props.placeholder === undefined ? (props.label !== undefined ? props.label : props.name) : props.placeholder
-    if (k && props.placeholder === undefined) {
-      return __(`replace.${opts?.choose ? 'choose' : 'enter'}`, { name: __(k) }) || props.placeholder
-    }
-    if (k) {
-      return __(k) || props.placeholder || undefined
-    }
-    return props.placeholder || undefined
+    return __(props.placeholder) || undefined
+    // if (inputProps.value.hidePlaceholder === !0) {
+    //   return props.placeholder !== undefined ? (__(props.placeholder) || undefined) : undefined
+    // }
   })
-  const getAutocompleteAttribute = computed(() => {
-    if (props.autocomplete !== undefined) {
-      if (props.autocomplete === !0 || props.autocomplete === '') {
-        return lodash.kebabCase(props.name)
-      } else if (props.autocomplete === !1) {
-        return undefined
-      } else if (props.autocomplete.length > 0) {
-        return props.autocomplete
-      }
+  const getAutocompleteAttribute = computed<string | null | undefined>(() => {
+    if (props.autocomplete === undefined) return props.autocomplete
+    if (props.autocomplete === !0 || props.autocomplete === '') {
+      return lodash.kebabCase(props.name)
+    } else if (props.autocomplete === !1) {
+      return 'off'
+    } else if (props.autocomplete.length > 0) {
+      return props.autocomplete
     }
-    return props.autocomplete
   })
   const accepts = computed(() => {
     const l = []

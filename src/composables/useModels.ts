@@ -1,5 +1,5 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
  * Website: https://www.4myth.com
@@ -165,7 +165,7 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
   }
 }
 
-type ItemModel<T extends object = any > = ApiModel<T>;
+type ItemModel<T extends object = any> = ApiModel<T>;
 
 export function useModel<T extends Partial<ItemModel<T>> = ItemModel> (name: string, id: any, opts: Options<T> = {}) {
   const api = useMyth()

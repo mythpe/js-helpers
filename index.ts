@@ -8,7 +8,8 @@
 
 export * from './src'
 
-import { installPlugin, useMyth } from './src'
+// import { installPlugin, useMyth } from 'src'
 
-export { installPlugin, useMyth }
+// export { installPlugin, useMyth }
+export {}
 export default {}

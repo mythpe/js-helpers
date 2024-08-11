@@ -1,13 +1,15 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
  * Website: https://www.4myth.com
  * Github: https://github.com/mythpe
  */
 
-import { GlobalComponentConstructor, openURL } from 'quasar'
+import { GlobalComponentConstructor, openURL, QInfiniteScroll } from 'quasar'
 import {
+  ApiErrorResponse,
+  ApiInterface,
   MAvatarViewerProps,
   MAvatarViewerSlots,
   MAxiosProps,
@@ -29,7 +31,9 @@ import {
   MDatatableProps,
   MDatatableSlots,
   MDateProps,
-  MDateSlots, MDialogProps, MDialogSlots,
+  MDateSlots,
+  MDialogProps,
+  MDialogSlots,
   MDtAvatarProps,
   MDtAvatarSlots,
   MDtBtnProps,
@@ -41,11 +45,17 @@ import {
   MFormProps,
   MFormSlots,
   MGoogleMapsProps,
-  MGoogleMapsSlots, MInputLabelProps, MInputLabelSlots,
+  MGoogleMapsSlots,
+  MHelpRowProps,
+  MHelpRowSlots,
+  MInputLabelProps,
+  MInputLabelSlots,
   MInputProps,
   MInputSlots,
   MListProps,
-  MListSlots, MModalMenuProps, MModalMenuSlots,
+  MListSlots,
+  MModalMenuProps,
+  MModalMenuSlots,
   MNoResultImgProps,
   MNoResultImgSlots,
   MOtpProps,
@@ -62,24 +72,38 @@ import {
   MTimeProps,
   MTimeSlots,
   MToggleProps,
-  MToggleSlots, MTooltipProps, MTooltipSlots,
+  MToggleSlots,
+  MTooltipProps,
+  MTooltipSlots,
   MTransitionProps,
-  MTransitionsSlots, MTypingStringProps, MTypingStringSlots,
+  MTransitionsSlots,
+  MTypingStringProps,
+  MTypingStringSlots,
   MUploaderProps,
-  MUploaderSlots
-} from 'app/src'
-import { TransitionProps } from 'vue'
+  MUploaderSlots,
+  UseMythVue
+} from '../types'
+import { MaybeRefOrGetter, Ref, TransitionProps, UnwrapNestedRefs } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
-import { UseMythVue } from 'src/types/myth-vue3'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 export * from './api-helpers.d'
 export * from './lodash.d'
 export * from './m-geolocation.d'
 export * from './m-helpers.d'
 export * from './myth-vue3.d'
-export * from '../composables'
-export * from './../components'
-export { InstallPluginOptions } from 'src/types/plugin'
+
+export type UseModelsOptionsArg<T extends ApiInterface = ApiInterface> = {
+  lazy?: boolean;
+  isPanel?: MaybeRefOrGetter<boolean>;
+  method?: MaybeRefOrGetter<string>;
+  timeout?: number;
+  qInfiniteScroll?: Ref<QInfiniteScroll | undefined>;
+  onSuccess?: (data: AxiosResponse<T>) => void;
+  onError?: (e: ApiErrorResponse) => void;
+  config?: MaybeRefOrGetter<AxiosRequestConfig>
+}
+export type UseModelsOptions<T> = UnwrapNestedRefs<UseModelsOptionsArg<T>> | Ref<UseModelsOptionsArg<T>> | UseModelsOptionsArg<T>
 
 declare module '@vue/runtime-core' {
   interface GlobalComponents {
@@ -123,6 +147,7 @@ declare module '@vue/runtime-core' {
     MDialog: GlobalComponentConstructor<MDialogProps, MDialogSlots>;
     MTypingString: GlobalComponentConstructor<MTypingStringProps, MTypingStringSlots>;
     MInputLabel: GlobalComponentConstructor<MInputLabelProps, MInputLabelSlots>;
+    MHelpRow: GlobalComponentConstructor<MHelpRowProps, MHelpRowSlots>;
   }
 
   interface ComponentCustomProperties {

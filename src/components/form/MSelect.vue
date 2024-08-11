@@ -15,6 +15,7 @@ import { useInputHelper } from '../../composables'
 import { QField, QSelect, QSelectSlots } from 'quasar'
 
 type P = {
+  name: Props['name'];
   auto?: Props['auto'];
   col?: Props['col'];
   xs?: Props['xs'];
@@ -22,24 +23,20 @@ type P = {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  help?: Props['help'];
-  helpIcon?: Props['helpIcon'];
-  helpProps?: Props['helpProps'];
-  name: Props['name'];
+  modelValue?: Props['modelValue'];
   label?: Props['label'];
-  stackLabel?: Props['stackLabel'];
+  caption?: Props['caption'];
+  hint?: Props['hint'];
   placeholder?: Props['placeholder'];
-  hidePlaceholder?: Props['hidePlaceholder'];
+  help?: Props['help'];
+  stackLabel?: Props['stackLabel'];
   required?: Props['required'];
-  hideRequired?: Props['hideRequired'];
   rules?: Props['rules'];
   errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
   autocomplete?: Props['autocomplete'];
   topLabel?: Props['topLabel'];
-  caption?: Props['caption'];
-  hint?: Props['hint'];
   behavior?: Props['behavior'];
   emitValue?: Props['emitValue'];
   useInput?: Props['useInput'];
@@ -59,6 +56,7 @@ type P = {
 }
 
 const props = withDefaults(defineProps<P>(), {
+  name: () => '',
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -66,24 +64,20 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  help: undefined,
-  helpIcon: () => 'ion-ios-help-circle-outline',
-  helpProps: undefined,
-  name: () => '',
+  modelValue: undefined,
   label: undefined,
-  stackLabel: undefined,
+  caption: undefined,
+  hint: undefined,
   placeholder: undefined,
-  hidePlaceholder: undefined,
+  help: undefined,
+  stackLabel: undefined,
   required: undefined,
-  hideRequired: undefined,
   rules: undefined,
   errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   autocomplete: undefined,
   topLabel: undefined,
-  caption: undefined,
-  hint: undefined,
   behavior: undefined,
   emitValue: () => !0,
   useInput: () => !0,
@@ -101,12 +95,13 @@ const props = withDefaults(defineProps<P>(), {
   axiosMode: undefined,
   hideSelected: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: undefined })
-
 const helper = useInputHelper<P & Props>(() => props, 'select', () => ({ choose: !0 }))
 const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, inputProps } = helper
 
-const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), { syncVModel: !0 })
+const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
+  initialValue: props.modelValue,
+  syncVModel: !0
+})
 const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
 const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
 const errorMessage = computed(() => getErrors.value[0] || undefined)
@@ -140,21 +135,19 @@ const filterFn = (val: any, update: any) => {
     search.value = val.toString()
   })
 }
-
-const listeners = {
-  blur: (v: any) => handleBlur(v, !1),
-  'update:modelValue': (v: string) => handleChange(v, !!errorMessage.value),
-  filterFn
-}
-type Input = InstanceType<typeof QSelect | typeof QField>
-const input = ref<Input | null>(null)
-const scopes = reactive(inputScope)
 const onDoneOptions = () => {
   const e = input.value as QSelect
   e?.updateInputValue('', !0)
   e?.hidePopup()
 }
-defineExpose<typeof scopes & { input: typeof input, onDoneOptions: typeof onDoneOptions}>({ input, ...scopes, onDoneOptions })
+const listeners = {
+  blur: (v: any) => handleBlur(v, !1),
+  'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value),
+  filterFn
+}
+const input = ref<InstanceType<typeof QSelect | typeof QField> | null>(null)
+const scopes = reactive(inputScope)
+defineExpose<typeof scopes & { input: typeof input, onDoneOptions: typeof onDoneOptions }>({ input, ...scopes, onDoneOptions })
 </script>
 
 <script lang="ts">
@@ -170,9 +163,9 @@ export default {
     :col="col"
     :lg="lg"
     :md="md"
+    :name="name"
     :sm="sm"
     :xs="xs"
-    :name="name"
   >
     <slot
       name="top-input"
@@ -203,21 +196,21 @@ export default {
       :emit-value="emitValue"
       :error="!!errorMessage"
       :error-message="errorMessage"
+      :hide-selected="hideSelected !== undefined ? hideSelected : search.length > 0"
       :hint="__(hint)"
       :label="loading ? undefined : getPlaceholder"
-      :loading="loading"
-      :map-options="mapOptions"
-      :multiple="multiple"
       :options="getOptions"
       :readonly="readonly"
-      :hide-selected="hideSelected !== undefined ? hideSelected : search.length > 0"
-      :use-input="useInput"
       v-bind="{
         ...$myth.options.select as any,
         ...( viewMode ? $myth.options.field : {} ),
         ...$attrs,
         ...(viewMode ? { stackLabel: !0 } : { stackLabel: hasTopLabel ? !1 : inputProps.stackLabel } ),
-        useChips: inputProps.useChips === !0 && !multiple ? !1 : inputProps.useChips
+        useChips: inputProps.useChips === !0 && !multiple ? !1 : inputProps.useChips,
+        multiple,
+        mapOptions,
+        loading,
+        useInput
       }"
       @filter="filterFn"
       v-on="listeners"
@@ -319,18 +312,7 @@ export default {
       name="help"
       v-bind="inputScope"
     >
-      <MRow
-        v-if="!!help"
-        class="items-center"
-        v-bind="helpProps"
-      >
-        <q-icon
-          :name="helpIcon"
-          left
-          size="20px"
-        />
-        <span class="text-caption">{{ __(help) }}</span>
-      </MRow>
+      <MHelpRow :text="help" />
     </slot>
     <slot
       name="bottom-input"

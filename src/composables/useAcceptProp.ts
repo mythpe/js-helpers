@@ -1,5 +1,5 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
  * Website: https://www.4myth.com
@@ -7,7 +7,7 @@
  */
 
 import { computed, MaybeRef, toValue } from 'vue'
-import { MAvatarViewerProps, MFileProps, MUploaderProps } from 'app/src'
+import { MAvatarViewerProps, MFileProps, MUploaderProps } from '../components'
 
 type PropsList = MFileProps | MUploaderProps | MAvatarViewerProps;
 type Arg = MaybeRef<Partial<PropsList>> | Partial<PropsList>;

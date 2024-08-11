@@ -1,5 +1,5 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
   - Website: https://www.4myth.com
@@ -42,7 +42,7 @@ withDefaults(defineProps<Props>(), {
         :label="contextmenuItem.label !== undefined ? __(contextmenuItem.label || contextmenuItem.name) : undefined"
         :list-item="displayMode === 'item'"
         :tooltip="contextmenuItem.tooltip !== undefined ? contextmenuItem.tooltip : (contextmenuItem.label === undefined ? contextmenuItem.name : undefined)"
-        v-bind="{...$myth.options.dt?.contextmenu?.btn,...contextmenuItem.attr,...$attrs}"
+        v-bind="{...contextmenuItem.attr,...$attrs}"
         @click="contextmenuItem.click ? contextmenuItem.click(item,index) : undefined"
       />
     </template>

@@ -7,7 +7,7 @@
  */
 
 import { AxiosRequestConfig } from 'axios'
-import { ApiServiceParams } from '../components/datatable/models.d'
+import { ApiServiceParams } from '../components'
 import { ApiInterface, Generic, ResponseDataType } from '../types/m-helpers'
 
 export type UrlType = string | number | any;

@@ -1,5 +1,5 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
  * Website: https://www.4myth.com
@@ -9,7 +9,7 @@
 import { AxiosError, AxiosResponse } from 'axios'
 import { DialogChainObject, QNotifyCreateOptions, QTableProps } from 'quasar'
 import { QNotifyUpdateOptions } from 'quasar/dist/types/api'
-import { MDatatableProps } from 'app/src'
+import { MDatatableProps } from '../components'
 
 export type ParseHeaderOptions = {
   controlKey?: 'control' | string

@@ -1,5 +1,5 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
   - Website: https://www.4myth.com
@@ -8,40 +8,43 @@
 
 <script lang="ts" setup>
 import { useMyth } from '../../vue3'
-import { Field as VeeField } from 'vee-validate'
-import { computed } from 'vue'
-import { useInputProps } from '../../composables'
+import { computed, reactive, ref } from 'vue'
+import { useField } from 'vee-validate'
+import { MToggleProps as Props } from './models'
+import { useInputHelper } from '../../composables'
+import { QToggle } from 'quasar'
 
-import { MToggleProps } from './models'
-
-interface Props {
-  auto?: MToggleProps['auto'];
-  col?: MToggleProps['col'];
-  xs?: MToggleProps['xs'];
-  sm?: MToggleProps['sm'];
-  md?: MToggleProps['md'];
-  lg?: MToggleProps['lg'];
-  xl?: MToggleProps['xl'];
-  borderless?: MToggleProps['borderless'];
-  clearable?: MToggleProps['clearable'];
-  dense?: MToggleProps['dense'];
-  modelValue?: MToggleProps['modelValue'];
-  val?: MToggleProps['val'];
-  name?: MToggleProps['name'];
-  label?: MToggleProps['label'];
-  activeLabel?: MToggleProps['activeLabel'];
-  inactiveLabel?: MToggleProps['inactiveLabel'];
-  trueValue?: MToggleProps['trueValue'];
-  falseValue?: MToggleProps['falseValue'];
-  color?: MToggleProps['color'];
-  checkedIcon?: MToggleProps['checkedIcon'];
-  uncheckedIcon?: MToggleProps['uncheckedIcon'];
-  toggleIndeterminate?: MToggleProps['toggleIndeterminate'];
-  statusLabels?: MToggleProps['statusLabels'];
-  hint?: MToggleProps['hint'];
+interface P {
+  auto?: Props['auto'];
+  col?: Props['col'];
+  xs?: Props['xs'];
+  sm?: Props['sm'];
+  md?: Props['md'];
+  lg?: Props['lg'];
+  xl?: Props['xl'];
+  modelValue?: Props['modelValue'];
+  val?: Props['val'];
+  name: Props['name'];
+  label?: Props['label'];
+  caption?: Props['caption'];
+  hint?: Props['hint'];
+  help?: Props['help'];
+  activeLabel?: Props['activeLabel'];
+  inactiveLabel?: Props['inactiveLabel'];
+  trueValue?: Props['trueValue'];
+  falseValue?: Props['falseValue'];
+  color?: Props['color'];
+  checkedIcon?: Props['checkedIcon'];
+  indeterminateIcon?: Props['indeterminateIcon'];
+  uncheckedIcon?: Props['uncheckedIcon'];
+  statusLabels?: Props['statusLabels'];
+  errors?: Props['errors'];
+  rules?: Props['rules'];
+  dense?: Props['dense'];
+  keepColor?: Props['keepColor'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<P>(), {
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -49,48 +52,63 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  borderless: undefined,
-  clearable: undefined,
-  dense: undefined,
   modelValue: undefined,
   val: undefined,
   name: () => '',
   label: undefined,
-  activeLabel: 'yes',
-  inactiveLabel: 'no',
+  caption: undefined,
+  hint: undefined,
+  help: undefined,
   trueValue: !0,
   falseValue: !1,
   color: 'primary',
-  checkedIcon: 'check',
-  uncheckedIcon: 'cancel',
-  toggleIndeterminate: !1,
+  checkedIcon: 'ion-checkmark',
+  uncheckedIcon: 'ion-close',
+  indeterminateIcon: 'ion-ios-code-working',
+  activeLabel: 'yes',
+  inactiveLabel: 'no',
   statusLabels: !1,
-  hint: undefined
+  errors: undefined,
+  rules: undefined,
+  dense: undefined,
+  keepColor: () => !0
 })
-const { getRules } = useInputProps(() => props)
 const { __ } = useMyth()
-type Events = {
-  (e: 'update:modelValue', value: any): void;
-}
-const emit = defineEmits<Events>()
-const inputValue = computed({
-  get: () => props.modelValue,
-  set: v => emit('update:modelValue', v)
+const helper = useInputHelper<Props>(() => props, 'toggle')
+const { inputProps } = helper
+
+const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
+  initialValue: props.modelValue,
+  syncVModel: !0
 })
-
-const topLabel = computed<string | null>(() => __(props.label === undefined ? props.name : props.label) ?? null)
-
+const { value, errors: fieldErrors, handleChange } = inputScope
+const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
+const errorMessage = computed(() => getErrors.value[0] || undefined)
+const listeners = {
+  'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
+}
 const getLabel = computed<string | undefined>(() => {
-  const v = props.modelValue
+  const def = undefined
+  const v = value.value
   if (v === props.trueValue) {
-    return __(props.statusLabels ? 'active' : props.activeLabel) || undefined
+    return __(props.statusLabels ? 'active' : props.activeLabel) as string || def
   }
   if (v === props.falseValue) {
-    return __(props.statusLabels ? 'inactive' : props.inactiveLabel) || undefined
+    return __(props.statusLabels ? 'inactive' : props.inactiveLabel) as string || def
   }
-  return __('none') || undefined
+  return __('none') as string || def
 })
 
+const input = ref<InstanceType<typeof QToggle> | null>(null)
+const scopes = reactive(inputScope)
+defineExpose({ input, ...scopes })
+</script>
+
+<script lang="ts">
+export default {
+  name: 'MToggle',
+  inheritAttrs: !1
+}
 </script>
 
 <template>
@@ -100,79 +118,77 @@ const getLabel = computed<string | undefined>(() => {
     :col="col"
     :lg="lg"
     :md="md"
+    :name="name"
     :sm="sm"
     :xs="xs"
   >
-    <VeeField
-      v-slot="fieldProps"
-      v-model="inputValue"
-      :label="label ? __(label) : name"
-      :name="name"
-      :rules="getRules"
-      v-bind="$attrs"
-    >
-      <MColumn>
-        <slot
-          name="top"
-          v-bind="fieldProps"
-        />
-        <div v-if="topLabel">
-          {{ topLabel }}
-        </div>
-        <MCol auto>
-          <slot
-            name="before"
-            v-bind="fieldProps"
-          />
+    <slot
+      name="top-input"
+      v-bind="inputScope"
+    />
+    <slot name="top-label">
+      <MInputLabel
+        :for="name"
+        class="no-margin"
+      >
+        {{ __(label ?? name) }}
+      </MInputLabel>
+    </slot>
+    <slot name="caption">
+      <div
+        v-if="!!caption"
+        class="text-caption m--input__caption"
+      >
+        {{ __(caption) }}
+      </div>
+    </slot>
+    <MRow>
+      <slot
+        name="before"
+        v-bind="inputScope"
+      />
+      <MCol col="shrink">
+        <q-field
+          :error="!!errorMessage"
+          :error-message="errorMessage"
+          :hint="__(hint)"
+          v-bind="{...$myth.options.input as any,...$myth.options.field,...$attrs, borderless: !0, outlined: !1, dense: inputProps.dense}"
+        >
           <q-toggle
-            :borderless="borderless"
-            :checked-icon="checkedIcon"
-            :clearable="clearable"
-            :color="color"
-            :dense="dense"
+            v-model="value"
             :false-value="falseValue"
             :label="getLabel"
-            :model-value="modelValue"
-            :toggle-indeterminate="toggleIndeterminate"
             :true-value="trueValue"
-            :unchecked-icon="uncheckedIcon"
-            keep-color
-            v-bind="{...($myth.options.toggle||{}),...($attrs || {}),...fieldProps.field}"
+            v-bind="{
+              ...$myth.options.toggle,
+              ...$attrs,
+              dense: inputProps.dense,
+              checkedIcon: inputProps.checkedIcon,
+              uncheckedIcon: inputProps.uncheckedIcon,
+              color: !!errorMessage ? 'negative' : inputProps.color,
+              indeterminateIcon: inputProps.indeterminateIcon,
+              keepColor: inputProps.keepColor,
+            }"
+            v-on="listeners"
           >
             <slot />
           </q-toggle>
-          <slot name="hint">
-            <div
-              v-if="!!hint"
-              class="text-caption"
-            >
-              <q-icon name="ion-ios-help-circle-outline" />
-              {{ __(hint) }}
-            </div>
-          </slot>
-          <div
-            v-if="fieldProps.errors.length > 0"
-            class="text-caption text-negative"
-          >
-            {{ fieldProps.errorMessage }}
-          </div>
-          <slot
-            name="after"
-            v-bind="fieldProps"
-          />
-        </MCol>
-        <slot
-          name="bottom"
-          v-bind="fieldProps"
-        />
-      </MColumn>
-    </VeeField>
+        </q-field>
+      </MCol>
+      <slot
+        name="after"
+        v-bind="inputScope"
+      />
+    </MRow>
+    <slot
+      name="help"
+      v-bind="inputScope"
+    >
+      <MHelpRow :text="help" />
+    </slot>
+    <slot
+      name="bottom-input"
+      v-bind="inputScope"
+    />
   </MCol>
 </template>
-
-<script lang="ts">
-export default {
-  name: 'MToggle',
-  inheritAttrs: !1
-}
-</script>

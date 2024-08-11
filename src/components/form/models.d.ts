@@ -1,5 +1,5 @@
 /*
- * MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+ * MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
  * Email: mythpe@gmail.com
  * Mobile: +966590470092
  * Website: https://www.4myth.com
@@ -13,28 +13,24 @@ import {
   QBtnProps,
   QBtnSlots,
   QCheckboxProps,
-  QCheckboxSlots,
   QDateProps,
   QEditorProps,
   QEditorSlots,
   QFieldSlots,
   QFileProps,
-  QFileSlots,
   QImgProps,
   QInputProps,
   QInputSlots,
   QRadioProps,
-  QRadioSlots,
   QSelectProps,
   QTimeProps,
   QToggleProps,
-  QToggleSlots,
   QUploaderProps,
   QUploaderSlots
 } from 'quasar'
 import type { FormActions, FormContext, FormMeta, Path, SubmissionHandler } from 'vee-validate'
 import { ComputedGetter, MaybeRefOrGetter, Ref, UnwrapRef, VNode } from 'vue'
-import { ColStyleType, MColProps, ViewModeProps } from '../grid/models'
+import { MColProps, ViewModeProps } from '../grid/models'
 
 export type InputRulesContext = string | Record<string, any> | undefined;
 export type InputErrorsContext = string[];
@@ -45,45 +41,71 @@ export type InputHelpProps = {
    * Information text with Icon.
    */
   help?: string;
-  /**
-   * Auto help Icon.
-   */
-  helpIcon?: string;
-  /**
-   * Div Props of help.
-   */
-  helpProps?: Record<string, any>;
 }
 export type InputHelpSlots = {
   /**
    * VNode bottom of input & before 'bottom-input slot'.
    */
-  'help': () => VNode[];
+  help: () => VNode[];
 }
 
 export type BaseInputFormProps = {
+  /**
+   * Input name.
+   */
   name: string;
+  /**
+   * Input model value.
+   */
   modelValue?: any;
+  /**
+   * Input Label.
+   */
+  label?: string | undefined;
+  /**
+   * Caption under label.
+   */
+  caption?: string | undefined;
+  /**
+   * Input Hint.
+   */
+  hint?: string | undefined;
+  /**
+   * Input Placeholder.
+   */
   placeholder?: string | undefined;
-  hidePlaceholder?: boolean | undefined;
-  required?: boolean | undefined;
-  hideRequired?: boolean | undefined;
-  // email?: boolean | undefined;
-  // mobile?: boolean | string | number | undefined;
+  /**
+   * Input Required validation.
+   */
+  required?: boolean;
+  /**
+   * Input Validation Rules.
+   */
   rules?: InputRulesContext;
+  /**
+   * Input Error Messages.
+   */
   errors?: InputErrorsContext;
-  formErrors?: InputFormErrorsContext;
+  /**
+   * Form Error Messages.
+   */
+  // formErrors?: InputFormErrorsContext;
+  /**
+   * Input autocomplete attribute.
+   * if true, will set from input name.
+   * if false, will set 'off'.
+   * else, will set the attribute value.
+   * Default: undefined.
+   */
   autocomplete?: boolean | string | undefined;
-  topLabel?: boolean | undefined;
-  caption?: string | null | undefined;
+  /**
+   * Inputs Top Label.
+   */
+  topLabel?: boolean;
 }
-export type BaseInputsProps = ViewModeProps & MColProps & InputHelpProps & BaseInputFormProps;
+export type BaseInputsProps = ViewModeProps & InputHelpProps & Omit<MColProps, 'name'> & BaseInputFormProps;
 
 export type BaseInputsSlots = InputHelpSlots & {
-  /**
-   * Field main content
-   */
-  default: () => VNode[];
   /**
    * VNode top of input & top of 'top label slot'.
    */
@@ -96,6 +118,10 @@ export type BaseInputsSlots = InputHelpSlots & {
    * VNode top of input & after top label.
    */
   caption: () => VNode[];
+  /**
+   * Field main content
+   */
+  default: () => VNode[];
   /**
    * VNode bottom of input.
    */
@@ -161,7 +187,7 @@ export interface MBtnSlots extends QBtnSlots {
   loading: () => VNode[];
 }
 
-export type MInputProps = Omit<QInputProps, 'rules' | 'name'> & BaseInputsProps
+export type MInputProps = Omit<QInputProps, 'rules' | 'name' | 'modelValue' | 'label' | 'hint'> & BaseInputsProps
 
 export type MPasswordProps = MInputProps & {
   /**
@@ -176,96 +202,36 @@ export type MPasswordProps = MInputProps & {
 
 export type MInputSlots = QInputSlots & QFieldSlots & BaseInputsSlots
 
-export interface MFileProps extends MColProps, Omit<QFileProps, 'rules'> {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
+export type MFileProps = Omit<QFileProps, 'rules' | 'name' | 'label' | 'hint'> & Omit<BaseInputsProps, 'modelValue' | 'autocomplete'> & {
   accept?: string | undefined;
   images?: boolean | undefined;
   video?: boolean | undefined;
   pdf?: boolean | undefined;
   excel?: boolean | undefined;
-  outlined?: boolean | undefined;
-  standout?: boolean | string | undefined;
-  borderless?: boolean | undefined;
-  stackLabel?: boolean | undefined;
-  filled?: boolean | undefined;
-  dense?: boolean | undefined;
-  hideBottomSpace?: boolean | undefined;
-  name: string;
-  label?: string | undefined;
-  placeholder?: string | undefined;
-  hidePlaceholder?: boolean | undefined;
-  required?: boolean | undefined;
-  hideRequired?: boolean | undefined;
-  email?: boolean | undefined;
-  clearable?: boolean | undefined;
-  loading?: boolean | undefined;
-  rules?: InputRulesContext;
-  errors?: Record<string, string[]>;
-  modelValue: any;
-  /**
-   * Set input to vie mode use q-field
-   */
-  viewMode?: boolean | undefined;
-  viewModeValue?: any | undefined;
-  topLabel?: boolean | undefined;
-  caption?: string | null | undefined;
 }
 
-export interface MFileSlots extends QFileSlots {
-  /**
-   * Field main content
-   */
-  default: () => VNode[];
-  'top-label': () => VNode[];
-  caption: () => VNode[];
-  bottom: () => VNode[];
-}
+export type MFileSlots = BaseInputsSlots
 
-export interface MPickerProps extends Omit<MInputProps, 'modelValue' | 'type'>, Omit<QDateProps, 'modelValue' | 'options'>, Omit<QTimeProps, 'modelValue'> {
-  modelValue: any;
+export type MPickerProps =
+  Omit<MInputProps, 'modelValue' | 'type' | 'topLabel'>
+  & Omit<QDateProps, 'modelValue' | 'options'>
+  & Omit<QTimeProps, 'modelValue'>
+  & {
+  modelValue?: any;
   type?: 'date' | 'time';
   btnProps?: MBtnProps;
   range?: boolean;
 }
 
-export interface MPickerSlots extends MInputSlots {
-  /**
-   * Field main content
-   */
-  default: () => VNode[];
-  'top-label': () => VNode[];
-  caption: () => VNode[];
-}
+export type MPickerSlots = MInputSlots
 
-export interface MDateProps extends MPickerProps {
-  modelValue: any;
-}
+export type MDateProps = Omit<MPickerProps, 'type'>
+export type MDateSlots = MPickerSlots
 
-export interface MDateSlots extends MPickerSlots {
-  /**
-   * Field main content
-   */
-  default: () => VNode[];
-}
+export type MTimeProps = Omit<MPickerProps, 'type'>
+export type MTimeSlots = MPickerSlots
 
-export interface MTimeProps extends MPickerProps {
-  modelValue: any
-}
-
-export interface MTimeSlots extends MPickerSlots {
-  /**
-   * Field main content
-   */
-  default: () => VNode[];
-}
-
-export type MSelectProps = Omit<QSelectProps, 'rules' | 'name' | 'modelValue'> & BaseInputsProps & {
+export type MSelectProps = Omit<QSelectProps, 'rules' | 'name' | 'modelValue' | 'label' | 'hint'> & BaseInputsProps & {
   /**
    * Input search functionality. useInput prop for this feature.
    */
@@ -322,81 +288,30 @@ export type MAxiosProps = Omit<MSelectProps, 'options' | 'axiosMode'> & {
 }
 export type MAxiosSlots = MSelectSlots
 
-export interface MCheckboxProps extends QCheckboxProps {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  name: string;
-  modelValue: any;
-  val?: any | undefined;
-  label?: any;
-  noLabel?: boolean;
-  required?: boolean;
-  rules?: InputRulesContext;
-  hideRequired?: boolean;
-  viewMode?: boolean;
-  placeholder?: any;
-  errors?: Record<string, string[]>;
-  colProps?: MColProps;
-}
-
-export interface MCheckboxSlots extends QCheckboxSlots {
-  default: () => VNode[];
-  top: () => VNode[];
+export type MCheckboxProps = Omit<QCheckboxProps, 'name' | 'modelValue' | 'label'> & BaseInputsProps
+export type MCheckboxSlots = BaseInputsSlots & {
+  /**
+   * VNode before field main content.
+   */
   before: () => VNode[];
-  beforeField: () => VNode[];
+  /**
+   * VNode after field main content.
+   */
   after: () => VNode[];
-  afterField: () => VNode[];
-  bottom: () => VNode[];
-  left: () => VNode[];
-  right: () => VNode[];
 }
 
-export interface MToggleProps extends MColProps, Omit<QToggleProps, 'modelValue'> {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  borderless?: boolean | undefined;
-  clearable?: boolean | undefined;
-  dense?: boolean | undefined;
-  modelValue?: any | undefined;
-  val?: any | undefined;
-  name?: string | undefined;
-  label?: string | undefined;
+export type MToggleProps =
+  Omit<BaseInputsProps, 'placeholder' | 'topLabel' | 'autocomplete'>
+  & Omit<QToggleProps, 'modelValue' | 'label' | 'name'>
+  & {
   activeLabel?: string;
   inactiveLabel?: string;
-  trueValue?: any | undefined;
-  falseValue?: any | undefined;
-  color?: string | undefined;
-  checkedIcon?: string | undefined;
-  uncheckedIcon?: string | undefined;
-  toggleIndeterminate?: boolean | undefined;
   statusLabels?: boolean | undefined;
-  rules?: InputRulesContext;
-  required?: boolean;
-  hideRequired?: boolean;
-  viewMode?: boolean;
-  placeholder?: any;
-  errors?: Record<string, string[]>;
-  hint?: string;
 }
+export type MToggleSlots = MCheckboxSlots
 
-export interface MToggleSlots extends QToggleSlots {
-  top: (scope: VeeFieldFormScope) => VNode[];
-  before: (scope: VeeFieldFormScope) => VNode[];
-  default: () => VNode[];
-  after: (scope: VeeFieldFormScope) => VNode[];
-  bottom: (scope: VeeFieldFormScope) => VNode[];
-  hint: () => VNode[];
-}
+export type MRadioProps = Omit<QRadioProps, 'name' | 'modelValue' | 'label'> & BaseInputsProps
+export type MRadioSlots = MCheckboxSlots
 
 type GenericObject = Record<string, any>;
 type FormErrors<TValues extends GenericObject> = Partial<Record<Path<TValues>, string | undefined>>;
@@ -638,53 +553,9 @@ export interface MUploaderSlots extends QUploaderSlots {
 
 export type MUploaderXhrInfo = { files: readonly any[]; xhr: any; }
 
-export interface MEditorProps extends Omit<QEditorProps, 'modelValue'>, MColProps {
-  modelValue: string | any;
-  name: string;
-  label?: string;
-  hint?: string;
-  rules?: InputRulesContext;
-  required?: boolean;
-  hideRequired?: boolean;
-  viewMode?: boolean;
-  errors?: Record<string, string[]>;
-  caption?: string | null | undefined;
-}
+export type MEditorProps = Omit<QEditorProps, 'modelValue' | 'placeholder'> & BaseInputsProps
 
-export interface MEditorSlots extends QEditorSlots {
-  /**
-   * Editor default slot
-   */
-  default: () => VNode[];
-  label: () => VNode[];
-  caption: () => VNode[];
-  hint: () => VNode[];
-}
-
-export interface MRadioProps extends Omit<QRadioProps, 'name' | 'modelValue' | 'val' | 'label'>, MColProps {
-  name: string;
-  modelValue: any;
-  val: any;
-  label?: string | null | undefined;
-  noLabel?: boolean;
-  required?: boolean;
-  rules?: InputRulesContext;
-  hideRequired?: boolean;
-  viewMode?: boolean;
-  placeholder?: any;
-  errors?: Record<string, string[]>;
-  colProps?: MColProps;
-}
-
-export interface MRadioSlots extends QRadioSlots {
-  default: () => VNode[];
-  top: () => VNode[];
-  before: () => VNode[];
-  after: () => VNode[];
-  bottom: () => VNode[];
-  left: () => VNode[];
-  right: () => VNode[];
-}
+export type MEditorSlots = QEditorSlots & BaseInputsSlots
 
 export interface MOtpProps extends Omit<QInputProps, 'modelValue'> {
   modelValue?: string | number;
@@ -693,7 +564,6 @@ export interface MOtpProps extends Omit<QInputProps, 'modelValue'> {
   time?: string | number;
   hideTime?: boolean;
   hideSendAgain?: boolean;
-  topLabel?: string | null | undefined;
   topLabelProps?: any | undefined;
   errors?: string[];
 }

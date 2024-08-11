@@ -1,32 +1,39 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
 
-<template>
-  <MPicker
-    v-model="inputValue"
-    type="date"
-    v-bind="$attrs"
-  >
-    <slot />
-  </MPicker>
-</template>
-
 <script lang="ts" setup>
+import { MDateProps, MInputSlots } from './models'
+import { ref } from 'vue'
+import MPicker from './MPicker.vue'
 
-import { MDateProps } from './models'
-
-const inputValue = defineModel<MDateProps['modelValue']>({ required: !0 })
-
+const modelValue = defineModel<MDateProps['modelValue']>({ required: !1, default: undefined })
+const input = ref<InstanceType<typeof MPicker> | null>(null)
+defineExpose<{ input: typeof input }>({ input })
 </script>
 
 <script lang="ts">
 export default {
-  name: 'MDate',
-  inheritAttrs: !1
+  name: 'MDate'
 }
 </script>
+
+<template>
+  <MPicker
+    ref="input"
+    v-model="modelValue"
+    type="date"
+  >
+    <template
+      v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
+      :key="slot"
+      #[slot]
+    >
+      <slot :name="slot" />
+    </template>
+  </MPicker>
+</template>
