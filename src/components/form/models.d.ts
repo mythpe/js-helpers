@@ -17,6 +17,7 @@ import {
   QDateProps,
   QEditorProps,
   QEditorSlots,
+  QFieldSlots,
   QFileProps,
   QFileSlots,
   QImgProps,
@@ -25,7 +26,6 @@ import {
   QRadioProps,
   QRadioSlots,
   QSelectProps,
-  QSelectSlots,
   QTimeProps,
   QToggleProps,
   QToggleSlots,
@@ -33,7 +33,7 @@ import {
   QUploaderSlots
 } from 'quasar'
 import type { FormActions, FormContext, FormMeta, Path, SubmissionHandler } from 'vee-validate'
-import { Ref, UnwrapRef, VNode } from 'vue'
+import { ComputedGetter, MaybeRefOrGetter, Ref, UnwrapRef, VNode } from 'vue'
 import { ColStyleType, MColProps, ViewModeProps } from '../grid/models'
 
 export type InputRulesContext = string | Record<string, any> | undefined;
@@ -63,6 +63,7 @@ export type InputHelpSlots = {
 
 export type BaseInputFormProps = {
   name: string;
+  modelValue?: any;
   placeholder?: string | undefined;
   hidePlaceholder?: boolean | undefined;
   required?: boolean | undefined;
@@ -160,34 +161,20 @@ export interface MBtnSlots extends QBtnSlots {
   loading: () => VNode[];
 }
 
-export type MInputProps = Omit<QInputProps, 'rules' | 'modelValue'> & MColProps & {
-  placeholder?: string | undefined;
-  hidePlaceholder?: boolean | undefined;
-  required?: boolean | undefined;
-  hideRequired?: boolean | undefined;
-  email?: boolean | undefined;
-  mobile?: boolean | string | number | undefined;
-  rules?: InputRulesContext;
-  errors?: Record<string, string[]>;
-  modelValue?: any;
+export type MInputProps = Omit<QInputProps, 'rules' | 'name'> & BaseInputsProps
+
+export type MPasswordProps = MInputProps & {
   /**
-   * Set input to vie mode use q-field
+   * icon prepend it to password input.
    */
-  viewMode?: boolean | undefined;
-  viewModeValue?: any | undefined;
-  autocomplete?: string | boolean | undefined;
-  topLabel?: boolean | undefined;
-  caption?: string | null | undefined;
+  icon?: boolean | undefined;
+  /**
+   * toggle password append icon.
+   */
+  noToggle?: boolean | undefined;
 }
 
-export interface MInputSlots extends QInputSlots {
-  /**
-   * Field main content
-   */
-  default: () => VNode[];
-  'top-label': () => VNode[];
-  caption: () => VNode[];
-}
+export type MInputSlots = QInputSlots & QFieldSlots & BaseInputsSlots
 
 export interface MFileProps extends MColProps, Omit<QFileProps, 'rules'> {
   auto?: boolean | undefined;
@@ -278,82 +265,62 @@ export interface MTimeSlots extends MPickerSlots {
   default: () => VNode[];
 }
 
-export interface MSelectProps extends MColProps, Omit<QSelectProps, 'rules'> {
-  behavior?: 'default' | 'menu' | 'dialog' | undefined;
-  emitValue?: boolean | undefined;
-  mapOptions?: boolean | undefined;
-  useInput?: boolean | undefined;
-  name: string;
-  label?: string | undefined;
-  placeholder?: any;
-  required?: boolean | undefined;
-  hideRequired?: boolean | undefined;
-  rules?: InputRulesContext;
-  errors?: Record<string, string[]>;
-  modelValue: any;
+export type MSelectProps = Omit<QSelectProps, 'rules' | 'name' | 'modelValue'> & BaseInputsProps & {
   /**
-   * Property of option which holds the 'value'; If using a function then for best performance, reference it from your scope and do not define it inline
-   * Default value: value
-   * @param option The current option being processed
-   * @returns Value of the current option
+   * Input search functionality. useInput prop for this feature.
    */
-  optionValue?: ((option: string | any) => any) | string | undefined;
-  /**
-   * Property of option which holds the 'label'; If using a function then for best performance, reference it from your scope and do not define it inline
-   * Default value: label
-   * @param option The current option being processed
-   * @returns Label of the current option
-   */
-  optionLabel?: ((option: string | any) => string) | string | undefined;
   search?: string | null | undefined;
-  timeout?: number;
-  autoSearch?: boolean | undefined;
   /**
-   * Fetch Data on mounted
+   * Minimum characters to start searching. Default is 1.
    */
-  iniData?: boolean;
+  searchLength?: string | number;
   /**
-   * The options using ajax request to filter
+   * hide the default empty list message.
+   */
+  hideEmptyList?: boolean | undefined;
+  /**
+   * Disable filter functionality.
    */
   noFilter?: boolean | undefined;
   /**
-   * Set input to vie mode use q-field
+   * Set mode of component to axios of filter & search.
+   * if set to true, component will fetch data from api and don't do filter functionality.
    */
-  viewMode?: boolean | undefined;
-  viewModeValue?: any | undefined;
-  topLabel?: boolean | undefined;
-  caption?: string | null | undefined;
-  hideEmptyList?: boolean | undefined;
-}
-
-export interface MSelectSlots extends QSelectSlots {
+  axiosMode?: boolean | undefined;
   /**
-   * Field main content
+   * Fetch Data on mounted
    */
-  default: () => VNode[];
-  'top-label': () => VNode[];
-  caption: () => VNode[];
+  // iniData?: boolean;
 }
+export type MSelectSlots = QInputSlots & QFieldSlots & BaseInputsSlots
 
-export interface MAxiosProps extends Omit<MSelectProps, 'options' | 'modelValue'> {
-  modelValue?: any | undefined;
-  requestWith?: string | undefined;
-  options?: any[];
+export type MAxiosProps = Omit<MSelectProps, 'options' | 'axiosMode'> & {
+  /**
+   * Request method. Default is GET.
+   */
   service: ((config?: AxiosRequestConfig) => Promise<any>) | string;
-  params?: Record<string, any> | undefined;
-  guest?: boolean | undefined;
+  /**
+   * Send request as guest request. If false, send request as authenticated user. Default is true.
+   */
+  guest?: MaybeRefOrGetter<boolean> | ComputedGetter<boolean>;
+  /**
+   * Request params.
+   */
+  params?: MaybeRefOrGetter<Record<string, any>> | ComputedGetter<Record<string, any>>;
+  /**
+   * Request relations.
+   */
+  requestWith?: MaybeRefOrGetter<string> | ComputedGetter<string> | undefined;
+  /**
+   * Component items.
+   */
+  items?: any[];
   /**
    *  The name of the attribute to be used as a label
    */
   attributeName?: string;
 }
-
-export interface MAxiosSlots extends MSelectSlots {
-  /**
-   * Field main content
-   */
-  default: () => VNode[];
-}
+export type MAxiosSlots = MSelectSlots
 
 export interface MCheckboxProps extends QCheckboxProps {
   auto?: boolean | undefined;
@@ -743,7 +710,5 @@ export type MInputLabelProps = Record<string, any>;
 export interface MInputLabelSlots extends QInputSlots {
   default: () => VNode[];
 }
-
-export * from './inputs/types.d'
 
 export {}

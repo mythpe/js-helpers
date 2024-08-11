@@ -66,7 +66,5 @@ export const initComponents = (app: App) => {
   app.component('MInputLabel', defineAsyncComponent(() => import('../components/form/MInputLabel.vue')))
 
   // Inputs.
-  app.component('MyInput', defineAsyncComponent(() => import('../components/form/inputs/Input/MyInput.vue')))
   app.component('MyRadio', defineAsyncComponent(() => import('../components/form/inputs/Radio/MyRadio.vue')))
-  app.component('MySelect', defineAsyncComponent(() => import('../components/form/inputs/Select/MySelect.vue')))
 }

@@ -8,32 +8,24 @@
 
 <script lang="ts" setup>
 
-import { MFieldViewProps } from './models'
 import { defineProps } from 'vue'
 import { QFieldSlots } from 'quasar'
-import { useInputs } from '../../composables'
+import { MInputProps } from './models'
 
 type Props = {
-  name: MFieldViewProps['name'];
-  value: MFieldViewProps['value'];
-  label?: MFieldViewProps['label'];
-  placeholder?: MFieldViewProps['placeholder'];
-  hidePlaceholder?: MFieldViewProps['hidePlaceholder'];
-  topLabel?: MFieldViewProps['topLabel'];
-  caption?: MFieldViewProps['caption'];
-  hint?: MFieldViewProps['hint'];
+  name: MInputProps['name'];
+  value: MInputProps['modelValue'];
+  label: MInputProps['label'];
+  placeholder: MInputProps['placeholder'];
+  hint: MInputProps['hint'];
 }
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   name: () => '',
   value: undefined,
   label: undefined,
   placeholder: undefined,
-  hidePlaceholder: undefined,
-  topLabel: undefined,
-  caption: undefined,
   hint: undefined
 })
-const { hasTopLabel, getLabel, getPlaceholder } = useInputs(() => props)
 
 </script>
 <script lang="ts">
@@ -43,18 +35,20 @@ export default {
 </script>
 <template>
   <q-field
-    :hint="hint"
-    :label="hasTopLabel ? undefined : getLabel"
-    :placeholder="getPlaceholder"
+    :hint="__(hint)"
+    :label="__(label)"
+    :placeholder="__(placeholder)"
     v-bind="{...$myth.options.input as any,...$myth.options.field as any,...$attrs, stackLabel: !0}"
   >
     <template #control>
-      <div
-        class="self-center full-width no-outline"
-        tabindex="0"
-      >
-        {{ value }}
-      </div>
+      <slot name="control">
+        <div
+          class="self-center full-width no-outline"
+          tabindex="0"
+        >
+          {{ value }}
+        </div>
+      </slot>
     </template>
     <template
       v-for="(_,slot) in ($slots as Readonly<QFieldSlots>)"

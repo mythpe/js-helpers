@@ -3,10 +3,11 @@
 </script>
 
 <template>
-  <label
+  <div
     class="m--input__top-label"
+    :for="$attrs.name || undefined"
     v-bind="$attrs"
   >
     <slot />
-  </label>
+  </div>
 </template>

@@ -6,23 +6,53 @@
   - Github: https://github.com/mythpe
   -->
 
+<script lang="ts" setup>
+import { defineProps, ref } from 'vue'
+import { MInputSlots, MPasswordProps } from './models'
+
+const inputType = ref<'text' | 'password'>('password')
+
+type Props = {
+  icon?: MPasswordProps['icon'];
+  noToggle?: MPasswordProps['noToggle'];
+}
+withDefaults(defineProps<Props>(), {
+  icon: () => !1,
+  noToggle: () => !1
+})
+
+const togglePassword = () => {
+  inputType.value = inputType.value === 'text' ? 'password' : 'text'
+}
+</script>
+
+<script lang="ts">
+export default {
+  name: 'MPassword',
+  inheritAttrs: !1
+}
+</script>
+
 <template>
   <MInput
     :type="inputType"
     v-bind="$attrs"
   >
     <template
-      v-if="passwordIcon && !Boolean($slots.prepend)"
+      v-if="icon && !Boolean($slots.prepend)"
       #prepend
     >
       <q-icon name="password" />
     </template>
-    <template #append>
+    <template
+      #append
+      v-if="!noToggle && !Boolean($slots.prepend)"
+    >
       <q-btn
         :icon="'ion-ios-eye' + (inputType !== 'password' ? '-off' : '')"
         flat
         round
-        @click="inputType = inputType === 'text' ? 'password' : 'text'"
+        @click="togglePassword()"
       />
     </template>
     <template
@@ -34,23 +64,3 @@
     </template>
   </MInput>
 </template>
-
-<script lang="ts" setup>
-import { ref } from 'vue'
-import { MInputSlots } from './models'
-
-const inputType = ref<'text' | 'password'>('password')
-</script>
-<script lang="ts">
-
-export default {
-  name: 'MPassword',
-  inheritAttrs: !1,
-  props: {
-    passwordIcon: {
-      type: Boolean,
-      default: () => !1
-    }
-  }
-}
-</script>

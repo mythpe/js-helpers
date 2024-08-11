@@ -135,6 +135,7 @@ export type MColProps = {
   md?: ColStyleType;
   lg?: ColStyleType;
   xl?: ColStyleType;
+  name?: string;
 }
 export type MColSlots = {
   default: () => VNode[];

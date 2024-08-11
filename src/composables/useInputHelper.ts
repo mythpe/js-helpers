@@ -7,24 +7,23 @@
  */
 
 import { computed, MaybeRefOrGetter, ref, toValue } from 'vue'
+import { extend } from 'quasar'
 import lodash from 'lodash'
 import { useMyth } from '../vue3'
-// import { MyInputProps } from 'app/src'
 import { MythOptionsConfig as MOC } from 'src/types'
-import { extend } from 'quasar'
-
+// type Options = Exclude<MOC, 'google'>;
 type G = { name: string; } & Record<string, any>;
 type OptsContext = {
   choose?: boolean;
   // key: keyof MOC
 };
-export const useInputs = <P extends G = G> (Props: MaybeRefOrGetter<P>, key: keyof MOC, Opts: MaybeRefOrGetter<OptsContext> = {}) => {
+export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key: keyof MOC, Opts: MaybeRefOrGetter<OptsContext> = {}) => {
   const { __ } = useMyth()
   const props = toValue<P>(Props)
   const opts = toValue<OptsContext>(Opts)
   const { options } = useMyth()
   const inputOptions = computed(() => (k: keyof MOC) => options[k] || {})
-  const inputProps = computed<P>(() => extend(!0, {}, inputOptions.value(key), props))
+  const inputProps = computed<MOC[typeof key] & P>(() => extend(!0, {}, inputOptions.value(key), props))
   const hasTopLabel = computed(() => inputProps.value.topLabel === !0)
 
   const getLabel = computed<string | undefined>(() => {

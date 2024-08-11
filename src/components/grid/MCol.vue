@@ -77,7 +77,8 @@ export default {
 <template>
   <div
     :class="classes"
-    v-bind="$myth.options.col"
+    :data-input-name="name"
+    v-bind="{ ...$myth.options.col, ...$attrs }"
   >
     <slot />
   </div>

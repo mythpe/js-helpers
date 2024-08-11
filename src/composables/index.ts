@@ -8,7 +8,7 @@
 
 export * from './useAcceptProp'
 export * from './useInputProps'
-export * from './useInputs'
+export * from './useInputHelper'
 export * from './useModels'
 export * from './models.d'
 

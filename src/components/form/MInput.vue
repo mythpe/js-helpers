@@ -1,50 +1,48 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
-<script lang="ts" setup>
-import { computed, defineProps } from 'vue'
-import { Field as VeeField } from 'vee-validate'
-import { useInputProps } from '../../composables'
-import { MInputProps } from './models'
-import { QFieldSlots, QInputSlots } from 'quasar'
-import lodash from 'lodash'
-import MInputLabel from './MInputLabel.vue'
-import { useMyth } from '../../vue3'
 
-type Props = {
-  name?: MInputProps['name'];
-  auto?: MInputProps['auto'];
-  col?: MInputProps['col'];
-  xs?: MInputProps['xs'];
-  sm?: MInputProps['sm'];
-  md?: MInputProps['md'];
-  lg?: MInputProps['lg'];
-  xl?: MInputProps['xl'];
-  label?: MInputProps['label'];
-  stackLabel?: MInputProps['stackLabel'];
-  placeholder?: MInputProps['placeholder'];
-  hidePlaceholder?: MInputProps['hidePlaceholder'];
-  required?: MInputProps['required'];
-  hideRequired?: MInputProps['hideRequired'];
-  email?: MInputProps['email'];
-  mobile?: MInputProps['mobile'];
-  rules?: MInputProps['rules'];
-  errors?: MInputProps['errors'];
-  modelValue: MInputProps['modelValue'];
-  viewMode?: MInputProps['viewMode'];
-  viewModeValue?: MInputProps['viewModeValue'];
-  autocomplete?: MInputProps['autocomplete'];
-  topLabel?: MInputProps['topLabel'];
-  caption?: MInputProps['caption'];
-  hint?: MInputProps['hint'];
+<script lang="ts" setup>
+
+import { useField } from 'vee-validate'
+import { MInputProps as Props } from './models.d'
+import { computed, reactive, ref } from 'vue'
+import { QField, QInput, QInputSlots } from 'quasar'
+import { useInputHelper } from '../../composables'
+
+type P = {
+  auto?: Props['auto'];
+  col?: Props['col'];
+  xs?: Props['xs'];
+  sm?: Props['sm'];
+  md?: Props['md'];
+  lg?: Props['lg'];
+  xl?: Props['xl'];
+  help?: Props['help'];
+  helpIcon?: Props['helpIcon'];
+  helpProps?: Props['helpProps'];
+  name: Props['name'];
+  label?: Props['label'];
+  stackLabel?: Props['stackLabel'];
+  placeholder?: Props['placeholder'];
+  hidePlaceholder?: Props['hidePlaceholder'];
+  required?: Props['required'];
+  hideRequired?: Props['hideRequired'];
+  rules?: Props['rules'];
+  errors?: Props['errors'];
+  viewMode?: Props['viewMode'];
+  viewModeValue?: Props['viewModeValue'];
+  autocomplete?: Props['autocomplete'];
+  topLabel?: Props['topLabel'];
+  caption?: Props['caption'];
+  hint?: Props['hint'];
 }
-const props = withDefaults(defineProps<Props>(), {
-  name: () => '',
-  label: undefined,
+
+const props = withDefaults(defineProps<P>(), {
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -52,16 +50,18 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
+  help: undefined,
+  helpIcon: () => 'ion-ios-help-circle-outline',
+  helpProps: undefined,
+  name: () => '',
+  label: undefined,
   stackLabel: undefined,
   placeholder: undefined,
   hidePlaceholder: undefined,
   required: undefined,
   hideRequired: undefined,
-  email: undefined,
-  mobile: undefined,
   rules: undefined,
   errors: undefined,
-  modelValue: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   autocomplete: undefined,
@@ -69,33 +69,29 @@ const props = withDefaults(defineProps<Props>(), {
   caption: undefined,
   hint: undefined
 })
-type EmitsTypes = {
-  (e: 'update:modelValue', value: any): void
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
+const helper = useInputHelper<P>(() => props, 'input')
+const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, inputProps } = helper
+
+const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), { syncVModel: !0 })
+const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
+const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
+const errorMessage = computed(() => getErrors.value[0] || undefined)
+
+const listeners = {
+  blur: (v: any) => handleBlur(v, !0),
+  'update:modelValue': (v: string) => handleChange(v, !!errorMessage.value)
 }
-defineEmits<EmitsTypes>()
-const inputValue = defineModel<MInputProps['modelValue']>({ required: !0, default: '' })
-const { getRules, getLabel, getPlaceholder } = useInputProps(() => props)
-const getAutocompleteAttribute = computed(() => {
-  if (props.autocomplete !== undefined) {
-    if (props.autocomplete === !0 || props.autocomplete === '') {
-      return lodash.kebabCase(props.name)
-    } else if (props.autocomplete === !1) {
-      return undefined
-    } else if (props.autocomplete.length > 0) {
-      return props.autocomplete
-    }
-  }
-  return props.autocomplete
-})
-const { options: { input: mythOptions } } = useMyth()
-const hasTopLabel = computed(() => {
-  if (props.topLabel !== undefined) {
-    return props.topLabel
-  } else if (mythOptions?.topLabel !== undefined) {
-    return mythOptions?.topLabel
-  }
-  return props.topLabel
-})
+type Input = InstanceType<typeof QInput | typeof QField>
+const input = ref<Input | null>(null)
+const scopes = reactive(inputScope)
+defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
+</script>
+
+<script lang="ts">
+export default {
+  inheritAttrs: !1
+}
 </script>
 
 <template>
@@ -105,97 +101,84 @@ const hasTopLabel = computed(() => {
     :col="col"
     :lg="lg"
     :md="md"
+    :name="name"
     :sm="sm"
     :xs="xs"
   >
-    <template v-if="viewMode">
+    <slot
+      name="top-input"
+      v-bind="inputScope"
+    />
+    <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
         :for="name"
       >
         {{ getLabel }}
       </MInputLabel>
-      <q-field
-        :label="(topLabel || $myth.options.input?.topLabel) ? undefined : getLabel"
-        :placeholder="getPlaceholder"
-        v-bind="{...$myth.options.input as any,...$myth.options.field as any,...$attrs, stackLabel: !0}"
+    </slot>
+    <slot name="caption">
+      <div
+        v-if="!!caption"
+        class="m--input__caption"
       >
-        <template #control>
+        {{ __(caption) }}
+      </div>
+    </slot>
+    <component
+      :is="viewMode ? QField : QInput"
+      ref="input"
+      v-model="value"
+      :autocomplete="getAutocompleteAttribute"
+      :error="!!errorMessage"
+      :error-message="errorMessage"
+      :hint="__(hint)"
+      :label="hasTopLabel ? undefined : getLabel"
+      :placeholder="getPlaceholder"
+      v-bind="{...$myth.options.input as any,...(viewMode?$myth.options.field:{}),...$attrs,...(viewMode ? {stackLabel: !0} : {stackLabel: inputProps.stackLabel})}"
+      v-on="listeners"
+    >
+      <template
+        v-for="(_,slot) in ($slots as Readonly<QInputSlots>)"
+        :key="slot"
+        #[slot]
+      >
+        <slot :name="slot" />
+      </template>
+      <template
+        v-if="viewMode"
+        #control
+      >
+        <slot name="control">
           <div
             class="self-center full-width no-outline"
             tabindex="0"
           >
-            {{ viewModeValue || inputValue }}
+            {{ viewModeValue ?? value }}
           </div>
-        </template>
-        <template
-          v-for="(_,slot) in ($slots as Readonly<QFieldSlots>)"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            :name="slot"
-            v-bind="inputSlot || {}"
-          />
-        </template>
-      </q-field>
-    </template>
-    <VeeField
-      v-else
-      ref="veeFieldRef"
-      v-slot="fieldScope"
-      v-model="inputValue"
-      :label="label ? __(label) : name"
-      :name="name"
-      :rules="getRules"
-      v-bind="$attrs"
+        </slot>
+      </template>
+    </component>
+    <slot
+      name="help"
+      v-bind="inputScope"
     >
-      <slot name="top-label">
-        <MInputLabel
-          v-if="hasTopLabel"
-          :for="name"
-        >
-          {{ getLabel }}
-        </MInputLabel>
-      </slot>
-      <slot name="caption">
-        <div
-          v-if="!!caption"
-          class="m--input__caption"
-        >
-          {{ __(caption) }}
-        </div>
-      </slot>
-      <q-input
-        :autocomplete="getAutocompleteAttribute"
-        :error="fieldScope.errors.length > 0"
-        :error-message="fieldScope.errorMessage"
-        :hint="hint ? __(hint) : hint"
-        :label="(topLabel || $myth.options.input?.topLabel) ? undefined : getLabel"
-        :model-value="inputValue"
-        :placeholder="getPlaceholder"
-        v-bind="{...$myth.options.input as any,...$attrs,...fieldScope.field,stackLabel}"
-        @update:model-value="fieldScope.handleChange"
+      <MRow
+        v-if="!!help"
+        class="items-center"
+        v-bind="helpProps"
       >
-        <template
-          v-for="(_,slot) in ($slots as Readonly<QInputSlots>)"
-          :key="slot"
-          #[slot]
-        >
-          <slot
-            v-if="slot !== 'default'"
-            :name="slot"
-          />
-        </template>
-      </q-input>
-      <slot v-bind="fieldScope" />
-    </VeeField>
+        <q-icon
+          :name="helpIcon"
+          left
+          size="20px"
+        />
+        <span class="text-caption">{{ __(help) }}</span>
+      </MRow>
+    </slot>
+    <slot
+      name="bottom-input"
+      v-bind="inputScope"
+    />
   </MCol>
 </template>
-
-<script lang="ts">
-export default {
-  name: 'MInput',
-  inheritAttrs: !1
-}
-</script>

@@ -30,7 +30,6 @@ import { useMyth } from '../../vue3'
 import MDtContextmenuItems from './MDtContextmenuItems.vue'
 import MDtBtn from './MDtBtn.vue'
 import { AxiosRequestConfig } from 'axios'
-import { DownloadFromResponseError } from '../../types'
 
 const initPaginationOptions: MDatatablePagination = {
   sortBy: undefined,
@@ -536,7 +535,7 @@ const exportData = (type: MDtExportOptions) => {
         _message && (myth.alertSuccess(_message))
         try {
           await myth.helpers.downloadFromResponse(response)
-        } catch (e: DownloadFromResponseError | any) {
+        } catch (e: any) {
           if (response.status === 200 && response.headers['content-type'] === 'application/json') {
             return response
           }
@@ -631,7 +630,7 @@ const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
     .then(({ _data }) => {
       dialogs.item = _data
       dialogs.index = index
-      getRows.value[index] = _data
+      getRows.value[index as any] = _data
       setTimeout(() => (dialogs.show = !0), openDialogTimeout)
     })
     .catch((e: any) => {

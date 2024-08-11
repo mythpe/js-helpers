@@ -42,9 +42,6 @@ import MFadeXTransition from './transition/MFadeXTransition.vue'
 import MModalMenu from './modal/MModalMenu.vue'
 import MTypingString from './typography/MTypingString.vue'
 import MInputLabel from './form/MInputLabel.vue'
-import MyInput from './form/inputs/Input/MyInput.vue'
-import MyRadio from './form/inputs/Radio/MyRadio.vue'
-import MySelect from './form/inputs/Select/MySelect.vue'
 
 export {
   MDatatable,
@@ -81,10 +78,7 @@ export {
   MFadeXTransition,
   MModalMenu,
   MTypingString,
-  MInputLabel,
-  MyInput,
-  MyRadio,
-  MySelect
+  MInputLabel
 }
 
 export * from './datatable/models.d'

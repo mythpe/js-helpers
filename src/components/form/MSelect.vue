@@ -1,5 +1,5 @@
 <!--
-  - MyTh Ahmed Faiz Copyright © 2016-2023 All rights reserved.
+  - MyTh Ahmed Faiz Copyright © 2016-2024 All rights reserved.
   - Email: mythpe@gmail.com
   - Mobile: +966590470092
   - Website: https://www.4myth.com
@@ -7,56 +7,58 @@
   -->
 
 <script lang="ts" setup>
-import { Field as VeeField } from 'vee-validate'
-import { computed, defineProps, ref, watch } from 'vue'
-import { useInputProps } from '../../composables'
-import { ColStyleType } from '../grid/models'
-import { MSelectProps } from './models'
-import { QFieldSlots, QSelectSlots } from 'quasar'
-import { useMyth } from '../../vue3'
-import MInputLabel from './MInputLabel.vue'
 
-type Props = {
-  auto?: boolean;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  behavior?: MSelectProps['behavior'];
-  name: MSelectProps['name'];
-  label?: MSelectProps['label'];
-  placeholder?: MSelectProps['placeholder'];
-  stackLabel?: MSelectProps['stackLabel'];
-  required?: MSelectProps['required'];
-  hideRequired?: MSelectProps['hideRequired'];
-  rules?: MSelectProps['rules'];
-  errors?: MSelectProps['errors'];
-  modelValue: MSelectProps['modelValue'];
-  clearable?: MSelectProps['clearable'];
-  options?: MSelectProps['options'];
-  optionLabel?: MSelectProps['optionLabel'];
-  optionValue?: MSelectProps['optionValue'];
-  emitValue?: MSelectProps['emitValue'];
-  mapOptions?: MSelectProps['mapOptions'];
-  useInput?: MSelectProps['useInput'];
-  search?: MSelectProps['search'];
-  timeout?: MSelectProps['timeout'];
-  autoSearch?: MSelectProps['autoSearch'];
-  loading?: MSelectProps['loading'];
-  noFilter?: MSelectProps['noFilter'];
-  viewMode?: MSelectProps['viewMode'];
-  viewModeValue?: MSelectProps['viewModeValue'];
-  multiple?: MSelectProps['multiple'];
-  topLabel?: MSelectProps['topLabel'];
-  caption?: MSelectProps['caption'];
-  useChips?: MSelectProps['useChips'];
-  hint?: MSelectProps['hint'];
-  hideEmptyList?: MSelectProps['hideEmptyList'];
+import { useField } from 'vee-validate'
+import { MSelectProps as Props } from './models.d'
+import { computed, reactive, ref } from 'vue'
+import { useInputHelper } from '../../composables'
+import { QField, QSelect, QSelectSlots } from 'quasar'
+
+type P = {
+  auto?: Props['auto'];
+  col?: Props['col'];
+  xs?: Props['xs'];
+  sm?: Props['sm'];
+  md?: Props['md'];
+  lg?: Props['lg'];
+  xl?: Props['xl'];
+  help?: Props['help'];
+  helpIcon?: Props['helpIcon'];
+  helpProps?: Props['helpProps'];
+  name: Props['name'];
+  label?: Props['label'];
+  stackLabel?: Props['stackLabel'];
+  placeholder?: Props['placeholder'];
+  hidePlaceholder?: Props['hidePlaceholder'];
+  required?: Props['required'];
+  hideRequired?: Props['hideRequired'];
+  rules?: Props['rules'];
+  errors?: Props['errors'];
+  viewMode?: Props['viewMode'];
+  viewModeValue?: Props['viewModeValue'];
+  autocomplete?: Props['autocomplete'];
+  topLabel?: Props['topLabel'];
+  caption?: Props['caption'];
+  hint?: Props['hint'];
+  behavior?: Props['behavior'];
+  emitValue?: Props['emitValue'];
+  useInput?: Props['useInput'];
+  mapOptions?: Props['mapOptions'];
+  loading?: Props['loading'];
+  multiple?: Props['multiple'];
+  options?: Props['options'];
+  optionLabel?: Props['optionLabel'];
+  optionValue?: Props['optionValue'];
+  noFilter?: Props['noFilter'];
+  hideEmptyList?: Props['hideEmptyList'];
+  readonly?: Props['readonly'];
+  useChips?: Props['useChips'];
+  searchLength?: Props['searchLength'];
+  axiosMode?: Props['axiosMode'];
+  hideSelected?: Props['hideSelected'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<P>(), {
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -64,110 +66,101 @@ const props = withDefaults(defineProps<Props>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  behavior: undefined,
+  help: undefined,
+  helpIcon: () => 'ion-ios-help-circle-outline',
+  helpProps: undefined,
   name: () => '',
   label: undefined,
-  placeholder: undefined,
   stackLabel: undefined,
+  placeholder: undefined,
+  hidePlaceholder: undefined,
   required: undefined,
   hideRequired: undefined,
   rules: undefined,
   errors: undefined,
-  modelValue: undefined,
-  clearable: undefined,
+  viewMode: () => !1,
+  viewModeValue: undefined,
+  autocomplete: undefined,
+  topLabel: undefined,
+  caption: undefined,
+  hint: undefined,
+  behavior: undefined,
+  emitValue: () => !0,
+  useInput: () => !0,
+  mapOptions: () => !0,
+  loading: undefined,
+  multiple: undefined,
   options: () => ([]),
   optionLabel: () => 'label',
   optionValue: () => 'value',
-  useInput: () => !0,
-  emitValue: () => !0,
-  mapOptions: () => !0,
-  search: undefined,
-  timeout: () => 300,
-  autoSearch: () => !1,
-  loading: () => !1,
-  noFilter: () => !1,
-  viewMode: () => !1,
-  viewModeValue: undefined,
-  multiple: undefined,
-  topLabel: undefined,
-  caption: undefined,
+  noFilter: undefined,
+  hideEmptyList: undefined,
+  readonly: undefined,
   useChips: undefined,
-  hint: undefined,
-  hideEmptyList: () => !1
+  searchLength: () => 1,
+  axiosMode: undefined,
+  hideSelected: undefined
 })
-type Events = {
-  (e: 'update:modelValue', value: any): void;
-  (e: 'search', value: any): void;
-}
-const emit = defineEmits<Events>()
-const veeFieldRef = ref()
-const selectRef = ref()
-const inputValue = defineModel<MSelectProps['modelValue']>({ required: !0, default: undefined })
-const errorMessageField = ref<string | undefined>(undefined)
-const myth = useMyth()
-const myProps = computed(() => ({ ...props, ...myth.options.select }))
-const { getRules, getLabel, getPlaceholder } = useInputProps(() => props, { choose: !0 })
-const originalOptions = computed(() => props.options ?? [])
-const searchInput = ref('')
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
+
+const helper = useInputHelper<P & Props>(() => props, 'select', () => ({ choose: !0 }))
+const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, inputProps } = helper
+
+const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), { syncVModel: !0 })
+const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
+const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
+const errorMessage = computed(() => getErrors.value[0] || undefined)
+const minLength = computed(() => parseInt(props.searchLength?.toString()))
+const search = defineModel<string>('search', { required: !1, default: '' })
 const getOptions = computed(() => {
-  if (searchInput.value?.length > 0 && myProps.value.noFilter !== !0) {
-    return originalOptions.value.filter((v: any) => {
+  if (props.noFilter && search.value?.length >= minLength.value && !props.axiosMode) {
+    return props.options.filter((v: any) => {
       if (typeof v === 'string' || typeof v === 'number') {
-        return v.toString().toLowerCase().indexOf(searchInput.value) > -1
+        return v.toString().toLowerCase().indexOf(search.value) > -1
       }
       let labelKey = 'label'
-      if (myProps.value.optionLabel) {
-        labelKey = typeof myProps.value.optionLabel === 'function' ? myProps.value.optionLabel(v) : myProps.value.optionLabel
+      if (props.optionLabel) {
+        labelKey = typeof props.optionLabel === 'function' ? props.optionLabel(v) : props.optionLabel
       }
       let valueKey = 'value'
-      if (myProps.value.optionValue) {
-        valueKey = typeof myProps.value.optionValue === 'function' ? myProps.value.optionValue(v) : myProps.value.optionValue
+      if (props.optionValue) {
+        valueKey = typeof props.optionValue === 'function' ? props.optionValue(v) : props.optionValue
       }
-      return v[labelKey]?.toString().toLowerCase().indexOf(searchInput.value) > -1 || v[valueKey]?.toString().toLowerCase().indexOf(searchInput.value) > -1
+      return v[labelKey]?.toString().toLowerCase().indexOf(search.value) > -1 || v[valueKey]?.toString().toLowerCase().indexOf(search.value) > -1
     })
   }
-  return originalOptions.value
+  return props.options
 })
 const filterFn = (val: any, update: any) => {
-  if (!val && searchInput.value === val) {
+  if ((!val && search.value === val) || props.noFilter === !0) {
     update()
     return
   }
   update(() => {
-    searchInput.value = val.toString()
+    search.value = val.toString()
   })
 }
-const updateFieldValue = (v?: any) => {
-  inputValue.value = v
+
+const listeners = {
+  blur: (v: any) => handleBlur(v, !1),
+  'update:modelValue': (v: string) => handleChange(v, !!errorMessage.value),
+  filterFn
 }
-const updateModelValue = (v?: any) => {
-  // console.log(useInputProp.value, veeFieldRef.value?.handleChange)
-  veeFieldRef.value?.handleChange(v)
-  // if (!useInputProp.value) {
-  // veeFieldRef.value?.handleChange(v)
-  // } else {
-  // inputValue.value = v
-  // }
-}
+type Input = InstanceType<typeof QSelect | typeof QField>
+const input = ref<Input | null>(null)
+const scopes = reactive(inputScope)
 const onDoneOptions = () => {
-  selectRef.value?.updateInputValue('', !0)
-  selectRef.value?.hidePopup()
+  const e = input.value as QSelect
+  e?.updateInputValue('', !0)
+  e?.hidePopup()
 }
+defineExpose<typeof scopes & { input: typeof input, onDoneOptions: typeof onDoneOptions}>({ input, ...scopes, onDoneOptions })
+</script>
 
-const { options: { select: mythOptions } } = useMyth()
-const hasTopLabel = computed(() => {
-  if (props.topLabel !== undefined) {
-    return props.topLabel
-  } else if (mythOptions?.topLabel !== undefined) {
-    return mythOptions?.topLabel
-  }
-  return props.topLabel
-})
-
-watch(() => searchInput.value, v => {
-  emit('search', v)
-})
-defineExpose({ searchInput, veeFieldRef, selectRef, updateModelValue, updateFieldValue, onDoneOptions, errorMessageField, filterFn })
+<script lang="ts">
+export default {
+  inheritAttrs: !1
+}
 </script>
 
 <template>
@@ -179,186 +172,173 @@ defineExpose({ searchInput, veeFieldRef, selectRef, updateModelValue, updateFiel
     :md="md"
     :sm="sm"
     :xs="xs"
+    :name="name"
   >
-    <template v-if="viewMode">
+    <slot
+      name="top-input"
+      v-bind="inputScope"
+    />
+    <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
         :for="name"
       >
         {{ getLabel }}
       </MInputLabel>
-      <q-field
-        :label="hasTopLabel ? undefined : getLabel"
-        :placeholder="getPlaceholder"
-        v-bind="{...$myth.options.select as any,...$myth.options.field,...$attrs, stackLabel: !0}"
+    </slot>
+    <slot name="caption">
+      <div
+        v-if="!!caption"
+        class="m--input__caption"
       >
-        <template #control>
+        {{ __(caption) }}
+      </div>
+    </slot>
+    <component
+      :is="viewMode ? QField : QSelect"
+      ref="input"
+      v-model="value"
+      :autocomplete="getAutocompleteAttribute"
+      :behavior="$q.platform.is.ios === !0 ? 'dialog' : behavior"
+      :emit-value="emitValue"
+      :error="!!errorMessage"
+      :error-message="errorMessage"
+      :hint="__(hint)"
+      :label="loading ? undefined : getPlaceholder"
+      :loading="loading"
+      :map-options="mapOptions"
+      :multiple="multiple"
+      :options="getOptions"
+      :readonly="readonly"
+      :hide-selected="hideSelected !== undefined ? hideSelected : search.length > 0"
+      :use-input="useInput"
+      v-bind="{
+        ...$myth.options.select as any,
+        ...( viewMode ? $myth.options.field : {} ),
+        ...$attrs,
+        ...(viewMode ? { stackLabel: !0 } : { stackLabel: hasTopLabel ? !1 : inputProps.stackLabel } ),
+        useChips: inputProps.useChips === !0 && !multiple ? !1 : inputProps.useChips
+      }"
+      @filter="filterFn"
+      v-on="listeners"
+    >
+      <template
+        v-if="!hideEmptyList"
+        #no-option
+      >
+        <slot name="no-option">
+          <q-item :dense="inputProps.optionsDense">
+            <q-item-section side>
+              <template v-if="loading">
+                <q-spinner color="primary" />
+              </template>
+              <template v-else-if="search?.length > 0">
+                <q-icon
+                  color="warning"
+                  name="ion-ios-warning"
+                />
+              </template>
+              <template v-else-if="!search?.length">
+                <q-icon name="ion-ios-search" />
+              </template>
+              <template v-else>
+                <q-icon name="ion-ios-information-circle-outline" />
+              </template>
+            </q-item-section>
+            <q-item-section>
+              <template v-if="loading">
+                <q-skeleton
+                  type="text"
+                  width="70%"
+                />
+                <q-skeleton
+                  type="text"
+                  width="50%"
+                />
+              </template>
+              <template v-else-if="!search?.length">
+                {{ __('myth.select.typeToSearch') }}
+              </template>
+              <template v-else-if="search?.length > 0">
+                {{ __('myth.select.noResult') }}
+              </template>
+              <template v-else>
+                {{ __('myth.select.noData') }}
+              </template>
+            </q-item-section>
+          </q-item>
+        </slot>
+      </template>
+      <template
+        v-if="loading"
+        #selected
+      >
+        <q-skeleton width="60%" />
+      </template>
+      <template
+        v-if="multiple"
+        #before-options
+      >
+        <MContainer>
+          <MRow class="items-center">
+            <MBtn
+              :label="__('done')"
+              flat
+              @click="onDoneOptions()"
+            />
+          </MRow>
+        </MContainer>
+      </template>
+
+      <template
+        v-for="(_,slot) in ($slots as Readonly<QSelectSlots>)"
+        :key="slot"
+        #[slot]="inputSlot"
+      >
+        <slot
+          :name="slot"
+          v-bind="inputSlot || {}"
+        />
+      </template>
+
+      <template
+        v-if="viewMode"
+        #control
+      >
+        <slot name="control">
           <div
             class="self-center full-width no-outline"
             tabindex="0"
           >
-            {{ viewModeValue || inputValue }}
+            {{ viewModeValue ?? value }}
           </div>
-        </template>
-        <template
-          v-for="(_,slot) in ($slots as Readonly<QFieldSlots>)"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            :name="slot"
-            v-bind="inputSlot || {}"
-          />
-        </template>
-      </q-field>
-    </template>
-    <component
-      :is="myProps.useInput ? 'label' : VeeField"
-      v-else
-      :ref="myProps.useInput ? undefined : `veeFieldRef`"
-      v-slot="fieldProps"
-      :model-value="useInput ? undefined : inputValue"
-      :name="name"
-      :rules="getRules"
-      v-bind="useInput ? undefined : $attrs"
-      @update:model-value="updateFieldValue"
-    >
-      <slot name="top-label">
-        <MInputLabel
-          v-if="hasTopLabel"
-          :for="name"
-        >
-          {{ getLabel }}
-        </MInputLabel>
-      </slot>
-      <slot name="caption">
-        <div
-          v-if="!!caption"
-          class="m--input__caption"
-        >
-          {{ __(caption) }}
-        </div>
-      </slot>
-      <q-select
-        ref="selectRef"
-        :behavior="$q.platform.is.ios === !0 ? 'dialog' : behavior"
-        :clearable="clearable === undefined ? ( useInput ? !!modelValue : clearable ) : clearable"
-        :emit-value="emitValue"
-        :error="(fieldProps||{errors:[]}).errors.length > 0 || Boolean(errorMessageField)"
-        :error-message="(fieldProps||{errorMessage:undefined}).errorMessage || errorMessageField"
-        :hint="hint ? __(hint) : hint"
-        :label="(topLabel || $myth.options.select?.topLabel) ? undefined : getLabel"
-        :loading="loading"
-        :map-options="mapOptions"
-        :model-value="inputValue"
-        :multiple="multiple"
-        :option-label="optionLabel"
-        :option-value="optionValue"
-        :options="getOptions"
-        :placeholder="useInput && !modelValue?.length ? getPlaceholder : placeholder"
-        :stack-label="stackLabel"
-        :use-input="useInput ? ( multiple ? useInput : !modelValue) : useInput"
-        v-bind="{
-          ...$myth.options.select,
-          ...$attrs,
-          ...(fieldProps||{field:{}}).field,
-          useChips: useChips !== undefined ? useChips : (
-            $myth.options?.select?.useChips !== undefined ? (
-              $myth.options.select.useChips && !multiple ? !1 : $myth.options.select.useChips
-            ) : useChips
-          )
-        }"
-        @filter="filterFn"
-        @update:model-value="updateModelValue"
-      >
-        <template #no-option>
-          <slot name="no-option">
-            <q-item
-              v-if="!hideEmptyList"
-              :dense="myProps.optionsDense"
-            >
-              <q-item-section avatar>
-                <template v-if="autoSearch && searchInput?.length > 0">
-                  <q-icon
-                    color="warning"
-                    name="o_warning"
-                  />
-                </template>
-                <template v-else-if="autoSearch && !searchInput?.length">
-                  <q-icon name="o_search" />
-                </template>
-                <template v-else-if="loading">
-                  <q-spinner color="primary" />
-                </template>
-                <template v-else>
-                  <q-icon name="o_info" />
-                </template>
-              </q-item-section>
-              <q-item-section>
-                <template v-if="autoSearch && searchInput?.length > 0">
-                  {{ __('myth.select.noData') }}
-                </template>
-                <template v-else-if="autoSearch && !searchInput?.length">
-                  {{ __('myth.select.typeToSearch') }}
-                </template>
-                <template v-else-if="loading">
-                  <q-spinner color="primary" />
-                </template>
-                <template v-else>
-                  {{ __('myth.select.noData') }}
-                </template>
-              </q-item-section>
-            </q-item>
-          </slot>
-        </template>
-        <template
-          v-if="multiple"
-          #before-options
-        >
-          <MContainer>
-            <MRow class="items-center">
-              <MBtn
-                :label="__('done')"
-                flat
-                @click="onDoneOptions()"
-              />
-            </MRow>
-          </MContainer>
-        </template>
-        <template
-          v-for="(_,slot) in ($slots as Readonly<QSelectSlots>)"
-          :key="slot"
-          #[slot]="inputSlot"
-        >
-          <slot
-            :name="slot"
-            v-bind="inputSlot || {}"
-          />
-        </template>
-      </q-select>
-      <slot v-bind="fieldProps||{}" />
-    </component>
-    <VeeField
-      v-if="myProps.useInput"
-      ref="veeFieldRef"
-      v-model="inputValue"
-      :label="label ? __(label) : name"
-      :name="name"
-      :rules="getRules"
-      class="hidden"
-    >
-      <template #default="{errorMessage}">
-        <div class="hidden">
-          {{ (errorMessageField = errorMessage) }}
-        </div>
+        </slot>
       </template>
-    </VeeField>
+    </component>
+    <slot
+      name="help"
+      v-bind="inputScope"
+    >
+      <MRow
+        v-if="!!help"
+        class="items-center"
+        v-bind="helpProps"
+      >
+        <q-icon
+          :name="helpIcon"
+          left
+          size="20px"
+        />
+        <span class="text-caption">{{ __(help) }}</span>
+      </MRow>
+    </slot>
+    <slot
+      name="bottom-input"
+      v-bind="inputScope"
+    />
   </MCol>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'MSelect',
-  inheritAttrs: !1
-}
-</script>
+<style lang="scss" scoped>
+
+</style>
