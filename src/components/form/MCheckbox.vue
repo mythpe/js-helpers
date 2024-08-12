@@ -21,7 +21,7 @@ type P = {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  modelValue: Props['modelValue'];
+  // modelValue?: Props['modelValue'];
   name: Props['name'];
   label?: Props['label'];
   caption?: Props['caption'];
@@ -36,6 +36,7 @@ type P = {
   falseValue?: Props['falseValue'];
   checkedIcon?: Props['checkedIcon'];
   indeterminateIcon?: Props['indeterminateIcon'];
+  topLabel?: Props['topLabel'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -46,7 +47,7 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  modelValue: undefined,
+  // modelValue: undefined,
   name: () => '',
   label: undefined,
   caption: undefined,
@@ -60,15 +61,17 @@ const props = withDefaults(defineProps<P>(), {
   trueValue: () => !0,
   falseValue: () => !1,
   checkedIcon: () => 'ion-checkbox-outline',
-  indeterminateIcon: undefined
+  indeterminateIcon: undefined,
+  topLabel: undefined
 })
-
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: null })
 const helper = useInputHelper<P & Props>(() => props, 'checkbox')
 const { getLabel, inputProps } = helper
 
 const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
-  initialValue: props.modelValue,
-  syncVModel: !0
+  initialValue: modelValue,
+  syncVModel: !0,
+  label: getLabel
 })
 const { value, errors: fieldErrors, handleChange } = inputScope
 const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
@@ -107,10 +110,10 @@ export default {
     />
     <slot name="top-label">
       <MInputLabel
+        v-if="!!topLabel"
         :for="name"
-        class="no-margin"
       >
-        {{ __(label ?? name) }}
+        {{ __(topLabel) }}
       </MInputLabel>
     </slot>
     <slot name="caption">

@@ -9,6 +9,7 @@
 import MDatatable from './datatable/MDatatable.vue'
 import MDtAvatar from './datatable/MDtAvatar.vue'
 import MDtBtn from './datatable/MDtBtn.vue'
+import MDtContextmenuItems from './datatable/MDtContextmenuItems.vue'
 
 import MAvatarViewer from './form/MAvatarViewer.vue'
 import MAxios from './form/MAxios.vue'
@@ -20,7 +21,10 @@ import MEmail from './form/MEmail.vue'
 import MFile from './form/MFile.vue'
 import MForm from './form/MForm.vue'
 import MInput from './form/MInput.vue'
+import MInputLabel from './form/MInputLabel.vue'
 import MMobile from './form/MMobile.vue'
+import MOptions from './form/MOptions.vue'
+import MOtp from './form/MOtp.vue'
 import MPassword from './form/MPassword.vue'
 import MPicker from './form/MPicker.vue'
 import MRadio from './form/MRadio.vue'
@@ -28,7 +32,10 @@ import MSelect from './form/MSelect.vue'
 import MTime from './form/MTime.vue'
 import MToggle from './form/MToggle.vue'
 import MUploader from './form/MUploader.vue'
+
 import MGoogleMaps from './google/MGoogleMaps.vue'
+
+import MBlock from './grid/MBlock.vue'
 import MCard from './grid/MCard.vue'
 import MCol from './grid/MCol.vue'
 import MColumn from './grid/MColumn.vue'
@@ -36,17 +43,24 @@ import MContainer from './grid/MContainer.vue'
 import MList from './grid/MList.vue'
 import MNoResultImg from './grid/MNoResultImg.vue'
 import MRow from './grid/MRow.vue'
+
+import MDialog from './modal/MDialog.vue'
+import MModalMenu from './modal/MModalMenu.vue'
+import MTooltip from './modal/MTooltip.vue'
+
 import MTransition from './transition/MTransition.vue'
 import MFadeTransition from './transition/MFadeTransition.vue'
 import MFadeXTransition from './transition/MFadeXTransition.vue'
-import MModalMenu from './modal/MModalMenu.vue'
+
 import MTypingString from './typography/MTypingString.vue'
-import MInputLabel from './form/MInputLabel.vue'
+import MHelpRow from './typography/MHelpRow.vue'
 
 export {
   MDatatable,
   MDtAvatar,
   MDtBtn,
+  MDtContextmenuItems,
+
   MAvatarViewer,
   MAxios,
   MBtn,
@@ -57,7 +71,10 @@ export {
   MFile,
   MForm,
   MInput,
+  MInputLabel,
   MMobile,
+  MOptions,
+  MOtp,
   MPassword,
   MPicker,
   MRadio,
@@ -65,7 +82,10 @@ export {
   MTime,
   MToggle,
   MUploader,
+
   MGoogleMaps,
+
+  MBlock,
   MCard,
   MCol,
   MColumn,
@@ -73,12 +93,16 @@ export {
   MList,
   MNoResultImg,
   MRow,
+
+  MDialog,
+  MModalMenu,
+  MTooltip,
+
   MTransition,
   MFadeTransition,
   MFadeXTransition,
-  MModalMenu,
   MTypingString,
-  MInputLabel
+  MHelpRow
 }
 
 export * from './datatable/models.d'

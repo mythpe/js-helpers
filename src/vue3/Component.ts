@@ -13,6 +13,7 @@ export const initComponents = (app: App) => {
   app.component('MDatatable', defineAsyncComponent(() => import('../components/datatable/MDatatable.vue')))
   app.component('MDtAvatar', defineAsyncComponent(() => import('../components/datatable/MDtAvatar.vue')))
   app.component('MDtBtn', defineAsyncComponent(() => import('../components/datatable/MDtBtn.vue')))
+  app.component('MDtContextmenuItems', defineAsyncComponent(() => import('../components/datatable/MDtContextmenuItems.vue')))
 
   // Form
   app.component('MAvatarViewer', defineAsyncComponent(() => import('../components/form/MAvatarViewer.vue')))
@@ -26,7 +27,9 @@ export const initComponents = (app: App) => {
   app.component('MFile', defineAsyncComponent(() => import('../components/form/MFile.vue')))
   app.component('MForm', defineAsyncComponent(() => import('../components/form/MForm.vue')))
   app.component('MInput', defineAsyncComponent(() => import('../components/form/MInput.vue')))
+  app.component('MInputLabel', defineAsyncComponent(() => import('../components/form/MInputLabel.vue')))
   app.component('MMobile', defineAsyncComponent(() => import('../components/form/MMobile.vue')))
+  app.component('MOptions', defineAsyncComponent(() => import('../components/form/MOptions.vue')))
   app.component('MOtp', defineAsyncComponent(() => import('../components/form/MOtp.vue')))
   app.component('MPassword', defineAsyncComponent(() => import('../components/form/MPassword.vue')))
   app.component('MPicker', defineAsyncComponent(() => import('../components/form/MPicker.vue')))
@@ -62,7 +65,4 @@ export const initComponents = (app: App) => {
   // Typography
   app.component('MHelpRow', defineAsyncComponent(() => import('../components/typography/MHelpRow.vue')))
   app.component('MTypingString', defineAsyncComponent(() => import('../components/typography/MTypingString.vue')))
-
-  // Helpers
-  app.component('MInputLabel', defineAsyncComponent(() => import('../components/form/MInputLabel.vue')))
 }

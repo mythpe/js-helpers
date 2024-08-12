@@ -22,7 +22,7 @@ defineExpose<{ input: typeof input }>({ input })
     v-bind="{...$myth.options.mobile,...$attrs}"
   >
     <template
-      v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
+      v-for="(_,slot) in $slots as Readonly<MInputSlots>"
       :key="slot"
       #[slot]
     >

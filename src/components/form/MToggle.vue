@@ -22,7 +22,7 @@ interface P {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  modelValue?: Props['modelValue'];
+  // modelValue?: Props['modelValue'];
   val?: Props['val'];
   name: Props['name'];
   label?: Props['label'];
@@ -37,7 +37,7 @@ interface P {
   checkedIcon?: Props['checkedIcon'];
   indeterminateIcon?: Props['indeterminateIcon'];
   uncheckedIcon?: Props['uncheckedIcon'];
-  statusLabels?: Props['statusLabels'];
+  status?: Props['status'];
   errors?: Props['errors'];
   rules?: Props['rules'];
   dense?: Props['dense'];
@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  modelValue: undefined,
+  // modelValue: undefined,
   val: undefined,
   name: () => '',
   label: undefined,
@@ -67,19 +67,21 @@ const props = withDefaults(defineProps<P>(), {
   indeterminateIcon: 'ion-ios-code-working',
   activeLabel: 'yes',
   inactiveLabel: 'no',
-  statusLabels: !1,
+  status: !1,
   errors: undefined,
   rules: undefined,
   dense: undefined,
   keepColor: () => !0
 })
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: null })
 const { __ } = useMyth()
 const helper = useInputHelper<Props>(() => props, 'toggle')
-const { inputProps } = helper
+const { inputProps, getLabel: toggleLabel } = helper
 
 const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
-  initialValue: props.modelValue,
-  syncVModel: !0
+  initialValue: modelValue,
+  syncVModel: !0,
+  label: toggleLabel
 })
 const { value, errors: fieldErrors, handleChange } = inputScope
 const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
@@ -91,10 +93,10 @@ const getLabel = computed<string | undefined>(() => {
   const def = undefined
   const v = value.value
   if (v === props.trueValue) {
-    return __(props.statusLabels ? 'active' : props.activeLabel) as string || def
+    return __(props.status ? 'active' : props.activeLabel) as string || def
   }
   if (v === props.falseValue) {
-    return __(props.statusLabels ? 'inactive' : props.inactiveLabel) as string || def
+    return __(props.status ? 'inactive' : props.inactiveLabel) as string || def
   }
   return __('none') as string || def
 })
@@ -131,7 +133,7 @@ export default {
         :for="name"
         class="no-margin"
       >
-        {{ __(label ?? name) }}
+        {{ toggleLabel }}
       </MInputLabel>
     </slot>
     <slot name="caption">

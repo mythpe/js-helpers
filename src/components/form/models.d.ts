@@ -21,6 +21,8 @@ import {
   QImgProps,
   QInputProps,
   QInputSlots,
+  QOptionGroupProps,
+  QOptionGroupSlots,
   QRadioProps,
   QSelectProps,
   QTimeProps,
@@ -187,6 +189,7 @@ export interface MBtnSlots extends QBtnSlots {
   loading: () => VNode[];
 }
 
+// autocomplete
 export type MInputProps = Omit<QInputProps, 'rules' | 'name' | 'modelValue' | 'label' | 'hint'> & BaseInputsProps
 
 export type MPasswordProps = MInputProps & {
@@ -201,6 +204,31 @@ export type MPasswordProps = MInputProps & {
 }
 
 export type MInputSlots = QInputSlots & QFieldSlots & BaseInputsSlots
+export type MOptionsOptionContext = Omit<QToggleProps, 'modelValue'> & Omit<QRadioProps, 'modelValue'> & Omit<QCheckboxProps, 'modelValue'> & {
+  /**
+   * Label to display along the component
+   */
+  label: string;
+  /**
+   * Value of the option that will be used by the component model
+   */
+  value: any;
+  /**
+   * If true, the option will be disabled
+   */
+  disable?: boolean;
+  /**
+   * Any other props from QToggle, QCheckbox, or QRadio
+   */
+}
+export type MOptionsProps = Omit<QOptionGroupProps, 'name' | 'modelValue' | 'options'> & Omit<BaseInputsProps, 'autocomplete', 'modelValue'> & {
+  modelValue?: any;
+  /**
+   * Array of objects with value, label, and disable (optional) props. The binary components will be created according to this array; Props from QToggle, QCheckbox or QRadio can also be added as key/value pairs to control the components singularly
+   */
+  options?: MOptionsOptionContext[];
+}
+export type MOptionsSlots = QOptionGroupSlots & QFieldSlots & BaseInputsSlots
 
 export type MFileProps = Omit<QFileProps, 'rules' | 'name' | 'label' | 'hint'> & Omit<BaseInputsProps, 'modelValue' | 'autocomplete'> & {
   accept?: string | undefined;
@@ -288,7 +316,12 @@ export type MAxiosProps = Omit<MSelectProps, 'options' | 'axiosMode'> & {
 }
 export type MAxiosSlots = MSelectSlots
 
-export type MCheckboxProps = Omit<QCheckboxProps, 'name' | 'modelValue' | 'label'> & BaseInputsProps
+export type MCheckboxProps = Omit<QCheckboxProps, 'name' | 'modelValue' | 'label'> & Omit<BaseInputsProps, 'topLabel'> & {
+  /**
+   * Top of input label.
+   */
+  topLabel?: string | null | undefined;
+}
 export type MCheckboxSlots = BaseInputsSlots & {
   /**
    * VNode before field main content.
@@ -304,13 +337,24 @@ export type MToggleProps =
   Omit<BaseInputsProps, 'placeholder' | 'topLabel' | 'autocomplete'>
   & Omit<QToggleProps, 'modelValue' | 'label' | 'name'>
   & {
+  /**
+   * Customize the label when the toggle is true.
+   * Default is: Yes.
+   */
   activeLabel?: string;
+  /**
+   * Customize the label when the toggle is false.
+   * Default is: No.
+   */
   inactiveLabel?: string;
-  statusLabels?: boolean | undefined;
+  /**
+   * Set labels of toggle to status, Active & Inactive.
+   */
+  status?: boolean;
 }
 export type MToggleSlots = MCheckboxSlots
 
-export type MRadioProps = Omit<QRadioProps, 'name' | 'modelValue' | 'label'> & BaseInputsProps
+export type MRadioProps = Omit<QRadioProps, 'name' | 'modelValue' | 'label'> & MCheckboxProps
 export type MRadioSlots = MCheckboxSlots
 
 type GenericObject = Record<string, any>;
@@ -564,6 +608,7 @@ export interface MOtpProps extends Omit<QInputProps, 'modelValue'> {
   time?: string | number;
   hideTime?: boolean;
   hideSendAgain?: boolean;
+  topLabel?: string | undefined;
   topLabelProps?: any | undefined;
   errors?: string[];
 }

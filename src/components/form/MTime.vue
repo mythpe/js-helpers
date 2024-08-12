@@ -11,7 +11,7 @@ import { MInputSlots, MTimeProps } from './models'
 import { ref } from 'vue'
 import MPicker from './MPicker.vue'
 
-const modelValue = defineModel<MTimeProps['modelValue']>({ required: !1, default: undefined })
+const modelValue = defineModel<MTimeProps['modelValue']>({ required: !1, default: null })
 const input = ref<InstanceType<typeof MPicker> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
 </script>

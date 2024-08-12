@@ -7,6 +7,7 @@
  */
 
 import { GlobalComponentConstructor, openURL, QInfiniteScroll } from 'quasar'
+
 import {
   ApiErrorResponse,
   ApiInterface,
@@ -58,6 +59,8 @@ import {
   MModalMenuSlots,
   MNoResultImgProps,
   MNoResultImgSlots,
+  MOptionsProps,
+  MOptionsSlots,
   MOtpProps,
   MOtpSlots,
   MPasswordProps,
@@ -83,6 +86,7 @@ import {
   MUploaderSlots,
   UseMythVue
 } from '../types'
+
 import { MaybeRefOrGetter, Ref, TransitionProps, UnwrapNestedRefs } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
@@ -123,6 +127,7 @@ declare module '@vue/runtime-core' {
     MForm: GlobalComponentConstructor<MFormProps, MFormSlots>;
     MInput: GlobalComponentConstructor<MInputProps, MInputSlots>;
     MMobile: GlobalComponentConstructor<MInputProps, MInputSlots>;
+    MOptions: GlobalComponentConstructor<MOptionsProps, MOptionsSlots>;
     MOtp: GlobalComponentConstructor<MOtpProps, MOtpSlots>;
     MPassword: GlobalComponentConstructor<MPasswordProps, MInputSlots>;
     MPicker: GlobalComponentConstructor<MPickerProps, MPickerSlots>;

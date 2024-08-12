@@ -174,10 +174,10 @@ const route = useRoute()
 const $q = useQuasar()
 const serviceName = computed(() => props.serviceName)
 const exportToBlob = computed(() => {
-  if (props.exportUrl === undefined && myth.options.dt?.props?.exportUrl === undefined) {
+  if (props.exportUrl === undefined && myth.options.datatable?.exportUrl === undefined) {
     return !0
   }
-  const t = props.exportUrl === undefined ? myth.options.dt?.props?.exportUrl : props.exportUrl
+  const t = props.exportUrl === undefined ? myth.options.datatable?.exportUrl : props.exportUrl
   if (t !== undefined) {
     if (t.toString() === 'true' || t.toString() === '') {
       return !1
@@ -1058,8 +1058,8 @@ const getProp = computed(() => (k: keyof Props) => {
   if (props[k] !== undefined) {
     return props[k]
   }
-  if (myth.options.dt?.props?.[k] !== undefined) {
-    return myth.options.dt?.props?.[k]
+  if (myth.options.datatable?.[k] !== undefined) {
+    return myth.options.datatable?.[k]
   }
   return props[k]
 })
@@ -1069,7 +1069,7 @@ const getProp = computed(() => (k: keyof Props) => {
   <div
     :class="{
       'm--datatable-component': !0,
-      'm--datatable-component__fixed': fixed === undefined ? ( $myth.options.dt?.props?.fixed === undefined ? undefined : $myth.options.dt?.props?.fixed) : fixed,
+      'm--datatable-component__fixed': fixed === undefined ? ( $myth.options.datatable?.fixed === undefined ? undefined : $myth.options.datatable?.fixed) : fixed,
       'm--datatable-component__too_small': $q.screen.height < 900,
       'm--datatable-component__fab': hasAddBtn && (noAddBtnFab ? !1 : $myth.options.dt?.addBtn?.noFab !== !0)
     }"
@@ -1096,7 +1096,7 @@ const getProp = computed(() => (k: keyof Props) => {
           <MDtBtn
             v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
             :[contextmenuItem.name]="!0"
-            :dense="dense === undefined ? $myth.options.dt?.props?.dense : dense"
+            :dense="dense === undefined ? $myth.options.datatable?.dense : dense"
             :label="contextmenuItem.contextLabel !== undefined ? (contextmenuItem.contextLabel === null ? undefined : __(contextmenuItem.contextLabel)) : __(contextmenuItem.label || contextmenuItem.name) "
             list-item
             v-bind="contextmenuItem.attr"
@@ -1132,11 +1132,11 @@ const getProp = computed(() => (k: keyof Props) => {
         v-bind="{
           virtualScroll: !0,
           wrapCells:!0,
-          ...$myth.options.dt?.props,
+          ...$myth.options.datatable,
           ...$attrs,
-          bordered: bordered === undefined ? $myth.options.dt?.props?.bordered : bordered,
-          dense: dense === undefined ? $myth.options.dt?.props?.dense : dense,
-          flat: flat === undefined ? $myth.options.dt?.props?.flat : flat,
+          bordered: bordered === undefined ? $myth.options.datatable?.bordered : bordered,
+          dense: dense === undefined ? $myth.options.datatable?.dense : dense,
+          flat: flat === undefined ? $myth.options.datatable?.flat : flat,
         }"
         @request="fetchDatatableItems"
         @virtual-scroll="endReach ? onScroll : undefined"
@@ -1182,7 +1182,7 @@ const getProp = computed(() => (k: keyof Props) => {
                     :key="col.name"
                   >
                     <MRow
-                      v-if="col.name !== controlKey || (col.name === controlKey && ( showCardControlHeader === undefined ? $myth.options.dt?.props?.showCardControlHeader : showCardControlHeader ))"
+                      v-if="col.name !== controlKey || (col.name === controlKey && ( showCardControlHeader === undefined ? $myth.options.datatable?.showCardControlHeader : showCardControlHeader ))"
                       class="justify-between"
                     >
                       <MCol
@@ -1295,7 +1295,7 @@ const getProp = computed(() => (k: keyof Props) => {
                   v-if="!hideSearch"
                   v-model="tableOptions.search"
                   :debounce="searchDebounce"
-                  :dense="dense === undefined ? ($myth.options.dt?.props?.dense !== undefined ? $myth.options.dt?.props?.dense : !0) : dense"
+                  :dense="dense === undefined ? ($myth.options.datatable?.dense !== undefined ? $myth.options.datatable?.dense : !0) : dense"
                   :placeholder="searchPlaceholder"
                   autocomplete="none"
                   col="12"

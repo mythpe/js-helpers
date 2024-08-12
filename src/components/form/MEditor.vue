@@ -129,20 +129,19 @@ interface P {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  modelValue?: Props['modelValue'];
-  help?: Props['help'];
   minHeight?: Props['minHeight'];
   name: Props['name'];
   label?: Props['label'];
+  caption?: Props['caption'];
   hint?: Props['hint'];
+  placeholder?: Props['placeholder'];
+  help?: Props['help'];
   dense?: Props['dense'];
   toolbar?: Props['toolbar'];
   fonts?: Props['fonts'];
-  caption?: Props['caption'];
   rules?: Props['rules'];
   errors?: Props['errors'];
   viewMode?: Props['viewMode'];
-  placeholder?: Props['placeholder'];
   topLabel?: Props['topLabel'];
 }
 
@@ -154,29 +153,29 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  modelValue: () => '',
   minHeight: () => '10rem',
   name: () => '',
   label: undefined,
+  caption: undefined,
   hint: undefined,
+  placeholder: undefined,
+  help: undefined,
   dense: undefined,
   toolbar: undefined,
   fonts: undefined,
-  caption: undefined,
   rules: undefined,
   errors: undefined,
-  placeholder: undefined,
   topLabel: undefined,
   viewMode: undefined
 })
-
-// defineModel<Props['modelValue']>({ required: !1, default: '' })
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: '' })
 const helper = useInputHelper<P>(() => props, 'editor')
 const { hasTopLabel, getLabel, getPlaceholder, inputProps } = helper
 
 const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
-  initialValue: props.modelValue,
-  syncVModel: !0
+  initialValue: modelValue,
+  syncVModel: !0,
+  label: getLabel
 })
 const { value, errors: fieldErrors, handleChange } = inputScope
 const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])

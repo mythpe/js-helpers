@@ -26,6 +26,7 @@ import {
 } from 'quasar'
 
 import {
+  MAvatarViewerProps,
   MBlockProps,
   MBtnProps,
   MCardProps,
@@ -43,12 +44,14 @@ import {
   MInputProps,
   MModalMenuProps,
   MNoResultImgProps,
+  MOptionsProps,
   MOtpProps,
   MRadioProps,
   MRowProps,
   MSelectProps,
   MTimeProps,
   MToggleProps,
+  MTypingStringProps,
   MUploaderProps
 } from '../components'
 import { I18n } from 'vue-i18n'
@@ -72,8 +75,8 @@ export type MythOptionsConfig = {
     okProps?: Partial<QBtnProps>;
     cancelProps?: Partial<QBtnProps>;
   };
+  datatable?: Partial<MDatatableProps>;
   dt?: {
-    props?: Partial<MDatatableProps>;
     filterDialogProps?: Partial<QDialogProps> & Partial<QMenuProps> & Partial<QPopupProxyProps>;
     showDialogProps?: Partial<QDialogProps>;
     formDialogProps?: Partial<QDialogProps>;
@@ -134,6 +137,8 @@ export type MythOptionsConfig = {
     size?: string | undefined;
   };
   input?: Partial<MInputProps>;
+  avatarViewer?: Partial<MAvatarViewerProps>;
+  options?: Partial<MOptionsProps>;
   mobile?: Partial<MInputProps>;
   field?: Partial<QFieldProps>;
   file?: Partial<MFileProps>;
@@ -145,8 +150,8 @@ export type MythOptionsConfig = {
   editor?: Partial<MEditorProps>;
   radio?: Partial<MRadioProps>;
   toggle?: Partial<MToggleProps>;
-  uploader?: {
-    props?: Partial<MUploaderProps>;
+  uploader?: Partial<MUploaderProps>;
+  uploaderOptions?: {
     downloadBtnProps?: Partial<MBtnProps>;
     removeBtnProps?: Partial<QBtnProps>;
     iconsSize?: MUploaderProps['iconsSize'];

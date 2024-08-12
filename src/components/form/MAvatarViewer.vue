@@ -8,41 +8,40 @@
 
 <script lang="ts" setup>
 
-import { useAcceptProp } from '../../composables'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
-import { ColStyleType } from '../grid/models'
 
 import MFile from './MFile.vue'
-import { MAvatarViewerModelValue, MAvatarViewerProps } from './models'
+import { MAvatarViewerModelValue, MAvatarViewerProps as Props } from './models'
 import { Field as VeeField } from 'vee-validate'
+import { useInputHelper } from 'src/composables'
 
-interface Props {
-  auto?: boolean;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  accept?: MAvatarViewerProps['accept'];
-  images?: MAvatarViewerProps['images'];
-  video?: MAvatarViewerProps['video'];
-  pdf?: MAvatarViewerProps['pdf'];
-  excel?: MAvatarViewerProps['excel'];
-  size?: MAvatarViewerProps['size'];
-  avatarText?: MAvatarViewerProps['avatarText'];
-  fit?: MAvatarViewerProps['fit'];
-  clearable?: MAvatarViewerProps['clearable'];
-  label?: MAvatarViewerProps['label'];
-  rounded?: MAvatarViewerProps['rounded'];
-  name?: MAvatarViewerProps['name'];
-  caption?: MAvatarViewerProps['caption'];
-  captionProps?: MAvatarViewerProps['captionProps'];
-  hint?: MAvatarViewerProps['hint'];
-  hintProps?: MAvatarViewerProps['hintProps'];
+interface P {
+  auto?: Props['auto'];
+  col?: Props['col'];
+  xs?: Props['xs'];
+  sm?: Props['sm'];
+  md?: Props['md'];
+  lg?: Props['lg'];
+  xl?: Props['xl'];
+  accept?: Props['accept'];
+  images?: Props['images'];
+  video?: Props['video'];
+  pdf?: Props['pdf'];
+  excel?: Props['excel'];
+  size?: Props['size'];
+  avatarText?: Props['avatarText'];
+  fit?: Props['fit'];
+  clearable?: Props['clearable'];
+  label?: Props['label'];
+  rounded?: Props['rounded'];
+  name?: Props['name'];
+  caption?: Props['caption'];
+  captionProps?: Props['captionProps'];
+  hint?: Props['hint'];
+  hintProps?: Props['hintProps'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<P>(), {
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -71,11 +70,11 @@ type Events = {
   (e: 'click', evt?: Event): void;
 }
 const emit = defineEmits<Events>()
-const { accepts } = useAcceptProp(props)
+const { accepts } = useInputHelper<any>(() => props, 'avatarViewer')
 
-const modelValue = defineModel<MAvatarViewerModelValue>({ required: true })
+const modelValue = defineModel<MAvatarViewerModelValue>({ required: !0, default: undefined })
 const url = defineModel<string>('url', { required: false, type: String })
-const errors = defineModel<MAvatarViewerProps['errors']>('errors', { required: true, default: () => ({}) })
+const errors = defineModel<Props['errors']>('errors', { required: true, default: () => ({}) })
 const getErrors = computed<Record<string, string[]> | undefined>(() => {
   if (errors.value?.[props.name]) {
     if (typeof errors.value[props.name] === 'string') {

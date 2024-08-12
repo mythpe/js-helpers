@@ -6,104 +6,35 @@
   - Github: https://github.com/mythpe
   -->
 
-<template>
-  <MCol
-    auto
-    class="text-center"
-  >
-    <slot name="before-all" />
-    <MRow
-      v-if="topLabel"
-      class="justify-start q-mb-md text-body1"
-      v-bind="topLabelProps"
-    >
-      <div>
-        {{ __(topLabel) }}
-      </div>
-    </MRow>
-    <div :class="`row ${$q.lang.rtl ? 'reverse' : ''} q-gutter-x-sm justify-center`">
-      <q-input
-        v-for="i in length"
-        :key="i"
-        :ref="el => updateFieldRef(el, i - 1)"
-        v-model="fieldValues[i - 1]"
-        :autofocus="autofocus && i === 1"
-        :error="otpErrors.length > 0"
-        hide-bottom-space
-        input-class="text-center"
-        maxlength="1"
-        no-error-icon
-        outlined
-        style="width: 6ch"
-        v-bind="{...($myth.options.otp || {}),...($attrs||{})}"
-        @keydown="onKeyDown($event, i - 1)"
-        @keyup="onKeyUp($event, i - 1)"
-        @paste.prevent="onPaste($event,i - 1)"
-        @update:model-value="onUpdate($event, i - 1)"
-      />
-    </div>
-    <div
-      v-if="otpErrors.length > 0"
-      class="q-my-md text-negative"
-    >
-      {{ otpErrors[0] }}
-    </div>
-    <slot name="after-input" />
-    <MFadeTransition>
-      <div
-        v-if="!hideTime"
-        class="q-mt-sm"
-      >
-        <span>{{ __('myth.otp.expire_line') }}:&nbsp;</span>
-        <span>{{ getTime }}</span>
-      </div>
-    </MFadeTransition>
-    <MFadeTransition>
-      <div
-        v-if="!hideSendAgain"
-        class="q-mt-sm"
-      >
-        <span>{{ __('myth.otp.send_again_title') }}&nbsp;</span>
-        <span
-          :class="{'text-decoration-underline':!0, disabled,'cursor-pointer': !disabled}"
-          @click="onSend()"
-        >{{ __('myth.otp.send_again_btn') }}</span>
-      </div>
-    </MFadeTransition>
-    <slot name="after-all" />
-  </MCol>
-</template>
-
 <script lang="ts" setup>
 
 import { computed, defineProps, nextTick, onBeforeUnmount, onBeforeUpdate, ref, watch, watchEffect } from 'vue'
 import { date } from 'quasar'
-import { MOtpProps } from './models'
+import { MOtpProps as Props } from './models'
 import { isNaN } from 'lodash'
 
-export interface Props {
-  modelValue?: MOtpProps['modelValue'];
-  inputLength?: MOtpProps['inputLength'];
-  numeric?: MOtpProps['numeric'];
-  time?: MOtpProps['time'];
-  hideTime?: MOtpProps['hideTime'];
-  hideSendAgain?: MOtpProps['hideSendAgain'];
-  topLabel?: MOtpProps['topLabel'];
-  topLabelProps?: MOtpProps['topLabelProps'];
-  autofocus?: MOtpProps['autofocus'];
-  errors?: MOtpProps['errors'];
+export interface P {
+  // modelValue?: Props['modelValue'];
+  inputLength?: Props['inputLength'];
+  numeric?: Props['numeric'];
+  time?: Props['time'];
+  hideTime?: Props['hideTime'];
+  hideSendAgain?: Props['hideSendAgain'];
+  topLabel?: Props['topLabel'];
+  topLabelProps?: Props['topLabelProps'];
+  autofocus?: Props['autofocus'];
+  errors?: Props['errors'];
 }
 
 interface Emits {
-  (e: 'update:modelValue', value: any): void;
 
   (e: 'end'): void;
 
   (e: 'send'): void;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  modelValue: undefined,
+const props = withDefaults(defineProps<P>(), {
+  // modelValue: undefined,
   inputLength: () => 6,
   numeric: () => !0,
   time: () => 120,
@@ -114,14 +45,14 @@ const props = withDefaults(defineProps<Props>(), {
   autofocus: () => !1,
   errors: () => ([])
 })
-
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const emit = defineEmits<Emits>()
 const otpErrors = computed(() => props.errors ? props.errors : [])
 const length = computed<number>(() => parseInt(props.inputLength?.toString() || '0'))
 const fields = ref<any>([])
 const fieldValues = ref<(string | number | null | undefined)[]>([])
 watchEffect(() => {
-  fieldValues.value = (props.modelValue || '').toString().split('').slice(0, length.value)
+  fieldValues.value = (modelValue.value || '').toString().split('').slice(0, length.value)
 })
 
 const composite = computed(() => {
@@ -136,10 +67,10 @@ watch(composite, () => {
   if (composite.value) {
     if (props.numeric !== !1) {
       if (!isNaN(composite.value) && composite.value?.toString()?.length?.toString() === props.inputLength.toString()) {
-        emit('update:modelValue', composite.value)
+        modelValue.value = composite.value
       }
     } else {
-      emit('update:modelValue', composite.value)
+      modelValue.value = composite.value
     }
   }
 })
@@ -290,3 +221,71 @@ export default {
   inheritAttrs: !1
 }
 </script>
+
+<template>
+  <MCol
+    auto
+    class="text-center"
+  >
+    <slot name="before-all" />
+    <MRow
+      v-if="!!topLabel"
+      class="justify-start q-mb-md text-body1"
+      v-bind="topLabelProps"
+    >
+      <div>
+        {{ __(topLabel) }}
+      </div>
+    </MRow>
+    <div :class="`row ${$q.lang.rtl ? 'reverse' : ''} q-gutter-x-sm justify-center`">
+      <q-input
+        v-for="i in length"
+        :key="i"
+        :ref="el => updateFieldRef(el, i - 1)"
+        v-model="fieldValues[i - 1]"
+        :autofocus="autofocus && i === 1"
+        :error="otpErrors.length > 0"
+        hide-bottom-space
+        input-class="text-center"
+        maxlength="1"
+        no-error-icon
+        outlined
+        style="width: 6ch"
+        v-bind="{...($myth.options.otp || {}),...($attrs||{})}"
+        @keydown="onKeyDown($event, i - 1)"
+        @keyup="onKeyUp($event, i - 1)"
+        @paste.prevent="onPaste($event,i - 1)"
+        @update:model-value="onUpdate($event, i - 1)"
+      />
+    </div>
+    <div
+      v-if="otpErrors.length > 0"
+      class="q-my-md text-negative"
+    >
+      {{ otpErrors[0] }}
+    </div>
+    <slot name="after-input" />
+    <MFadeTransition>
+      <div
+        v-if="!hideTime"
+        class="q-mt-sm"
+      >
+        <span>{{ __('myth.otp.expire_line') }}:&nbsp;</span>
+        <span>{{ getTime }}</span>
+      </div>
+    </MFadeTransition>
+    <MFadeTransition>
+      <div
+        v-if="!hideSendAgain"
+        class="q-mt-sm"
+      >
+        <span>{{ __('myth.otp.send_again_title') }}&nbsp;</span>
+        <span
+          :class="{'text-decoration-underline':!0, disabled,'cursor-pointer': !disabled}"
+          @click="onSend()"
+        >{{ __('myth.otp.send_again_btn') }}</span>
+      </div>
+    </MFadeTransition>
+    <slot name="after-all" />
+  </MCol>
+</template>

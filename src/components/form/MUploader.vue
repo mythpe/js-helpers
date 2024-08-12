@@ -9,59 +9,58 @@
 import { QList, QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
 import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
-import { useAcceptProp } from '../../composables'
-import { useMyth } from '../../vue3'
-import { ColStyleType } from '../grid/models'
-import { MUploaderMediaItem, MUploaderProps, MUploaderXhrInfo } from './models'
 import { useI18n } from 'vue-i18n'
+import { useInputHelper } from '../../composables'
+import { useMyth } from '../../vue3'
+import { MUploaderMediaItem, MUploaderProps as Props, MUploaderXhrInfo } from './models'
 import { QUploaderFactoryObject } from 'quasar/dist/types/api/quploader'
 
-interface Props {
+interface P {
   auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  disable?: MUploaderProps['disable'];
-  readonly?: MUploaderProps['readonly'];
-  accept?: MUploaderProps['accept'];
-  images?: MUploaderProps['images'];
-  video?: MUploaderProps['video'];
-  pdf?: MUploaderProps['pdf'];
-  excel?: MUploaderProps['excel'];
-  autoUpload?: MUploaderProps['autoUpload'];
-  fieldName?: MUploaderProps['fieldName'];
-  collection?: MUploaderProps['collection'];
-  attachmentType?: MUploaderProps['attachmentType'];
-  returnType?: MUploaderProps['returnType'];
-  formFields?: MUploaderProps['formFields'];
-  headers?: MUploaderProps['headers'];
-  label?: MUploaderProps['label'];
-  modelValue: MUploaderProps['modelValue'];
-  hideDeleteMedia?: MUploaderProps['hideDeleteMedia'];
-  hideUploadBtn?: MUploaderProps['hideUploadBtn'];
-  service: MUploaderProps['service'];
-  modelId: MUploaderProps['modelId'];
-  uploading?: MUploaderProps['uploading'];
-  useQuasarLoading?: MUploaderProps['useQuasarLoading'];
-  batch?: MUploaderProps['batch'];
-  defaultFileIcon?: MUploaderProps['defaultFileIcon'];
-  deleteMediaIcon?: MUploaderProps['deleteMediaIcon'];
-  uploadFilesIcon?: MUploaderProps['uploadFilesIcon'];
-  pickFilesIcon?: MUploaderProps['pickFilesIcon'];
-  removeUploadedIcon?: MUploaderProps['removeUploadedIcon'];
-  removeQueuedIcon?: MUploaderProps['removeQueuedIcon'];
-  abortUploadIcon?: MUploaderProps['abortUploadIcon'];
-  downloadFileIcon?: MUploaderProps['downloadFileIcon'];
-  errorsIcon?: MUploaderProps['errorsIcon'];
-  iconsSize?: MUploaderProps['iconsSize'];
-  displayMode?: MUploaderProps['displayMode'];
-  shadow?: MUploaderProps['shadow'];
+  col?: Props['col'];
+  xs?: Props['xs'];
+  sm?: Props['sm'];
+  md?: Props['md'];
+  lg?: Props['lg'];
+  xl?: Props['xl'];
+  disable?: Props['disable'];
+  readonly?: Props['readonly'];
+  accept?: Props['accept'];
+  images?: Props['images'];
+  video?: Props['video'];
+  pdf?: Props['pdf'];
+  excel?: Props['excel'];
+  autoUpload?: Props['autoUpload'];
+  fieldName?: Props['fieldName'];
+  collection?: Props['collection'];
+  attachmentType?: Props['attachmentType'];
+  returnType?: Props['returnType'];
+  formFields?: Props['formFields'];
+  headers?: Props['headers'];
+  label?: Props['label'];
+  // modelValue: Props['modelValue'];
+  hideDeleteMedia?: Props['hideDeleteMedia'];
+  hideUploadBtn?: Props['hideUploadBtn'];
+  service: Props['service'];
+  modelId: Props['modelId'];
+  uploading?: Props['uploading'];
+  useQuasarLoading?: Props['useQuasarLoading'];
+  batch?: Props['batch'];
+  defaultFileIcon?: Props['defaultFileIcon'];
+  deleteMediaIcon?: Props['deleteMediaIcon'];
+  uploadFilesIcon?: Props['uploadFilesIcon'];
+  pickFilesIcon?: Props['pickFilesIcon'];
+  removeUploadedIcon?: Props['removeUploadedIcon'];
+  removeQueuedIcon?: Props['removeQueuedIcon'];
+  abortUploadIcon?: Props['abortUploadIcon'];
+  downloadFileIcon?: Props['downloadFileIcon'];
+  errorsIcon?: Props['errorsIcon'];
+  iconsSize?: Props['iconsSize'];
+  displayMode?: Props['displayMode'];
+  shadow?: Props['shadow'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<P>(), {
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -84,7 +83,7 @@ const props = withDefaults(defineProps<Props>(), {
   formFields: undefined,
   headers: undefined,
   label: undefined,
-  modelValue: () => ([]),
+  // modelValue: () => ([]),
   hideDeleteMedia: undefined,
   hideUploadBtn: undefined,
   service: undefined,
@@ -117,7 +116,7 @@ interface Events {
 
   (e: 'remove-file', File: File): void;
 
-  (e: 'update:modelValue', value: MUploaderMediaItem[]): void;
+  // (e: 'update:modelValue', value: MUploaderMediaItem[]): void;
 
   (e: 'update:uploading', value: boolean): void;
 }
@@ -129,11 +128,8 @@ const { alertError, alertSuccess, confirmMessage } = $myth
 const { t } = useI18n({ useScope: 'global' })
 
 const uploader = ref<InstanceType<typeof QUploader>>()
-const attachmentsRef = computed({
-  get: () => props.modelValue,
-  set: v => emit('update:modelValue', v)
-})
-const { accepts } = useAcceptProp(props)
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: [] })
+const { accepts } = useInputHelper<any>(() => props, 'uploader')
 const quasarLoading = computed<boolean | undefined>({
   get: () => $q.loading.isActive,
   set: v => v ? $q.loading.show() : $q.loading.hide()
@@ -147,7 +143,7 @@ const modelIdProp = computed(() => props.modelId)
 const headersProp = computed(() => props.headers)
 const hideDeleteMediaProp = computed(() => props.hideDeleteMedia)
 const useQuasarLoadingProp = computed(() => props.useQuasarLoading)
-const iconsSizeProp = computed(() => $myth.options.uploader?.iconsSize || props.iconsSize)
+const iconsSizeProp = computed(() => $myth.options.uploaderOptions?.iconsSize || props.iconsSize)
 const fieldNameProp = computed(() => props.fieldName)
 const errors = ref<any>([])
 /* Events Callback */
@@ -240,7 +236,7 @@ const onFinishUpload = ({ files, xhr }: MUploaderXhrInfo) => {
     if (xhr.responseText) {
       const response = JSON.parse(xhr.responseText)
       if (response?.data?.length !== undefined) {
-        attachmentsRef.value = response.data
+        modelValue.value = response.data
         files.forEach(f => uploader.value?.removeFile(f))
       }
       if (response?.message) {
@@ -279,7 +275,7 @@ const deleteMedia = (media: MUploaderMediaItem) => {
         const { _message, _success, _data }: any = await method(media)
         _message && alertSuccess(_message)
         r = Boolean(_success)
-        attachmentsRef.value = _data ?? []
+        modelValue.value = _data ?? []
       }
     } catch (e: any) {
       alertError(e?._message || e?.message)
@@ -357,7 +353,7 @@ export default {
       :label="label"
       :readonly="readonly"
       style="width: 100%;max-height: 450px;"
-      v-bind="{...($myth.options.uploader?.props || {}),...($attrs || {})}"
+      v-bind="{...$myth.options.uploader as any,...$attrs}"
       @failed="onError"
       @rejected="onReject"
       @uploaded="onFinishUpload"
@@ -427,7 +423,7 @@ export default {
 
       <template #list="scope">
         <div
-          v-if="!scope.files.length && !attachmentsRef.length"
+          v-if="!scope.files.length && !modelValue.length"
           key="m--uploader-no-data"
           class="absolute-full"
         >
@@ -448,7 +444,7 @@ export default {
         </div>
         <template v-else-if="$slots.list">
           <slot
-            :items="attachmentsRef"
+            :items="modelValue"
             name="list"
             v-bind="scope"
           />
@@ -458,7 +454,7 @@ export default {
           class="q-col-gutter-sm"
         >
           <template
-            v-for="(file,i) in [...scope.files,...attachmentsRef]"
+            v-for="(file,i) in [...scope.files,...modelValue]"
             :key="`item-${i}`"
           >
             <slot
@@ -475,7 +471,7 @@ export default {
           :separator="displayMode === 'list' ? !0 : undefined"
         >
           <template
-            v-for="(file,i) in [...scope.files,...attachmentsRef]"
+            v-for="(file,i) in [...scope.files,...modelValue]"
             :key="`item-${i}`"
           >
             <q-item
@@ -565,7 +561,7 @@ export default {
                     flat
                     target="_blank"
                     type="a"
-                    v-bind="$myth.options.uploader?.downloadBtnProps"
+                    v-bind="$myth.options.uploaderOptions?.downloadBtnProps"
                   />
                   <MBtn
                     v-if="(!hideDeleteMedia || (hideDeleteMedia && !Boolean(file.id))) && displayMode === 'list'"
@@ -576,7 +572,7 @@ export default {
                     dense
                     flat
                     type="a"
-                    v-bind="$myth.options.uploader?.removeBtnProps"
+                    v-bind="$myth.options.uploaderOptions?.removeBtnProps"
                     @click="onClickDeleteAttachment(file)"
                   >
                     <q-tooltip class="m--dt-btn-tooltip">
@@ -599,7 +595,7 @@ export default {
                     dense
                     flat
                     round
-                    v-bind="$myth.options.uploader?.removeBtnProps"
+                    v-bind="$myth.options.uploaderOptions?.removeBtnProps"
                     @click="onClickDeleteAttachment(file)"
                   >
                     <q-tooltip class="m--dt-btn-tooltip">

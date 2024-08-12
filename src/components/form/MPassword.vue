@@ -8,16 +8,16 @@
 
 <script lang="ts" setup>
 import { defineProps, ref } from 'vue'
-import { MInputSlots, MPasswordProps } from './models'
+import { MInputSlots, MPasswordProps as Props } from './models'
 import MInput from './MInput.vue'
 
 const inputType = ref<'text' | 'password'>('password')
 
-type Props = {
-  icon?: MPasswordProps['icon'];
-  noToggle?: MPasswordProps['noToggle'];
+type P = {
+  icon?: Props['icon'];
+  noToggle?: Props['noToggle'];
 }
-withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<P>(), {
   icon: () => !1,
   noToggle: () => !1
 })

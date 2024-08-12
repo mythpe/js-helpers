@@ -23,7 +23,7 @@ type P = {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  modelValue?: Props['modelValue'];
+  // modelValue?: Props['modelValue'];
   label?: Props['label'];
   caption?: Props['caption'];
   hint?: Props['hint'];
@@ -64,7 +64,7 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  modelValue: undefined,
+  // modelValue: undefined,
   label: undefined,
   caption: undefined,
   hint: undefined,
@@ -95,12 +95,14 @@ const props = withDefaults(defineProps<P>(), {
   axiosMode: undefined,
   hideSelected: undefined
 })
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: null })
 const helper = useInputHelper<P & Props>(() => props, 'select', () => ({ choose: !0 }))
 const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, inputProps } = helper
 
 const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
-  initialValue: props.modelValue,
-  syncVModel: !0
+  initialValue: modelValue,
+  syncVModel: !0,
+  label: getLabel
 })
 const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
 const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])

@@ -37,7 +37,7 @@ const props = withDefaults(defineProps<P>(), {
   requestWith: undefined,
   params: () => ({})
 })
-const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: null })
 const search = defineModel<string>('search', { required: !1, default: '' })
 const myth = useMyth()
 const loading = defineModel<Props['loading']>('loading', { required: !1, default: !1 })

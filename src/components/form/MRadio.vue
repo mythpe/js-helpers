@@ -11,7 +11,7 @@ import { useField } from 'vee-validate'
 import { computed, defineProps, reactive, ref } from 'vue'
 import { useInputHelper } from '../../composables'
 import { MRadioProps as Props } from './models'
-import { QField, QRadio, QToggle } from 'quasar'
+import { QField, QRadio } from 'quasar'
 
 type P = {
   auto?: Props['auto'];
@@ -21,7 +21,7 @@ type P = {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  modelValue: Props['modelValue'];
+  // modelValue?: Props['modelValue'];
   name: Props['name'];
   label?: Props['label'];
   caption?: Props['caption'];
@@ -33,6 +33,7 @@ type P = {
   errors?: Props['errors'];
   dense?: Props['dense'];
   checkedIcon?: Props['checkedIcon'];
+  topLabel?: Props['topLabel'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -43,7 +44,7 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  modelValue: undefined,
+  // modelValue: undefined,
   name: () => '',
   label: undefined,
   caption: undefined,
@@ -54,15 +55,17 @@ const props = withDefaults(defineProps<P>(), {
   rules: undefined,
   errors: undefined,
   dense: undefined,
-  checkedIcon: () => 'ion-checkmark-circle-outline'
+  checkedIcon: () => 'ion-checkmark-circle-outline',
+  topLabel: undefined
 })
-
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: null })
 const helper = useInputHelper<P>(() => props, 'radio')
 const { getLabel, inputProps } = helper
 
 const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
-  initialValue: props.modelValue,
-  syncVModel: !0
+  initialValue: modelValue,
+  syncVModel: !0,
+  label: getLabel
 })
 const { value, errors: fieldErrors, handleChange } = inputScope
 const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
@@ -101,16 +104,16 @@ export default {
     />
     <slot name="top-label">
       <MInputLabel
+        v-if="!!topLabel"
         :for="name"
-        class="no-margin"
       >
-        {{ __(label ?? name) }}
+        {{ __(topLabel) }}
       </MInputLabel>
     </slot>
     <slot name="caption">
       <div
         v-if="!!caption"
-        class="text-caption m--input__caption"
+        class="m--input__caption"
       >
         {{ __(caption) }}
       </div>
@@ -135,21 +138,23 @@ export default {
             stackLabel: !0
           }"
         >
-          <q-radio
-            ref="input"
-            v-model="value"
-            :label="getLabel"
-            :val="val"
-            v-bind="{
-              ...$myth.options.radio,
-              ...$attrs,
-              dense: inputProps.dense,
-              checkedIcon: inputProps.checkedIcon,
-            }"
-            v-on="listeners"
-          >
-            <slot />
-          </q-radio>
+          <template #control>
+            <q-radio
+              ref="input"
+              v-model="value"
+              :label="getLabel"
+              :val="val"
+              v-bind="{
+                ...$myth.options.radio,
+                ...$attrs,
+                dense: inputProps.dense,
+                checkedIcon: inputProps.checkedIcon,
+              }"
+              v-on="listeners"
+            >
+              <slot />
+            </q-radio>
+          </template>
         </q-field>
       </MCol>
       <slot

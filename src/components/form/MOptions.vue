@@ -9,10 +9,11 @@
 <script lang="ts" setup>
 
 import { useField } from 'vee-validate'
-import { MInputProps as Props } from './models.d'
+import { MOptionsOptionContext, MOptionsProps as Props } from './models.d'
 import { computed, reactive, ref } from 'vue'
-import { QField, QInput, QInputSlots } from 'quasar'
+import { QField, QOptionGroup, QOptionGroupSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
+import { useMyth } from '../../vue3'
 
 type P = {
   name: Props['name'];
@@ -34,8 +35,9 @@ type P = {
   errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
-  autocomplete?: Props['autocomplete'];
   topLabel?: Props['topLabel'];
+  color?: Props['color'];
+  type?: Props['type'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -47,7 +49,7 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  // modelValue: undefined,
+  // modelValue: null,
   label: undefined,
   caption: undefined,
   hint: undefined,
@@ -58,14 +60,17 @@ const props = withDefaults(defineProps<P>(), {
   errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
-  autocomplete: undefined,
-  topLabel: undefined
+  topLabel: undefined,
+  color: () => 'primary',
+  type: 'radio'
 })
-const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
+defineModel<Props['modelValue']>({ required: !1, default: null })
+const options = defineModel<MOptionsOptionContext[]>('options', { required: !1, default: [] })
 const helper = useInputHelper<P>(() => props, 'input')
-const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute } = helper
+const { getLabel, getPlaceholder } = helper
+const { __ } = useMyth()
 const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
-  initialValue: modelValue,
+  initialValue: props.modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -77,13 +82,22 @@ const listeners = {
   blur: (v: any) => handleBlur(v, !0),
   'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
 }
-const input = ref<InstanceType<typeof QInput | typeof QField> | null>(null)
+const input = ref<InstanceType<typeof QOptionGroup | typeof QField> | null>(null)
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
+const getOptions = computed(() => {
+  return options.value.map((option: Props['options'][number]) => {
+    return {
+      label: option.label,
+      value: option.value
+    }
+  })
+})
 </script>
 
 <script lang="ts">
 export default {
+  name: 'MOptions',
   inheritAttrs: !1
 }
 </script>
@@ -105,7 +119,7 @@ export default {
     />
     <slot name="top-label">
       <MInputLabel
-        v-if="hasTopLabel"
+        v-if="!!getLabel"
         :for="name"
       >
         {{ getLabel }}
@@ -120,20 +134,22 @@ export default {
       </div>
     </slot>
     <component
-      :is="viewMode ? QField : QInput"
+      :is="viewMode ? QField : QOptionGroup"
       ref="input"
       v-model="value"
-      :autocomplete="getAutocompleteAttribute"
+      :color="color"
       :error="!!errorMessage"
       :error-message="errorMessage"
       :hint="__(hint)"
-      :label="hasTopLabel ? undefined : getLabel"
+      :label="getLabel"
+      :options="getOptions"
       :placeholder="getPlaceholder"
-      v-bind="{ ...$myth.options.input as any,...( viewMode ? $myth.options.field : {} ), ...$attrs, ...( viewMode ? { stackLabel: !0 } : {} ) }"
+      keep-color
+      v-bind="{ ...$myth.options.options as any,...( viewMode ? $myth.options.field : {} ), ...$attrs, ...( viewMode ? { stackLabel: !0 } : {} ) }"
       v-on="listeners"
     >
       <template
-        v-for="(_,slot) in ($slots as Readonly<QInputSlots>)"
+        v-for="(_,slot) in $slots as Readonly<QOptionGroupSlots>"
         :key="slot"
         #[slot]
       >
