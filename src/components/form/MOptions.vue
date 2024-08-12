@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MOptionsOptionContext, MOptionsProps as Props } from './models.d'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, useAttrs } from 'vue'
 import { QField, QOptionGroup, QOptionGroupSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
@@ -30,7 +30,7 @@ type P = {
   hint?: Props['hint'];
   placeholder?: Props['placeholder'];
   help?: Props['help'];
-  required?: Props['required'];
+  // required?: Props['required'];
   rules?: Props['rules'];
   errors?: Props['errors'];
   viewMode?: Props['viewMode'];
@@ -38,6 +38,8 @@ type P = {
   topLabel?: Props['topLabel'];
   color?: Props['color'];
   type?: Props['type'];
+  keepColor?: Props['keepColor'];
+  service?: Props['service'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -55,22 +57,25 @@ const props = withDefaults(defineProps<P>(), {
   hint: undefined,
   placeholder: undefined,
   help: undefined,
-  required: undefined,
+  // required: undefined,
   rules: undefined,
   errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   topLabel: undefined,
   color: () => 'primary',
-  type: 'radio'
+  type: 'radio',
+  keepColor: undefined,
+  service: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: null })
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
+const loading = defineModel<Props['loading']>('loading', { required: !1, default: !1 })
 const options = defineModel<MOptionsOptionContext[]>('options', { required: !1, default: [] })
-const helper = useInputHelper<P>(() => props, 'input')
-const { getLabel, getPlaceholder } = helper
-const { __ } = useMyth()
-const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
-  initialValue: props.modelValue,
+const attrs = useAttrs()
+const helper = useInputHelper<P>(() => props, 'options', () => ({ attrs }))
+const { getLabel, getPlaceholder, inputProps, getRules } = helper
+const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
+  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -85,14 +90,21 @@ const listeners = {
 const input = ref<InstanceType<typeof QOptionGroup | typeof QField> | null>(null)
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
-const getOptions = computed(() => {
-  return options.value.map((option: Props['options'][number]) => {
-    return {
-      label: option.label,
-      value: option.value
+const { alertError } = useMyth()
+const fetchData = async () => {
+  if (props.service) {
+    loading.value = !0
+    try {
+      const { _data } = await props.service()
+      options.value = _data as any
+    } catch (e: any) {
+      alertError(e?._message || e?.message || 'Failed to fetch data')
+    } finally {
+      loading.value = !1
     }
-  })
-})
+  }
+}
+fetchData()
 </script>
 
 <script lang="ts">
@@ -120,9 +132,17 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="!!getLabel"
+        :class="{'text-negative':!!errorMessage }"
         :for="name"
       >
         {{ getLabel }}
+        <MTransition>
+          <q-spinner-dots
+            v-if="loading"
+            color="primary"
+            size="25px"
+          />
+        </MTransition>
       </MInputLabel>
     </slot>
     <slot name="caption">
@@ -133,27 +153,45 @@ export default {
         {{ __(caption) }}
       </div>
     </slot>
+    <MTransition>
+      <div
+        v-if="!!errorMessage"
+        class="text-negative text-caption"
+      >
+        <q-icon
+          v-if="!!errorMessage"
+          color="negative"
+          name="ion-ios-information-circle-outline"
+          size="20px"
+        />
+        {{ errorMessage }}
+      </div>
+    </MTransition>
     <component
       :is="viewMode ? QField : QOptionGroup"
       ref="input"
-      v-model="value"
-      :color="color"
+      :color="!!errorMessage ? 'negative' : inputProps.color"
       :error="!!errorMessage"
       :error-message="errorMessage"
       :hint="__(hint)"
+      :keep-color="!!errorMessage ? !0 : inputProps.keepColor"
       :label="getLabel"
-      :options="getOptions"
+      :model-value="value"
+      :options="options"
       :placeholder="getPlaceholder"
-      keep-color
+      :type="type"
       v-bind="{ ...$myth.options.options as any,...( viewMode ? $myth.options.field : {} ), ...$attrs, ...( viewMode ? { stackLabel: !0 } : {} ) }"
       v-on="listeners"
     >
       <template
         v-for="(_,slot) in $slots as Readonly<QOptionGroupSlots>"
         :key="slot"
-        #[slot]
+        #[slot]="inputSlot"
       >
-        <slot :name="slot" />
+        <slot
+          :name="slot"
+          v-bind="inputSlot || {}"
+        />
       </template>
       <template
         v-if="viewMode"
@@ -177,6 +215,10 @@ export default {
     </slot>
     <slot
       name="bottom-input"
+      v-bind="inputScope"
+    />
+    <slot
+      :options="options"
       v-bind="inputScope"
     />
   </MCol>

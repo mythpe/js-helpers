@@ -8,10 +8,12 @@
 
 import lodash from 'lodash'
 import { patterns } from 'quasar'
+
 const { testPattern } = patterns
 
 export const VeeRules = {
-  float: (v: any) => lodash.isNumber(parseInt(v)) && !isNaN(parseInt(v)) && v?.toString().split('.')?.length <= 2 && (/(\d)+/g.test(v) && !/[a-zA-Z]/.test(v)),
+  float: (v: any) => lodash.isNumber(parseInt(v)) && !isNaN(parseInt(v)) && v?.toString().split('.')?.length <= 2 && (/(\d)+/g.test(v) && !/[a-zA-Z]/.test(
+    v)),
   date: (v: any) => /^-?[\d]+-[0-1]\d-[0-3]\d$/.test(v),
   time: (v: any) => testPattern.time(v),
   fulltime: (v: any) => testPattern.fulltime(v),

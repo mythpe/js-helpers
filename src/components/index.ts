@@ -15,6 +15,7 @@ import MAvatarViewer from './form/MAvatarViewer.vue'
 import MAxios from './form/MAxios.vue'
 import MBtn from './form/MBtn.vue'
 import MCheckbox from './form/MCheckbox.vue'
+import MCkeditor from './form/MCkeditor.vue'
 import MDate from './form/MDate.vue'
 import MEditor from './form/MEditor.vue'
 import MEmail from './form/MEmail.vue'
@@ -65,6 +66,7 @@ export {
   MAxios,
   MBtn,
   MCheckbox,
+  MCkeditor,
   MDate,
   MEditor,
   MEmail,

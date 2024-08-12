@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { useMyth } from '../../vue3'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, useAttrs } from 'vue'
 import { useField } from 'vee-validate'
 import { MToggleProps as Props } from './models'
 import { useInputHelper } from '../../composables'
@@ -71,15 +71,15 @@ const props = withDefaults(defineProps<P>(), {
   errors: undefined,
   rules: undefined,
   dense: undefined,
-  keepColor: () => !0
+  keepColor: undefined
 })
 const modelValue = defineModel<Props['modelValue']>({ required: !1, default: null })
 const { __ } = useMyth()
-const helper = useInputHelper<Props>(() => props, 'toggle')
-const { inputProps, getLabel: toggleLabel } = helper
-
-const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
-  initialValue: modelValue,
+const attrs = useAttrs()
+const helper = useInputHelper<P>(() => props, 'toggle', () => ({ choose: !0, attrs }))
+const { inputProps, getLabel: toggleLabel, getRules } = helper
+const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
+  // initialValue: modelValue,
   syncVModel: !0,
   label: toggleLabel
 })
@@ -157,9 +157,9 @@ export default {
           v-bind="{...$myth.options.input as any,...$myth.options.field,...$attrs, borderless: !0, outlined: !1, dense: inputProps.dense}"
         >
           <q-toggle
-            v-model="value"
             :false-value="falseValue"
             :label="getLabel"
+            :model-value="value"
             :true-value="trueValue"
             v-bind="{
               ...$myth.options.toggle,

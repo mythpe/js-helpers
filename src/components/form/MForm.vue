@@ -6,117 +6,55 @@
   - Github: https://github.com/mythpe
   -->
 
-<template>
-  <VeeForm
-    ref="veeForm"
-    v-slot="v"
-    :initial-errors="errors"
-    :initial-values="form"
-    as="div"
-    v-bind="$attrs"
-  >
-    <form
-      class="m--form"
-      v-bind="formProps"
-      @submit="v.handleSubmit($event, onSubmit)"
-    >
-      <slot v-bind="v" />
-    </form>
-  </VeeForm>
-</template>
-
 <script lang="ts" setup>
-import { Form as VeeForm, SubmissionContext } from 'vee-validate'
-import { ref, watch } from 'vue'
+import { Form as VeeForm, InvalidSubmissionHandler, SubmissionContext, SubmissionHandler, useForm } from 'vee-validate'
+import { reactive } from 'vue'
+import { MFormProps as Props } from 'src/components/form/models'
 
 type VeeFormElm = InstanceType<typeof VeeForm>
 
-interface Props {
-  form?: Record<string, any>;
-  errors?: Record<string, string[]>;
-  formProps?: Record<string, any>;
+interface P {
+  formProps?: Props['formProps'];
+  opts?: Props['opts'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  form: () => ({}),
-  errors: () => ({}),
-  formProps: undefined
+const props = withDefaults(defineProps<P>(), {
+  formProps: undefined,
+  opts: undefined
 })
 
+const formContext = useForm(props.opts)
+const { handleSubmit } = formContext
+// (cb: SubmissionHandler<TValues, TOutput, TReturn>, onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues, TOutput>)
 type Events = {
   (e: 'submit', values: Record<string, any>, ctx: SubmissionContext): void;
 }
-
 const emit = defineEmits<Events>()
-const veeForm = ref<VeeFormElm>()
+// const onSubmit = (values: Record<string, any>, ctx: SubmissionContext): void => emit('submit', values, ctx)
 
-watch(() => props.errors, (v) => {
-  const errors: Record<string, string> = {}
-  for (const errorsKey in v) {
-    if (v[errorsKey].length > 0) {
-      errors[errorsKey] = v[errorsKey][0]
-    }
-  }
-  setErrors(errors)
-})
-watch(() => props.form, (values) => {
-  resetForm({ values })
-  // setValues(values)
-})
+const onSuccess: SubmissionHandler = (values, ctx) => {
+  console.log(ctx)
+}
 
-const onSubmit = (values: Record<string, any>, ctx: SubmissionContext): void => emit('submit', values, ctx)
-const setFieldValue: VeeFormElm['setFieldValue'] = (...args: Parameters<VeeFormElm['setFieldValue']>) => veeForm.value?.setFieldValue(...args)
-const setFieldError: VeeFormElm['setFieldError'] = (...args: Parameters<VeeFormElm['setFieldError']>) => veeForm.value?.setFieldError(...args)
-const setErrors: VeeFormElm['setErrors'] = (...args: Parameters<VeeFormElm['setErrors']>) => veeForm.value?.setErrors(...args)
-const setValues: VeeFormElm['setValues'] = (...args: Parameters<VeeFormElm['setValues']>) => veeForm.value?.setValues(...args)
-const setFieldTouched: VeeFormElm['setFieldTouched'] = (...args: Parameters<VeeFormElm['setFieldTouched']>) => veeForm.value?.setFieldTouched(...args)
-const setTouched: VeeFormElm['setTouched'] = (...args: Parameters<VeeFormElm['setTouched']>) => veeForm.value?.setTouched(...args)
-const resetForm: VeeFormElm['resetForm'] = (...args: Parameters<VeeFormElm['resetForm']>) => veeForm.value?.resetForm(...args)
-const resetField: VeeFormElm['resetField'] = (...args: Parameters<VeeFormElm['resetField']>) => veeForm.value?.resetField(...args)
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const validate: VeeFormElm['validate'] = (...args: Parameters<VeeFormElm['validate']>) => veeForm.value?.validate(...args)
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const validateField: VeeFormElm['validateField'] = (...args: Parameters<VeeFormElm['validateField']>) => veeForm.value?.validateField(...args)
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const getValues: VeeFormElm['getValues'] = (...args: Parameters<VeeFormElm['getValues']>) => veeForm.value?.getValues(...args)
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const getMeta: VeeFormElm['getMeta'] = (...args: Parameters<VeeFormElm['getMeta']>) => veeForm.value?.getMeta(...args)
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const getErrors: VeeFormElm['getErrors'] = (...args: Parameters<VeeFormElm['getErrors']>) => veeForm.value?.getErrors(...args)
+const onInvalidSubmit: InvalidSubmissionHandler = (values) => {
+  console.log(values) // current form values
+  // console.log(errors) // a map of field names and their first error message
+  // console.log(results) // a detailed map of field names and their validation results
+}
 
-defineExpose({
-  setFieldValue,
-  setFieldError,
-  setErrors,
-  setValues,
-  setFieldTouched,
-  setTouched,
-  resetForm,
-  resetField,
-  validate,
-  validateField,
-  getValues,
-  getMeta,
-  getErrors
-})
+const submit = (e?: Event) => {
+  e?.preventDefault()
+  e?.stopImmediatePropagation()
 
-// watch(() => props.errors, (v) => {
-//   // setErrors(v || {})
-//   nextTick(() => {
-//     // setTouched(Object.keys(v))
-//   })
-// })
-
-// watch(() => props.form, (v) => setValues(v))
-// onBeforeMount(() => {
-// console.log(props.errors)
-// setValues(props.form)
-// })
+  const a = handleSubmit(onSuccess, onInvalidSubmit)
+  const onSubmit = handleSubmit((...values) => {
+    console.log(values)
+  })
+  onSubmit(e)
+  console.log(e)
+}
+const scope = reactive(formContext)
+defineExpose({ ...scope })
 </script>
 
 <script lang="ts">
@@ -125,3 +63,18 @@ export default {
   inheritAttrs: !1
 }
 </script>
+
+<template>
+  <div
+    class="m--form__container"
+    v-bind="$attrs"
+  >
+    <form
+      class="m--form"
+      v-bind="formProps"
+      @submit="submit"
+    >
+      <slot v-bind="scope" />
+    </form>
+  </div>
+</template>

@@ -30,6 +30,7 @@ import { useMyth } from '../../vue3'
 import MDtContextmenuItems from './MDtContextmenuItems.vue'
 import MDtBtn from './MDtBtn.vue'
 import { AxiosRequestConfig } from 'axios'
+import MForm from '../form/MForm.vue'
 
 const initPaginationOptions: MDatatablePagination = {
   sortBy: undefined,
@@ -743,7 +744,12 @@ const removeDtItem = (i: MDtItem | number) => {
   }
 }
 const ignoreKeysProps = computed(() => props.ignoreKeys)
+const formDialogRef = ref<InstanceType<typeof MForm>>()
 const defaultSubmitItem = async (_form: Record<string, any>) => {
+  console.log('Submitting form...', formDialogRef.value)
+  if (_form.id !== 2500) {
+    return
+  }
   // let form = { ..._form, ...(dialogs.itemForm || {}) }
   let form = { ...(props.formModel ? props.formModel : _form) }
   if (loading.value) {

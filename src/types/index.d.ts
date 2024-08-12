@@ -84,6 +84,8 @@ import {
   MTypingStringSlots,
   MUploaderProps,
   MUploaderSlots,
+  MCkeditorProps,
+  MCkeditorSlots,
   UseMythVue
 } from '../types'
 
@@ -119,6 +121,7 @@ declare module '@vue/runtime-core' {
     MAxios: GlobalComponentConstructor<MAxiosProps, MAxiosSlots>;
     MBtn: GlobalComponentConstructor<MBtnProps, MBtnSlots>;
     MCheckbox: GlobalComponentConstructor<MCheckboxProps, MCheckboxSlots>;
+    MCkeditor: GlobalComponentConstructor<MCkeditorProps, MCkeditorSlots>;
     MRadio: GlobalComponentConstructor<MRadioProps, MRadioSlots>;
     MDate: GlobalComponentConstructor<MDateProps, MDateSlots>;
     MEditor: GlobalComponentConstructor<MEditorProps, MEditorSlots>;

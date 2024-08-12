@@ -8,17 +8,17 @@
 
 import { useMyth } from '../vue3'
 import lodash from 'lodash'
-import { computed, MaybeRefOrGetter, ref, toValue } from 'vue'
+import { computed, MaybeRefOrGetter, toValue } from 'vue'
 import { MythOptionsConfig as MOC } from '../types'
 import { extend } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
 type G = { name: string; } & Record<string, any>;
-type OptsContext = { choose?: boolean; };
+type OptsContext = { choose?: boolean; attrs?: Record<string, any> };
 export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key: keyof MOC, Opts: MaybeRefOrGetter<OptsContext> = {}) => {
-  const { __ } = useMyth()
   const props = toValue<P>(Props)
   const opts = toValue<OptsContext>(Opts)
-  const { options } = useMyth()
+  const { __, options } = useMyth()
   const inputOptions = computed(() => (k: keyof MOC) => options[k] || {})
   const inputProps = computed<MOC[typeof key] & P>(() => extend(!0, {}, inputOptions.value(key), props))
   const hasTopLabel = computed(() => inputProps.value.topLabel === !0)
@@ -66,11 +66,59 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
     }
     return l
   })
-  const skipInputSlots = ref(['top-input', 'top-label', 'caption', 'bottom-input'])
+
+  const isNumeric = (str: any) => !isNaN(str) && !isNaN(parseFloat(str))
+  const convertRules = (rules: any) => {
+    if (!rules) {
+      return {}
+    }
+    const values: Record<string, any> = {}
+
+    const list = typeof rules === 'string' ? rules.split('|') : (Array.isArray(rules) ? rules : [rules])
+    for (const r of list) {
+      const [name, value] = r.split(':')
+      if (!name) {
+        continue
+      }
+      rules[name] = !value ? !0
+        : /,/g.test(value) ? value.split(',').map((e: any) => isNumeric(e) ? parseInt(e) : e) : (isNumeric(value) ? parseInt(value) : value)
+    }
+    return values
+  }
+  const { messages, locale } = useI18n({ useScope: 'global' })
+  const validations = (messages.value as any)?.[locale.value]?.validation?.messages || {}
+  const getRules = computed<any>(() => {
+    const rules: any = { ...convertRules(toValue(props.rules)) }
+    const attrs = toValue(opts.attrs) || {}
+    const keys = lodash.uniq<string>(['required', 'email', 'numeric', 'integer', 'float', ...(options.inputRules ?? []), ...Object.keys(validations)])
+    for (const k of keys) {
+      if (['mobile', '_default', 'default'].includes(k)) {
+        continue
+      }
+      const cases = [k, lodash.snakeCase(k), lodash.camelCase(k), lodash.kebabCase(k)]
+      for (const c of cases) {
+        if (c in attrs) {
+          rules[lodash.snakeCase(k)] = attrs[c] ?? !0
+          break
+        }
+        if (c in props) {
+          rules[lodash.snakeCase(k)] = props[c] ?? !0
+          break
+        }
+      }
+    }
+
+    const mobile = attrs?.mobile ?? props.mobile
+    if (mobile) {
+      const defLen = 10
+      rules.digits = typeof mobile === 'boolean' ? defLen : (mobile || defLen)
+    }
+    return Object.values(rules).filter(e => !!e).length > 0 ? rules : undefined
+  })
 
   return {
+    getRules,
     accepts,
-    skipInputSlots,
     hasTopLabel,
     getLabel,
     getPlaceholder,

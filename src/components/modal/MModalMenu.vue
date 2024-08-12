@@ -17,9 +17,9 @@
     maximized
     no-backdrop-dismiss
     no-shake
-    v-bind="{...$myth.options.modalMenu?.props,...$attrs}"
+    v-bind="{...$myth.options.modalMenu,...$attrs}"
   >
-    <q-card v-bind="$myth.options.modalMenu?.card">
+    <q-card v-bind="$myth.options.modalMenuOptions?.card">
       <slot />
       <template v-if="!closeBtnProps">
         <q-separator class="lt-md" />
@@ -27,7 +27,7 @@
           v-close-popup
           class="lt-md"
           clickable
-          v-bind="$myth.options.modalMenu?.closeBtn"
+          v-bind="$myth.options.modalMenuOptions?.closeBtn"
         >
           <q-item-section>
             <q-item-label header>

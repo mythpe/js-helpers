@@ -161,7 +161,7 @@ export const Helpers = {
    */
   downloadFromResponse (response: any, callback?: ((url: string, response: any) => void)) {
     return new Promise<DownloadFromResponse>((resolve, reject) => {
-      const rejectPromise = (e?: {code: DownloadFromResponseCode}) => reject(e ?? { status: !1, code: 'unknown' })
+      const rejectPromise = (e?: { code: DownloadFromResponseCode }) => reject(e ?? { status: !1, code: 'unknown' })
       const resolvePromise = (response: DownloadFromResponse['response']) => resolve({ status: !0, response })
       try {
         if (!response) {
@@ -207,7 +207,7 @@ export const Helpers = {
           try {
             document.body.removeChild(fileLink)
             URL.revokeObjectURL(fileURL)
-          } catch (e : any) {
+          } catch (e: any) {
             console.log(e)
             if (e?.message) {
               alert(e.message)

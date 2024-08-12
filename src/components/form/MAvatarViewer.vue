@@ -8,12 +8,12 @@
 
 <script lang="ts" setup>
 
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, useAttrs, watch } from 'vue'
 
 import MFile from './MFile.vue'
 import { MAvatarViewerModelValue, MAvatarViewerProps as Props } from './models'
 import { Field as VeeField } from 'vee-validate'
-import { useInputHelper } from 'src/composables'
+import { useInputHelper } from '../../composables'
 
 interface P {
   auto?: Props['auto'];
@@ -70,7 +70,8 @@ type Events = {
   (e: 'click', evt?: Event): void;
 }
 const emit = defineEmits<Events>()
-const { accepts } = useInputHelper<any>(() => props, 'avatarViewer')
+const attrs = useAttrs()
+const { accepts } = useInputHelper<any>(() => props, 'avatarViewer', () => ({ attrs }))
 
 const modelValue = defineModel<MAvatarViewerModelValue>({ required: !0, default: undefined })
 const url = defineModel<string>('url', { required: false, type: String })

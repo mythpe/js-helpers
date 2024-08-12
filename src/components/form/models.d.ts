@@ -30,11 +30,12 @@ import {
   QUploaderProps,
   QUploaderSlots
 } from 'quasar'
-import type { FormActions, FormContext, FormMeta, Path, SubmissionHandler } from 'vee-validate'
+import { FormActions, FormContext, FormMeta, FormOptions, Path, SubmissionHandler } from 'vee-validate'
 import { ComputedGetter, MaybeRefOrGetter, Ref, UnwrapRef, VNode } from 'vue'
 import { MColProps, ViewModeProps } from '../grid/models'
+import { EditorConfig } from 'ckeditor5'
 
-export type InputRulesContext = string | Record<string, any> | undefined;
+export type InputRulesContext = string | string[] | Record<string, any> | undefined;
 export type InputErrorsContext = string[];
 export type InputFormErrorsContext = Record<string, InputErrorsContext> | undefined;
 
@@ -79,7 +80,7 @@ export type BaseInputFormProps = {
   /**
    * Input Required validation.
    */
-  required?: boolean;
+  // required?: boolean;
   /**
    * Input Validation Rules.
    */
@@ -104,6 +105,18 @@ export type BaseInputFormProps = {
    * Inputs Top Label.
    */
   topLabel?: boolean;
+  /**
+   * Mobile Rule.
+   */
+  // mobile?: boolean | string | number | undefined;
+  /**
+   * Email Rule.
+   */
+  // email?: boolean;
+  /**
+   * Number Rule.
+   */
+  // float?: boolean;
 }
 export type BaseInputsProps = ViewModeProps & InputHelpProps & Omit<MColProps, 'name'> & BaseInputFormProps;
 
@@ -189,7 +202,6 @@ export interface MBtnSlots extends QBtnSlots {
   loading: () => VNode[];
 }
 
-// autocomplete
 export type MInputProps = Omit<QInputProps, 'rules' | 'name' | 'modelValue' | 'label' | 'hint'> & BaseInputsProps
 
 export type MPasswordProps = MInputProps & {
@@ -227,6 +239,14 @@ export type MOptionsProps = Omit<QOptionGroupProps, 'name' | 'modelValue' | 'opt
    * Array of objects with value, label, and disable (optional) props. The binary components will be created according to this array; Props from QToggle, QCheckbox or QRadio can also be added as key/value pairs to control the components singularly
    */
   options?: MOptionsOptionContext[];
+  /**
+   * Get options by function. any send the current value to this function to get options.
+   */
+  service?: ((value: any) => Promise<void>) | undefined;
+  /**
+   * Service loading.
+   */
+  loading?: boolean | undefined;
 }
 export type MOptionsSlots = QOptionGroupSlots & QFieldSlots & BaseInputsSlots
 
@@ -369,14 +389,13 @@ type FormSlotProps =
   getErrors<TValues extends GenericObject = GenericObject> (): FormErrors<TValues>;
 };
 
-export interface MFormSlots {
-  default: (scope: FormSlotProps) => VNode[];
+export interface MFormProps {
+  formProps?: Record<string, any>;
+  opts?: FormOptions;
 }
 
-export interface MFormProps {
-  form?: Record<string, any>;
-  errors?: Record<string, string[]>;
-  formProps?: Record<string, any>;
+export interface MFormSlots {
+  default: (scope: FormContext) => VNode[];
 }
 
 export type MAvatarViewerModelValue = File | null | undefined;
@@ -598,8 +617,38 @@ export interface MUploaderSlots extends QUploaderSlots {
 export type MUploaderXhrInfo = { files: readonly any[]; xhr: any; }
 
 export type MEditorProps = Omit<QEditorProps, 'modelValue' | 'placeholder'> & BaseInputsProps
-
 export type MEditorSlots = QEditorSlots & BaseInputsSlots
+
+export type MCkeditorProps = Omit<BaseInputsProps, 'hint' | 'topLabel' | 'placeholder' | 'autocomplete'> & {
+  /**
+   * Editor language.
+   * Default value: ar.
+   */
+  lang: 'ar' | 'en';
+  /**
+   * Specifies the configuration of the editor.
+   * https://ckeditor.com/docs/ckeditor5/latest/api/module_core_editor_editorconfig-EditorConfig.html
+   */
+  config?: ((config: UnwrapRef<EditorConfig>) => EditorConfig) | undefined;
+  /**
+   * By default, the editor component creates a <div> container which is used as an element passed to the editor (for example, ClassicEditor#element).
+   * The element can be configured, so for example to create a <textarea>, use the following directive:
+   * tag-name="textarea"
+   * Default value: div.
+   */
+  tagName?: string;
+  /**
+   * This directive controls the isReadOnly property of the editor.
+   * Default value: false.
+   */
+  disabled?: boolean;
+  /**
+   * Allows disabling the two-way data binding mechanism.
+   * Default value: false.
+   */
+  disableTwoWayDataBinding?: boolean;
+}
+export type MCkeditorSlots = BaseInputsSlots
 
 export interface MOtpProps extends Omit<QInputProps, 'modelValue'> {
   modelValue?: string | number;

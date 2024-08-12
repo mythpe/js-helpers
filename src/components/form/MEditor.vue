@@ -11,7 +11,7 @@ import { QEditor, QField, useQuasar } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
 import { MEditorProps as Props } from './models'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, useAttrs } from 'vue'
 
 const $q = useQuasar()
 const _toolbar = [
@@ -168,12 +168,12 @@ const props = withDefaults(defineProps<P>(), {
   topLabel: undefined,
   viewMode: undefined
 })
-const modelValue = defineModel<Props['modelValue']>({ required: !1, default: '' })
-const helper = useInputHelper<P>(() => props, 'editor')
-const { hasTopLabel, getLabel, getPlaceholder, inputProps } = helper
-
-const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
-  initialValue: modelValue,
+defineModel<Props['modelValue']>({ required: !1, default: '' })
+const attrs = useAttrs()
+const helper = useInputHelper<any>(() => props, 'editor', () => ({ attrs }))
+const { hasTopLabel, getLabel, getPlaceholder, inputProps, getRules } = helper
+const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
+  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -237,11 +237,11 @@ export default {
     <component
       :is="viewMode ? QField : QEditor"
       ref="input"
-      v-model="value"
       :_definitions="{..._definitions,...$myth.options.editor?.definitions}"
       :fonts="fonts || _fonts"
       :label="hasTopLabel ? undefined : getLabel"
       :min-height="minHeight"
+      :model-value="value"
       :placeholder="getPlaceholder"
       :toolbar="toolbar || _toolbar"
       v-bind="{

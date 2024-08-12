@@ -31,6 +31,7 @@ import {
   MBtnProps,
   MCardProps,
   MCheckboxProps,
+  MCkeditorProps,
   MColProps,
   MColumnProps,
   MContainerProps,
@@ -62,6 +63,13 @@ import { Dates, Helpers, Str } from '../utils'
 import { MythApiServicesSchema } from './api-helpers'
 
 export type MythOptionsConfig = {
+  /**
+   * Rules keys that can be added to Input Rules as Vue Attr
+   */
+  inputRules?: string[];
+  /**
+   * Google Maps API key.
+   */
   google?: {
     apiKey: string;
     // eslint-disable-next-line no-undef
@@ -69,8 +77,8 @@ export type MythOptionsConfig = {
   };
   notify?: Partial<QNotifyCreateOptions>;
   dialog?: Partial<QDialogOptions>;
-  confirmDialog?: {
-    props?: Partial<QDialogOptions>;
+  confirmDialog?: Partial<QDialogOptions>;
+  confirmDialogOptions?: {
     buttons?: Partial<QBtnProps>;
     okProps?: Partial<QBtnProps>;
     cancelProps?: Partial<QBtnProps>;
@@ -148,6 +156,7 @@ export type MythOptionsConfig = {
   select?: Partial<MSelectProps>;
   checkbox?: Partial<MCheckboxProps>;
   editor?: Partial<MEditorProps>;
+  ckeditor?: Partial<MCkeditorProps>;
   radio?: Partial<MRadioProps>;
   toggle?: Partial<MToggleProps>;
   uploader?: Partial<MUploaderProps>;
@@ -162,8 +171,8 @@ export type MythOptionsConfig = {
   column?: Partial<MColumnProps>;
   draggable?: Partial<MDraggableProps>;
   noResultImg?: Partial<MNoResultImgProps>;
-  modalMenu?: {
-    props?: Partial<MModalMenuProps>;
+  modalMenu: Partial<MModalMenuProps>;
+  modalMenuOptions?: {
     card?: Partial<QCardProps>;
     closeBtn?: Partial<QItemProps>;
   };

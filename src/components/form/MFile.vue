@@ -11,7 +11,7 @@
 import { QField, QFile, QFileSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
-import { computed, defineProps, reactive, ref } from 'vue'
+import { computed, defineProps, reactive, ref, useAttrs } from 'vue'
 import { MFileProps as Props } from './models'
 
 interface P {
@@ -29,7 +29,7 @@ interface P {
   hint?: Props['hint'];
   placeholder?: Props['placeholder'];
   help?: Props['help'];
-  required?: Props['required'];
+  // required?: Props['required'];
   rules?: Props['rules'];
   errors?: Props['errors'];
   viewMode?: Props['viewMode'];
@@ -57,7 +57,7 @@ const props = withDefaults(defineProps<P>(), {
   hint: undefined,
   placeholder: undefined,
   help: undefined,
-  required: undefined,
+  // required: undefined,
   rules: undefined,
   errors: undefined,
   viewMode: () => !1,
@@ -69,12 +69,12 @@ const props = withDefaults(defineProps<P>(), {
   pdf: undefined,
   excel: undefined
 })
-const modelValue = defineModel<Props['modelValue']>({ required: !1, default: null })
-const helper = useInputHelper<P>(() => props, 'file', { choose: !0 })
-const { hasTopLabel, getLabel, getPlaceholder, accepts } = helper
-
-const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
-  initialValue: modelValue,
+defineModel<Props['modelValue']>({ required: !1, default: null })
+const attrs = useAttrs()
+const helper = useInputHelper<P>(() => props, 'file', () => ({ choose: !0, attrs }))
+const { hasTopLabel, getLabel, getPlaceholder, accepts, getRules } = helper
+const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
+  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -154,12 +154,12 @@ export default {
     <component
       :is="viewMode ? QField : QFile"
       ref="input"
-      v-model="value"
       :accept="accepts.join(',')"
       :error="!!errorMessage"
       :error-message="errorMessage"
       :hint="__(hint)"
       :label="hasTopLabel ? getPlaceholder : getLabel"
+      :model-value="value"
       v-bind="{ ...$myth.options.file as any,...( viewMode ? $myth.options.field : {} ), ...$attrs, ...( viewMode ? { stackLabel: !0 } : {} ) }"
       v-on="listeners"
     >

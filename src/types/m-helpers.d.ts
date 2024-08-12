@@ -160,7 +160,7 @@ export type DownloadFromResponse = {
   response: AxiosResponse;
 }
 
-export type DownloadFromResponseCode = 'no_response' |'no_file_name' | 'no_file_url'| 'unknown' | string
+export type DownloadFromResponseCode = 'no_response' | 'no_file_name' | 'no_file_url' | 'unknown' | string
 export type DownloadFromResponseError = {
   code: DownloadFromResponseCode
   status: boolean;

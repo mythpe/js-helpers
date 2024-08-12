@@ -11,7 +11,8 @@ import { TransitionGroupProps, VNode } from 'vue'
 export type MTransitionProps = TransitionGroupProps & {
   enterIn?: string;
   enterOut?: string;
-  slow?: boolean;
+  slowIn?: boolean;
+  slowOut?: boolean;
 }
 
 export type MTransitionsSlots = {

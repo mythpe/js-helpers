@@ -5,6 +5,525 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
+"@aws-crypto/crc32@npm:5.2.0":
+  version: 5.2.0
+  resolution: "@aws-crypto/crc32@npm:5.2.0"
+  dependencies:
+    "@aws-crypto/util": "npm:^5.2.0"
+    "@aws-sdk/types": "npm:^3.222.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/eab9581d3363af5ea498ae0e72de792f54d8890360e14a9d8261b7b5c55ebe080279fb2556e07994d785341cdaa99ab0b1ccf137832b53b5904cd6928f2b094b
+  languageName: node
+  linkType: hard
+
+"@aws-crypto/sha256-browser@npm:5.2.0":
+  version: 5.2.0
+  resolution: "@aws-crypto/sha256-browser@npm:5.2.0"
+  dependencies:
+    "@aws-crypto/sha256-js": "npm:^5.2.0"
+    "@aws-crypto/supports-web-crypto": "npm:^5.2.0"
+    "@aws-crypto/util": "npm:^5.2.0"
+    "@aws-sdk/types": "npm:^3.222.0"
+    "@aws-sdk/util-locate-window": "npm:^3.0.0"
+    "@smithy/util-utf8": "npm:^2.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/05f6d256794df800fe9aef5f52f2ac7415f7f3117d461f85a6aecaa4e29e91527b6fd503681a17136fa89e9dd3d916e9c7e4cfb5eba222875cb6c077bdc1d00d
+  languageName: node
+  linkType: hard
+
+"@aws-crypto/sha256-js@npm:5.2.0, @aws-crypto/sha256-js@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "@aws-crypto/sha256-js@npm:5.2.0"
+  dependencies:
+    "@aws-crypto/util": "npm:^5.2.0"
+    "@aws-sdk/types": "npm:^3.222.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/6c48701f8336341bb104dfde3d0050c89c288051f6b5e9bdfeb8091cf3ffc86efcd5c9e6ff2a4a134406b019c07aca9db608128f8d9267c952578a3108db9fd1
+  languageName: node
+  linkType: hard
+
+"@aws-crypto/supports-web-crypto@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "@aws-crypto/supports-web-crypto@npm:5.2.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/4d2118e29d68ca3f5947f1e37ce1fbb3239a0c569cc938cdc8ab8390d595609b5caf51a07c9e0535105b17bf5c52ea256fed705a07e9681118120ab64ee73af2
+  languageName: node
+  linkType: hard
+
+"@aws-crypto/util@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "@aws-crypto/util@npm:5.2.0"
+  dependencies:
+    "@aws-sdk/types": "npm:^3.222.0"
+    "@smithy/util-utf8": "npm:^2.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/0362d4c197b1fd64b423966945130207d1fe23e1bb2878a18e361f7743c8d339dad3f8729895a29aa34fff6a86c65f281cf5167c4bf253f21627ae80b6dd2951
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/client-bedrock-runtime@npm:3.621.0":
+  version: 3.621.0
+  resolution: "@aws-sdk/client-bedrock-runtime@npm:3.621.0"
+  dependencies:
+    "@aws-crypto/sha256-browser": "npm:5.2.0"
+    "@aws-crypto/sha256-js": "npm:5.2.0"
+    "@aws-sdk/client-sso-oidc": "npm:3.621.0"
+    "@aws-sdk/client-sts": "npm:3.621.0"
+    "@aws-sdk/core": "npm:3.621.0"
+    "@aws-sdk/credential-provider-node": "npm:3.621.0"
+    "@aws-sdk/middleware-host-header": "npm:3.620.0"
+    "@aws-sdk/middleware-logger": "npm:3.609.0"
+    "@aws-sdk/middleware-recursion-detection": "npm:3.620.0"
+    "@aws-sdk/middleware-user-agent": "npm:3.620.0"
+    "@aws-sdk/region-config-resolver": "npm:3.614.0"
+    "@aws-sdk/types": "npm:3.609.0"
+    "@aws-sdk/util-endpoints": "npm:3.614.0"
+    "@aws-sdk/util-user-agent-browser": "npm:3.609.0"
+    "@aws-sdk/util-user-agent-node": "npm:3.614.0"
+    "@smithy/config-resolver": "npm:^3.0.5"
+    "@smithy/core": "npm:^2.3.1"
+    "@smithy/eventstream-serde-browser": "npm:^3.0.5"
+    "@smithy/eventstream-serde-config-resolver": "npm:^3.0.3"
+    "@smithy/eventstream-serde-node": "npm:^3.0.4"
+    "@smithy/fetch-http-handler": "npm:^3.2.4"
+    "@smithy/hash-node": "npm:^3.0.3"
+    "@smithy/invalid-dependency": "npm:^3.0.3"
+    "@smithy/middleware-content-length": "npm:^3.0.5"
+    "@smithy/middleware-endpoint": "npm:^3.1.0"
+    "@smithy/middleware-retry": "npm:^3.0.13"
+    "@smithy/middleware-serde": "npm:^3.0.3"
+    "@smithy/middleware-stack": "npm:^3.0.3"
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/node-http-handler": "npm:^3.1.4"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/smithy-client": "npm:^3.1.11"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/url-parser": "npm:^3.0.3"
+    "@smithy/util-base64": "npm:^3.0.0"
+    "@smithy/util-body-length-browser": "npm:^3.0.0"
+    "@smithy/util-body-length-node": "npm:^3.0.0"
+    "@smithy/util-defaults-mode-browser": "npm:^3.0.13"
+    "@smithy/util-defaults-mode-node": "npm:^3.0.13"
+    "@smithy/util-endpoints": "npm:^2.0.5"
+    "@smithy/util-middleware": "npm:^3.0.3"
+    "@smithy/util-retry": "npm:^3.0.3"
+    "@smithy/util-stream": "npm:^3.1.3"
+    "@smithy/util-utf8": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/77818370c676675a7e69bba723a6ec30a19bb5ceb931682c5760530f01245c2dcb451fb80f50a93f02535d2c143b220a341567cb3a788fd6a5c254547664e71c
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/client-sso-oidc@npm:3.621.0":
+  version: 3.621.0
+  resolution: "@aws-sdk/client-sso-oidc@npm:3.621.0"
+  dependencies:
+    "@aws-crypto/sha256-browser": "npm:5.2.0"
+    "@aws-crypto/sha256-js": "npm:5.2.0"
+    "@aws-sdk/core": "npm:3.621.0"
+    "@aws-sdk/credential-provider-node": "npm:3.621.0"
+    "@aws-sdk/middleware-host-header": "npm:3.620.0"
+    "@aws-sdk/middleware-logger": "npm:3.609.0"
+    "@aws-sdk/middleware-recursion-detection": "npm:3.620.0"
+    "@aws-sdk/middleware-user-agent": "npm:3.620.0"
+    "@aws-sdk/region-config-resolver": "npm:3.614.0"
+    "@aws-sdk/types": "npm:3.609.0"
+    "@aws-sdk/util-endpoints": "npm:3.614.0"
+    "@aws-sdk/util-user-agent-browser": "npm:3.609.0"
+    "@aws-sdk/util-user-agent-node": "npm:3.614.0"
+    "@smithy/config-resolver": "npm:^3.0.5"
+    "@smithy/core": "npm:^2.3.1"
+    "@smithy/fetch-http-handler": "npm:^3.2.4"
+    "@smithy/hash-node": "npm:^3.0.3"
+    "@smithy/invalid-dependency": "npm:^3.0.3"
+    "@smithy/middleware-content-length": "npm:^3.0.5"
+    "@smithy/middleware-endpoint": "npm:^3.1.0"
+    "@smithy/middleware-retry": "npm:^3.0.13"
+    "@smithy/middleware-serde": "npm:^3.0.3"
+    "@smithy/middleware-stack": "npm:^3.0.3"
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/node-http-handler": "npm:^3.1.4"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/smithy-client": "npm:^3.1.11"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/url-parser": "npm:^3.0.3"
+    "@smithy/util-base64": "npm:^3.0.0"
+    "@smithy/util-body-length-browser": "npm:^3.0.0"
+    "@smithy/util-body-length-node": "npm:^3.0.0"
+    "@smithy/util-defaults-mode-browser": "npm:^3.0.13"
+    "@smithy/util-defaults-mode-node": "npm:^3.0.13"
+    "@smithy/util-endpoints": "npm:^2.0.5"
+    "@smithy/util-middleware": "npm:^3.0.3"
+    "@smithy/util-retry": "npm:^3.0.3"
+    "@smithy/util-utf8": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    "@aws-sdk/client-sts": ^3.621.0
+  checksum: 10c0/600a196da24da566d2cc126fbba47c013724c91d399911614c13d0ebf4af33f4d0553da0da40ac7146d8e593cd4c46ebd4d7313a61a6c1d2dc9fb03948a98796
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/client-sso@npm:3.621.0":
+  version: 3.621.0
+  resolution: "@aws-sdk/client-sso@npm:3.621.0"
+  dependencies:
+    "@aws-crypto/sha256-browser": "npm:5.2.0"
+    "@aws-crypto/sha256-js": "npm:5.2.0"
+    "@aws-sdk/core": "npm:3.621.0"
+    "@aws-sdk/middleware-host-header": "npm:3.620.0"
+    "@aws-sdk/middleware-logger": "npm:3.609.0"
+    "@aws-sdk/middleware-recursion-detection": "npm:3.620.0"
+    "@aws-sdk/middleware-user-agent": "npm:3.620.0"
+    "@aws-sdk/region-config-resolver": "npm:3.614.0"
+    "@aws-sdk/types": "npm:3.609.0"
+    "@aws-sdk/util-endpoints": "npm:3.614.0"
+    "@aws-sdk/util-user-agent-browser": "npm:3.609.0"
+    "@aws-sdk/util-user-agent-node": "npm:3.614.0"
+    "@smithy/config-resolver": "npm:^3.0.5"
+    "@smithy/core": "npm:^2.3.1"
+    "@smithy/fetch-http-handler": "npm:^3.2.4"
+    "@smithy/hash-node": "npm:^3.0.3"
+    "@smithy/invalid-dependency": "npm:^3.0.3"
+    "@smithy/middleware-content-length": "npm:^3.0.5"
+    "@smithy/middleware-endpoint": "npm:^3.1.0"
+    "@smithy/middleware-retry": "npm:^3.0.13"
+    "@smithy/middleware-serde": "npm:^3.0.3"
+    "@smithy/middleware-stack": "npm:^3.0.3"
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/node-http-handler": "npm:^3.1.4"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/smithy-client": "npm:^3.1.11"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/url-parser": "npm:^3.0.3"
+    "@smithy/util-base64": "npm:^3.0.0"
+    "@smithy/util-body-length-browser": "npm:^3.0.0"
+    "@smithy/util-body-length-node": "npm:^3.0.0"
+    "@smithy/util-defaults-mode-browser": "npm:^3.0.13"
+    "@smithy/util-defaults-mode-node": "npm:^3.0.13"
+    "@smithy/util-endpoints": "npm:^2.0.5"
+    "@smithy/util-middleware": "npm:^3.0.3"
+    "@smithy/util-retry": "npm:^3.0.3"
+    "@smithy/util-utf8": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/6a276bcd6bbb32849504124bd7fe63dcb151b4a978cef9207909b24ce82bdec8dd8df39f3175530e2633ed056c4abab460a594b180765f3078ca7c3646728c9c
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/client-sts@npm:3.621.0":
+  version: 3.621.0
+  resolution: "@aws-sdk/client-sts@npm:3.621.0"
+  dependencies:
+    "@aws-crypto/sha256-browser": "npm:5.2.0"
+    "@aws-crypto/sha256-js": "npm:5.2.0"
+    "@aws-sdk/client-sso-oidc": "npm:3.621.0"
+    "@aws-sdk/core": "npm:3.621.0"
+    "@aws-sdk/credential-provider-node": "npm:3.621.0"
+    "@aws-sdk/middleware-host-header": "npm:3.620.0"
+    "@aws-sdk/middleware-logger": "npm:3.609.0"
+    "@aws-sdk/middleware-recursion-detection": "npm:3.620.0"
+    "@aws-sdk/middleware-user-agent": "npm:3.620.0"
+    "@aws-sdk/region-config-resolver": "npm:3.614.0"
+    "@aws-sdk/types": "npm:3.609.0"
+    "@aws-sdk/util-endpoints": "npm:3.614.0"
+    "@aws-sdk/util-user-agent-browser": "npm:3.609.0"
+    "@aws-sdk/util-user-agent-node": "npm:3.614.0"
+    "@smithy/config-resolver": "npm:^3.0.5"
+    "@smithy/core": "npm:^2.3.1"
+    "@smithy/fetch-http-handler": "npm:^3.2.4"
+    "@smithy/hash-node": "npm:^3.0.3"
+    "@smithy/invalid-dependency": "npm:^3.0.3"
+    "@smithy/middleware-content-length": "npm:^3.0.5"
+    "@smithy/middleware-endpoint": "npm:^3.1.0"
+    "@smithy/middleware-retry": "npm:^3.0.13"
+    "@smithy/middleware-serde": "npm:^3.0.3"
+    "@smithy/middleware-stack": "npm:^3.0.3"
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/node-http-handler": "npm:^3.1.4"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/smithy-client": "npm:^3.1.11"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/url-parser": "npm:^3.0.3"
+    "@smithy/util-base64": "npm:^3.0.0"
+    "@smithy/util-body-length-browser": "npm:^3.0.0"
+    "@smithy/util-body-length-node": "npm:^3.0.0"
+    "@smithy/util-defaults-mode-browser": "npm:^3.0.13"
+    "@smithy/util-defaults-mode-node": "npm:^3.0.13"
+    "@smithy/util-endpoints": "npm:^2.0.5"
+    "@smithy/util-middleware": "npm:^3.0.3"
+    "@smithy/util-retry": "npm:^3.0.3"
+    "@smithy/util-utf8": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/bfee49ac83b2167c3da1eab7a2d55f8e7e2bc5c0cc5914e0ca46e109cca682a29d9149b0bb5880dd9e7cc6ed1aed3c1c2a2299a4c2c099f9c222cb74f320564c
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/core@npm:3.621.0":
+  version: 3.621.0
+  resolution: "@aws-sdk/core@npm:3.621.0"
+  dependencies:
+    "@smithy/core": "npm:^2.3.1"
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/signature-v4": "npm:^4.1.0"
+    "@smithy/smithy-client": "npm:^3.1.11"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-middleware": "npm:^3.0.3"
+    fast-xml-parser: "npm:4.4.1"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/7c23da79289b73b6e34eca04eb28200c3e800ca360ed4dc7cd0c2b17839cc6bc9f151589eb78fe3dc71632800bea540529ec8f6d26ac909ddebc30b6bc7a6c65
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/credential-provider-env@npm:3.620.1":
+  version: 3.620.1
+  resolution: "@aws-sdk/credential-provider-env@npm:3.620.1"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/25156df7c0e9a1423f261276506fc5766c9f43c41e811adaa0f9a6199b03ff4fd299e9dd94fd73942ab99283b30d8e127692ae371c16917f6709f655de401874
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/credential-provider-http@npm:3.621.0":
+  version: 3.621.0
+  resolution: "@aws-sdk/credential-provider-http@npm:3.621.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/fetch-http-handler": "npm:^3.2.4"
+    "@smithy/node-http-handler": "npm:^3.1.4"
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/smithy-client": "npm:^3.1.11"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-stream": "npm:^3.1.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/d92dfea07d432059189f61735a6504439804463a4a3ff2b0ed22f9ce70ffbfa003f3137236b18c268a4a63b9d25d358110fc9d566a56936d71cd2f31fc2a2286
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/credential-provider-ini@npm:3.621.0":
+  version: 3.621.0
+  resolution: "@aws-sdk/credential-provider-ini@npm:3.621.0"
+  dependencies:
+    "@aws-sdk/credential-provider-env": "npm:3.620.1"
+    "@aws-sdk/credential-provider-http": "npm:3.621.0"
+    "@aws-sdk/credential-provider-process": "npm:3.620.1"
+    "@aws-sdk/credential-provider-sso": "npm:3.621.0"
+    "@aws-sdk/credential-provider-web-identity": "npm:3.621.0"
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/credential-provider-imds": "npm:^3.2.0"
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/shared-ini-file-loader": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    "@aws-sdk/client-sts": ^3.621.0
+  checksum: 10c0/01b6c8a7a045422dd0826aed3e7fa3a9584bd28d3ce6abee322e5114b03adc362a6b1ea27c226371d76e6f671cf6593fb8d604054f126c40fb3df8f7abb9076b
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/credential-provider-node@npm:3.621.0":
+  version: 3.621.0
+  resolution: "@aws-sdk/credential-provider-node@npm:3.621.0"
+  dependencies:
+    "@aws-sdk/credential-provider-env": "npm:3.620.1"
+    "@aws-sdk/credential-provider-http": "npm:3.621.0"
+    "@aws-sdk/credential-provider-ini": "npm:3.621.0"
+    "@aws-sdk/credential-provider-process": "npm:3.620.1"
+    "@aws-sdk/credential-provider-sso": "npm:3.621.0"
+    "@aws-sdk/credential-provider-web-identity": "npm:3.621.0"
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/credential-provider-imds": "npm:^3.2.0"
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/shared-ini-file-loader": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/284c3140a615fdaf76f7a965e9bb9a1e60b43b68c69a095c758d10a82978a32e3fe39962a4491c64066cfd53c11188045ab183d34f90e1152bae95ebaf1ce290
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/credential-provider-process@npm:3.620.1":
+  version: 3.620.1
+  resolution: "@aws-sdk/credential-provider-process@npm:3.620.1"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/shared-ini-file-loader": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/d33bf3e5e73f16c8e58dc71a738cdcbcf48b54610e464affc69c73f9bdcc2b287b6cb281c9a719f67298fb0cd795e67201e5d6704dcc24933e71e58653607992
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/credential-provider-sso@npm:3.621.0":
+  version: 3.621.0
+  resolution: "@aws-sdk/credential-provider-sso@npm:3.621.0"
+  dependencies:
+    "@aws-sdk/client-sso": "npm:3.621.0"
+    "@aws-sdk/token-providers": "npm:3.614.0"
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/shared-ini-file-loader": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/dca9c793136ca2113f675b641a537bed6ce1a1fa004747cc5320aefd0caebc9dbc48ca176390cca4feed09316ca3790bcaf63383d58902fd0f6d9ab3406d7e85
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/credential-provider-web-identity@npm:3.621.0":
+  version: 3.621.0
+  resolution: "@aws-sdk/credential-provider-web-identity@npm:3.621.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    "@aws-sdk/client-sts": ^3.621.0
+  checksum: 10c0/c699a60e242cc3895b3536a0a4818560f167b6c0cc3e8858cf75cd0438020a070b2e5c84e59280ee81679d865516dcde5b31cf6af1ee35b0d28c94b68c63f742
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/middleware-host-header@npm:3.620.0":
+  version: 3.620.0
+  resolution: "@aws-sdk/middleware-host-header@npm:3.620.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/221e8e440fc156bc0ef8d2186bc3b9c18c7874cb275ae714c3c7eeb934b846e1291c3cb9a3631c486a86189a4c446e61c64e8e7d737f209fe63808ad313bd779
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/middleware-logger@npm:3.609.0":
+  version: 3.609.0
+  resolution: "@aws-sdk/middleware-logger@npm:3.609.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/e8d110552fee03c5290f94be8da8bb6c07404c06c68971cf24c89a5a4e08b93f6039a2bf729b173855815dd13e382eda18c31e098e7a40db9c8163b74a7770e7
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/middleware-recursion-detection@npm:3.620.0":
+  version: 3.620.0
+  resolution: "@aws-sdk/middleware-recursion-detection@npm:3.620.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/f859a777eb0441e8ec78054b478bb75c2debcf53680deb6731830a62ec2a45a5a9b1462028214c49bbc67acff2ca1a78cb35913f826ccc4118fa45b51220bcd4
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/middleware-user-agent@npm:3.620.0":
+  version: 3.620.0
+  resolution: "@aws-sdk/middleware-user-agent@npm:3.620.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@aws-sdk/util-endpoints": "npm:3.614.0"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/c661d368c2fe12a925faa7f59509f507edf9cebc5a98650d5592eaf333cbb50a92dd3532e04de6e5b44686c7ab25fa5a6515df4e0790d1b6b0823e44efb3657c
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/region-config-resolver@npm:3.614.0":
+  version: 3.614.0
+  resolution: "@aws-sdk/region-config-resolver@npm:3.614.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-config-provider": "npm:^3.0.0"
+    "@smithy/util-middleware": "npm:^3.0.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/555842b34c26398741fa3a1f629d27d210270516b453b0a7237672a4472ff8e204c5979fe1823baddf4d695d4d95a631fadfa78d1d27089d9e9cba28e736346e
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/token-providers@npm:3.614.0":
+  version: 3.614.0
+  resolution: "@aws-sdk/token-providers@npm:3.614.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/shared-ini-file-loader": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    "@aws-sdk/client-sso-oidc": ^3.614.0
+  checksum: 10c0/b794bcb9ad05f57bfc415e9290d3ea177701bb3221a9c5e1d4529deb946bd418acb7ac7407adb8d2f3da7d3793a62c7c1b43a8c1a8fe7999e38485208811f59a
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/types@npm:3.609.0, @aws-sdk/types@npm:^3.222.0":
+  version: 3.609.0
+  resolution: "@aws-sdk/types@npm:3.609.0"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/293249118c2fc3cdc79ff9712e3a9f757a2f38e7d5d770507b3bb31d22b8c67ed6f9bdd83c1b6319236b8257d5cc7e2882c15e076200021e8bbf41e4780d430c
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-endpoints@npm:3.614.0":
+  version: 3.614.0
+  resolution: "@aws-sdk/util-endpoints@npm:3.614.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-endpoints": "npm:^2.0.5"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/95a893dc3cff00d2ad5b48c4ffd83e19e45da75de7dd112b93b09f9e2a8db200e3a9ea7116b0fa943b945fb100f678795cbca1fb7be07bddcaac2549f6533332
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-locate-window@npm:^3.0.0":
+  version: 3.568.0
+  resolution: "@aws-sdk/util-locate-window@npm:3.568.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/cb1d0919498206fe266542a635cd05909456a06f007a6a550ff897a01390b239e51c2a50e47509e23c179f8df8001bd5fecd900045da5ec989c3f934c3fd3d56
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-user-agent-browser@npm:3.609.0":
+  version: 3.609.0
+  resolution: "@aws-sdk/util-user-agent-browser@npm:3.609.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/types": "npm:^3.3.0"
+    bowser: "npm:^2.11.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/ca2f2863d753521fd63e0c924ed6f9602cc9f5bb65f7d0111be140d037962cf6897f49929dde21e4d8e613895486d9053abd8965d34a9a6ecc4a81de401f0f16
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-user-agent-node@npm:3.614.0":
+  version: 3.614.0
+  resolution: "@aws-sdk/util-user-agent-node@npm:3.614.0"
+  dependencies:
+    "@aws-sdk/types": "npm:3.609.0"
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    aws-crt: ">=1.0.0"
+  peerDependenciesMeta:
+    aws-crt:
+      optional: true
+  checksum: 10c0/1e7b4d572a2915d921db814efbf771603b605aea114399aa357208433746f4b2990c927bdedd8616a6e50c98588032449b8994ce9ffae1cce7976986dc40adc1
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.12.13":
   version: 7.24.7
   resolution: "@babel/code-frame@npm:7.24.7"
@@ -52,6 +571,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.21.0":
+  version: 7.25.0
+  resolution: "@babel/runtime@npm:7.25.0"
+  dependencies:
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: 10c0/bd3faf246170826cef2071a94d7b47b49d532351360ecd17722d03f6713fd93a3eb3dbd9518faa778d5e8ccad7392a7a604e56bd37aaad3f3aa68d619ccd983d
+  languageName: node
+  linkType: hard
+
 "@babel/types@npm:^7.25.2":
   version: 7.25.2
   resolution: "@babel/types@npm:7.25.2"
@@ -60,6 +588,1053 @@ __metadata:
     "@babel/helper-validator-identifier": "npm:^7.24.7"
     to-fast-properties: "npm:^2.0.0"
   checksum: 10c0/e489435856be239f8cc1120c90a197e4c2865385121908e5edb7223cfdff3768cba18f489adfe0c26955d9e7bbb1fb10625bc2517505908ceb0af848989bd864
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor-cloud-services-collaboration@npm:52.6.10":
+  version: 52.6.10
+  resolution: "@ckeditor/ckeditor-cloud-services-collaboration@npm:52.6.10"
+  dependencies:
+    protobufjs: "npm:7.2.5"
+    socket.io-client: "npm:4.7.0"
+    socket.io-parser: "npm:~4.2.3"
+    url-parse: "npm:1.5.10"
+    uuid: "npm:^9.0.1"
+  peerDependencies:
+    "@ckeditor/ckeditor5-utils": ">= 37.0"
+    ckeditor5: ">= 37.0"
+  checksum: 10c0/fc58a848a5e1314a20aca1e42805bd65a4ee0056c0f842797e8280e91670411227c91ec324a5312eb7fd4235e591a3e53e6b3084105ce49c9e9863596c7e5440
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-adapter-ckfinder@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-adapter-ckfinder@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-upload": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/1f39e738776e9d6419368c34eccfe22598b21e36e8ef07d531f7f6fc2c035b1a2095d0430caeef2bce3deb0c0f0c66857fd334ff0408a99b19f43acd66d38c4a
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-ai@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-ai@npm:43.0.0"
+  dependencies:
+    "@aws-sdk/client-bedrock-runtime": "npm:3.621.0"
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    ckeditor5-collaboration: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/f3e01ec8fa84fba366dbe025168ab2c12dc1e3dd45bd25402a8e59b658b0bc0ad53df5a4ae29c1c6d007d6d6d3f0c3f3e931485fc362121fefdc71cdc64b149b
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-alignment@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-alignment@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/6ae970b47b28d572c5be5a28ffe28cdf2241ef69f45ddc29f9af85bc6a1ad0d53f40f8169e90e0e9bd87e53d2011c37b7e03b66b931a6fc5b1c15b10811a544d
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-autoformat@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-autoformat@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/7e7fc5863520ed5d43e06e299a340886acf680305821497848a88f216ee02061be3056b0e70eef4d6c21e9317966cfef6c1467cacb9a509d6aa7d5f093e622d0
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-autosave@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-autosave@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/7efa6896139449ebdea79535d0b56cf1575920b03982ff4a0e5dbe642791b8e64c03a1cc9f7d36e781ab13104a426656c7490a27a60a3e8a32aeff42110cbd91
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-basic-styles@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-basic-styles@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/d3ea3dccad9e32f727f807a0e29679c1ea0046e654802f9f7c7c24a8ec8a5fc70dd53ab066b556ea22b579762c92aa644e4f6c3134e4113dc9a2ee448d0c6aeb
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-block-quote@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-block-quote@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-enter": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/aa37ea1a467f873db3896fb9dfb5c738179833d7cc8961b5a345246d1c5276c9301f34d0b73470e90e02b54e33d5405f6a1294f755832f6ebb2db37f2c389508
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-case-change@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-case-change@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    ckeditor5-collaboration: "npm:43.0.0"
+  checksum: 10c0/c78853d96ed590cff9f0dbbada5b17cc74e4452df5c37457d279a95beca47d762f9d548ffdfc7e0cbc960478cce935ee104361f63dfce4ed9ee1b24342c04160
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-ckbox@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-ckbox@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-upload": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    blurhash: "npm:2.0.5"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/500f98216cb30cb20a9e56d0745425329acb63aa084ea96fd1f5dd37eff3c0da0bafa529dc6bfe7b04210ffdb9e540218d97045e36fb364103ede63bcd3aca46
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-ckfinder@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-ckfinder@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/72170a01a6d43cae1aded0638f5e0615df9742895c2d305a2368e0b3eab0b7c0a06dfe1300296dc049d9af0cf614dcb4e644f526adab3e983097aa40bf6a513e
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-clipboard@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-clipboard@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/168c74e86a9f7b260f065ca8e6401b8dc5330218824540e0ff00ff20e489450d8984ca8701c0f4dc8fbaa57ebc5887c1d2368a5224f63dada531d2d0168b8d4a
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-cloud-services@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-cloud-services@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/105a832c066193f486ee38c132f76a4eb67fb4a33454cd6bf120c8d3b167a0fed9f83ecd05e2371a5c1d8e9b3aad30d8d3c7ef702f4d5b231a81d0508d0d9d00
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-code-block@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-code-block@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-enter": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/25286930c158f448665b53e483b55c0f74c45fbe98f590cf0cf9c641a15400efb4587aa38673939e62bff0aa659609c8f7083396717a0548d0c2dacf8c937934
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-collaboration-core@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-collaboration-core@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-theme-lark": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    date-fns: "npm:2.30.0"
+  checksum: 10c0/53220a3ec18f512bc4bfae2c2cde818364469e450e514d872dadaf9f5bd22ade076ed0a3cf0c292bdbb694eba0184afa97c6f9a2ab92af656318888c5d8aed7d
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-comments@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-comments@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-enter": "npm:43.0.0"
+    "@ckeditor/ckeditor5-paragraph": "npm:43.0.0"
+    "@ckeditor/ckeditor5-select-all": "npm:43.0.0"
+    "@ckeditor/ckeditor5-theme-lark": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-undo": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    ckeditor5-collaboration: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/8d56e05d52b387793dbf4591bd66ef4f506646ba29a862a0906112bf4963995a99ea45851709a5b9480df66795490e2e57474f59cda5d4249c89a7db5da378a1
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-core@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-core@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-watchdog": "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/1de79ebcd5582ef58df912cb2860700bb05a40c40df4dc890dc069156858b9974a0a320b51e8f09ed2e7211884adf509acc7a2912fec3a8860b6616f3c823cac
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-document-outline@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-document-outline@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    ckeditor5-collaboration: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/5d36ab3e0254413a6b0207600c1e67090f31e597c8e0637b7c8325d4331a34613d6331efe2ebe77580c774a194e282c238530a38d128dceda698e6093dbf8da2
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-easy-image@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-easy-image@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-upload": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/dfbfda26339687c44014aa627ef7b63a37a0dc7599a4b91656965650260c17fa74b3a1d25ba9b5176d6c5c8e32e3e0e08399b110473db63fe27055fcd0bfb6d4
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-editor-balloon@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-editor-balloon@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/b20be1346d1d67e95ffc3dd4a572c62c54515a33eb421af38853a5e11342be4fa61f9aaf5c5045bf52cf89651b4506c63ae35a4dddff30a5e3291f3fb9b3b8f4
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-editor-classic@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-editor-classic@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/b279f9427e10c5a882881935271b67cea68a2003d5dd52d9020802fcf3b17b46fef9616829bbd10fd8c9ca9ef02d7a8f98eedc7e2d716405ea61ccff631273c5
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-editor-decoupled@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-editor-decoupled@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/7edf66bb17ce86ad354631847f594d0e8657bf368acf8fc95a5355bc91a6f0daabcde3397739930cd8840f5a1c257a5ac86ac86c5117032a107d7a353c90101d
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-editor-inline@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-editor-inline@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/18ffbd1986c923365c9566d134e02da5f44b4770f05239f3180a3a7c922a99c4292b24022e99415ceab1fde701ef9e5d2ea527277983ddb0bbeecfc90f5b1cfc
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-editor-multi-root@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-editor-multi-root@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/612a562f9121cee3390831a509816f34901bd57ba301f6ba82831edcf82ff441fee10be3acb4703fe217a32e2542b04e66cb1e80b24c69c9a2b50ba05e01b297
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-engine@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-engine@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/2967b05852ddefbd9b60ae8bd1b8d243e8929b4cd2fd9ed8a837f7847e470b9e2b8b49279b985dc018d474afb311a147e4af9b49e1cad453ff2a718374b353ca
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-enter@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-enter@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+  checksum: 10c0/bf677f90bec444f28b6c03c3728ea4df6f8c4ac1db50c3a49881735c3852a218649633d6c1499e7dd8dbb361b03380549ca2e9ef94118c026b24dfe50c103ad2
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-essentials@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-essentials@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-enter": "npm:43.0.0"
+    "@ckeditor/ckeditor5-select-all": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-undo": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/ead4e3c0e595a1a3ba60709b34224a289c4fca0d98633056d59e154839a3a2921db376f7f8117c638c87954cf7ad694d6be257fa8c392bfe38b8ffeef5151fe5
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-export-pdf@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-export-pdf@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/d78746f0eab1c299fb40f3efa6e33504be91cf36175ceadc19a0d86c2861a138654b48e9369a5d0d6160629706a68813a95fe1e3ddf17268b063d330e594b7b3
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-export-word@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-export-word@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/fbed56bbe2f63cec0dcf9a872fdd02b5bbd4563333bbf34f83c98009bc7aec739bd30f0a8e0db76bdc3a1c6cf6b0e3adabc0ba1263975727d5827cec242b1c30
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-find-and-replace@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-find-and-replace@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/9b89fb441c6261f1143c0a2082409657f0f7155c456c56e4e0a39ee5d33384599aaec8f786915ecbd0e54bb339e78f08c2eb2a610a381abd1f31e3387da97c22
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-font@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-font@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/b0bc61aedd8bab9bb8ea46cd9015d05bef117b5ae197e5d9e843f5e39e97527e657839706b711dd87570602de9b9521a7a6a8daea04cd3eb0dd6f44310582545
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-format-painter@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-format-painter@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    ckeditor5-collaboration: "npm:43.0.0"
+  checksum: 10c0/0732f6f8da66dc8870c051a59fc0c51d9bf65a8ce86994eec50e1fdadf141bb77d51867b7c47b12b99a895463eba1ab190b046a40401da4fd641d5bb7e7437b5
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-heading@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-heading@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-paragraph": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/db1c88ef573574b95574812942241fc5a881e1a912b9f9557bfd950716449cf932088b071fe4df2184638e7b42a165760ca1ca5bc3c00d45cff3bc4d9f47d5de
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-highlight@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-highlight@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/c08bc0cce356957add508a1b50762b0a5cd86d085b0d68add0f677ce9d6146a0356bf81e4ab0744c4530930cf67ccfe5d41d822566d33e56b2eca6d8fd9e1c06
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-horizontal-line@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-horizontal-line@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/6774f218f45d1d5c8ceb7f0273befa41a5707c69d65b0322cdf30f761f338b98d5db99714a33c70055108b6ab8500b043c4fe514c3ce72edfee4659dbe55a51e
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-html-embed@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-html-embed@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/fd0e5067e1126f852080d371af0df8e1702c824561f5316c13e8ebabd0861e897fee81ae3b360f975d8797dd739e578ef7921d6379c63bfc0a4a3f4a94f97104
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-html-support@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-html-support@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-enter": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/c7f7e7b4ad4d9915a196395b0889f73b1a605c5d69d9650badb628ae3528ddf17508411973c11bb4f88e8228966a536febfff2cb6fa7fc454e710e52dd6c300a
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-image@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-image@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-undo": "npm:43.0.0"
+    "@ckeditor/ckeditor5-upload": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/96b743b3af3798a77dd5774f3eeaa78b4a522ddd807263c73c9c4d7fe72d1da352de553694b5fe71d226e28a360e2b12b8e4586b0ab18c1cd2fbaba316a97dba
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-import-word@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-import-word@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/856fe69cb509094f58af3859034e0b748f0eb2dacd23f4d3d4aa054861fb5fd0875e2a32f3884b9ef396ec0bbdbc74d7a37fa73566c68f8f2e47925603310640
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-indent@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-indent@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/473e3b8c574664a813b61820c961aa63e739eebebee079f6b100c972effd0886c48373fc2b9ec72183d388baae39e110bd92631beae0ec5fb011d61e481823d1
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-language@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-language@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/db9532590ac94ad0d07529b11dda7c1620a35d3b4f3ce3d946f2ab44c18f328b7bcf6a2a9bfae17b32911a20a839ded2105acbdea72c48f8d39e650b5be547ae
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-link@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-link@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/407afd78986b8dd5a884d1beb15977f28663cbb8c8ffdf794072b538b8fc139b9d4f2101817eb93504a9c3a390ac84eadcaf3a2d14a03387f6b14a54609929af
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-list-multi-level@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-list-multi-level@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/8c0c0ae192fa199a8f19c5678ce60d0e96eb03771e628c8d46b63b0465d2660829ed0a951683305a4772a07e470afe9b732cf9f7a20dc40410c97377c0317d1b
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-list@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-list@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-enter": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/d9fe11277c19f44d67b256d3b9ceab6ec51e2dc032575da1fc5aa0d5164ef6d23042fba6cdb5876171356c82cc2a0868afbc56e84fa04dea4881f8e4a57746c8
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-markdown-gfm@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-markdown-gfm@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    marked: "npm:4.0.12"
+    turndown: "npm:7.2.0"
+    turndown-plugin-gfm: "npm:1.0.2"
+  checksum: 10c0/048dc090bf9011931dc4c8650a86ba0d7c4a09bf6d091d1a3eac647cadfac7d727415adad2b44238fb68551f9680c68317610deeaad72be39c276883c40f05ba
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-media-embed@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-media-embed@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-undo": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/e841d8958a9868fa498bfe11a2f53aa234574f7d319bd4cb2c0e20721ebfd09647972d71f7d19fca0ce4f1046433f68e0b310f3594b46eb66503353a758015a6
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-mention@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-mention@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/bf64243d728e81d46d0f34a3b82196a175045e1776b44eb8db8e153ea0822dcb7458a02edb8b66b7d7ff9271b6313d584b8f40e815eee4baf38c321889895139
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-merge-fields@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-merge-fields@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/e546df19e37d0547b428e696d7238f7f3e423b07514e947b1b5fd945035b0588f2f968af18b62a3f969d4e2f3d2afe7f7665cf1b788e070a7075492b21829eb8
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-minimap@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-minimap@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/8a8a0d7b9230c1ed702e18e67e12a4f0de5088eda074d0d00a07e2031d293c2575b4d0d9ba9367ca0bb1738eccaa1863cda19c355b1ccace45254eb02f46ae88
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-operations-compressor@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-operations-compressor@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+    protobufjs: "npm:7.2.5"
+  checksum: 10c0/87f4833e8857833a148e8ae8720e09a252b8beb7e321ddc6f96226c1d28cdf984623e9dedf323e45d2fc2de92bc13a27b53ec1954bdd9ede5a85553fc9acd42b
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-page-break@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-page-break@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/61dd4b2421a65b6e984637fca792876a6fabc3c152fd113ebba66d58369c4e634649754d089e23fad8387f44c3e4f86bff271cea6dcee480c3c8b47cf9864cab
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-pagination@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-pagination@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-theme-lark": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/bd83b2972a9c27dcead85ef393e419ad4986722f5a3a05d714cfecb7dc137dad314f8a4e6df31eb4359820af207358bb1b55f94c8ea248e7467d8b7d6d721d7a
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-paragraph@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-paragraph@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+  checksum: 10c0/ad482546f6cbc2ae4727b2790a3a723202b461112265af22b38e8aa5852c7e0492ce94e622a2da809ef366dcef69e023d2e0fd967b8685c9039040e85ecd8b63
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-paste-from-office-enhanced@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-paste-from-office-enhanced@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-paste-from-office": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/169437c5628546563d4fc2126226bda605f1a305c4b8b23a9bf0248ea84448c5a7f6a070c8ebe74848a388017673b79a03fc3df4436bc24da8c23b15f3f25a1c
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-paste-from-office@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-paste-from-office@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/0b40968e08953a0daeb5b362d4215648301e9b47b0b207873ec5fb39e8a9e800c2b6235e9c937ad6e3eb171a42b2598e5f7852736254df2346dedb389d413cf6
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-real-time-collaboration@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-real-time-collaboration@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor-cloud-services-collaboration": "npm:52.6.10"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-operations-compressor": "npm:43.0.0"
+    "@ckeditor/ckeditor5-theme-lark": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    ckeditor5-collaboration: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/3f24855d60adbd1c161b536ce4fa97150061d35253d3d21fbfdc25795a41c47763ccab0b9ecf3364a7ffb935abc0f44824ef409f9ba53060b034881fc3bc92d6
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-remove-format@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-remove-format@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/1109b14ab61e4dfb192336a836440b663c45503e3f92a73721567108106223239f7851791b7def6f74a9ee436c319df489ffbcf5d7ed4a774886d2e428a61702
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-restricted-editing@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-restricted-editing@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/4fd95b92e565de3af17ae42820e628bbc45d46c2857b953231017dbf448dd304e645159cb0c287ef10fb296ea3461d4ce624fb99b6836da6041ecc4dcf55aba9
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-revision-history@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-revision-history@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-editor-classic": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    ckeditor5-collaboration: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+    luxon: "npm:1.28.1"
+  checksum: 10c0/62061a2124da6ceb6c2da6a5cef7aba1fc20b3eaaabfa3ff7fd59c8d2ec768e1e506fbd7972cf76dbacb98f846a872ac480a867cb25eb9e69bc5ccb97dab4764
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-select-all@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-select-all@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+  checksum: 10c0/67455eb7e25ada6b9c3f6f98fc8fea5b85296c563b2b8f6337959c0e76f747552f98e920f412b642298229a530f34070e76be07403fd080710cf52cc932458db
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-show-blocks@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-show-blocks@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/56c9738aedc16659faa6ae2113426377bbf6b894646873892ab8c9d6a4a681b6dcf999d964f96fedae76a1bface6b1319561f09c5728bb7fcf6fd8ebbb8ec350
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-slash-command@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-slash-command@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    ckeditor5-collaboration: "npm:43.0.0"
+  checksum: 10c0/4a92f92ff8b6de2522063511b9c5ff72c4038889f5c8b49ce0be53ff51a8489edfb4d915396778529f1bb2739a2656cb60c3d97f9fc97c2e178ef71edeb1e708
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-source-editing@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-source-editing@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-theme-lark": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/10638d6681cd0add0aa0749d1bbaefc96be4939ccc73cc9c67ea10f6d14ff5bf21aa924e1901a904cb71085fb8b349593a7cdec07444264017bc31c9c51b77c8
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-special-characters@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-special-characters@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+  checksum: 10c0/d1c1ad26d0228b185089a7a12daedf13a30ff35bd88bce28a7d1f6d636cf483dd84c4e94190355d564351614e8655778317f34764323b84b1b468df9fb12a108
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-style@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-style@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/bb53b785b81e62ae0a28e9f0ccb1c1372f647d16cc40165151246e8a30b2e85d1a447beafdb3da5c3366204364f0b9a02b8a0cc4a5d94a4e1ea1f97be9340e31
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-table@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-table@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/5cab1b310fbf45b66d9a011c4f06799a7595beafb1ad614a30a8124d0a9a731dbd2c035b1c40d5b082cb1f622b127787951b2fd2de296d1859b35a66261d35ed
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-template@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-template@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    ckeditor5-collaboration: "npm:43.0.0"
+  checksum: 10c0/5456b98ef7fe46c7cbb61461fc5d1bc4385d3c67955a09360b772570edbe7db6377c8393ae2a6d488c5a02f797c6abd105001bd400b1f63ef9b97da4e2d32b90
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-theme-lark@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-theme-lark@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+  checksum: 10c0/a035227b29fd9387aa9b4325d5ac539f4aaf4e01e51f55ccc3ca6f4afba7df069385a210ed27369f74e50a46a1c48cb966c4de2d11479575577ccf2409cfe78f
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-track-changes@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-track-changes@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-enter": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    ckeditor5-collaboration: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/2ef9997d419498c80083d282513c94e81e8f47b7496763231d200585eea454e1a44893a6aa4f56f8b65d96201fa6caff9fc1da8e67a30cb5c8c8c0b94c61ce85
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-typing@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-typing@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/7e4c29fa89915ff452a81455984cc4e0a8b127b548bebec09969f48382872237d4089a542287c2b30a4bff2200c833ef092b07a5822236b425ba92b4c4fc5d36
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-ui@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-ui@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    color-convert: "npm:2.0.1"
+    color-parse: "npm:1.4.2"
+    lodash-es: "npm:4.17.21"
+    vanilla-colorful: "npm:0.7.2"
+  checksum: 10c0/59a35e639943dd702e2c248d1234ee246d051dbc15aac40edb39ba07f5eb221c636383c36bfebd11335b249738fd83e3e477544255f0fd7f39c37a817201d913
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-undo@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-undo@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+  checksum: 10c0/c9b680da2508beb44af6919e16a4a89c016cf470d602c549d18a37428d702d3646d7ea8ecd61d9d260d97ccf991d296b48010f6c13bcc4f43928980d603f0815
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-upload@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-upload@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+  checksum: 10c0/7cba7ff9712ac48f0786d2a579201c1ae3868888a285af473fd1bbba1e8166b4989b0026e8887b7c563f8a7f07c5bf45778c4674955152ef9561d2d86a065862
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-utils@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-utils@npm:43.0.0"
+  dependencies:
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/eb4cfb3f06edf263673042944103ab70927b116dc48713fecf23783710b103f4a19b48411a8b816f33583101b42bb899306c26104cf88de0211c6b40c83fe0d1
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-vue@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@ckeditor/ckeditor5-vue@npm:7.0.0"
+  dependencies:
+    lodash-es: "npm:^4.17.21"
+  peerDependencies:
+    ckeditor5: ">=42.0.0 || ^0.0.0-nightly"
+    vue: ^3.4.0
+  checksum: 10c0/3fc409110f0c2544d39eb65c8ec89e45fb7c8dc7526c1b38d521d3cdf69af8503be0940b0285eb65d9e5dd39cb0fbe70a9bb23199a4330ab32a4ea151ed0cbdd
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-watchdog@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-watchdog@npm:43.0.0"
+  dependencies:
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/663f7cdac832ac177705101b949372f037d98d0efc638219bd012b9d831359ac49d8d23374f778cc43ddcc38f3aa71ac09cdc63c60b115f2a45b093188100a57
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-widget@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-widget@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-enter": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/17e98e123f79d55365d5b43a2d0e945a268f809d3566eace773bee6ddf05f34533c9dbdffe130f33dca23ebb27aa1e87114b15e5d75718a49b0cff9e93d09ecb
+  languageName: node
+  linkType: hard
+
+"@ckeditor/ckeditor5-word-count@npm:43.0.0":
+  version: 43.0.0
+  resolution: "@ckeditor/ckeditor5-word-count@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    ckeditor5: "npm:43.0.0"
+    lodash-es: "npm:4.17.21"
+  checksum: 10c0/61b4e5475a130578233bd7edb165234de39063d8cf5c439b08a8ced3f9831f007f60cdf10990a6b021ddff524e47f59c1f2a06f2dddd8954912580b575ecc0aa
   languageName: node
   linkType: hard
 
@@ -288,10 +1863,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mixmark-io/domino@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@mixmark-io/domino@npm:2.2.0"
+  checksum: 10c0/aa468a15f9217d425220fe6a4b3f9416cbe8e566ee14efc191c6d5cc04fe39338b16a90bbac190f28d44e69465db5f2cf95f479c621ce38060ca6b2a3d346e9d
+  languageName: node
+  linkType: hard
+
 "@mythpe/js-helpers@workspace:.":
   version: 0.0.0-use.local
   resolution: "@mythpe/js-helpers@workspace:."
   dependencies:
+    "@ckeditor/ckeditor5-vue": "npm:^7.0.0"
     "@googlemaps/js-api-loader": "npm:^1.16.6"
     "@intlify/vite-plugin-vue-i18n": "npm:^3.3.1"
     "@quasar/app-vite": "npm:^1.4.0"
@@ -302,6 +1885,8 @@ __metadata:
     "@typescript-eslint/parser": "npm:^5.10.0"
     autoprefixer: "npm:^10.4.2"
     axios: "npm:^1.7.2"
+    ckeditor5: "npm:^43.0.0"
+    ckeditor5-premium-features: "npm:^43.0.0"
     dotenv: "npm:^16.3.1"
     eslint: "npm:^8.10.0"
     eslint-config-standard: "npm:^17.0.0"
@@ -383,6 +1968,79 @@ __metadata:
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
   checksum: 10c0/5bd7576bb1b38a47a7fc7b51ac9f38748e772beebc56200450c4a817d712232b8f1d3ef70532c80840243c657d491cf6a6be1e3a214cff907645819fdc34aadd
+  languageName: node
+  linkType: hard
+
+"@protobufjs/aspromise@npm:^1.1.1, @protobufjs/aspromise@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@protobufjs/aspromise@npm:1.1.2"
+  checksum: 10c0/a83343a468ff5b5ec6bff36fd788a64c839e48a07ff9f4f813564f58caf44d011cd6504ed2147bf34835bd7a7dd2107052af755961c6b098fd8902b4f6500d0f
+  languageName: node
+  linkType: hard
+
+"@protobufjs/base64@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@protobufjs/base64@npm:1.1.2"
+  checksum: 10c0/eec925e681081af190b8ee231f9bad3101e189abbc182ff279da6b531e7dbd2a56f1f306f37a80b1be9e00aa2d271690d08dcc5f326f71c9eed8546675c8caf6
+  languageName: node
+  linkType: hard
+
+"@protobufjs/codegen@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@protobufjs/codegen@npm:2.0.4"
+  checksum: 10c0/26ae337c5659e41f091606d16465bbcc1df1f37cc1ed462438b1f67be0c1e28dfb2ca9f294f39100c52161aef82edf758c95d6d75650a1ddf31f7ddee1440b43
+  languageName: node
+  linkType: hard
+
+"@protobufjs/eventemitter@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@protobufjs/eventemitter@npm:1.1.0"
+  checksum: 10c0/1eb0a75180e5206d1033e4138212a8c7089a3d418c6dfa5a6ce42e593a4ae2e5892c4ef7421f38092badba4040ea6a45f0928869989411001d8c1018ea9a6e70
+  languageName: node
+  linkType: hard
+
+"@protobufjs/fetch@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@protobufjs/fetch@npm:1.1.0"
+  dependencies:
+    "@protobufjs/aspromise": "npm:^1.1.1"
+    "@protobufjs/inquire": "npm:^1.1.0"
+  checksum: 10c0/cda6a3dc2d50a182c5865b160f72077aac197046600091dbb005dd0a66db9cce3c5eaed6d470ac8ed49d7bcbeef6ee5f0bc288db5ff9a70cbd003e5909065233
+  languageName: node
+  linkType: hard
+
+"@protobufjs/float@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@protobufjs/float@npm:1.0.2"
+  checksum: 10c0/18f2bdede76ffcf0170708af15c9c9db6259b771e6b84c51b06df34a9c339dbbeec267d14ce0bddd20acc142b1d980d983d31434398df7f98eb0c94a0eb79069
+  languageName: node
+  linkType: hard
+
+"@protobufjs/inquire@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@protobufjs/inquire@npm:1.1.0"
+  checksum: 10c0/64372482efcba1fb4d166a2664a6395fa978b557803857c9c03500e0ac1013eb4b1aacc9ed851dd5fc22f81583670b4f4431bae186f3373fedcfde863ef5921a
+  languageName: node
+  linkType: hard
+
+"@protobufjs/path@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@protobufjs/path@npm:1.1.2"
+  checksum: 10c0/cece0a938e7f5dfd2fa03f8c14f2f1cf8b0d6e13ac7326ff4c96ea311effd5fb7ae0bba754fbf505312af2e38500250c90e68506b97c02360a43793d88a0d8b4
+  languageName: node
+  linkType: hard
+
+"@protobufjs/pool@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@protobufjs/pool@npm:1.1.0"
+  checksum: 10c0/eda2718b7f222ac6e6ad36f758a92ef90d26526026a19f4f17f668f45e0306a5bd734def3f48f51f8134ae0978b6262a5c517c08b115a551756d1a3aadfcf038
+  languageName: node
+  linkType: hard
+
+"@protobufjs/utf8@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@protobufjs/utf8@npm:1.1.0"
+  checksum: 10c0/a3fe31fe3fa29aa3349e2e04ee13dc170cc6af7c23d92ad49e3eeaf79b9766264544d3da824dba93b7855bd6a2982fb40032ef40693da98a136d835752beb487
   languageName: node
   linkType: hard
 
@@ -484,6 +2142,543 @@ __metadata:
     estree-walker: "npm:^2.0.1"
     picomatch: "npm:^2.2.2"
   checksum: 10c0/3ee56b2c8f1ed8dfd0a92631da1af3a2dfdd0321948f089b3752b4de1b54dc5076701eadd0e5fc18bd191b77af594ac1db6279e83951238ba16bf8a414c64c48
+  languageName: node
+  linkType: hard
+
+"@smithy/abort-controller@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "@smithy/abort-controller@npm:3.1.1"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/914933d961b3b29db41a10b9040396968a738340d2bfd7f0b553521a91624ff86ee4ce7d97c15e3d94ca5e2b924da9dbefaf91e6cbd34db25d493690e4889f93
+  languageName: node
+  linkType: hard
+
+"@smithy/config-resolver@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "@smithy/config-resolver@npm:3.0.5"
+  dependencies:
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-config-provider": "npm:^3.0.0"
+    "@smithy/util-middleware": "npm:^3.0.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/2346a0430a157660a759aee24fd20f18a9c4a3796938b1c792019a898afcdbb0af91af687b84f976a9f1e05eaba6946736e076f6b0ceb5f84b9063c67d2db8ae
+  languageName: node
+  linkType: hard
+
+"@smithy/core@npm:^2.3.1":
+  version: 2.3.2
+  resolution: "@smithy/core@npm:2.3.2"
+  dependencies:
+    "@smithy/middleware-endpoint": "npm:^3.1.0"
+    "@smithy/middleware-retry": "npm:^3.0.14"
+    "@smithy/middleware-serde": "npm:^3.0.3"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/smithy-client": "npm:^3.1.12"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-middleware": "npm:^3.0.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/94174b9e049568172d8d46989ecb85e16929c216259a9f185aa8eef671a381ff183979f382a308f22f44965a70930ce289cc913155672c6d4bec12751df93075
+  languageName: node
+  linkType: hard
+
+"@smithy/credential-provider-imds@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "@smithy/credential-provider-imds@npm:3.2.0"
+  dependencies:
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/url-parser": "npm:^3.0.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/aee18386df65ac01969d9210ff81fec79fb7d365823b0b99527834bcaf068b20ce8c9170fdedb7c141e1fe1a7c1878072c10c4d4908aa41ed5cbdf84debf8011
+  languageName: node
+  linkType: hard
+
+"@smithy/eventstream-codec@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "@smithy/eventstream-codec@npm:3.1.2"
+  dependencies:
+    "@aws-crypto/crc32": "npm:5.2.0"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-hex-encoding": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/fc8db95d9625524b2832cf9cea203b4c1062197d04eef6f676b6eea06cc0007d45acb5270937c1b6b76f98638acaf0c2b822278226c25841ab45488df786e332
+  languageName: node
+  linkType: hard
+
+"@smithy/eventstream-serde-browser@npm:^3.0.5":
+  version: 3.0.6
+  resolution: "@smithy/eventstream-serde-browser@npm:3.0.6"
+  dependencies:
+    "@smithy/eventstream-serde-universal": "npm:^3.0.5"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/0b70151fe310687b38bf6619992a0e1d687bd4fd3c52278581147e0962bd1fa2f4bd5bfef13711d7d03d68a73484e81e5da7f7755c0141e61b045b9c1a387d10
+  languageName: node
+  linkType: hard
+
+"@smithy/eventstream-serde-config-resolver@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@smithy/eventstream-serde-config-resolver@npm:3.0.3"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/ef3360c0a0e4ad20f6e6da84b63e5071e3158af726bf291c610e2d42b5e042008cd9fe41ce2183f491422f23c36437987c0d1139e68b3c127d48c01b442dab82
+  languageName: node
+  linkType: hard
+
+"@smithy/eventstream-serde-node@npm:^3.0.4":
+  version: 3.0.5
+  resolution: "@smithy/eventstream-serde-node@npm:3.0.5"
+  dependencies:
+    "@smithy/eventstream-serde-universal": "npm:^3.0.5"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/7f1dc63838f68b99a49051ce64f81f624d881e1ccbe363e2dcfa33709d9913fec3939e9e48f75e2e11cd7a21bcfc7b7d430d10ea1c867720e0d934b2c065b16a
+  languageName: node
+  linkType: hard
+
+"@smithy/eventstream-serde-universal@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "@smithy/eventstream-serde-universal@npm:3.0.5"
+  dependencies:
+    "@smithy/eventstream-codec": "npm:^3.1.2"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/9d065a0fcb2de7b5d7a0ad7631949d5d972fc92e7edb66a695c61f98ab659b59e39d6375527e2a85af4a97ba4f8d998e99bd84a62ded2758c925f9fe3e4b2ab1
+  languageName: node
+  linkType: hard
+
+"@smithy/fetch-http-handler@npm:^3.2.4":
+  version: 3.2.4
+  resolution: "@smithy/fetch-http-handler@npm:3.2.4"
+  dependencies:
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/querystring-builder": "npm:^3.0.3"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-base64": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/ef788ef9d4b88f11a3b9dea60de0e0fa500ce38f43ae1359b3053d4c0acfe81e53ce76d4e8dab7c25cec22cd95371a6c994de1a54118811e0b91e8bddd7c6e83
+  languageName: node
+  linkType: hard
+
+"@smithy/hash-node@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@smithy/hash-node@npm:3.0.3"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-buffer-from": "npm:^3.0.0"
+    "@smithy/util-utf8": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/d0ba0f069cb047a8a040733b9b119a194c130d287e8a68b8e79cf9cac5abe683df84ea28dd918e85a46031155e0d561f3c5854de3d280c3d501977a986550c8b
+  languageName: node
+  linkType: hard
+
+"@smithy/invalid-dependency@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@smithy/invalid-dependency@npm:3.0.3"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/c52e909fa0cd8630e1e850da78af20abb11091b134ca107108e4f8336eee4b1b8cde60ba5946eff4bfe3d7bddc74e80a59fa0f448a7b45bf69df1e247aeee607
+  languageName: node
+  linkType: hard
+
+"@smithy/is-array-buffer@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@smithy/is-array-buffer@npm:2.2.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/2f2523cd8cc4538131e408eb31664983fecb0c8724956788b015aaf3ab85a0c976b50f4f09b176f1ed7bbe79f3edf80743be7a80a11f22cd9ce1285d77161aaf
+  languageName: node
+  linkType: hard
+
+"@smithy/is-array-buffer@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@smithy/is-array-buffer@npm:3.0.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/44710d94b9e6655ebc02169c149ea2bc5d5b9e509b6b39511cfe61bac571412290f4b9c743d61e395822f014021fcb709dbb533f2f717c1ac2d5a356696c22fd
+  languageName: node
+  linkType: hard
+
+"@smithy/middleware-content-length@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "@smithy/middleware-content-length@npm:3.0.5"
+  dependencies:
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/fb8901dc0673709235dd5c0788bd9cb930a6590023ecf350fa4835289a606c2e6d60ca8fca90f7525bc15c005db9cf98ae8ccffccc42f611468863f883051a7d
+  languageName: node
+  linkType: hard
+
+"@smithy/middleware-endpoint@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@smithy/middleware-endpoint@npm:3.1.0"
+  dependencies:
+    "@smithy/middleware-serde": "npm:^3.0.3"
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/shared-ini-file-loader": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/url-parser": "npm:^3.0.3"
+    "@smithy/util-middleware": "npm:^3.0.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/c50e0ee205d5126263be1bda8c5580048bddb939c75521dc8a53a7fae5b5fbea6ad8258d22cd59e49c88a5c0c669c246bf1eefb5a7dc03660d778e7ce6cd9aca
+  languageName: node
+  linkType: hard
+
+"@smithy/middleware-retry@npm:^3.0.13, @smithy/middleware-retry@npm:^3.0.14":
+  version: 3.0.14
+  resolution: "@smithy/middleware-retry@npm:3.0.14"
+  dependencies:
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/service-error-classification": "npm:^3.0.3"
+    "@smithy/smithy-client": "npm:^3.1.12"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-middleware": "npm:^3.0.3"
+    "@smithy/util-retry": "npm:^3.0.3"
+    tslib: "npm:^2.6.2"
+    uuid: "npm:^9.0.1"
+  checksum: 10c0/8fc86ef6e7c455b09e8226da4e7401fd9b4248e47a20d9682ffea48db25710cc4b40978b6774405abebfaf1fbf4d8cb130c9585e53ef20edd10b37dad876e23b
+  languageName: node
+  linkType: hard
+
+"@smithy/middleware-serde@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@smithy/middleware-serde@npm:3.0.3"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/5b2ad50dea8af9a7a98816c0746c14af4267d053adcade9586a260cff968c41d768220b2987e5b751dbee7cd8c9538ff9839fbc7698dd09bf9b9ca4f5c8001ab
+  languageName: node
+  linkType: hard
+
+"@smithy/middleware-stack@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@smithy/middleware-stack@npm:3.0.3"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/c886d367ce02f6ae7bc70c4060e79ddfa46c3b35851921364836d64efb76f2fc71b0c1c09401c47d289dc93527a7699085a3feb0778e0337862aa8e6473cb54b
+  languageName: node
+  linkType: hard
+
+"@smithy/node-config-provider@npm:^3.1.4":
+  version: 3.1.4
+  resolution: "@smithy/node-config-provider@npm:3.1.4"
+  dependencies:
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/shared-ini-file-loader": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/1d69cb8f83292df9e15523a727d55f6b812ff0ca30d615439cc6e7a5fe0d59c9524875745939bba611ca818757790f37509bb843b95f1e6d6b1ccd6d6c546077
+  languageName: node
+  linkType: hard
+
+"@smithy/node-http-handler@npm:^3.1.4":
+  version: 3.1.4
+  resolution: "@smithy/node-http-handler@npm:3.1.4"
+  dependencies:
+    "@smithy/abort-controller": "npm:^3.1.1"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/querystring-builder": "npm:^3.0.3"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/9d7354084ed19f0aefb127d640f4a96fa6f5cf4212b3f128d8c9fa3258061bf666e6101d659167693653d729b44b6e558968b5018910e6045a5f9ebd2529d395
+  languageName: node
+  linkType: hard
+
+"@smithy/property-provider@npm:^3.1.3":
+  version: 3.1.3
+  resolution: "@smithy/property-provider@npm:3.1.3"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/e1414e01f6efc298728ff79c1513f9606b44c00b98eb92d003e332ae7312ac9c0e1b7ef08ce426c99545100531fdc33efc0d769b6f75a953df015a8479e73f90
+  languageName: node
+  linkType: hard
+
+"@smithy/protocol-http@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@smithy/protocol-http@npm:4.1.0"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/0bf5b40709724ff47880132297ba210d7db3c36bb7c841bc20fe98a2daa39697ea5d943a8181753ac6af19f0c8c7831381b93c1ffb9867ef5b6d071297e80fb8
+  languageName: node
+  linkType: hard
+
+"@smithy/querystring-builder@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@smithy/querystring-builder@npm:3.0.3"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-uri-escape": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/0fd88fb2f3b494981e286b840b7eeb90896d8cc2f47ce3964f65ae95eb74c82691af205bdc17abc39fd483e1952359459204686bb1741c9f425cd5a9a1503f65
+  languageName: node
+  linkType: hard
+
+"@smithy/querystring-parser@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@smithy/querystring-parser@npm:3.0.3"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/a7bcbce8342ca520ca0dbbe420e93547c4eebf7193df4467bae5be6f0493492486a8dad6e20477c5f37f40b9903df91cb8bfb41ee1d21b63b5512f77291ffe6e
+  languageName: node
+  linkType: hard
+
+"@smithy/service-error-classification@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@smithy/service-error-classification@npm:3.0.3"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+  checksum: 10c0/8ba7b655668fff01eb5de1d504711d6304d3e8a8dbbcb0620921bfdaafa5abca7621c0278d21367782d6c53277cddb8bbb6f9373013f64aac0c855520696bbd1
+  languageName: node
+  linkType: hard
+
+"@smithy/shared-ini-file-loader@npm:^3.1.4":
+  version: 3.1.4
+  resolution: "@smithy/shared-ini-file-loader@npm:3.1.4"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/e90e5e375fc5afb4dda335e1d0a9d3496cec731511c35351330a210dc22d22b398c45e49d3a4142e55ce7d0e1b280d1b3d46cecdd97b9527f2d9e89ced74f63b
+  languageName: node
+  linkType: hard
+
+"@smithy/signature-v4@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@smithy/signature-v4@npm:4.1.0"
+  dependencies:
+    "@smithy/is-array-buffer": "npm:^3.0.0"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-hex-encoding": "npm:^3.0.0"
+    "@smithy/util-middleware": "npm:^3.0.3"
+    "@smithy/util-uri-escape": "npm:^3.0.0"
+    "@smithy/util-utf8": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/7f20f60b1bc280fb60014d75fbafb1c923ef492997c02cabfa8f37e87381c5aa5c47cfd8a0d9e4c17020c5cf2ab73c461c5e2965a1d6f933b54f617fab27b8c6
+  languageName: node
+  linkType: hard
+
+"@smithy/smithy-client@npm:^3.1.11, @smithy/smithy-client@npm:^3.1.12":
+  version: 3.1.12
+  resolution: "@smithy/smithy-client@npm:3.1.12"
+  dependencies:
+    "@smithy/middleware-endpoint": "npm:^3.1.0"
+    "@smithy/middleware-stack": "npm:^3.0.3"
+    "@smithy/protocol-http": "npm:^4.1.0"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-stream": "npm:^3.1.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/da7300f35d197b16fc7d72060b40bdbfc72b3c903fc95e46c97898b6bc2a3c703618499bc7cf262971f116cc363bdfa62eac299f85f4fc078ae6f0c4353adfa3
+  languageName: node
+  linkType: hard
+
+"@smithy/types@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "@smithy/types@npm:3.3.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/ab2c2d621384a2bbdd31d5c90809395cb5c2a726afd69758895d5a630f932f6ae9a53ca7a9cd5d8c195df9278869b2420a2fb4fada47dee9e8c9d4e3c80a349e
+  languageName: node
+  linkType: hard
+
+"@smithy/url-parser@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@smithy/url-parser@npm:3.0.3"
+  dependencies:
+    "@smithy/querystring-parser": "npm:^3.0.3"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/9ed0ab14034369fd823587c22d22e257203638a327954853c9bb92c3571a94fa7dc56211f9340b0ac3af5c37dfa206fd99dcde4ee9164a300994314a83e0b042
+  languageName: node
+  linkType: hard
+
+"@smithy/util-base64@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@smithy/util-base64@npm:3.0.0"
+  dependencies:
+    "@smithy/util-buffer-from": "npm:^3.0.0"
+    "@smithy/util-utf8": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/5c05c3505bd1ac4c1e04ec0e22ad1c9e0c61756945735861614f9e46146369a1a112dd0895602475822c18b8f1fe0cc3fb9e45c99a4e7fb03308969c673cf043
+  languageName: node
+  linkType: hard
+
+"@smithy/util-body-length-browser@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@smithy/util-body-length-browser@npm:3.0.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/cfb595e814334fe7bb78e8381141cc7364f66bff0c1d672680f4abb99361ef66fbdb9468fa1dbabcd5753254b2b05c59c907fa9d600b36e6e4b8423eccf412f7
+  languageName: node
+  linkType: hard
+
+"@smithy/util-body-length-node@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@smithy/util-body-length-node@npm:3.0.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/6f779848e7c81051364cf6e40ed61034a06fa8df3480398528baae54d9b69622abc7d068869e33dbe51fef2bbc6fda3f548ac59644a0f10545a54c87bc3a4391
+  languageName: node
+  linkType: hard
+
+"@smithy/util-buffer-from@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@smithy/util-buffer-from@npm:2.2.0"
+  dependencies:
+    "@smithy/is-array-buffer": "npm:^2.2.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/223d6a508b52ff236eea01cddc062b7652d859dd01d457a4e50365af3de1e24a05f756e19433f6ccf1538544076b4215469e21a4ea83dc1d58d829725b0dbc5a
+  languageName: node
+  linkType: hard
+
+"@smithy/util-buffer-from@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@smithy/util-buffer-from@npm:3.0.0"
+  dependencies:
+    "@smithy/is-array-buffer": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/b10fb81ef34f95418f27c9123c2c1774e690dd447e8064184688c553156bdec46d2ba1b1ae3bad7edd2b58a5ef32ac569e1ad814b36e7ee05eba10526d329983
+  languageName: node
+  linkType: hard
+
+"@smithy/util-config-provider@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@smithy/util-config-provider@npm:3.0.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/a2c25eac31223eddea306beff2bb3c32e8761f8cb50e8cb2a9d61417a5040e9565dc715a655787e99a37465fdd35bbd0668ff36e06043a5f6b7be48a76974792
+  languageName: node
+  linkType: hard
+
+"@smithy/util-defaults-mode-browser@npm:^3.0.13":
+  version: 3.0.14
+  resolution: "@smithy/util-defaults-mode-browser@npm:3.0.14"
+  dependencies:
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/smithy-client": "npm:^3.1.12"
+    "@smithy/types": "npm:^3.3.0"
+    bowser: "npm:^2.11.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/d76af727a69d3c6ae7b99478c09eae25270741bcc63152dd5d9c113b79230e5ebfb83ebbb171da740e1f98c0369e76547807419042abefe86d867af5c2643b01
+  languageName: node
+  linkType: hard
+
+"@smithy/util-defaults-mode-node@npm:^3.0.13":
+  version: 3.0.14
+  resolution: "@smithy/util-defaults-mode-node@npm:3.0.14"
+  dependencies:
+    "@smithy/config-resolver": "npm:^3.0.5"
+    "@smithy/credential-provider-imds": "npm:^3.2.0"
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/property-provider": "npm:^3.1.3"
+    "@smithy/smithy-client": "npm:^3.1.12"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/ce0091fde6d3679b9dfcd8e4cf87c51a3d11b9ab20e1ee924fa99bb4f1cccd5beaf51e5016f501b569109640ff57355b7f235f49a9c73f616d23a5fe9c9668b5
+  languageName: node
+  linkType: hard
+
+"@smithy/util-endpoints@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "@smithy/util-endpoints@npm:2.0.5"
+  dependencies:
+    "@smithy/node-config-provider": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/4dd0740eaca169dc1078ef7e10dd0b0cc186e8c2bb1bf26c7ab8dff557c59f146bf6496a3e44a7bbb9ac6bfbcb587f1a100d81466f29b20dbb58e3e5cf5bceeb
+  languageName: node
+  linkType: hard
+
+"@smithy/util-hex-encoding@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@smithy/util-hex-encoding@npm:3.0.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/d2fa7270853cc8f22c4f4635c72bf52e303731a68a3999e3ea9da1d38b6bf08c0f884e7d20b65741e3bc68bb3821e1abd1c3406d7a3dce8fc02df019aea59162
+  languageName: node
+  linkType: hard
+
+"@smithy/util-middleware@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@smithy/util-middleware@npm:3.0.3"
+  dependencies:
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/1d7d01f75ab6d116e6d539bbcfc6f5d7f2b6e3a25f970758872a2e45c4a6b5795326d2f51b2566ca9fe5ba260d9176b33260bde15759c5296ab9f8557835364e
+  languageName: node
+  linkType: hard
+
+"@smithy/util-retry@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@smithy/util-retry@npm:3.0.3"
+  dependencies:
+    "@smithy/service-error-classification": "npm:^3.0.3"
+    "@smithy/types": "npm:^3.3.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/bea28dff13ae32222dda579eb9bccfaf34b427ab46165509cd524a7080463361a39acc5d1aa7452714c38193a5523f3ab810cd2e60eef9bc768fd1ab23b5bde6
+  languageName: node
+  linkType: hard
+
+"@smithy/util-stream@npm:^3.1.3":
+  version: 3.1.3
+  resolution: "@smithy/util-stream@npm:3.1.3"
+  dependencies:
+    "@smithy/fetch-http-handler": "npm:^3.2.4"
+    "@smithy/node-http-handler": "npm:^3.1.4"
+    "@smithy/types": "npm:^3.3.0"
+    "@smithy/util-base64": "npm:^3.0.0"
+    "@smithy/util-buffer-from": "npm:^3.0.0"
+    "@smithy/util-hex-encoding": "npm:^3.0.0"
+    "@smithy/util-utf8": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/4ee3b323f727e7ff1e45ce561a1168dee1c9aaf9d275c019f19f9ee1af3abd0d6bf4c84fc2f11df259aeea1bffd1ddc40fff2c4c845bc41682dbf4a26946bf46
+  languageName: node
+  linkType: hard
+
+"@smithy/util-uri-escape@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@smithy/util-uri-escape@npm:3.0.0"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/b8d831348412cfafd9300069e74a12e0075b5e786d7ef6a210ba4ab576001c2525653eec68b71dfe6d7aef71c52f547404c4f0345c0fb476a67277f9d44b1156
+  languageName: node
+  linkType: hard
+
+"@smithy/util-utf8@npm:^2.0.0":
+  version: 2.3.0
+  resolution: "@smithy/util-utf8@npm:2.3.0"
+  dependencies:
+    "@smithy/util-buffer-from": "npm:^2.2.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/e18840c58cc507ca57fdd624302aefd13337ee982754c9aa688463ffcae598c08461e8620e9852a424d662ffa948fc64919e852508028d09e89ced459bd506ab
+  languageName: node
+  linkType: hard
+
+"@smithy/util-utf8@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@smithy/util-utf8@npm:3.0.0"
+  dependencies:
+    "@smithy/util-buffer-from": "npm:^3.0.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/b568ed84b4770d2ae9b632eb85603765195a791f045af7f47df1369dc26b001056f4edf488b42ca1cd6d852d0155ad306a0d6531e912cb4e633c0d87abaa8899
+  languageName: node
+  linkType: hard
+
+"@socket.io/component-emitter@npm:~3.1.0":
+  version: 3.1.2
+  resolution: "@socket.io/component-emitter@npm:3.1.2"
+  checksum: 10c0/c4242bad66f67e6f7b712733d25b43cbb9e19a595c8701c3ad99cbeb5901555f78b095e24852f862fffb43e96f1d8552e62def885ca82ae1bb05da3668fd87d7
   languageName: node
   linkType: hard
 
@@ -621,7 +2816,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:>=13.7.0":
   version: 22.2.0
   resolution: "@types/node@npm:22.2.0"
   dependencies:
@@ -1360,6 +3555,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"blurhash@npm:2.0.5":
+  version: 2.0.5
+  resolution: "blurhash@npm:2.0.5"
+  checksum: 10c0/75d5f042b5bb8ead977524a985048378a033af866534abbaee73c80030cc9fc34e6c5b7d483c68bbdb600e0ae438f2ea6140b1f46d75fcfa57a902208ae8b85e
+  languageName: node
+  linkType: hard
+
 "body-parser@npm:1.20.2":
   version: 1.20.2
   resolution: "body-parser@npm:1.20.2"
@@ -1384,6 +3586,13 @@ __metadata:
   version: 1.0.0
   resolution: "boolbase@npm:1.0.0"
   checksum: 10c0/e4b53deb4f2b85c52be0e21a273f2045c7b6a6ea002b0e139c744cb6f95e9ec044439a52883b0d74dedd1ff3da55ed140cfdddfed7fb0cccbed373de5dce1bcf
+  languageName: node
+  linkType: hard
+
+"bowser@npm:^2.11.0":
+  version: 2.11.0
+  resolution: "bowser@npm:2.11.0"
+  checksum: 10c0/04efeecc7927a9ec33c667fa0965dea19f4ac60b3fea60793c2e6cf06c1dcd2f7ae1dbc656f450c5f50783b1c75cf9dc173ba6f3b7db2feee01f8c4b793e1bd3
   languageName: node
   linkType: hard
 
@@ -1594,6 +3803,107 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ckeditor5-collaboration@npm:43.0.0":
+  version: 43.0.0
+  resolution: "ckeditor5-collaboration@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-collaboration-core": "npm:43.0.0"
+  checksum: 10c0/1931bb206bdbc0734b22cc5c91f7bbda160bbf386b32fdb400366f35a20a01980183d0d012318a42c496ebc4dae04bb5f25b53cb6e647386cd65b2d4cdbfd52e
+  languageName: node
+  linkType: hard
+
+"ckeditor5-premium-features@npm:^43.0.0":
+  version: 43.0.0
+  resolution: "ckeditor5-premium-features@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-ai": "npm:43.0.0"
+    "@ckeditor/ckeditor5-case-change": "npm:43.0.0"
+    "@ckeditor/ckeditor5-collaboration-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-comments": "npm:43.0.0"
+    "@ckeditor/ckeditor5-document-outline": "npm:43.0.0"
+    "@ckeditor/ckeditor5-export-pdf": "npm:43.0.0"
+    "@ckeditor/ckeditor5-export-word": "npm:43.0.0"
+    "@ckeditor/ckeditor5-format-painter": "npm:43.0.0"
+    "@ckeditor/ckeditor5-import-word": "npm:43.0.0"
+    "@ckeditor/ckeditor5-list-multi-level": "npm:43.0.0"
+    "@ckeditor/ckeditor5-merge-fields": "npm:43.0.0"
+    "@ckeditor/ckeditor5-pagination": "npm:43.0.0"
+    "@ckeditor/ckeditor5-paste-from-office-enhanced": "npm:43.0.0"
+    "@ckeditor/ckeditor5-real-time-collaboration": "npm:43.0.0"
+    "@ckeditor/ckeditor5-revision-history": "npm:43.0.0"
+    "@ckeditor/ckeditor5-slash-command": "npm:43.0.0"
+    "@ckeditor/ckeditor5-template": "npm:43.0.0"
+    "@ckeditor/ckeditor5-track-changes": "npm:43.0.0"
+    ckeditor5-collaboration: "npm:43.0.0"
+  checksum: 10c0/435781a37956baa80e864041e9046c4d3569c687c996601d9ff1204c7285bb49403f035b3e00faa3efed0a7129c7f9fe85ce3509c9365721cb58bcb8836aa24c
+  languageName: node
+  linkType: hard
+
+"ckeditor5@npm:43.0.0, ckeditor5@npm:^43.0.0":
+  version: 43.0.0
+  resolution: "ckeditor5@npm:43.0.0"
+  dependencies:
+    "@ckeditor/ckeditor5-adapter-ckfinder": "npm:43.0.0"
+    "@ckeditor/ckeditor5-alignment": "npm:43.0.0"
+    "@ckeditor/ckeditor5-autoformat": "npm:43.0.0"
+    "@ckeditor/ckeditor5-autosave": "npm:43.0.0"
+    "@ckeditor/ckeditor5-basic-styles": "npm:43.0.0"
+    "@ckeditor/ckeditor5-block-quote": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ckbox": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ckfinder": "npm:43.0.0"
+    "@ckeditor/ckeditor5-clipboard": "npm:43.0.0"
+    "@ckeditor/ckeditor5-cloud-services": "npm:43.0.0"
+    "@ckeditor/ckeditor5-code-block": "npm:43.0.0"
+    "@ckeditor/ckeditor5-core": "npm:43.0.0"
+    "@ckeditor/ckeditor5-easy-image": "npm:43.0.0"
+    "@ckeditor/ckeditor5-editor-balloon": "npm:43.0.0"
+    "@ckeditor/ckeditor5-editor-classic": "npm:43.0.0"
+    "@ckeditor/ckeditor5-editor-decoupled": "npm:43.0.0"
+    "@ckeditor/ckeditor5-editor-inline": "npm:43.0.0"
+    "@ckeditor/ckeditor5-editor-multi-root": "npm:43.0.0"
+    "@ckeditor/ckeditor5-engine": "npm:43.0.0"
+    "@ckeditor/ckeditor5-enter": "npm:43.0.0"
+    "@ckeditor/ckeditor5-essentials": "npm:43.0.0"
+    "@ckeditor/ckeditor5-find-and-replace": "npm:43.0.0"
+    "@ckeditor/ckeditor5-font": "npm:43.0.0"
+    "@ckeditor/ckeditor5-heading": "npm:43.0.0"
+    "@ckeditor/ckeditor5-highlight": "npm:43.0.0"
+    "@ckeditor/ckeditor5-horizontal-line": "npm:43.0.0"
+    "@ckeditor/ckeditor5-html-embed": "npm:43.0.0"
+    "@ckeditor/ckeditor5-html-support": "npm:43.0.0"
+    "@ckeditor/ckeditor5-image": "npm:43.0.0"
+    "@ckeditor/ckeditor5-indent": "npm:43.0.0"
+    "@ckeditor/ckeditor5-language": "npm:43.0.0"
+    "@ckeditor/ckeditor5-link": "npm:43.0.0"
+    "@ckeditor/ckeditor5-list": "npm:43.0.0"
+    "@ckeditor/ckeditor5-markdown-gfm": "npm:43.0.0"
+    "@ckeditor/ckeditor5-media-embed": "npm:43.0.0"
+    "@ckeditor/ckeditor5-mention": "npm:43.0.0"
+    "@ckeditor/ckeditor5-minimap": "npm:43.0.0"
+    "@ckeditor/ckeditor5-page-break": "npm:43.0.0"
+    "@ckeditor/ckeditor5-paragraph": "npm:43.0.0"
+    "@ckeditor/ckeditor5-paste-from-office": "npm:43.0.0"
+    "@ckeditor/ckeditor5-remove-format": "npm:43.0.0"
+    "@ckeditor/ckeditor5-restricted-editing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-select-all": "npm:43.0.0"
+    "@ckeditor/ckeditor5-show-blocks": "npm:43.0.0"
+    "@ckeditor/ckeditor5-source-editing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-special-characters": "npm:43.0.0"
+    "@ckeditor/ckeditor5-style": "npm:43.0.0"
+    "@ckeditor/ckeditor5-table": "npm:43.0.0"
+    "@ckeditor/ckeditor5-theme-lark": "npm:43.0.0"
+    "@ckeditor/ckeditor5-typing": "npm:43.0.0"
+    "@ckeditor/ckeditor5-ui": "npm:43.0.0"
+    "@ckeditor/ckeditor5-undo": "npm:43.0.0"
+    "@ckeditor/ckeditor5-upload": "npm:43.0.0"
+    "@ckeditor/ckeditor5-utils": "npm:43.0.0"
+    "@ckeditor/ckeditor5-watchdog": "npm:43.0.0"
+    "@ckeditor/ckeditor5-widget": "npm:43.0.0"
+    "@ckeditor/ckeditor5-word-count": "npm:43.0.0"
+  checksum: 10c0/ccd786b103d227841d962565a761ed71a9ec9ade3b7219e8e636f8c1d72d9bb5b7f23204ab6da74003874cb20bc9f0f7a1282c131faaaef61e4695ba47cdccc3
+  languageName: node
+  linkType: hard
+
 "clean-css@npm:~5.3.2":
   version: 5.3.3
   resolution: "clean-css@npm:5.3.3"
@@ -1662,21 +3972,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"color-convert@npm:2.0.1, color-convert@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "color-convert@npm:2.0.1"
+  dependencies:
+    color-name: "npm:~1.1.4"
+  checksum: 10c0/37e1150172f2e311fe1b2df62c6293a342ee7380da7b9cfdba67ea539909afbd74da27033208d01d6d5cfc65ee7868a22e18d7e7648e004425441c0f8a15a7d7
+  languageName: node
+  linkType: hard
+
 "color-convert@npm:^1.9.0":
   version: 1.9.3
   resolution: "color-convert@npm:1.9.3"
   dependencies:
     color-name: "npm:1.1.3"
   checksum: 10c0/5ad3c534949a8c68fca8fbc6f09068f435f0ad290ab8b2f76841b9e6af7e0bb57b98cb05b0e19fe33f5d91e5a8611ad457e5f69e0a484caad1f7487fd0e8253c
-  languageName: node
-  linkType: hard
-
-"color-convert@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "color-convert@npm:2.0.1"
-  dependencies:
-    color-name: "npm:~1.1.4"
-  checksum: 10c0/37e1150172f2e311fe1b2df62c6293a342ee7380da7b9cfdba67ea539909afbd74da27033208d01d6d5cfc65ee7868a22e18d7e7648e004425441c0f8a15a7d7
   languageName: node
   linkType: hard
 
@@ -1687,10 +3997,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-name@npm:~1.1.4":
+"color-name@npm:^1.0.0, color-name@npm:~1.1.4":
   version: 1.1.4
   resolution: "color-name@npm:1.1.4"
   checksum: 10c0/a1a3f914156960902f46f7f56bc62effc6c94e84b2cae157a526b1c1f74b677a47ec602bf68a61abfa2b42d15b7c5651c6dbe72a43af720bc588dff885b10f95
+  languageName: node
+  linkType: hard
+
+"color-parse@npm:1.4.2":
+  version: 1.4.2
+  resolution: "color-parse@npm:1.4.2"
+  dependencies:
+    color-name: "npm:^1.0.0"
+  checksum: 10c0/911e47271d6362f6535779c3b5cfddbdc1ca2160e253de83e36784bb223c0c41cf11c382fa4b1cb766fcb313bd891f51c24d0ff0a7afee3a92aa0daf792ac4ff
   languageName: node
   linkType: hard
 
@@ -1890,6 +4209,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-fns@npm:2.30.0":
+  version: 2.30.0
+  resolution: "date-fns@npm:2.30.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.21.0"
+  checksum: 10c0/e4b521fbf22bc8c3db332bbfb7b094fd3e7627de0259a9d17c7551e2d2702608a7307a449206065916538e384f37b181565447ce2637ae09828427aed9cb5581
+  languageName: node
+  linkType: hard
+
 "de-indent@npm:^1.0.2":
   version: 1.0.2
   resolution: "de-indent@npm:1.0.2"
@@ -1906,7 +4234,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4":
+"debug@npm:4, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4, debug@npm:~4.3.1, debug@npm:~4.3.2":
   version: 4.3.6
   resolution: "debug@npm:4.3.6"
   dependencies:
@@ -2112,6 +4440,26 @@ __metadata:
   dependencies:
     once: "npm:^1.4.0"
   checksum: 10c0/870b423afb2d54bb8d243c63e07c170409d41e20b47eeef0727547aea5740bd6717aca45597a9f2745525667a6b804c1e7bede41f856818faee5806dd9ff3975
+  languageName: node
+  linkType: hard
+
+"engine.io-client@npm:~6.5.0":
+  version: 6.5.4
+  resolution: "engine.io-client@npm:6.5.4"
+  dependencies:
+    "@socket.io/component-emitter": "npm:~3.1.0"
+    debug: "npm:~4.3.1"
+    engine.io-parser: "npm:~5.2.1"
+    ws: "npm:~8.17.1"
+    xmlhttprequest-ssl: "npm:~2.0.0"
+  checksum: 10c0/ef220f9875d6a43bade906bd9b61118e812474bbe46e80f38c92dca238484170daf92d51e58bbade6433c29ffb5ba329f4864c5609f2e33c5e31041b1f8ad672
+  languageName: node
+  linkType: hard
+
+"engine.io-parser@npm:~5.2.1":
+  version: 5.2.3
+  resolution: "engine.io-parser@npm:5.2.3"
+  checksum: 10c0/ed4900d8dbef470ab3839ccf3bfa79ee518ea8277c7f1f2759e8c22a48f64e687ea5e474291394d0c94f84054749fd93f3ef0acb51fa2f5f234cc9d9d8e7c536
   languageName: node
   linkType: hard
 
@@ -3117,6 +5465,17 @@ __metadata:
   version: 3.0.1
   resolution: "fast-uri@npm:3.0.1"
   checksum: 10c0/3cd46d6006083b14ca61ffe9a05b8eef75ef87e9574b6f68f2e17ecf4daa7aaadeff44e3f0f7a0ef4e0f7e7c20fc07beec49ff14dc72d0b500f00386592f2d10
+  languageName: node
+  linkType: hard
+
+"fast-xml-parser@npm:4.4.1":
+  version: 4.4.1
+  resolution: "fast-xml-parser@npm:4.4.1"
+  dependencies:
+    strnum: "npm:^1.0.5"
+  bin:
+    fxparser: src/cli/cli.js
+  checksum: 10c0/7f334841fe41bfb0bf5d920904ccad09cefc4b5e61eaf4c225bf1e1bb69ee77ef2147d8942f783ee8249e154d1ca8a858e10bda78a5d78b8bed3f48dcee9bf33
   languageName: node
   linkType: hard
 
@@ -4196,6 +6555,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash-es@npm:4.17.21, lodash-es@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash-es@npm:4.17.21"
+  checksum: 10c0/fb407355f7e6cd523a9383e76e6b455321f0f153a6c9625e21a8827d10c54c2a2341bd2ae8d034358b60e07325e1330c14c224ff582d04612a46a4f0479ff2f2
+  languageName: node
+  linkType: hard
+
 "lodash-inflection@npm:^1.5.0":
   version: 1.5.0
   resolution: "lodash-inflection@npm:1.5.0"
@@ -4269,6 +6635,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"long@npm:^5.0.0":
+  version: 5.2.3
+  resolution: "long@npm:5.2.3"
+  checksum: 10c0/6a0da658f5ef683b90330b1af76f06790c623e148222da9d75b60e266bbf88f803232dd21464575681638894a84091616e7f89557aa087fd14116c0f4e0e43d9
+  languageName: node
+  linkType: hard
+
 "lower-case@npm:^2.0.2":
   version: 2.0.2
   resolution: "lower-case@npm:2.0.2"
@@ -4282,6 +6655,13 @@ __metadata:
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
   checksum: 10c0/ebd04fbca961e6c1d6c0af3799adcc966a1babe798f685bb84e6599266599cd95d94630b10262f5424539bc4640107e8a33aa28585374abf561d30d16f4b39fb
+  languageName: node
+  linkType: hard
+
+"luxon@npm:1.28.1":
+  version: 1.28.1
+  resolution: "luxon@npm:1.28.1"
+  checksum: 10c0/5c561ce4364bb2301ca5811c74d11a9e087f82164109c7997dc8f0959e64d51259d8e630914dca2edc6702525ce5ab066a4b85caa19d04be71f10e79ffe2bc84
   languageName: node
   linkType: hard
 
@@ -4311,6 +6691,15 @@ __metadata:
     promise-retry: "npm:^2.0.1"
     ssri: "npm:^10.0.0"
   checksum: 10c0/df5f4dbb6d98153b751bccf4dc4cc500de85a96a9331db9805596c46aa9f99d9555983954e6c1266d9f981ae37a9e4647f42b9a4bb5466f867f4012e582c9e7e
+  languageName: node
+  linkType: hard
+
+"marked@npm:4.0.12":
+  version: 4.0.12
+  resolution: "marked@npm:4.0.12"
+  bin:
+    marked: bin/marked.js
+  checksum: 10c0/45745e97c9e6538ae777e797dfe3d5b34b08584ee2d5a06f03775a00b5c8986616b1a17eacf4ece6a2103d100febf876b6b9234d5b37ebb2bb474894496914f4
   languageName: node
   linkType: hard
 
@@ -5042,6 +7431,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"protobufjs@npm:7.2.5":
+  version: 7.2.5
+  resolution: "protobufjs@npm:7.2.5"
+  dependencies:
+    "@protobufjs/aspromise": "npm:^1.1.2"
+    "@protobufjs/base64": "npm:^1.1.2"
+    "@protobufjs/codegen": "npm:^2.0.4"
+    "@protobufjs/eventemitter": "npm:^1.1.0"
+    "@protobufjs/fetch": "npm:^1.1.0"
+    "@protobufjs/float": "npm:^1.0.2"
+    "@protobufjs/inquire": "npm:^1.1.0"
+    "@protobufjs/path": "npm:^1.1.2"
+    "@protobufjs/pool": "npm:^1.1.0"
+    "@protobufjs/utf8": "npm:^1.1.0"
+    "@types/node": "npm:>=13.7.0"
+    long: "npm:^5.0.0"
+  checksum: 10c0/12bb88965a2291ec717daddb1b7153c0e567586076da7d138c8f04558d3d0a9cad6445a3558f16c1a61f5cd9dec1a107712590daccb71763429d9b1e10d164d3
+  languageName: node
+  linkType: hard
+
 "proxy-addr@npm:~2.0.7":
   version: 2.0.7
   resolution: "proxy-addr@npm:2.0.7"
@@ -5079,6 +7488,13 @@ __metadata:
   version: 2.16.8
   resolution: "quasar@npm:2.16.8"
   checksum: 10c0/77e8ee542061a22008aafcfa274076ff3cea01cb818b58a823eaf4befc2292dfd22369fcc5f0b83251e4d8806d5f76c912ea25c80b7952ed890b6c56b9a9f312
+  languageName: node
+  linkType: hard
+
+"querystringify@npm:^2.1.1":
+  version: 2.2.0
+  resolution: "querystringify@npm:2.2.0"
+  checksum: 10c0/3258bc3dbdf322ff2663619afe5947c7926a6ef5fb78ad7d384602974c467fadfc8272af44f5eb8cddd0d011aae8fabf3a929a8eee4b86edcc0a21e6bd10f9aa
   languageName: node
   linkType: hard
 
@@ -5161,6 +7577,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"regenerator-runtime@npm:^0.14.0":
+  version: 0.14.1
+  resolution: "regenerator-runtime@npm:0.14.1"
+  checksum: 10c0/1b16eb2c4bceb1665c89de70dcb64126a22bc8eb958feef3cd68fe11ac6d2a4899b5cd1b80b0774c7c03591dc57d16631a7f69d2daa2ec98100e2f29f7ec4cc4
+  languageName: node
+  linkType: hard
+
 "regexp.prototype.flags@npm:^1.5.2":
   version: 1.5.2
   resolution: "regexp.prototype.flags@npm:1.5.2"
@@ -5205,6 +7628,13 @@ __metadata:
   version: 2.0.2
   resolution: "require-from-string@npm:2.0.2"
   checksum: 10c0/aaa267e0c5b022fc5fd4eef49d8285086b15f2a1c54b28240fdf03599cbd9c26049fee3eab894f2e1f6ca65e513b030a7c264201e3f005601e80c49fb2937ce2
+  languageName: node
+  linkType: hard
+
+"requires-port@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "requires-port@npm:1.0.0"
+  checksum: 10c0/b2bfdd09db16c082c4326e573a82c0771daaf7b53b9ce8ad60ea46aa6e30aaf475fe9b164800b89f93b748d2c234d8abff945d2551ba47bf5698e04cd7713267
   languageName: node
   linkType: hard
 
@@ -5581,6 +8011,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"socket.io-client@npm:4.7.0":
+  version: 4.7.0
+  resolution: "socket.io-client@npm:4.7.0"
+  dependencies:
+    "@socket.io/component-emitter": "npm:~3.1.0"
+    debug: "npm:~4.3.2"
+    engine.io-client: "npm:~6.5.0"
+    socket.io-parser: "npm:~4.2.4"
+  checksum: 10c0/814268cf417c8ec99c19ec0d9aa90d20de494be70f7ff9548481b680a51902b716d1f3d2138532a0a13d00e46a3f872fffefabbc03e88b5324a487b5f78d6a59
+  languageName: node
+  linkType: hard
+
+"socket.io-parser@npm:~4.2.3, socket.io-parser@npm:~4.2.4":
+  version: 4.2.4
+  resolution: "socket.io-parser@npm:4.2.4"
+  dependencies:
+    "@socket.io/component-emitter": "npm:~3.1.0"
+    debug: "npm:~4.3.1"
+  checksum: 10c0/9383b30358fde4a801ea4ec5e6860915c0389a091321f1c1f41506618b5cf7cd685d0a31c587467a0c4ee99ef98c2b99fb87911f9dfb329716c43b587f29ca48
+  languageName: node
+  linkType: hard
+
 "socks-proxy-agent@npm:^8.0.3":
   version: 8.0.4
   resolution: "socks-proxy-agent@npm:8.0.4"
@@ -5776,6 +8228,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"strnum@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "strnum@npm:1.0.5"
+  checksum: 10c0/64fb8cc2effbd585a6821faa73ad97d4b553c8927e49086a162ffd2cc818787643390b89d567460a8e74300148d11ac052e21c921ef2049f2987f4b1b89a7ff1
+  languageName: node
+  linkType: hard
+
 "supercluster@npm:^8.0.1":
   version: 8.0.1
   resolution: "supercluster@npm:8.0.1"
@@ -5936,7 +8395,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.3, tslib@npm:^2.1.0":
+"tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.6.2":
   version: 2.6.3
   resolution: "tslib@npm:2.6.3"
   checksum: 10c0/2598aef53d9dbe711af75522464b2104724d6467b26a60f2bdac8297d2b5f1f6b86a71f61717384aa8fd897240467aaa7bcc36a0700a0faf751293d1331db39a
@@ -5951,6 +8410,22 @@ __metadata:
   peerDependencies:
     typescript: ">=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta"
   checksum: 10c0/02f19e458ec78ead8fffbf711f834ad8ecd2cc6ade4ec0320790713dccc0a412b99e7fd907c4cda2a1dc602c75db6f12e0108e87a5afad4b2f9e90a24cabd5a2
+  languageName: node
+  linkType: hard
+
+"turndown-plugin-gfm@npm:1.0.2":
+  version: 1.0.2
+  resolution: "turndown-plugin-gfm@npm:1.0.2"
+  checksum: 10c0/eb9bc20dbb08d5335231f9617d7440f14b35781f14a3a393d8f13fc8205afeb11a0a632d52da4548ab0fa353f315ca265462b24d368faf23258dccbe439182b9
+  languageName: node
+  linkType: hard
+
+"turndown@npm:7.2.0":
+  version: 7.2.0
+  resolution: "turndown@npm:7.2.0"
+  dependencies:
+    "@mixmark-io/domino": "npm:^2.2.0"
+  checksum: 10c0/6abcdcdf9d35cd79d7a8100a7de1d2226b921d5bd99e73ac14a7ead39c059978f519378913375efb04c68bcfc40f7ffe2dee0ce9ae4d54dc1235b12856a78d4e
   languageName: node
   linkType: hard
 
@@ -6147,6 +8622,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"url-parse@npm:1.5.10":
+  version: 1.5.10
+  resolution: "url-parse@npm:1.5.10"
+  dependencies:
+    querystringify: "npm:^2.1.1"
+    requires-port: "npm:^1.0.0"
+  checksum: 10c0/bd5aa9389f896974beb851c112f63b466505a04b4807cea2e5a3b7092f6fbb75316f0491ea84e44f66fed55f1b440df5195d7e3a8203f64fcefa19d182f5be87
+  languageName: node
+  linkType: hard
+
 "util-deprecate@npm:^1.0.1, util-deprecate@npm:^1.0.2, util-deprecate@npm:~1.0.1":
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
@@ -6158,6 +8643,22 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: 10c0/02ba649de1b7ca8854bfe20a82f1dfbdda3fb57a22ab4a8972a63a34553cf7aa51bc9081cf7e001b035b88186d23689d69e71b510e610a09a4c66f68aa95b672
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "uuid@npm:9.0.1"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 10c0/1607dd32ac7fc22f2d8f77051e6a64845c9bce5cd3dd8aa0070c074ec73e666a1f63c7b4e0f4bf2bc8b9d59dc85a15e17807446d9d2b17c8485fbc2147b27f9b
+  languageName: node
+  linkType: hard
+
+"vanilla-colorful@npm:0.7.2":
+  version: 0.7.2
+  resolution: "vanilla-colorful@npm:0.7.2"
+  checksum: 10c0/53e759ffaf2608e41d85f0f2a06b5e7745773365702363fc83f743c43a6eec11feb78c9a6e680d59983d66e278eb81a43b3230b81a288f5d73512c62597251be
   languageName: node
   linkType: hard
 
@@ -6557,10 +9058,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ws@npm:~8.17.1":
+  version: 8.17.1
+  resolution: "ws@npm:8.17.1"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/f4a49064afae4500be772abdc2211c8518f39e1c959640457dcee15d4488628620625c783902a52af2dd02f68558da2868fd06e6fd0e67ebcd09e6881b1b5bfe
+  languageName: node
+  linkType: hard
+
 "xml-name-validator@npm:^4.0.0":
   version: 4.0.0
   resolution: "xml-name-validator@npm:4.0.0"
   checksum: 10c0/c1bfa219d64e56fee265b2bd31b2fcecefc063ee802da1e73bad1f21d7afd89b943c9e2c97af2942f60b1ad46f915a4c81e00039c7d398b53cf410e29d3c30bd
+  languageName: node
+  linkType: hard
+
+"xmlhttprequest-ssl@npm:~2.0.0":
+  version: 2.0.0
+  resolution: "xmlhttprequest-ssl@npm:2.0.0"
+  checksum: 10c0/b64ab371459bd5e3a4827e3c7535759047d285fd310aea6fd028973d547133f3be0d473c1fdae9f14d89bf509267759198ae1fbe89802079a7e217ddd990d734
   languageName: node
   linkType: hard
 

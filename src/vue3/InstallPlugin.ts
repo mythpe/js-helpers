@@ -331,11 +331,11 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
       opts = opts || {}
       const buttonsProps = {
         ...(options.value.button || {}),
-        ...(options.value.confirmDialog?.buttons || {})
+        ...(options.value.confirmDialogOptions?.buttons || {})
       }
-      const okProps = options.value.confirmDialog?.okProps || {}
-      const cancelProps = options.value.confirmDialog?.cancelProps || {}
-      const dialogProps = options.value.confirmDialog?.props || {} as any
+      const okProps = options.value.confirmDialogOptions?.okProps || {}
+      const cancelProps = options.value.confirmDialogOptions?.cancelProps || {}
+      const dialogProps = options.value.confirmDialog || {} as any
       dialogProps.transitionShow = dialogProps.transitionShow || 'jump-down'
       dialogProps.transitionHide = dialogProps.transitionHide || 'jump-up'
       dialogProps.class = ('m--confirm ') + (dialogProps.class || '')

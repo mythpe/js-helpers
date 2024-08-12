@@ -7,18 +7,20 @@
   -->
 
 <script lang="ts" setup>
-import { MTransitionProps } from './models'
+import { MTransitionProps as Props } from './models'
 
-interface Props {
-  enterIn?: MTransitionProps['enterIn'];
-  enterOut?: MTransitionProps['enterOut'];
-  slow?: MTransitionProps['slow'];
+interface P {
+  enterIn?: Props['enterIn'];
+  enterOut?: Props['enterOut'];
+  slowIn?: Props['slowIn'];
+  slowOut?: Props['slowIn'];
 }
 
-withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<P>(), {
   enterIn: () => 'fadeIn',
   enterOut: () => 'fadeOut',
-  slow: () => !0
+  slowIn: () => !1,
+  slowOut: () => !1
 })
 // const def = ref({})
 //
@@ -49,8 +51,8 @@ withDefaults(defineProps<Props>(), {
 
 <template>
   <TransitionGroup
-    :enter-active-class="`animated ${enterIn} ${slow ? 'slow' : ''}`"
-    :leave-active-class="`animated ${enterOut} ${slow ? 'slow' : ''}`"
+    :enter-active-class="`animated ${enterIn} ${slowIn ? 'slow' : ''}`"
+    :leave-active-class="`animated ${enterOut} ${slowOut ? 'slow' : ''}`"
     appear
     name="m__transition__fade"
     v-bind="$attrs"

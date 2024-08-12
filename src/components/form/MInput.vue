@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MInputProps as Props } from './models.d'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, useAttrs } from 'vue'
 import { QField, QInput, QInputSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 
@@ -29,7 +29,7 @@ type P = {
   hint?: Props['hint'];
   placeholder?: Props['placeholder'];
   help?: Props['help'];
-  required?: Props['required'];
+  // required?: Props['required'];
   rules?: Props['rules'];
   errors?: Props['errors'];
   viewMode?: Props['viewMode'];
@@ -53,7 +53,7 @@ const props = withDefaults(defineProps<P>(), {
   hint: undefined,
   placeholder: undefined,
   help: undefined,
-  required: undefined,
+  // required: undefined,
   rules: undefined,
   errors: undefined,
   viewMode: () => !1,
@@ -61,11 +61,12 @@ const props = withDefaults(defineProps<P>(), {
   autocomplete: undefined,
   topLabel: undefined
 })
-const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const helper = useInputHelper<P>(() => props, 'input')
-const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute } = helper
-const inputScope = useField<Props['modelValue']>(() => props.name, computed(() => props.rules), {
-  initialValue: modelValue,
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
+const attrs = useAttrs()
+const helper = useInputHelper<P>(() => props, 'input', () => ({ attrs }))
+const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, getRules } = helper
+const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
+  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -84,6 +85,7 @@ defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
 
 <script lang="ts">
 export default {
+  name: 'MInput',
   inheritAttrs: !1
 }
 </script>
@@ -122,12 +124,12 @@ export default {
     <component
       :is="viewMode ? QField : QInput"
       ref="input"
-      v-model="value"
       :autocomplete="getAutocompleteAttribute"
       :error="!!errorMessage"
       :error-message="errorMessage"
       :hint="__(hint)"
       :label="hasTopLabel ? undefined : getLabel"
+      :model-value="value"
       :placeholder="getPlaceholder"
       v-bind="{ ...$myth.options.input as any,...( viewMode ? $myth.options.field : {} ), ...$attrs, ...( viewMode ? { stackLabel: !0 } : {} ) }"
       v-on="listeners"
