@@ -80,7 +80,7 @@ export type BaseInputFormProps = {
   /**
    * Input Required validation.
    */
-  // required?: boolean;
+  required?: boolean;
   /**
    * Input Validation Rules.
    */
@@ -108,15 +108,15 @@ export type BaseInputFormProps = {
   /**
    * Mobile Rule.
    */
-  // mobile?: boolean | string | number | undefined;
+  mobile?: boolean | string | number | undefined;
   /**
    * Email Rule.
    */
-  // email?: boolean;
+  email?: boolean;
   /**
    * Number Rule.
    */
-  // float?: boolean;
+  float?: boolean;
 }
 export type BaseInputsProps = ViewModeProps & InputHelpProps & Omit<MColProps, 'name'> & BaseInputFormProps;
 
@@ -145,47 +145,6 @@ export type BaseInputsSlots = InputHelpSlots & {
 
 export declare type GenericFormValues = Record<any, any>;
 
-export interface VeeFormFormMeta {
-  touched: boolean;
-  dirty: boolean;
-  valid: boolean;
-  validated: boolean;
-  pending: boolean;
-  initialValues?: GenericFormValues;
-}
-
-export interface VeeFormSubmissionContext<TValues extends GenericFormValues = GenericFormValues> extends FormActions<TValues> {
-  evt?: Event;
-  controlledValues: Partial<TValues>;
-}
-
-export interface VeeFormState<TValues extends GenericFormValues = GenericFormValues> {
-  values: TValues;
-  errors: Partial<Record<keyof TValues, string | undefined>>;
-  touched: Partial<Record<keyof TValues, boolean>>;
-  submitCount: number;
-}
-
-export type VeeFieldFormScope = {
-  errors: Record<string, string>;
-  isSubmitting: Ref<boolean>;
-  meta: VeeFormFormMeta;
-  values: GenericFormValues | any;
-  setFieldError: (field: string, message: string) => void
-  setErrors: (fields: Record<string, string>) => void
-  setFieldValue: (field: string, value: any) => void
-  setValues: (fields: Record<string, any>) => void
-  setFieldTouched: (field: string, isTouched: boolean) => void
-  setTouched: (fields: Record<string, boolean>) => void
-  validate: () => Promise<{ valid: boolean; errors: Record<string, string> }>
-  validateField: (field: string) => Promise<{ valid: boolean; errors: string[] }>
-  handleSubmit: (evt: Event, cb: (values: Record<string, any>, ctx: VeeFormSubmissionContext) => any) => Promise<void>
-  submitForm: (evt: Event) => void
-  submitCount: number
-  handleReset: () => void
-  resetForm: (state?: Partial<VeeFormState>) => void;
-}
-
 export interface MBtnProps extends QBtnProps {
   color?: string | undefined
   noCaps?: boolean | undefined
@@ -203,7 +162,6 @@ export interface MBtnSlots extends QBtnSlots {
 }
 
 export type MInputProps = Omit<QInputProps, 'rules' | 'name' | 'modelValue' | 'label' | 'hint'> & BaseInputsProps
-
 export type MPasswordProps = MInputProps & {
   /**
    * icon prepend it to password input.
@@ -216,6 +174,19 @@ export type MPasswordProps = MInputProps & {
 }
 
 export type MInputSlots = QInputSlots & QFieldSlots & BaseInputsSlots
+
+export type MHiddenInputSlots = object
+export type MHiddenInputProps = {
+  /**
+   * Input name.
+   */
+  name: string;
+  /**
+   * Input model value.
+   */
+  modelValue: any;
+}
+
 export type MOptionsOptionContext = Omit<QToggleProps, 'modelValue'> & Omit<QRadioProps, 'modelValue'> & Omit<QCheckboxProps, 'modelValue'> & {
   /**
    * Label to display along the component
@@ -393,9 +364,9 @@ export interface MFormProps {
   formProps?: Record<string, any>;
   opts?: FormOptions;
 }
-
+export type MFormScope = FormContext;
 export interface MFormSlots {
-  default: (scope: FormContext) => VNode[];
+  default: (scope: MFormScope) => VNode[];
 }
 
 export type MAvatarViewerModelValue = File | null | undefined;
@@ -439,9 +410,13 @@ export type MAvatarViewerProps = QAvatarProps & MColProps & {
    */
   label?: string;
   /**
-   * List of errors contains prop name { [name]: ['error1','error2']}
+   * List of error messages.
    */
-  errors?: Record<string, string[] | string | undefined>;
+  errors?: InputErrorsContext;
+  /**
+   * List of form errors.
+   */
+  formErrors?: InputFormErrorsContext;
   /**
    * Model of the component;
    * Must be FileList or Array if using 'multiple' prop;

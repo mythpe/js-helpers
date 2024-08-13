@@ -27,6 +27,7 @@ interface P {
   readonly?: Props['readonly'];
   disable?: Props['disable'];
   viewMode?: Props['viewMode'];
+  required?: Props['required'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -44,7 +45,8 @@ const props = withDefaults(defineProps<P>(), {
   btnProps: undefined,
   readonly: undefined,
   disable: undefined,
-  viewMode: () => !1
+  viewMode: () => !1,
+  required: undefined
 })
 
 const isDate = computed(() => props.type === 'date')

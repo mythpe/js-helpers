@@ -21,6 +21,7 @@ import MEditor from './form/MEditor.vue'
 import MEmail from './form/MEmail.vue'
 import MFile from './form/MFile.vue'
 import MForm from './form/MForm.vue'
+import MHiddenInput from './form/MHiddenInput.vue'
 import MInput from './form/MInput.vue'
 import MInputLabel from './form/MInputLabel.vue'
 import MMobile from './form/MMobile.vue'
@@ -55,6 +56,7 @@ import MFadeXTransition from './transition/MFadeXTransition.vue'
 
 import MTypingString from './typography/MTypingString.vue'
 import MHelpRow from './typography/MHelpRow.vue'
+import { MHiddenInputProps } from 'src/components/form/models'
 
 export {
   MDatatable,
@@ -72,6 +74,7 @@ export {
   MEmail,
   MFile,
   MForm,
+  MHiddenInput,
   MInput,
   MInputLabel,
   MMobile,

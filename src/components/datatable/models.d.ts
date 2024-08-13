@@ -9,7 +9,7 @@
 import { AxiosResponse } from 'axios'
 import { QAvatarProps, QAvatarSlots, QTableProps, QTableSlots } from 'quasar'
 import { ComputedRef, MaybeRef, Ref, UnwrapNestedRefs, UnwrapRef, VNode } from 'vue'
-import { GenericFormValues, MBtnProps, MBtnSlots, VeeFieldFormScope } from '../form/models'
+import { GenericFormValues, MBtnProps, MBtnSlots, MFormSlots } from '../form/models'
 import { ApiMetaInterface, Generic, StubSchema } from '../../types'
 import { RouteLocationRaw } from 'vue-router'
 
@@ -167,12 +167,8 @@ export type GenericMDtBtn<T extends E = E> = Record<string, any> & {
 }
 
 // type TopSlots = { dt: MDatatableScope; item: MDtItem, index: MDtItemIndex | undefined }
-
+type MFormParameter = Parameters<MFormSlots['default']>[0]
 export interface MDatatableSlots extends Omit<QTableSlots, `body-cell-${string}`> {
-  // top: (scope: QTableSlots['top'] &TopSlots) => VNode[];
-  // 'top-right': (scope: QTableSlots['top-right'] & TopSlots) => VNode[];
-  // 'top-left': (scope: QTableSlots['top-left'] & TopSlots) => VNode[];
-
   tools: ((scope: { dt: MDatatableScope, }) => VNode[]);
 
   selection: ((scope: { dt: MDatatableScope, }) => VNode[]);
@@ -181,9 +177,9 @@ export interface MDatatableSlots extends Omit<QTableSlots, `body-cell-${string}`
 
   show: ((scope: { item: MDtItem, index: MDtItemIndex, }) => VNode[]);
 
-  form: ((scope: MDatatableScope & { item: MDtItem, index: MDtItemIndex, form: VeeFieldFormScope, }) => VNode[]);
+  form: ((scope: MDatatableScope & { item: MDtItem, index: MDtItemIndex, form: MFormParameter, }) => VNode[]);
 
-  'form-actions': ((scope: MDatatableScope & { item: MDtItem, index: MDtItemIndex, form: VeeFieldFormScope, }) => VNode[]);
+  'form-actions': ((scope: MDatatableScope & { item: MDtItem, index: MDtItemIndex, form: MFormParameter, }) => VNode[]);
 
   [K: `body-cell-${string}`]: ((scope: Parameters<QTableSlots['body-cell']>[0] & { dt: MDatatableScope }) => VNode[]);
 }
@@ -253,10 +249,6 @@ export type MDatatableProps<I extends GenericFormValues = GenericFormValues> = O
    * Auto actions body headers 'control'
    */
   noBodyControl?: boolean;
-  /**
-   * Use this instead of form values
-   */
-  formModel?: Record<string, any>;
   /**
    * Auto actions card 'control'
    */

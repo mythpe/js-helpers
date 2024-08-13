@@ -6,36 +6,20 @@
   - Github: https://github.com/mythpe
   -->
 
-<template>
-  <q-dialog
-    :transition-hide="$q.screen.lt.md ? slideHide : (slideProp ? slideHide : 'jump-down')"
-    :transition-show="$q.screen.lt.md ? slideShow : (slideProp ? slideShow : 'jump-up')"
-    allow-focus-outside
-    maximized
-    no-backdrop-dismiss
-    no-esc-dismiss
-    no-shake
-    persistent
-    v-bind="{...($myth.options.dialog||{}),...($attrs||{})}"
-  >
-    <slot />
-  </q-dialog>
-</template>
-
 <script
   lang="ts"
   setup
 >
 
 import { computed } from 'vue'
-import { MDialogProps } from './models'
+import { MDialogProps as Props } from './models'
 
-interface Props {
-  slide?: MDialogProps['slide'] | undefined;
-  from?: MDialogProps['from']
+interface P {
+  slide?: Props['slide'] | undefined;
+  from?: Props['from']
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<P>(), {
   slide: () => !1,
   from: () => 'left'
 })
@@ -57,3 +41,19 @@ export default {
   inheritAttrs: !1
 }
 </script>
+
+<template>
+  <q-dialog
+    :transition-hide="$q.screen.lt.md ? slideHide : (slideProp ? slideHide : 'jump-down')"
+    :transition-show="$q.screen.lt.md ? slideShow : (slideProp ? slideShow : 'jump-up')"
+    allow-focus-outside
+    maximized
+    no-backdrop-dismiss
+    no-esc-dismiss
+    no-shake
+    persistent
+    v-bind="{...$myth.options.dialog,...$attrs}"
+  >
+    <slot />
+  </q-dialog>
+</template>

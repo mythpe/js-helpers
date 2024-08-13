@@ -220,7 +220,7 @@ export const Helpers = {
       }
     })
   },
-  async scrollToElement (el: HTMLElement | string, opt?: { target?: HTMLElement, duration?: number; }) {
+  async scrollToElement (el: HTMLElement | string, opt?: { target?: HTMLElement | string, duration?: number; }) {
     await nextTick()
     const { getScrollTarget, setVerticalScrollPosition, getVerticalScrollPosition } = scroll
     const scrollTo = typeof el === 'string' ? document.querySelector(el) as HTMLElement : el
@@ -228,7 +228,10 @@ export const Helpers = {
       return
     }
     await nextTick()
-    const target = getScrollTarget(opt?.target || window.document.documentElement)
+    const { target: t } = opt || {}
+    const targetSelector = typeof t === 'string' ? document.querySelector(t) as HTMLElement : t
+    const target = getScrollTarget(targetSelector || window.document.documentElement)
+    // console.log(target)
     // let offset = 0
     // try {
     //   let parent = scrollTo
@@ -277,15 +280,20 @@ export const Helpers = {
     // })
     setVerticalScrollPosition(target, (offset + current) - 100, duration)
   },
-  async scrollToElementFromErrors (errors?: Record<number, string[]>, elm?: any) {
+  async scrollToElementFromErrors (errors?: Record<string, string[]>, elm?: any, target?: any) {
     if (!errors) {
       return
     }
     const list = Object.values(errors).filter(e => !!e && e?.length > 0)
     if (list.length > 0) {
       const k = Object.keys(errors)[0]
-      // console.log(elm || `[name='${k}']`)
-      await this.scrollToElement(elm || `[name='${k}']`)
+      if (!elm) {
+        const e = document.querySelector(`[data-input-name='${k}']`) as HTMLElement
+        const selector = `[data-input-name='${k}']`
+        await this.scrollToElement(e ? selector : `[name='${k}']`, { target })
+      } else {
+        await this.scrollToElement(elm, { target })
+      }
     }
   },
   makeUrl (path: string) {

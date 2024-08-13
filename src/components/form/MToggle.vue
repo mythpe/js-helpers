@@ -42,6 +42,7 @@ interface P {
   rules?: Props['rules'];
   dense?: Props['dense'];
   keepColor?: Props['keepColor'];
+  required?: Props['required'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -71,9 +72,10 @@ const props = withDefaults(defineProps<P>(), {
   errors: undefined,
   rules: undefined,
   dense: undefined,
-  keepColor: undefined
+  keepColor: undefined,
+  required: undefined
 })
-const modelValue = defineModel<Props['modelValue']>({ required: !1, default: null })
+defineModel<Props['modelValue']>({ required: !1, default: null })
 const { __ } = useMyth()
 const attrs = useAttrs()
 const helper = useInputHelper<P>(() => props, 'toggle', () => ({ choose: !0, attrs }))

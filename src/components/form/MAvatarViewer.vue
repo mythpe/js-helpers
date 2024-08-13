@@ -12,7 +12,7 @@ import { computed, nextTick, onBeforeUnmount, ref, useAttrs, watch } from 'vue'
 
 import MFile from './MFile.vue'
 import { MAvatarViewerModelValue, MAvatarViewerProps as Props } from './models'
-import { Field as VeeField } from 'vee-validate'
+import { Field as VeeField, useField, useFieldError } from 'vee-validate'
 import { useInputHelper } from '../../composables'
 
 interface P {
@@ -39,6 +39,7 @@ interface P {
   captionProps?: Props['captionProps'];
   hint?: Props['hint'];
   hintProps?: Props['hintProps'];
+  formErrors?: Props['formErrors'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -64,7 +65,8 @@ const props = withDefaults(defineProps<P>(), {
   hint: undefined,
   hintProps: undefined,
   caption: undefined,
-  captionProps: undefined
+  captionProps: undefined,
+  formErrors: () => ({})
 })
 type Events = {
   (e: 'click', evt?: Event): void;
@@ -72,39 +74,50 @@ type Events = {
 const emit = defineEmits<Events>()
 const attrs = useAttrs()
 const { accepts } = useInputHelper<any>(() => props, 'avatarViewer', () => ({ attrs }))
+const errorMessage = useFieldError(() => props.name)
+const modelValue = defineModel<MAvatarViewerModelValue>({ required: !0, default: null })
 
-const modelValue = defineModel<MAvatarViewerModelValue>({ required: !0, default: undefined })
-const url = defineModel<string>('url', { required: false, type: String })
-const errors = defineModel<Props['errors']>('errors', { required: true, default: () => ({}) })
-const getErrors = computed<Record<string, string[]> | undefined>(() => {
-  if (errors.value?.[props.name]) {
-    if (typeof errors.value[props.name] === 'string') {
-      return {
-        [props.name]: [
-          errors.value[props.name] as string
-        ]
-      }
-    }
-    return errors.value as Record<string, string[]>
-  }
-  return undefined
+const removedModel = defineModel<boolean>('removed', { required: !1, default: null })
+const removedScope = useField<Props['removed']>(() => `${props.name}_removed`, undefined, {
+  initialValue: removedModel,
+  syncVModel: 'removed'
 })
-const removed = defineModel<boolean>('removed')
+const { handleChange: handleRemoved } = removedScope
 
-const blobRef = ref<typeof MFile | null | undefined>()
+const urlModel = defineModel<string>('url', { required: !1, default: null })
+const urlScope = useField<Props['url']>(() => `${props.name}_url`, undefined, {
+  initialValue: urlModel,
+  syncVModel: 'url'
+})
+const { value: url, handleChange: handleUrl } = urlScope
 
-const hasErrors = computed(() => (errors.value?.[props.name] ?? []).length > 0)
+const errors = defineModel<Props['errors']>('errors', { required: true, default: () => ({}) })
+
+const getErrors = computed<string[]>(() => {
+  let e = errors.value || []
+  if (props.formErrors?.[props.name]) {
+    e = [...e, ...props.formErrors[props.name]]
+  }
+  return e
+})
+
+const fileRef = ref<typeof MFile | null | undefined>()
+const pickFiles = () => fileRef.value?.pickFiles()
+const removeFile = () => fileRef.value?.removeAtIndex(0)
+
+const hasErrors = computed(() => getErrors.value.length > 0)
 
 const veeFieldRemovedValue = ref<InstanceType<typeof VeeField>>()
-const veeFieldUrlValue = ref<InstanceType<typeof VeeField>>()
 
-/** Blob file to url helpers */
-const blobUrl = ref<string | undefined>()
+/**
+ * Blob file to url helpers
+ */
+const blobUrl = ref<string | null>(null)
 const isLoaded = ref(!1)
 const revoke = () => {
   if (blobUrl.value) {
     URL.revokeObjectURL(blobUrl.value)
-    blobUrl.value = undefined
+    blobUrl.value = null
   }
 }
 const toUrl = (data?: any) => {
@@ -112,10 +125,12 @@ const toUrl = (data?: any) => {
   blobUrl.value = URL.createObjectURL(data)
   return blobUrl
 }
-/** Blob file to url helpers */
+
 const hasSrc = computed(() => !!modelValue.value || !!url.value)
 
-/** Check if blob value is a File & not image */
+/**
+ * Check if blob value is a File & not image
+ */
 const isFile = computed(() => {
   if (!(modelValue.value instanceof File)) {
     return !1
@@ -124,30 +139,28 @@ const isFile = computed(() => {
 })
 const getAvatarText = computed(() => props.avatarText ? props.avatarText.slice(0, 1).toUpperCase() : undefined)
 const onClick = (e?: Event) => {
-  errors.value = {}
+  errors.value = []
   if (props.clearable && hasSrc.value) {
     onClearInput()
     return
   }
-  blobRef.value?.pickFiles()
+  pickFiles()
   nextTick(() => emit('click', e))
 }
 const onClearInput = () => {
-  blobRef.value?.removeAtIndex(0)
-  nextTick(() => {
-    veeFieldUrlValue.value?.reset({ value: undefined })
-    veeFieldRemovedValue.value?.reset({ value: !0 })
-  })
+  removeFile()
+  handleRemoved(!0, !1)
+  handleUrl(null, !1)
 }
 onBeforeUnmount(() => {
   revoke()
-  blobRef.value?.removeAtIndex(0)
+  removeFile()
   veeFieldRemovedValue.value?.reset({ value: undefined })
 })
-watch(() => modelValue.value, (v) => {
+watch(modelValue, (v) => {
   if (v instanceof File) {
-    toUrl(v)
-    errors.value = {}
+    errors.value = []
+    nextTick(() => toUrl(v))
   }
 })
 </script>
@@ -166,6 +179,7 @@ export default {
     :col="col"
     :lg="lg"
     :md="md"
+    :name="name"
     :sm="sm"
     :xs="xs"
   >
@@ -242,39 +256,12 @@ export default {
           />
         </div>
         <div
-          v-if="!!errors"
+          v-if="!!errorMessage"
           key="errors"
           class="q-mb-sm"
         >
-          <span class="text-body2 text-negative">{{ typeof errors[name] === 'string' ? errors[name] : errors[name]?.[0] }}</span>
+          <span class="text-body2 text-negative">{{ errorMessage }}</span>
         </div>
-        <MFile
-          key="file"
-          ref="blobRef"
-          v-model="modelValue"
-          :accept="accepts.join(',')"
-          :clearable="clearable"
-          :errors="getErrors"
-          :name="name"
-          class="hidden"
-        />
-        <VeeField
-          key="removed"
-          ref="veeFieldRemovedValue"
-          v-model="removed"
-          :name="`${name}_removed`"
-          :value="!0"
-          class="hidden"
-          type="checkbox"
-        />
-        <VeeField
-          key="url"
-          ref="veeFieldUrlValue"
-          v-model="url"
-          :name="`${name}_url`"
-          class="hidden"
-          type="textarea"
-        />
       </MTransition>
       <slot name="caption">
         <div
@@ -285,7 +272,16 @@ export default {
           {{ __(caption) }}
         </div>
       </slot>
-      <slot />
     </MColumn>
+    <slot />
+    <MFile
+      key="file"
+      ref="fileRef"
+      v-model="modelValue"
+      :accept="accepts.join(',')"
+      :clearable="clearable"
+      :name="name"
+      class="hidden"
+    />
   </MCol>
 </template>

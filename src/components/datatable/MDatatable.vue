@@ -31,6 +31,9 @@ import MDtContextmenuItems from './MDtContextmenuItems.vue'
 import MDtBtn from './MDtBtn.vue'
 import { AxiosRequestConfig } from 'axios'
 import MForm from '../form/MForm.vue'
+import { MFormScope } from 'src/components/form/models'
+import { InvalidSubmissionHandler, SubmissionHandler } from 'vee-validate'
+import MDialog from '../modal/MDialog.vue'
 
 const initPaginationOptions: MDatatablePagination = {
   sortBy: undefined,
@@ -91,7 +94,6 @@ interface Props {
   noAddBtnFab?: MDatatableProps['noAddBtnFab'];
   noFullscreen?: MDatatableProps['noFullscreen'];
   noBodyControl?: MDatatableProps['noBodyControl'];
-  formModel?: MDatatableProps['formModel'];
   showCardControlHeader?: MDatatableProps['showCardControlHeader'];
   dense?: MDatatableProps['dense'];
   bordered?: MDatatableProps['bordered'];
@@ -150,7 +152,6 @@ const props = withDefaults(defineProps<Props>(), {
   noAddBtnFab: undefined,
   noFullscreen: undefined,
   noBodyControl: undefined,
-  formModel: undefined,
   showCardControlHeader: undefined,
   dense: undefined,
   bordered: undefined,
@@ -564,6 +565,7 @@ const exportData = (type: MDtExportOptions) => {
 }
 /** Methods */
 
+const openDialogTimeout = 100
 /** Filter Dialog */
 const openFilterDialog = () => {
   dialogs.filter = !0
@@ -596,7 +598,6 @@ const updateFilterOptions = (data: Record<string, any>) => {
   }
 }
 /** Filter Dialog */
-const openDialogTimeout = 100
 /** Show Dialog */
 const openShowDialogNoIndex = async (i: MDtItem) => {
   const item = toRef(i)
@@ -744,73 +745,87 @@ const removeDtItem = (i: MDtItem | number) => {
   }
 }
 const ignoreKeysProps = computed(() => props.ignoreKeys)
-const formDialogRef = ref<InstanceType<typeof MForm>>()
-const defaultSubmitItem = async (_form: Record<string, any>) => {
-  console.log('Submitting form...', formDialogRef.value)
-  if (_form.id !== 2500) {
-    return
-  }
-  // let form = { ..._form, ...(dialogs.itemForm || {}) }
-  let form = { ...(props.formModel ? props.formModel : _form) }
-  if (loading.value) {
-    return
-  }
-  loading.value = !0
-  const api = getMythApiServicesSchema()
-  form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withStore')
-  if (!form.requestWith) {
-    delete form.requestWith
-  }
-  const fdt = isUpdateMode.value ? 'u' : 'c'
-  form.fdt = fdt
-  if (ignoreKeysProps.value) {
-    if (typeof ignoreKeysProps.value === 'function') {
-      form = ignoreKeysProps.value(form)
-    } else {
-      for (const k in ignoreKeysProps.value) {
-        delete form[ignoreKeysProps.value[k]]
-      }
-    }
-  }
 
-  const ignoreKeys = [
-    '_to_string',
-    '_to_number_format',
-    '_to_date_format',
-    'toString',
-    'toNumberFormat',
-    'toDateFormat'
-  ]
-
-  for (const i in ignoreKeys) {
-    for (const k in form) {
-      if (k.slice(-ignoreKeys[i].length) === ignoreKeys[i]) {
-        delete form[k]
-      }
+const defaultSubmitItem = async (evt?: Event, { handleSubmit }: MFormScope) => {
+  const onSuccess: SubmissionHandler = async (values) => {
+    // let form = { ..._form, ...(dialogs.itemForm || {}) }
+    // let form = { ...(props.formModel ? props.formModel : {}) }
+    let form: { [K: string | number | symbol]: any } = {
+      requestWith: undefined,
+      fdt: undefined,
+      ...values
+    } as any
+    if (loading.value) {
+      return
     }
-  }
-  const _conf: any = { params: { fdt } }
-  const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form, _conf) : await api.store(form, _conf)
-  try {
-    const { _data, _message, _success }: any = await method()
-    _message && myth.alertSuccess(_message)
-    if (_success) {
-      if (isUpdateMode.value) {
-        _data && updateDatatableItem(_data, dialogs.index)
+    loading.value = !0
+    const api = getMythApiServicesSchema()
+    form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withStore')
+    if (!form.requestWith) {
+      delete form.requestWith
+    }
+    const fdt = isUpdateMode.value ? 'u' : 'c'
+    form.fdt = fdt
+    if (ignoreKeysProps.value) {
+      if (typeof ignoreKeysProps.value === 'function') {
+        form = ignoreKeysProps.value(form) as any
       } else {
-        await nextTick()
-        refresh()
+        for (const k in ignoreKeysProps.value) {
+          delete form[ignoreKeysProps.value[k] as any]
+        }
       }
-      await nextTick()
-      closeFormDialog()
     }
-  } catch (e: any) {
-    const { _message, _errors } = e || {}
-    dialogs.errors = _errors || {}
-    _message && myth.alertError(_message)
-  } finally {
-    loading.value = !1
+
+    const ignoreKeys = [
+      '_to_string',
+      '_to_number_format',
+      '_to_date_format',
+      'toString',
+      'toNumberFormat',
+      'toDateFormat'
+    ]
+
+    for (const i in ignoreKeys) {
+      for (const k in form) {
+        if (k.slice(-ignoreKeys[i].length) === ignoreKeys[i]) {
+          delete form[k]
+        }
+      }
+    }
+    const _conf: any = { params: { fdt } }
+    const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form, _conf) : await api.store(form, _conf)
+    try {
+      const { _data, _message, _success }: any = await method()
+      _message && myth.alertSuccess(_message)
+      if (_success) {
+        if (isUpdateMode.value) {
+          _data && updateDatatableItem(_data, dialogs.index)
+        } else {
+          await nextTick()
+          refresh()
+        }
+        await nextTick()
+        closeFormDialog()
+      }
+    } catch (e: any) {
+      const { _message, _errors } = e || {}
+      dialogs.errors = _errors || {}
+      await myth.helpers.scrollToElementFromErrors(_errors)
+      _message && myth.alertError(_message)
+    } finally {
+      loading.value = !1
+    }
   }
+  const onInvalidSubmit: InvalidSubmissionHandler = ({ errors }) => {
+    const keys: (keyof typeof errors)[] = Object.keys(errors)
+    if (keys.length) {
+      const message = errors[keys[0]] as string || myth.__('messages.the_given_data_was_invalid')
+      myth.helpers.scrollToElementFromErrors({ [keys[0]]: [message] }, undefined, '.m--datatable__dialog-form-container')
+      myth.alertError(message)
+    }
+  }
+  const onSubmit = handleSubmit(onSuccess, onInvalidSubmit)
+  await onSubmit(evt)
 }
 const hideAutoMessage = computed(() => props.hideAutoMessage)
 const onDeleteItem = (i: MDtItem, index: number) => {
@@ -1867,7 +1882,6 @@ const getProp = computed(() => (k: keyof Props) => {
       v-bind="$myth.options.dt?.formDialogProps"
     >
       <MForm
-        ref="formDialogRef"
         v-slot="form"
         :errors="dialogs.errors"
         :form="dialogs.item"
@@ -1920,7 +1934,7 @@ const getProp = computed(() => (k: keyof Props) => {
           <q-separator />
           <q-card-section
             :style="`height: ${($q.screen.height || 100) - 3 - (($refs.formActions as any)?.$el?.offsetHeight || 60) - (($refs.formTitle as any)?.$el?.offsetHeight || 80)}px`"
-            class="scroll"
+            class="scroll m--datatable__dialog-form-container"
           >
             <MContainer v-if="tableOptions.loading && !dialogs.item">
               <MRow

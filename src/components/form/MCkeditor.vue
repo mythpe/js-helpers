@@ -82,7 +82,7 @@ type P = {
   label?: Props['label'];
   caption?: Props['caption'];
   help?: Props['help'];
-  // required?: Props['required'];
+  required?: Props['required'];
   rules?: Props['rules'];
   errors?: Props['errors'];
   viewMode?: Props['viewMode'];
@@ -107,7 +107,7 @@ const props = withDefaults(defineProps<P>(), {
   label: undefined,
   caption: undefined,
   help: undefined,
-  // required: undefined,
+  required: undefined,
   rules: undefined,
   errors: undefined,
   viewMode: () => !1,

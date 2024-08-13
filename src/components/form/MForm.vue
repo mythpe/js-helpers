@@ -7,11 +7,9 @@
   -->
 
 <script lang="ts" setup>
-import { Form as VeeForm, InvalidSubmissionHandler, SubmissionContext, SubmissionHandler, useForm } from 'vee-validate'
+import { useForm } from 'vee-validate'
+import { MFormProps as Props, MFormScope } from './models'
 import { reactive } from 'vue'
-import { MFormProps as Props } from 'src/components/form/models'
-
-type VeeFormElm = InstanceType<typeof VeeForm>
 
 interface P {
   formProps?: Props['formProps'];
@@ -24,36 +22,35 @@ const props = withDefaults(defineProps<P>(), {
 })
 
 const formContext = useForm(props.opts)
-const { handleSubmit } = formContext
-// (cb: SubmissionHandler<TValues, TOutput, TReturn>, onSubmitValidationErrorCb?: InvalidSubmissionHandler<TValues, TOutput>)
-type Events = {
-  (e: 'submit', values: Record<string, any>, ctx: SubmissionContext): void;
+type Emits = {
+  (e: 'submit', evt?: Event, ctx: MFormScope): void;
 }
-const emit = defineEmits<Events>()
-// const onSubmit = (values: Record<string, any>, ctx: SubmissionContext): void => emit('submit', values, ctx)
+const emit = defineEmits<Emits>()
 
-const onSuccess: SubmissionHandler = (values, ctx) => {
-  console.log(ctx)
-}
-
-const onInvalidSubmit: InvalidSubmissionHandler = (values) => {
-  console.log(values) // current form values
-  // console.log(errors) // a map of field names and their first error message
-  // console.log(results) // a detailed map of field names and their validation results
-}
-
+// const onSuccess: SubmissionHandler = (values, ctx) => {
+//   console.log(ctx)
+// }
+// const onInvalidSubmit: InvalidSubmissionHandler = ({ errors }) => {
+//   const keys: (keyof typeof errors)[] = Object.keys(errors)
+//   if (keys.length) {
+//     console.log(errors[keys[0]])
+//     // console.log(keys[0])
+//     helpers.scrollToElementFromErrors({
+//       [keys[0]]: [
+//         errors[keys[0]] as string
+//       ]
+//     })
+//   }
+//   // console.log(keys, errors) // current form values
+//   // console.log(errors) // a map of field names and their first error message
+//   // console.log(results) // a detailed map of field names and their validation results
+// }
+const scope = reactive(formContext)
 const submit = (e?: Event) => {
   e?.preventDefault()
   e?.stopImmediatePropagation()
-
-  const a = handleSubmit(onSuccess, onInvalidSubmit)
-  const onSubmit = handleSubmit((...values) => {
-    console.log(values)
-  })
-  onSubmit(e)
-  console.log(e)
+  emit('submit', e, formContext)
 }
-const scope = reactive(formContext)
 defineExpose({ ...scope })
 </script>
 
@@ -74,7 +71,7 @@ export default {
       v-bind="formProps"
       @submit="submit"
     >
-      <slot v-bind="scope" />
+      <slot v-bind="formContext" />
     </form>
   </div>
 </template>

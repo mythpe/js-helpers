@@ -28,7 +28,7 @@ type P = {
   hint?: Props['hint'];
   help?: Props['help'];
   val?: Props['val'];
-  // required?: Props['required'];
+  required?: Props['required'];
   rules?: Props['rules'];
   errors?: Props['errors'];
   dense?: Props['dense'];
@@ -54,7 +54,7 @@ const props = withDefaults(defineProps<P>(), {
   hint: undefined,
   help: undefined,
   val: undefined,
-  // required: undefined,
+  required: undefined,
   rules: undefined,
   errors: undefined,
   dense: undefined,

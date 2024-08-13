@@ -30,7 +30,7 @@ type P = {
   placeholder?: Props['placeholder'];
   help?: Props['help'];
   stackLabel?: Props['stackLabel'];
-  // required?: Props['required'];
+  required?: Props['required'];
   rules?: Props['rules'];
   errors?: Props['errors'];
   viewMode?: Props['viewMode'];
@@ -71,7 +71,7 @@ const props = withDefaults(defineProps<P>(), {
   placeholder: undefined,
   help: undefined,
   stackLabel: undefined,
-  // required: undefined,
+  required: undefined,
   rules: undefined,
   errors: undefined,
   viewMode: () => !1,

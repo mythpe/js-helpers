@@ -30,7 +30,7 @@ type P = {
   hint?: Props['hint'];
   placeholder?: Props['placeholder'];
   help?: Props['help'];
-  // required?: Props['required'];
+  required?: Props['required'];
   rules?: Props['rules'];
   errors?: Props['errors'];
   viewMode?: Props['viewMode'];
@@ -57,7 +57,7 @@ const props = withDefaults(defineProps<P>(), {
   hint: undefined,
   placeholder: undefined,
   help: undefined,
-  // required: undefined,
+  required: undefined,
   rules: undefined,
   errors: undefined,
   viewMode: () => !1,

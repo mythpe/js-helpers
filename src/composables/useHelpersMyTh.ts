@@ -73,14 +73,14 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
       return {}
     }
     const values: Record<string, any> = {}
-
     const list = typeof rules === 'string' ? rules.split('|') : (Array.isArray(rules) ? rules : [rules])
+
     for (const r of list) {
       const [name, value] = r.split(':')
       if (!name) {
         continue
       }
-      rules[name] = !value ? !0
+      values[name] = !value ? !0
         : /,/g.test(value) ? value.split(',').map((e: any) => isNumeric(e) ? parseInt(e) : e) : (isNumeric(value) ? parseInt(value) : value)
     }
     return values
@@ -96,14 +96,14 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
         continue
       }
       const cases = [k, lodash.snakeCase(k), lodash.camelCase(k), lodash.kebabCase(k)]
+
+      mainFor:
       for (const c of cases) {
-        if (c in attrs) {
-          rules[lodash.snakeCase(k)] = attrs[c] ?? !0
-          break
-        }
-        if (c in props) {
-          rules[lodash.snakeCase(k)] = props[c] ?? !0
-          break
+        for (const b of [attrs, props]) {
+          if (c in b && (b[c] === !0 || b[c] === '')) {
+            rules[lodash.snakeCase(k)] = attrs[c] ?? !0
+            break mainFor
+          }
         }
       }
     }

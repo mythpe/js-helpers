@@ -11,7 +11,7 @@
 import { QField, QFile, QFileSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
-import { computed, defineProps, reactive, ref, useAttrs } from 'vue'
+import { computed, defineProps, reactive, ref, useAttrs, watch } from 'vue'
 import { MFileProps as Props } from './models'
 
 interface P {
@@ -29,7 +29,7 @@ interface P {
   hint?: Props['hint'];
   placeholder?: Props['placeholder'];
   help?: Props['help'];
-  // required?: Props['required'];
+  required?: Props['required'];
   rules?: Props['rules'];
   errors?: Props['errors'];
   viewMode?: Props['viewMode'];
@@ -57,7 +57,7 @@ const props = withDefaults(defineProps<P>(), {
   hint: undefined,
   placeholder: undefined,
   help: undefined,
-  // required: undefined,
+  required: undefined,
   rules: undefined,
   errors: undefined,
   viewMode: () => !1,
@@ -205,4 +205,8 @@ export default {
       v-bind="inputScope"
     />
   </MCol>
+  <slot
+    name="hidden"
+    v-bind="inputScope"
+  />
 </template>

@@ -143,6 +143,7 @@ interface P {
   errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   topLabel?: Props['topLabel'];
+  required?: Props['required'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -166,7 +167,8 @@ const props = withDefaults(defineProps<P>(), {
   rules: undefined,
   errors: undefined,
   topLabel: undefined,
-  viewMode: undefined
+  viewMode: undefined,
+  required: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: '' })
 const attrs = useAttrs()

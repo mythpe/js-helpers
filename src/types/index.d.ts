@@ -92,6 +92,7 @@ import {
 import { MaybeRefOrGetter, Ref, TransitionProps, UnwrapNestedRefs } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { MHiddenInputProps, MHiddenInputSlots } from 'src/components'
 
 export * from './api-helpers.d'
 export * from './lodash.d'
@@ -128,6 +129,7 @@ declare module '@vue/runtime-core' {
     MEmail: GlobalComponentConstructor<MInputProps, MInputSlots>;
     MFile: GlobalComponentConstructor<MFileProps, MFileSlots>;
     MForm: GlobalComponentConstructor<MFormProps, MFormSlots>;
+    MHiddenInput: GlobalComponentConstructor<MHiddenInputProps, MHiddenInputSlots>;
     MInput: GlobalComponentConstructor<MInputProps, MInputSlots>;
     MMobile: GlobalComponentConstructor<MInputProps, MInputSlots>;
     MOptions: GlobalComponentConstructor<MOptionsProps, MOptionsSlots>;
