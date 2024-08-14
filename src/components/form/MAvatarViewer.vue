@@ -12,7 +12,7 @@ import { computed, nextTick, onBeforeUnmount, ref, useAttrs, watch } from 'vue'
 
 import MFile from './MFile.vue'
 import { MAvatarViewerModelValue, MAvatarViewerProps as Props } from './models'
-import { Field as VeeField, useField, useFieldError } from 'vee-validate'
+import { useField, useFieldError } from 'vee-validate'
 import { useInputHelper } from '../../composables'
 
 interface P {
@@ -107,8 +107,6 @@ const removeFile = () => fileRef.value?.removeAtIndex(0)
 
 const hasErrors = computed(() => getErrors.value.length > 0)
 
-const veeFieldRemovedValue = ref<InstanceType<typeof VeeField>>()
-
 /**
  * Blob file to url helpers
  */
@@ -155,7 +153,7 @@ const onClearInput = () => {
 onBeforeUnmount(() => {
   revoke()
   removeFile()
-  veeFieldRemovedValue.value?.reset({ value: undefined })
+  handleRemoved(undefined, !1)
 })
 watch(modelValue, (v) => {
   if (v instanceof File) {
