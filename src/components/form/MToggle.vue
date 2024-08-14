@@ -33,6 +33,7 @@ interface P {
   inactiveLabel?: Props['inactiveLabel'];
   trueValue?: Props['trueValue'];
   falseValue?: Props['falseValue'];
+  indeterminateValue?: Props['indeterminateValue'];
   color?: Props['color'];
   checkedIcon?: Props['checkedIcon'];
   indeterminateIcon?: Props['indeterminateIcon'];
@@ -62,6 +63,7 @@ const props = withDefaults(defineProps<P>(), {
   help: undefined,
   trueValue: !0,
   falseValue: !1,
+  indeterminateValue: null,
   color: 'primary',
   checkedIcon: 'ion-checkmark',
   uncheckedIcon: 'ion-close',
@@ -163,6 +165,7 @@ export default {
             :label="getLabel"
             :model-value="value"
             :true-value="trueValue"
+            :indeterminate-value="indeterminateValue"
             v-bind="{
               ...$myth.options.toggle,
               ...$attrs,

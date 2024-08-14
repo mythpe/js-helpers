@@ -62,7 +62,8 @@ import {
 } from 'ckeditor5'
 import arTranslations from 'ckeditor5/translations/ar.js'
 import enTranslations from 'ckeditor5/translations/en.js'
-import { ExtractEditorType } from '@ckeditor/ckeditor5-vue/dist/types'
+import { Ckeditor } from '@ckeditor/ckeditor5-vue'
+import { useMyth } from '../../vue3'
 
 type P = {
   name: Props['name'];
@@ -113,7 +114,8 @@ const props = withDefaults(defineProps<P>(), {
   viewMode: () => !1,
   viewModeValue: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: '' })
+defineModel<Props['modelValue']>({ required: !1, default: '', type: String })
+const { __ } = useMyth()
 const attrs = useAttrs()
 const helper = useInputHelper<any>(() => props, 'ckeditor', () => ({ attrs }))
 const { getLabel, getRules } = helper
@@ -124,15 +126,31 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
   label: getLabel
 })
-const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
+const { value, errors: fieldErrors, handleChange } = inputScope
 const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
 const errorMessage = computed(() => getErrors.value[0] || undefined)
 
+const listeners = {
+  'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
+}
+
+const isRtl = computed(() => props.lang === 'ar')
 const inpConfig = reactive<EditorConfig>({
   language: {
-    // ui: toValue(locale),
-    ui: (props.lang as string) ?? 'ar',
-    content: (props.lang as string) ?? 'ar'
+    ui: computed(() => props.lang).value,
+    content: computed(() => props.lang).value,
+    textPartLanguage: [
+      {
+        title: __('ar'),
+        languageCode: 'ar',
+        textDirection: 'rtl'
+      },
+      {
+        title: __('en'),
+        languageCode: 'en',
+        textDirection: 'ltr'
+      }
+    ]
   },
   translations: [
     arTranslations,
@@ -287,9 +305,8 @@ const getConfig = computed<EditorConfig>(() => {
   }
   return inpConfig as EditorConfig
 })
-const isRtl = computed(() => inpConfig.language === 'ar' || inpConfig.language === 'ar' || inpConfig.language?.ui === 'ar')
 
-const input = ref<ExtractEditorType>()
+const input = ref<any>()
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
 </script>
@@ -364,12 +381,13 @@ export default {
     >
       <ckeditor
         ref="input"
-        v-model="value"
+        :model-value="value || ''"
         :config="getConfig"
         :disable-two-way-data-binding="disableTwoWayDataBinding"
         :disabled="disabled"
         :editor="ClassicEditor"
         :tag-name="tagName"
+        v-on="listeners"
       />
       <slot v-bind="scopes" />
     </div>

@@ -30,8 +30,8 @@ import {
   QUploaderProps,
   QUploaderSlots
 } from 'quasar'
-import { FormActions, FormContext, FormMeta, FormOptions, Path, SubmissionHandler } from 'vee-validate'
-import { ComputedGetter, MaybeRefOrGetter, Ref, UnwrapRef, VNode } from 'vue'
+import { FormContext, FormMeta, FormOptions, Path, SubmissionHandler } from 'vee-validate'
+import { ComputedGetter, MaybeRefOrGetter, UnwrapRef, VNode } from 'vue'
 import { MColProps, ViewModeProps } from '../grid/models'
 import { EditorConfig } from 'ckeditor5'
 
@@ -232,7 +232,7 @@ export type MFileProps = Omit<QFileProps, 'rules' | 'name' | 'label' | 'hint'> &
 export type MFileSlots = BaseInputsSlots
 
 export type MPickerProps =
-  Omit<MInputProps, 'modelValue' | 'type' | 'topLabel'>
+  Omit<MInputProps, 'modelValue' | 'type'>
   & Omit<QDateProps, 'modelValue' | 'options'>
   & Omit<QTimeProps, 'modelValue'>
   & {
@@ -364,7 +364,9 @@ export interface MFormProps {
   formProps?: Record<string, any>;
   opts?: FormOptions;
 }
+
 export type MFormScope = FormContext;
+
 export interface MFormSlots {
   default: (scope: MFormScope) => VNode[];
 }

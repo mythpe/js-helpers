@@ -60,7 +60,6 @@ export default {
 </script>
 
 <template>
-  {{ value }}
   <input
     :value="value"
     type="hidden"

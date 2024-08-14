@@ -7,11 +7,15 @@
   -->
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { MInputSlots, MPickerProps as Props } from './models'
+import { computed, ref, useAttrs } from 'vue'
+import { MPickerProps as Props } from './models'
 import MInput from './MInput.vue'
+import { useInputHelper } from '../../composables'
+import { useField } from 'vee-validate'
+import { QField, QFieldSlots } from 'quasar'
 
 interface P {
+  name: Props['name'];
   auto?: Props['auto'];
   col?: Props['col'];
   xs?: Props['xs'];
@@ -19,18 +23,29 @@ interface P {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  name: Props['name'];
+  // modelValue?: Props['modelValue'];
+  label?: Props['label'];
+  caption?: Props['caption'];
+  hint?: Props['hint'];
+  placeholder?: Props['placeholder'];
+  help?: Props['help'];
+  required?: Props['required'];
+  rules?: Props['rules'];
+  errors?: Props['errors'];
+  viewMode?: Props['viewMode'];
+  viewModeValue?: Props['viewModeValue'];
+  autocomplete?: Props['autocomplete'];
+  topLabel?: Props['topLabel'];
   type?: Props['type'];
   range?: Props['range'];
   multiple?: Props['multiple'];
   btnProps?: Props['btnProps'];
   readonly?: Props['readonly'];
   disable?: Props['disable'];
-  viewMode?: Props['viewMode'];
-  required?: Props['required'];
 }
 
 const props = withDefaults(defineProps<P>(), {
+  name: () => '',
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -38,31 +53,52 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  name: () => '',
+  // modelValue: undefined,
+  label: undefined,
+  caption: undefined,
+  hint: undefined,
+  placeholder: undefined,
+  help: undefined,
+  required: undefined,
+  rules: undefined,
+  errors: undefined,
+  viewMode: () => !1,
+  viewModeValue: undefined,
+  autocomplete: undefined,
+  topLabel: undefined,
   type: () => 'date',
   range: () => !1,
   multiple: () => !1,
   btnProps: undefined,
   readonly: undefined,
-  disable: undefined,
-  viewMode: () => !1,
-  required: undefined
+  disable: undefined
 })
 
-const isDate = computed(() => props.type === 'date')
-const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
+const attrs = useAttrs()
+const helper = useInputHelper<P>(() => props, 'input', () => ({ choose: !0, attrs }))
+const { hasTopLabel, getLabel, getPlaceholder, getRules } = helper
+const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
+  // initialValue: modelValue,
+  syncVModel: !0,
+  label: getLabel
+})
+const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
+const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
+const errorMessage = computed(() => getErrors.value[0] || undefined)
 
+const isDate = computed(() => props.type === 'date')
 const mask = computed(() => {
   if (props.range || props.multiple) {
     return undefined
-    // return isDate.value ? '####-##-## - ####-##-##' : '##:## - ##:##'
+    // return isDate.value ? '####/##/## - ####-##-##' : '##:## - ##:##'
   }
-  return isDate.value ? '####-##-##' : '##:##'
+  return isDate.value ? '####/##/##' : '##:##'
 })
-const format = computed(() => isDate.value ? 'YYYY-MM-DD' : 'HH:mm')
+const format = computed(() => isDate.value ? 'YYYY/MM/DD' : 'HH:mm')
 const dateRef = ref()
 const onBeforeShow = () => {
-  dateRef.value = modelValue.value || null
+  dateRef.value = value.value || null
 }
 const onBeforeHide = () => {
   dateRef.value = null
@@ -78,107 +114,159 @@ const saveDialog = () => {
     }
     newVal = values
   }
-  modelValue.value = newVal
+  handleChange(newVal, !!errorMessage.value)
 }
 
+const listeners = {
+  blur: (v: any) => handleBlur(v, !0),
+  'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
+}
 const input = ref<InstanceType<typeof MInput> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
 </script>
 
 <template>
-  <MInput
-    ref="input"
-    v-model="modelValue"
+  <MCol
     :auto="auto"
+    :class="$attrs.class"
     :col="col"
-    :disable="disable"
     :lg="lg"
-    :mask="mask"
     :md="md"
     :name="name"
-    :readonly="readonly"
     :sm="sm"
-    :view-mode="viewMode"
     :xs="xs"
-    v-bind="$attrs"
   >
-    <template #append>
-      <q-btn
-        v-if="!disable && !readonly && !viewMode"
-        :icon="isDate ? 'ion-ios-calendar' : 'ion-ios-clock'"
-        flat
-        round
-        v-bind="{...btnProps, ...$myth.options?.pickerBtn}"
+    <slot
+      name="top-input"
+      v-bind="inputScope"
+    />
+    <slot name="top-label">
+      <MInputLabel
+        v-if="hasTopLabel"
+        :for="name"
       >
-        <q-popup-proxy
-          cover
-          no-shake
-          persistent
-          transition-hide="jump-down"
-          transition-show="jump-up"
-          @before-show="onBeforeShow()"
-          @before-hide="onBeforeHide()"
-        >
-          <q-card>
-            <q-date
-              v-if="isDate"
-              v-model="dateRef"
-              :mask="format"
-              :multiple="multiple"
-              :range="range"
-              today-btn
-              v-bind="{...$myth.options.date as any, ...$attrs}"
-            >
-              <div class="row items-center justify-end">
-                <MBtn
-                  v-close-popup
-                  :label="__('close')"
-                  color="negative"
-                  flat
-                />
-                <MBtn
-                  v-close-popup
-                  :label="__('save')"
-                  flat
-                  @click="saveDialog()"
-                />
-              </div>
-            </q-date>
-            <q-time
-              v-else
-              v-model="dateRef"
-              :mask="format"
-              now-btn
-              v-bind="{...$myth.options.time, ...$attrs}"
-            >
-              <div class="row items-center justify-end">
-                <MBtn
-                  v-close-popup
-                  :label="__('close')"
-                  color="negative"
-                  flat
-                />
-                <MBtn
-                  v-close-popup
-                  :label="__('save')"
-                  flat
-                  @click="saveDialog()"
-                />
-              </div>
-            </q-time>
-          </q-card>
-        </q-popup-proxy>
-      </q-btn>
-    </template>
-
-    <template
-      v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
-      :key="slot"
-      #[slot]
+        {{ getLabel }}
+      </MInputLabel>
+    </slot>
+    <slot name="caption">
+      <div
+        v-if="!!caption"
+        class="m--input__caption"
+      >
+        {{ __(caption) }}
+      </div>
+    </slot>
+    <q-field
+      ref="input"
+      :error="!!errorMessage"
+      :error-message="errorMessage"
+      :hint="__(hint)"
+      :label="hasTopLabel ? undefined : getLabel"
+      :model-value="value"
+      v-bind="{ ...$myth.options.input as any,...$attrs, topLabel: undefined }"
+      v-on="listeners"
     >
-      <slot :name="slot" />
-    </template>
-  </MInput>
+      <template #control>
+        <slot name="control">
+          <div v-if="!disable && !readonly && !viewMode && !!getPlaceholder && !value">
+            {{ getPlaceholder }}
+          </div>
+          <template v-else-if="viewMode && viewModeValue">
+            <div>{{ viewModeValue }}</div>
+          </template>
+          <template v-else>
+            <div>{{ value?.toString() }}</div>
+          </template>
+        </slot>
+      </template>
+      <template #append>
+        <q-btn
+          v-if="!disable && !readonly && !viewMode"
+          :icon="isDate ? 'ion-ios-calendar' : 'ion-ios-clock'"
+          flat
+          round
+          v-bind="{...btnProps, ...$myth.options?.pickerBtn}"
+        >
+          <q-popup-proxy
+            cover
+            no-shake
+            persistent
+            transition-hide="jump-down"
+            transition-show="jump-up"
+            @before-show="onBeforeShow()"
+            @before-hide="onBeforeHide()"
+          >
+            <q-card>
+              <q-date
+                v-if="isDate"
+                v-model="dateRef"
+                :mask="format"
+                :multiple="multiple"
+                :range="range"
+                today-btn
+                v-bind="{...$myth.options.date as any, ...$attrs}"
+              >
+                <div class="row items-center justify-end">
+                  <MBtn
+                    v-close-popup
+                    :label="__('close')"
+                    color="negative"
+                    flat
+                  />
+                  <MBtn
+                    v-close-popup
+                    :label="__('save')"
+                    flat
+                    @click="saveDialog()"
+                  />
+                </div>
+              </q-date>
+              <q-time
+                v-else
+                v-model="dateRef"
+                :mask="format"
+                now-btn
+                v-bind="{...$myth.options.time, ...$attrs}"
+              >
+                <div class="row items-center justify-end">
+                  <MBtn
+                    v-close-popup
+                    :label="__('close')"
+                    color="negative"
+                    flat
+                  />
+                  <MBtn
+                    v-close-popup
+                    :label="__('save')"
+                    flat
+                    @click="saveDialog()"
+                  />
+                </div>
+              </q-time>
+            </q-card>
+          </q-popup-proxy>
+        </q-btn>
+      </template>
+
+      <template
+        v-for="(_,slot) in ($slots as Readonly<QFieldSlots>)"
+        :key="slot"
+        #[slot]
+      >
+        <slot :name="slot" />
+      </template>
+    </q-field>
+    <slot
+      name="help"
+      v-bind="inputScope"
+    >
+      <MHelpRow :text="help" />
+    </slot>
+    <slot
+      name="bottom-input"
+      v-bind="inputScope"
+    />
+  </MCol>
 </template>
 
 <script lang="ts">

@@ -171,7 +171,7 @@ export type MythOptionsConfig = {
   column?: Partial<MColumnProps>;
   draggable?: Partial<MDraggableProps>;
   noResultImg?: Partial<MNoResultImgProps>;
-  modalMenu: Partial<MModalMenuProps>;
+  modalMenu?: Partial<MModalMenuProps>;
   modalMenuOptions?: {
     card?: Partial<QCardProps>;
     closeBtn?: Partial<QItemProps>;

@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { computed, defineEmits, nextTick, onMounted, reactive, ref, toRef, useSlots, watch } from 'vue'
-import { is as quasarHelpers, QTable, QTableSlots, useQuasar } from 'quasar'
+import { extend, is as quasarHelpers, QTable, QTableSlots, useQuasar } from 'quasar'
 import lodash from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
 import {
@@ -750,11 +750,8 @@ const defaultSubmitItem = async (evt?: Event, { handleSubmit }: MFormScope) => {
   const onSuccess: SubmissionHandler = async (values) => {
     // let form = { ..._form, ...(dialogs.itemForm || {}) }
     // let form = { ...(props.formModel ? props.formModel : {}) }
-    let form: { [K: string | number | symbol]: any } = {
-      requestWith: undefined,
-      fdt: undefined,
-      ...values
-    } as any
+    // let form: { [K: string | number | symbol]: any } = { requestWith: undefined, fdt: undefined, ...values } as any
+    let form = extend<Record<string, any>>(!0, defaultItem.value, values)
     if (loading.value) {
       return
     }
@@ -1528,6 +1525,7 @@ const getProp = computed(() => (k: keyof Props) => {
                 >
                   <MModalMenu
                     no-close-btn
+                    persistent
                     position="top"
                     v-bind="$myth.options.dt?.filterDialogProps"
                   >

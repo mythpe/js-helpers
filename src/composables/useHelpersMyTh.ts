@@ -101,15 +101,15 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
       for (const c of cases) {
         for (const b of [attrs, props]) {
           if (c in b && (b[c] === !0 || b[c] === '')) {
-            rules[lodash.snakeCase(k)] = attrs[c] ?? !0
+            rules[lodash.snakeCase(k)] = b[c] === !0 || b[c] === '' ? !0 : b[c]
             break mainFor
           }
         }
       }
     }
 
-    const mobile = attrs?.mobile ?? props.mobile
-    if (mobile) {
+    const mobile = attrs?.mobile !== undefined ? attrs.mobile : props.mobile
+    if (mobile !== undefined) {
       const defLen = 10
       rules.digits = typeof mobile === 'boolean' ? defLen : (mobile || defLen)
     }
