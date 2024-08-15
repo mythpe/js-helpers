@@ -32,7 +32,7 @@ type P = {
   stackLabel?: Props['stackLabel'];
   required?: Props['required'];
   rules?: Props['rules'];
-  errors?: Props['errors'];
+  // errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
   autocomplete?: Props['autocomplete'];
@@ -73,7 +73,7 @@ const props = withDefaults(defineProps<P>(), {
   stackLabel: undefined,
   required: undefined,
   rules: undefined,
-  errors: undefined,
+  // errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   autocomplete: undefined,
@@ -97,16 +97,14 @@ const props = withDefaults(defineProps<P>(), {
 })
 defineModel<Props['modelValue']>({ required: !1, default: null })
 const attrs = useAttrs()
-const helper = useInputHelper<P>(() => props, 'select', () => ({ choose: !0, attrs }))
+const helper = useInputHelper<P & Props>(() => props, 'select', () => ({ choose: !0, attrs }))
 const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
-const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
-const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
-const errorMessage = computed(() => getErrors.value[0] || undefined)
+const { value, errorMessage, handleChange, handleBlur } = inputScope
 const minLength = computed(() => parseInt(props.searchLength?.toString()))
 const search = defineModel<string>('search', { required: !1, default: '' })
 const getOptions = computed(() => {

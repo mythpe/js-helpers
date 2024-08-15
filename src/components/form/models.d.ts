@@ -88,7 +88,7 @@ export type BaseInputFormProps = {
   /**
    * Input Error Messages.
    */
-  errors?: InputErrorsContext;
+  // errors?: InputErrorsContext;
   /**
    * Form Error Messages.
    */
@@ -656,9 +656,181 @@ export type MInputLabelProps = {
   error?: boolean;
   required?: boolean;
 }
-
 export type MInputLabelSlots = {
   default: () => VNode[];
+}
+
+export type SignaturePadWaterMark = {
+  /**
+   * Watermark text. default is: ''
+   * e.g. "Your Name", "Your Company", "Date"
+   */
+  text: string;
+  /**
+   * Mark font. Default is: '20px sans-serif'
+   */
+  font: string;
+  /**
+   * Fill Text and Stroke Text,  'all' | 'stroke' | 'fill'.
+   * Default is: 'fill'.
+   */
+  style: 'all' | 'stroke' | 'fill';
+  /**
+   *  Fill color.
+   *  Default is: '#333'
+   */
+  fillStyle: CSSStyleDeclaration['color'];
+  /**
+   * Stroke Color.
+   * Default is: '#333'.
+   */
+  strokeStyle: CSSStyleDeclaration['color'];
+  /**
+   * Fill positionX.
+   * Default is: 20
+   */
+  x: number;
+  /**
+   * fill positionY.
+   * Default is: 20
+   */
+  y: number;
+  /**
+   * Stroke positionX.
+   * Default is: 40
+   */
+  sx: number;
+  /**
+   * Stroke positionY.
+   * Default is: 40
+   */
+  sy: number;
+}
+export type MSignaturePadProps = Omit<MColProps, 'name'> & {
+  /**
+   * Base64 data of the signature.
+   */
+  modelValue?: string | null | undefined;
+  /**
+   * Name of field.
+   * Default is: signature.
+   */
+  name?: string;
+  /**
+   * Signature pen color.
+   * Default is: 'rgb(0, 0, 0)'
+   */
+  color?: CSSStyleDeclaration['color'];
+  /**
+   * Signature pad background color.
+   * Default is: 'rgb(255,255,255)'
+   */
+  bg?: CSSStyleDeclaration['backgroundColor'];
+  /**
+   * Parent container width.
+   * Need units like 100px or 100%
+   * Default is: '100%'
+   */
+  width?: string;
+  /**
+   * Parent container height.
+   * Need units like 100px or 100%
+   * Default is: '200px'
+   */
+  height?: string;
+  /**
+   * Canvas is cleared on window resize.
+   * Default is: false.
+   */
+  clearOnResize?: boolean;
+  /**
+   * Disable Signature pad.
+   * Default is: false.
+   */
+  disabled?: boolean;
+  /**
+   * Add Required validation.
+   * Default is: false.
+   */
+  required?: boolean;
+  /**
+   * Signature pad label.
+   * Default is: undefined.
+   */
+  label?: string | undefined | null;
+  /**
+   * Props of signature pad label.
+   * Default is: undefined.
+   */
+  labelProps?: Record<string, any>;
+  /**
+   * Signature pad center label.
+   * Default is: false.
+   */
+  center?: boolean | undefined;
+  /**
+   * Default value for signature url.
+   * Default is: undefined.
+   */
+  url?: string;
+  /**
+   * Hide control buttons.
+   * Default is: false.
+   */
+  noBtn?: boolean;
+  /**
+   * Size of signature pad label.
+   * Default is: false.
+   */
+  large?: boolean;
+  /**
+   * Signature pad watermark text.
+   * Default is: undefined.
+   */
+  waterMark?: SignaturePadWaterMark;
+}
+export type MSignaturePadMethods = {
+  /**
+   * Save image as PNG/JPEG/SVG
+   * @param type
+   */
+  save: (type: 'image/jpeg' | 'image/svg+xml') => string;
+  /**
+   * Clear canvas
+   */
+  clear: () => void;
+  /**
+   * Returns true if canvas is empty.
+   * otherwise returns false
+   */
+  isEmpty: () => boolean;
+  /**
+   * Remove the last step of pen.
+   */
+  undo: () => void;
+  /**
+   * Reset Pad state.
+   */
+  reset: () => void;
+  /**
+   * Add Text Watermark.
+   */
+  addWaterMark: (opt: SignaturePadWaterMark) => void;
+  /**
+   * Draws signature image from data URL.
+   */
+  fromDataURL: (url: string) => void;
+}
+export type MSignaturePadSlots = {
+  default: () => VNode[];
+  pad: (scope: {
+    width: MSignaturePadProps['width'];
+    height: MSignaturePadProps['height'];
+    reset: MSignaturePadMethods['reset'];
+    save: MSignaturePadMethods['save'];
+    clear: MSignaturePadMethods['clear'];
+    undo: MSignaturePadMethods['undo']
+  }) => VNode[];
 }
 
 export {}

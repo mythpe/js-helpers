@@ -1911,6 +1911,7 @@ __metadata:
     vue-router: "npm:^4.4.0"
     vue-tsc: "npm:^1.8.27"
     vue3-google-map: "npm:^0.20.0"
+    vue3-signature: "npm:^0.2.4"
     vuedraggable: "npm:^2.24.3"
   languageName: unknown
   linkType: soft
@@ -4259,6 +4260,13 @@ __metadata:
   version: 0.1.4
   resolution: "deep-is@npm:0.1.4"
   checksum: 10c0/7f0ee496e0dff14a573dc6127f14c95061b448b87b995fc96c017ce0a1e66af1675e73f1d6064407975bc4ea6ab679497a29fff7b5b9c4e99cb10797c1ad0b4c
+  languageName: node
+  linkType: hard
+
+"default-passive-events@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "default-passive-events@npm:2.0.0"
+  checksum: 10c0/3b2a59446464478601aac1146b1a62fcb0fef810be3f40b5a3d990b7543fe3785f0f4f6f0343a48bdf6fbe60b2f05bf042114ba270e2c871e70d35b361db3845
   languageName: node
   linkType: hard
 
@@ -7986,6 +7994,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"signature_pad@npm:^3.0.0-beta.4":
+  version: 3.0.0-beta.4
+  resolution: "signature_pad@npm:3.0.0-beta.4"
+  checksum: 10c0/6c6306e309b22788dcec11726e14c1bb16518f74723fe61cb4f8238f255e65b4a8b5f1089f8d259d6598f2eb71760ffc432c3efa834411aa3221136d7e62d319
+  languageName: node
+  linkType: hard
+
 "slash@npm:^3.0.0":
   version: 3.0.0
   resolution: "slash@npm:3.0.0"
@@ -8909,7 +8924,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.4.33":
+"vue3-signature@npm:^0.2.4":
+  version: 0.2.4
+  resolution: "vue3-signature@npm:0.2.4"
+  dependencies:
+    default-passive-events: "npm:^2.0.0"
+    signature_pad: "npm:^3.0.0-beta.4"
+    vue: "npm:^3.2.37"
+  peerDependencies:
+    vue: ^3.2.0
+  checksum: 10c0/4862f7c01bbadfb6ac67c482f88ad0094c98a163d1072a50513567530d79f2f9d844103b5cb60aeedeed83f8a49beaa9a00052e03c6b1a8c4e6ef0cf654d4d5c
+  languageName: node
+  linkType: hard
+
+"vue@npm:^3.2.37, vue@npm:^3.4.33":
   version: 3.4.37
   resolution: "vue@npm:3.4.37"
   dependencies:

@@ -30,7 +30,7 @@ type P = {
   val: Props['val'];
   // required?: Props['required'];
   rules?: Props['rules'];
-  errors?: Props['errors'];
+  // errors?: Props['errors'];
   dense?: Props['dense'];
   checkedIcon?: Props['checkedIcon'];
   topLabel?: Props['topLabel'];
@@ -53,7 +53,7 @@ const props = withDefaults(defineProps<P>(), {
   val: undefined,
   // required: undefined,
   rules: undefined,
-  errors: undefined,
+  // errors: undefined,
   dense: undefined,
   checkedIcon: () => 'ion-checkmark-circle-outline',
   topLabel: undefined
@@ -69,9 +69,7 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   type: 'radio',
   checkedValue: () => props.val
 })
-const { value, errors: fieldErrors, handleChange } = inputScope
-const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
-const errorMessage = computed(() => getErrors.value[0] || undefined)
+const { value, errorMessage, handleChange } = inputScope
 
 const listeners = {
   'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)

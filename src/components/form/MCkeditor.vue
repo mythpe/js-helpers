@@ -85,7 +85,7 @@ type P = {
   help?: Props['help'];
   required?: Props['required'];
   rules?: Props['rules'];
-  errors?: Props['errors'];
+  // errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
 }
@@ -110,7 +110,7 @@ const props = withDefaults(defineProps<P>(), {
   help: undefined,
   required: undefined,
   rules: undefined,
-  errors: undefined,
+  // errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined
 })
@@ -126,9 +126,7 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
   label: getLabel
 })
-const { value, errors: fieldErrors, handleChange } = inputScope
-const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
-const errorMessage = computed(() => getErrors.value[0] || undefined)
+const { value, errorMessage, handleChange } = inputScope
 
 const listeners = {
   'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)

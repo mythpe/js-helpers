@@ -140,7 +140,7 @@ interface P {
   toolbar?: Props['toolbar'];
   fonts?: Props['fonts'];
   rules?: Props['rules'];
-  errors?: Props['errors'];
+  // errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   topLabel?: Props['topLabel'];
   required?: Props['required'];
@@ -165,7 +165,7 @@ const props = withDefaults(defineProps<P>(), {
   toolbar: undefined,
   fonts: undefined,
   rules: undefined,
-  errors: undefined,
+  // errors: undefined,
   topLabel: undefined,
   viewMode: undefined,
   required: undefined
@@ -179,9 +179,7 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
   label: getLabel
 })
-const { value, errors: fieldErrors, handleChange } = inputScope
-const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
-const errorMessage = computed(() => getErrors.value[0] || undefined)
+const { value, errorMessage, handleChange } = inputScope
 
 const listeners = {
   'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)

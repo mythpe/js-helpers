@@ -31,6 +31,7 @@ import MPassword from './form/MPassword.vue'
 import MPicker from './form/MPicker.vue'
 import MRadio from './form/MRadio.vue'
 import MSelect from './form/MSelect.vue'
+import MSignaturePad from './form/MSignaturePad.vue'
 import MTime from './form/MTime.vue'
 import MToggle from './form/MToggle.vue'
 import MUploader from './form/MUploader.vue'
@@ -83,6 +84,7 @@ export {
   MPicker,
   MRadio,
   MSelect,
+  MSignaturePad,
   MTime,
   MToggle,
   MUploader,

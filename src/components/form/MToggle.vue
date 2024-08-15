@@ -39,7 +39,7 @@ interface P {
   indeterminateIcon?: Props['indeterminateIcon'];
   uncheckedIcon?: Props['uncheckedIcon'];
   status?: Props['status'];
-  errors?: Props['errors'];
+  // errors?: Props['errors'];
   rules?: Props['rules'];
   dense?: Props['dense'];
   keepColor?: Props['keepColor'];
@@ -64,14 +64,14 @@ const props = withDefaults(defineProps<P>(), {
   trueValue: !0,
   falseValue: !1,
   indeterminateValue: null,
-  color: 'primary',
-  checkedIcon: 'ion-checkmark',
-  uncheckedIcon: 'ion-close',
-  indeterminateIcon: 'ion-ios-code-working',
-  activeLabel: 'yes',
-  inactiveLabel: 'no',
-  status: !1,
-  errors: undefined,
+  color: () => 'primary',
+  checkedIcon: () => 'ion-checkmark',
+  uncheckedIcon: () => 'ion-close',
+  indeterminateIcon: () => 'ion-ios-code-working',
+  activeLabel: () => 'yes',
+  inactiveLabel: () => 'no',
+  status: () => !1,
+  // errors: undefined,
   rules: undefined,
   dense: undefined,
   keepColor: undefined,
@@ -87,9 +87,8 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
   label: toggleLabel
 })
-const { value, errors: fieldErrors, handleChange } = inputScope
-const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
-const errorMessage = computed(() => getErrors.value[0] || undefined)
+const { value, errorMessage, handleChange } = inputScope
+
 const listeners = {
   'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
 }

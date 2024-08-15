@@ -11,7 +11,7 @@
 import { QField, QFile, QFileSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
-import { computed, defineProps, reactive, ref, useAttrs } from 'vue'
+import { defineProps, reactive, ref, useAttrs } from 'vue'
 import { MFileProps as Props } from './models'
 
 interface P {
@@ -31,7 +31,7 @@ interface P {
   help?: Props['help'];
   required?: Props['required'];
   rules?: Props['rules'];
-  errors?: Props['errors'];
+  // errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
   topLabel?: Props['topLabel'];
@@ -59,7 +59,7 @@ const props = withDefaults(defineProps<P>(), {
   help: undefined,
   required: undefined,
   rules: undefined,
-  errors: undefined,
+  // errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   topLabel: undefined,
@@ -78,9 +78,7 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
   label: getLabel
 })
-const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
-const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
-const errorMessage = computed(() => getErrors.value[0] || undefined)
+const { value, errorMessage, handleChange, handleBlur } = inputScope
 
 const listeners = {
   focus: (v: Event) => handleBlur(v, !1),

@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MInputProps as Props } from './models.d'
-import { computed, reactive, ref, useAttrs } from 'vue'
+import { reactive, ref, useAttrs } from 'vue'
 import { QField, QInput, QInputSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 
@@ -31,7 +31,7 @@ type P = {
   help?: Props['help'];
   required?: Props['required'];
   rules?: Props['rules'];
-  errors?: Props['errors'];
+  // errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
   autocomplete?: Props['autocomplete'];
@@ -55,7 +55,7 @@ const props = withDefaults(defineProps<P>(), {
   help: undefined,
   required: undefined,
   rules: undefined,
-  errors: undefined,
+  // errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   autocomplete: undefined,
@@ -70,9 +70,7 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
   label: getLabel
 })
-const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
-const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
-const errorMessage = computed(() => getErrors.value[0] || undefined)
+const { value, errorMessage, handleChange, handleBlur } = inputScope
 
 const listeners = {
   blur: (v: any) => handleBlur(v, !0),

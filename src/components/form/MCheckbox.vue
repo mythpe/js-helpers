@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { useField } from 'vee-validate'
-import { computed, defineProps, reactive, ref, useAttrs } from 'vue'
+import { defineProps, reactive, ref, useAttrs } from 'vue'
 import { useInputHelper } from '../../composables'
 import { MCheckboxProps as Props } from './models'
 import { QCheckbox, QField } from 'quasar'
@@ -30,7 +30,7 @@ type P = {
   val?: Props['val'];
   required?: Props['required'];
   rules?: Props['rules'];
-  errors?: Props['errors'];
+  // errors?: Props['errors'];
   dense?: Props['dense'];
   trueValue?: Props['trueValue'];
   falseValue?: Props['falseValue'];
@@ -56,7 +56,7 @@ const props = withDefaults(defineProps<P>(), {
   val: undefined,
   required: undefined,
   rules: undefined,
-  errors: undefined,
+  // errors: undefined,
   dense: undefined,
   trueValue: () => !0,
   falseValue: () => !1,
@@ -75,9 +75,7 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   type: 'checkbox',
   checkedValue: () => props.val
 })
-const { value, errors: fieldErrors, handleChange } = inputScope
-const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
-const errorMessage = computed(() => getErrors.value[0] || undefined)
+const { value, errorMessage, handleChange } = inputScope
 
 const listeners = {
   'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)

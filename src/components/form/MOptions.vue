@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MOptionsOptionContext, MOptionsProps as Props } from './models.d'
-import { computed, reactive, ref, useAttrs } from 'vue'
+import { reactive, ref, useAttrs } from 'vue'
 import { QField, QOptionGroup, QOptionGroupSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
@@ -60,7 +60,7 @@ const props = withDefaults(defineProps<P>(), {
   help: undefined,
   required: undefined,
   rules: undefined,
-  errors: undefined,
+  // errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   topLabel: undefined,
@@ -81,9 +81,7 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
   label: getLabel
 })
-const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
-const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
-const errorMessage = computed(() => getErrors.value[0] || undefined)
+const { value, errorMessage, handleChange, handleBlur } = inputScope
 
 const listeners = {
   blur: (v: any) => handleBlur(v, !0),
@@ -173,6 +171,7 @@ export default {
     <component
       :is="viewMode ? QField : QOptionGroup"
       ref="input"
+      :class="{'m--options': !0,'m--options__full_width': fullWidth }"
       :color="!!errorMessage ? 'negative' : inputProps.color"
       :error="viewMode ? !!errorMessage : undefined"
       :error-message="viewMode ? errorMessage : undefined"
@@ -182,7 +181,6 @@ export default {
       :model-value="value || undefined"
       :options="options"
       :type="viewMode ? undefined : type"
-      :class="{'m--options': !0,'m--options__full_width': fullWidth }"
       v-bind="{ ...$myth.options.options as any,...( viewMode ? $myth.options.field : {} ), ...$attrs, ...( viewMode ? { stackLabel: !0 } : {} ) }"
       v-on="listeners"
     >
@@ -243,8 +241,8 @@ export default {
       .q-radio__label,
       .q-toggle__label
         width: 100%
-  // &.q-option-group--inline
-  //   > div
-  //     background-color: red
-  //     width: 49.3333333%
+// &.q-option-group--inline
+//   > div
+//     background-color: red
+//     width: 49.3333333%
 </style>

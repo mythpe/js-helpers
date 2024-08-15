@@ -51,6 +51,7 @@ import {
   MRadioProps,
   MRowProps,
   MSelectProps,
+  MSignaturePadProps,
   MTimeProps,
   MToggleProps,
   MTypingStringProps,
@@ -164,6 +165,7 @@ export type MythOptionsConfig = {
   time?: Partial<MTimeProps>;
   pickerBtn?: Partial<MBtnProps>;
   select?: Partial<MSelectProps>;
+  signaturePad?: Partial<MSignaturePadProps>;
   checkbox?: Partial<MCheckboxProps>;
   editor?: Partial<MEditorProps>;
   ckeditor?: Partial<MCkeditorProps>;
@@ -259,7 +261,7 @@ export type UseModelsOptionsArg<T extends ApiInterface = ApiInterface> = {
   method?: MaybeRefOrGetter<string>;
   timeout?: number;
   qInfiniteScroll?: Ref<QInfiniteScroll | undefined>;
-  onSuccess?: (data: AxiosResponse<T>) => void;
+  onSuccess?: (data: ApiInterface) => void;
   onError?: (e: ApiErrorResponse) => void;
   config?: MaybeRefOrGetter<AxiosRequestConfig>
 }

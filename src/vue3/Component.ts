@@ -36,6 +36,7 @@ export const initComponents = (app: App) => {
   app.component('MPassword', defineAsyncComponent(() => import('../components/form/MPassword.vue')))
   app.component('MPicker', defineAsyncComponent(() => import('../components/form/MPicker.vue')))
   app.component('MSelect', defineAsyncComponent(() => import('../components/form/MSelect.vue')))
+  app.component('MSignaturePad', defineAsyncComponent(() => import('../components/form/MSignaturePad.vue')))
   app.component('MTime', defineAsyncComponent(() => import('../components/form/MTime.vue')))
   app.component('MToggle', defineAsyncComponent(() => import('../components/form/MToggle.vue')))
   app.component('MUploader', defineAsyncComponent(() => import('../components/form/MUploader.vue')))

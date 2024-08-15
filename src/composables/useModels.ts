@@ -9,7 +9,7 @@
 import { computed, MaybeRefOrGetter, nextTick, onMounted, onUnmounted, reactive, Ref, ref, toRefs, toValue, watch } from 'vue'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useMyth } from '../vue3'
-import { ApiFulfilledResponse, ApiMetaInterface, ApiModel, UseModelsOptions as Options } from '../types'
+import { ApiFulfilledResponse, ApiInterface, ApiMetaInterface, ApiModel, UseModelsOptions as Options } from '../types'
 
 const itemsPerPage = 50
 type Item = ApiModel & object
@@ -65,7 +65,7 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
     }
     const f: any = opts.value?.method ? myth.services[name.value][toValue(opts.value.method)] : (opts.value?.isPanel ? myth.services[name.value].index : myth.services[name.value].staticIndex)
     return f(config)
-      .then((res: any) => {
+      .then((res: ApiInterface) => {
         const { _data, _meta } = res
         models.value.push(...(_data || []) as any)
         meta.value = _meta || { ...defMeta }

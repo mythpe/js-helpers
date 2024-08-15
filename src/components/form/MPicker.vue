@@ -9,10 +9,9 @@
 <script lang="ts" setup>
 import { computed, ref, useAttrs } from 'vue'
 import { MPickerProps as Props } from './models'
-import MInput from './MInput.vue'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
-import { QField, QFieldSlots } from 'quasar'
+import { QDate, QField, QFieldSlots, QTime } from 'quasar'
 
 interface P {
   name: Props['name'];
@@ -31,7 +30,7 @@ interface P {
   help?: Props['help'];
   required?: Props['required'];
   rules?: Props['rules'];
-  errors?: Props['errors'];
+  // errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
   autocomplete?: Props['autocomplete'];
@@ -61,7 +60,7 @@ const props = withDefaults(defineProps<P>(), {
   help: undefined,
   required: undefined,
   rules: undefined,
-  errors: undefined,
+  // errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   autocomplete: undefined,
@@ -83,18 +82,16 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
   label: getLabel
 })
-const { value, errors: fieldErrors, handleChange, handleBlur } = inputScope
-const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
-const errorMessage = computed(() => getErrors.value[0] || undefined)
+const { value, errorMessage, handleChange } = inputScope
 
 const isDate = computed(() => props.type === 'date')
-const mask = computed(() => {
-  if (props.range || props.multiple) {
-    return undefined
-    // return isDate.value ? '####/##/## - ####-##-##' : '##:## - ##:##'
-  }
-  return isDate.value ? '####/##/##' : '##:##'
-})
+// const mask = computed(() => {
+//   if (props.range || props.multiple) {
+//     return undefined
+//     // return isDate.value ? '####/##/## - ####-##-##' : '##:## - ##:##'
+//   }
+//   return isDate.value ? '####/##/##' : '##:##'
+// })
 const format = computed(() => isDate.value ? 'YYYY/MM/DD' : 'HH:mm')
 const dateRef = ref()
 const onBeforeShow = () => {
@@ -117,12 +114,9 @@ const saveDialog = () => {
   handleChange(newVal, !!errorMessage.value)
 }
 
-const listeners = {
-  blur: (v: any) => handleBlur(v, !0),
-  'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
-}
-const input = ref<InstanceType<typeof MInput> | null>(null)
-defineExpose<{ input: typeof input }>({ input })
+const dateElm = ref<InstanceType<typeof QDate> | null>(null)
+const timeElm = ref<InstanceType<typeof QTime> | null>(null)
+defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ? dateElm : timeElm })
 </script>
 
 <template>
@@ -163,17 +157,18 @@ defineExpose<{ input: typeof input }>({ input })
       :error-message="errorMessage"
       :hint="__(hint)"
       :label="hasTopLabel ? undefined : getLabel"
-      :model-value="value"
       v-bind="{ ...$myth.options.input as any,...$attrs, topLabel: undefined }"
-      v-on="listeners"
     >
       <template #control>
         <slot name="control">
-          <div v-if="!disable && !readonly && !viewMode && !!getPlaceholder && !value">
+          <div
+            v-if="!disable && !readonly && !viewMode && !!getPlaceholder && !value"
+            class="q-placeholder"
+          >
             {{ getPlaceholder }}
           </div>
           <template v-else-if="viewMode && viewModeValue">
-            <div>{{ viewModeValue }}</div>
+            <div>{{ viewModeValue?.toString() }}</div>
           </template>
           <template v-else>
             <div>{{ value?.toString() }}</div>
@@ -198,8 +193,10 @@ defineExpose<{ input: typeof input }>({ input })
             @before-hide="onBeforeHide()"
           >
             <q-card>
+              {{ dateRef }}
               <q-date
                 v-if="isDate"
+                ref="dateElm"
                 v-model="dateRef"
                 :mask="format"
                 :multiple="multiple"
@@ -224,6 +221,7 @@ defineExpose<{ input: typeof input }>({ input })
               </q-date>
               <q-time
                 v-else
+                ref="timeElm"
                 v-model="dateRef"
                 :mask="format"
                 now-btn

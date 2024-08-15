@@ -84,7 +84,9 @@ import {
   MTypingStringProps,
   MTypingStringSlots,
   MUploaderProps,
-  MUploaderSlots
+  MUploaderSlots,
+  MSignaturePadProps,
+  MSignaturePadSlots
 } from '../components'
 import { TransitionProps } from 'vue'
 
@@ -113,6 +115,7 @@ declare module '@vue/runtime-core' {
     MPassword: GlobalComponentConstructor<MPasswordProps, MInputSlots>;
     MPicker: GlobalComponentConstructor<MPickerProps, MPickerSlots>;
     MSelect: GlobalComponentConstructor<MSelectProps, MSelectSlots>;
+    MSignaturePad: GlobalComponentConstructor<MSignaturePadProps, MSignaturePadSlots>;
     MTime: GlobalComponentConstructor<MTimeProps, MTimeSlots>;
     MToggle: GlobalComponentConstructor<MToggleProps, MToggleSlots>;
     MGoogleMaps: GlobalComponentConstructor<MGoogleMapsProps, MGoogleMapsSlots>;
