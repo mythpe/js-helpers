@@ -6,14 +6,15 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance } from 'axios'
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import {
+  openURL,
   QBtnProps,
   QCardProps,
   QDialogOptions,
   QDialogProps,
   QFieldProps,
-  QIconProps,
+  QIconProps, QInfiniteScroll,
   QItemLabelProps,
   QItemProps,
   QItemSectionProps,
@@ -56,9 +57,18 @@ import {
   MUploaderProps
 } from '../components'
 import { I18n } from 'vue-i18n'
-import { ComputedRef } from 'vue'
+import { ComputedRef, MaybeRefOrGetter, Ref, UnwrapNestedRefs } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
-import { MDtColumn, MDtHeadersParameter, ParseHeaderOptions, Vue3MAlertMessage, Vue3MAlertMessageOptions, Vue3MConfirmMessage } from './m-helpers'
+import {
+  ApiInterface,
+  ApiErrorResponse,
+  MDtColumn,
+  MDtHeadersParameter,
+  ParseHeaderOptions,
+  Vue3MAlertMessage,
+  Vue3MAlertMessageOptions,
+  Vue3MConfirmMessage
+} from './m-helpers'
 import { Dates, Helpers, Str } from '../utils'
 import { MythApiServicesSchema } from './api-helpers'
 
@@ -241,4 +251,27 @@ export type InstallPluginOptions = {
   i18n: MythI18nType;
   api: MythApiConfig;
   options: MythOptionsConfig;
+}
+
+export type UseModelsOptionsArg<T extends ApiInterface = ApiInterface> = {
+  lazy?: boolean;
+  isPanel?: MaybeRefOrGetter<boolean>;
+  method?: MaybeRefOrGetter<string>;
+  timeout?: number;
+  qInfiniteScroll?: Ref<QInfiniteScroll | undefined>;
+  onSuccess?: (data: AxiosResponse<T>) => void;
+  onError?: (e: ApiErrorResponse) => void;
+  config?: MaybeRefOrGetter<AxiosRequestConfig>
+}
+
+export type UseModelsOptions<T> = UnwrapNestedRefs<UseModelsOptionsArg<T>> | Ref<UseModelsOptionsArg<T>> | UseModelsOptionsArg<T>
+
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $myth: UseMythVue;
+    openWindow: InstanceType<typeof openURL>;
+    __: UseMythVue['__']
+
+    getPageTitle (number?: number | string, route?: RouteLocationNormalizedLoaded): string;
+  }
 }

@@ -65,7 +65,9 @@ const { getLabel, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   // initialValue: modelValue,
   syncVModel: !0,
-  label: getLabel
+  label: getLabel,
+  type: 'radio',
+  checkedValue: () => props.val
 })
 const { value, errors: fieldErrors, handleChange } = inputScope
 const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
@@ -105,15 +107,16 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="!!topLabel"
-        :for="name"
-      >
-        {{ __(topLabel) }}
-      </MInputLabel>
+        :error="!!errorMessage"
+        :label="topLabel"
+        :name="name"
+        :required="!!getRules?.required"
+      />
     </slot>
     <slot name="caption">
       <div
         v-if="!!caption"
-        class="m--input__caption"
+        class="m--input__caption text-caption"
       >
         {{ __(caption) }}
       </div>
@@ -151,11 +154,10 @@ export default {
                 checkedIcon: inputProps.checkedIcon,
               }"
               v-on="listeners"
-            >
-              <slot />
-            </q-radio>
+            />
           </template>
         </q-field>
+        <slot v-bind="inputScope" />
       </MCol>
       <slot
         name="after"

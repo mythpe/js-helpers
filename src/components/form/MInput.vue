@@ -108,10 +108,11 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
-        :for="name"
-      >
-        {{ getLabel }}
-      </MInputLabel>
+        :error="!!errorMessage"
+        :label="getLabel"
+        :name="name"
+        :required="!!getRules?.required"
+      />
     </slot>
     <slot name="caption">
       <div

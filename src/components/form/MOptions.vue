@@ -40,6 +40,7 @@ type P = {
   type?: Props['type'];
   keepColor?: Props['keepColor'];
   service?: Props['service'];
+  fullWidth?: Props['fullWidth'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -66,14 +67,15 @@ const props = withDefaults(defineProps<P>(), {
   color: () => 'primary',
   type: 'radio',
   keepColor: undefined,
-  service: undefined
+  service: undefined,
+  fullWidth: () => !1
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const loading = defineModel<Props['loading']>('loading', { required: !1, default: !1 })
-const options = defineModel<MOptionsOptionContext[]>('options', { required: !1, default: [] })
+const options = defineModel<MOptionsOptionContext[]>('options', { required: !1, default: undefined })
 const attrs = useAttrs()
 const helper = useInputHelper<P>(() => props, 'options', () => ({ attrs }))
-const { getLabel, getPlaceholder, inputProps, getRules } = helper
+const { getLabel, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   // initialValue: modelValue,
   syncVModel: !0,
@@ -132,10 +134,11 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="!!getLabel"
-        :class="{'text-negative':!!errorMessage }"
-        :for="name"
+        :error="!!errorMessage"
+        :label="getLabel"
+        :name="name"
+        :required="!!getRules?.required"
       >
-        {{ getLabel }}
         <MTransition>
           <q-spinner-dots
             v-if="loading"
@@ -171,15 +174,15 @@ export default {
       :is="viewMode ? QField : QOptionGroup"
       ref="input"
       :color="!!errorMessage ? 'negative' : inputProps.color"
-      :error="!!errorMessage"
-      :error-message="errorMessage"
-      :hint="__(hint)"
+      :error="viewMode ? !!errorMessage : undefined"
+      :error-message="viewMode ? errorMessage : undefined"
+      :hint="viewMode ? __(hint) : undefined"
       :keep-color="!!errorMessage ? !0 : inputProps.keepColor"
       :label="getLabel"
-      :model-value="value"
+      :model-value="value || undefined"
       :options="options"
-      :placeholder="getPlaceholder"
-      :type="type"
+      :type="viewMode ? undefined : type"
+      :class="{'m--options': !0,'m--options__full_width': fullWidth }"
       v-bind="{ ...$myth.options.options as any,...( viewMode ? $myth.options.field : {} ), ...$attrs, ...( viewMode ? { stackLabel: !0 } : {} ) }"
       v-on="listeners"
     >
@@ -223,3 +226,25 @@ export default {
     />
   </MCol>
 </template>
+
+<style lang="sass">
+.m--options
+  .q-checkbox__inner,
+  .q-radio__inner,
+  .q-toggle__inner
+    align-self: flex-start
+
+  &__full_width
+    > div
+      .q-checkbox,
+      .q-radio,
+      .q-toggle,
+      .q-checkbox__label,
+      .q-radio__label,
+      .q-toggle__label
+        width: 100%
+  // &.q-option-group--inline
+  //   > div
+  //     background-color: red
+  //     width: 49.3333333%
+</style>

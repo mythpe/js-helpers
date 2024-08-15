@@ -64,14 +64,16 @@ const props = withDefaults(defineProps<P>(), {
   indeterminateIcon: undefined,
   topLabel: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: null })
+defineModel<Props['modelValue']>({ required: !1, default: [] })
 const attrs = useAttrs()
 const helper = useInputHelper<any>(() => props, 'checkbox', () => ({ attrs }))
 const { getLabel, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   // initialValue: modelValue,
   syncVModel: !0,
-  label: getLabel
+  label: getLabel,
+  type: 'checkbox',
+  checkedValue: () => props.val
 })
 const { value, errors: fieldErrors, handleChange } = inputScope
 const getErrors = computed(() => [...(props.errors || []), ...fieldErrors.value])
@@ -111,15 +113,16 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="!!topLabel"
-        :for="name"
-      >
-        {{ __(topLabel) }}
-      </MInputLabel>
+        :error="!!errorMessage"
+        :label="topLabel"
+        :name="name"
+        :required="!!getRules?.required"
+      />
     </slot>
     <slot name="caption">
       <div
         v-if="!!caption"
-        class="text-caption m--input__caption"
+        class="m--input__caption text-caption"
       >
         {{ __(caption) }}
       </div>
@@ -157,10 +160,9 @@ export default {
               indeterminateIcon: inputProps.indeterminateIcon
             }"
             v-on="listeners"
-          >
-            <slot />
-          </q-checkbox>
+          />
         </q-field>
+        <slot v-bind="inputScope" />
       </MCol>
       <slot
         name="after"

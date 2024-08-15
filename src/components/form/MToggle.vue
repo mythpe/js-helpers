@@ -134,16 +134,17 @@ export default {
     />
     <slot name="top-label">
       <MInputLabel
-        :for="name"
+        :error="!!errorMessage"
+        :label="toggleLabel"
+        :name="name"
+        :required="!!getRules?.required"
         class="no-margin"
-      >
-        {{ toggleLabel }}
-      </MInputLabel>
+      />
     </slot>
     <slot name="caption">
       <div
         v-if="!!caption"
-        class="text-caption m--input__caption"
+        class="m--input__caption text-caption"
       >
         {{ __(caption) }}
       </div>
@@ -162,10 +163,10 @@ export default {
         >
           <q-toggle
             :false-value="falseValue"
+            :indeterminate-value="indeterminateValue"
             :label="getLabel"
             :model-value="value"
             :true-value="trueValue"
-            :indeterminate-value="indeterminateValue"
             v-bind="{
               ...$myth.options.toggle,
               ...$attrs,

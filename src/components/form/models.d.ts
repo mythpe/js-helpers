@@ -218,6 +218,10 @@ export type MOptionsProps = Omit<QOptionGroupProps, 'name' | 'modelValue' | 'opt
    * Service loading.
    */
   loading?: boolean | undefined;
+  /**
+   * Set content to be full width.
+   */
+  fullWidth?: boolean;
 }
 export type MOptionsSlots = QOptionGroupSlots & QFieldSlots & BaseInputsSlots
 
@@ -646,9 +650,14 @@ export interface MOtpSlots extends QInputSlots {
   'after-input': () => VNode[];
 }
 
-export type MInputLabelProps = Record<string, any>;
+export type MInputLabelProps = {
+  name: string;
+  label?: string | null | undefined;
+  error?: boolean;
+  required?: boolean;
+}
 
-export interface MInputLabelSlots extends QInputSlots {
+export type MInputLabelSlots = {
   default: () => VNode[];
 }
 

@@ -336,10 +336,11 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="!!getLabel"
-        :for="name"
-      >
-        {{ getLabel }}
-      </MInputLabel>
+        :error="!!errorMessage"
+        :label="getLabel"
+        :name="name"
+        :required="!!getRules?.required"
+      />
     </slot>
     <slot name="caption">
       <div
@@ -381,11 +382,11 @@ export default {
     >
       <ckeditor
         ref="input"
-        :model-value="value || ''"
         :config="getConfig"
         :disable-two-way-data-binding="disableTwoWayDataBinding"
         :disabled="disabled"
         :editor="ClassicEditor"
+        :model-value="value || ''"
         :tag-name="tagName"
         v-on="listeners"
       />

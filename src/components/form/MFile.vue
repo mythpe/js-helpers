@@ -11,7 +11,7 @@
 import { QField, QFile, QFileSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
-import { computed, defineProps, reactive, ref, useAttrs, watch } from 'vue'
+import { computed, defineProps, reactive, ref, useAttrs } from 'vue'
 import { MFileProps as Props } from './models'
 
 interface P {
@@ -138,10 +138,11 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
-        :for="name"
-      >
-        {{ getLabel }}
-      </MInputLabel>
+        :error="!!errorMessage"
+        :label="getLabel"
+        :name="name"
+        :required="!!getRules?.required"
+      />
     </slot>
     <slot name="caption">
       <div

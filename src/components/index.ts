@@ -56,7 +56,6 @@ import MFadeXTransition from './transition/MFadeXTransition.vue'
 
 import MTypingString from './typography/MTypingString.vue'
 import MHelpRow from './typography/MHelpRow.vue'
-import { MHiddenInputProps } from 'src/components/form/models'
 
 export {
   MDatatable,
