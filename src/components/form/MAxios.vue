@@ -37,7 +37,7 @@ const props = withDefaults(defineProps<P>(), {
   requestWith: undefined,
   params: () => ({})
 })
-const modelValue = defineModel<Props['modelValue']>({ required: !1, default: null })
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const search = defineModel<string>('search', { required: !1, default: '' })
 const myth = useMyth()
 const loading = defineModel<Props['loading']>('loading', { required: !1, default: !1 })
@@ -113,7 +113,7 @@ export default {
     @update:search="onSearch"
   >
     <template
-      v-for="(_,slot) in ($slots as Readonly<QSelectSlots>)"
+      v-for="(_,slot) in $slots as Readonly<QSelectSlots>"
       :key="slot"
       #[slot]="inputSlot"
     >

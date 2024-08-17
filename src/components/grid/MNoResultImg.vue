@@ -15,7 +15,7 @@
     width="50px"
   >
     <template
-      v-for="(k,v) in ($slots as Readonly<MNoResultImgSlots>)"
+      v-for="(k,v) in $slots as Readonly<MNoResultImgSlots>"
       #[v]
     >
       <slot :name="v" />

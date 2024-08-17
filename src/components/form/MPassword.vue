@@ -11,17 +11,17 @@ import { defineProps, ref } from 'vue'
 import { MInputSlots, MPasswordProps as Props } from './models'
 import MInput from './MInput.vue'
 
-const inputType = ref<'text' | 'password'>('password')
-
 type P = {
   icon?: Props['icon'];
   noToggle?: Props['noToggle'];
 }
+
 withDefaults(defineProps<P>(), {
   icon: () => !1,
   noToggle: () => !1
 })
-
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
+const inputType = ref<'text' | 'password'>('password')
 const togglePassword = () => {
   inputType.value = inputType.value === 'text' ? 'password' : 'text'
 }
@@ -39,6 +39,7 @@ export default {
 <template>
   <MInput
     ref="input"
+    v-model="modelValue"
     :type="inputType"
     v-bind="$attrs"
   >
@@ -60,7 +61,7 @@ export default {
       />
     </template>
     <template
-      v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
+      v-for="(_,slot) in $slots as Readonly<MInputSlots>"
       :key="slot"
       #[slot]
     >

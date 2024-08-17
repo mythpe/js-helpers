@@ -11,7 +11,7 @@ import { QEditor, QField, useQuasar } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
 import { MEditorProps as Props } from './models'
-import { computed, reactive, ref, useAttrs } from 'vue'
+import { reactive, ref, useAttrs } from 'vue'
 
 const $q = useQuasar()
 const _toolbar = [
@@ -170,12 +170,11 @@ const props = withDefaults(defineProps<P>(), {
   viewMode: undefined,
   required: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: '' })
+defineModel<Props['modelValue']>({ required: !1, default: '', type: String })
 const attrs = useAttrs()
 const helper = useInputHelper<any>(() => props, 'editor', () => ({ attrs }))
 const { hasTopLabel, getLabel, getPlaceholder, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
-  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -200,7 +199,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="$attrs.class"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -215,10 +214,7 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
-        :error="!!errorMessage"
-        :label="getLabel"
-        :name="name"
-        :required="!!getRules?.required"
+        :field="inputScope"
       />
     </slot>
     <slot name="caption">

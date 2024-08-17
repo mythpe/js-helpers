@@ -44,6 +44,8 @@ interface P {
   dense?: Props['dense'];
   keepColor?: Props['keepColor'];
   required?: Props['required'];
+  rowProps?: Props['rowProps'];
+  colProps?: Props['colProps'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -75,15 +77,16 @@ const props = withDefaults(defineProps<P>(), {
   rules: undefined,
   dense: undefined,
   keepColor: undefined,
-  required: undefined
+  required: undefined,
+  rowProps: undefined,
+  colProps: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: null })
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const { __ } = useMyth()
 const attrs = useAttrs()
 const helper = useInputHelper<P>(() => props, 'toggle', () => ({ choose: !0, attrs }))
 const { inputProps, getLabel: toggleLabel, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
-  // initialValue: modelValue,
   syncVModel: !0,
   label: toggleLabel
 })
@@ -119,7 +122,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="$attrs.class"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -133,10 +136,7 @@ export default {
     />
     <slot name="top-label">
       <MInputLabel
-        :error="!!errorMessage"
-        :label="toggleLabel"
-        :name="name"
-        :required="!!getRules?.required"
+        :field="inputScope"
         class="no-margin"
       />
     </slot>
@@ -148,12 +148,12 @@ export default {
         {{ __(caption) }}
       </div>
     </slot>
-    <MRow>
+    <MRow v-bind="rowProps">
       <slot
         name="before"
         v-bind="inputScope"
       />
-      <MCol col="shrink">
+      <MCol v-bind="colProps">
         <q-field
           :error="!!errorMessage"
           :error-message="errorMessage"

@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { useField } from 'vee-validate'
-import { computed, defineProps, reactive, ref, useAttrs } from 'vue'
+import { defineProps, reactive, ref, useAttrs } from 'vue'
 import { useInputHelper } from '../../composables'
 import { MRadioProps as Props } from './models'
 import { QField, QRadio } from 'quasar'
@@ -28,12 +28,14 @@ type P = {
   hint?: Props['hint'];
   help?: Props['help'];
   val: Props['val'];
-  // required?: Props['required'];
+  required?: Props['required'];
   rules?: Props['rules'];
   // errors?: Props['errors'];
   dense?: Props['dense'];
   checkedIcon?: Props['checkedIcon'];
   topLabel?: Props['topLabel'];
+  rowProps?: Props['rowProps'];
+  colProps?: Props['colProps'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -51,19 +53,20 @@ const props = withDefaults(defineProps<P>(), {
   hint: undefined,
   help: undefined,
   val: undefined,
-  // required: undefined,
+  required: undefined,
   rules: undefined,
   // errors: undefined,
   dense: undefined,
   checkedIcon: () => 'ion-checkmark-circle-outline',
-  topLabel: undefined
+  topLabel: undefined,
+  rowProps: undefined,
+  colProps: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: null })
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
 const helper = useInputHelper<P>(() => props, 'radio', () => ({ attrs }))
 const { getLabel, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
-  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel,
   type: 'radio',
@@ -90,7 +93,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="$attrs.class"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -105,10 +108,7 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="!!topLabel"
-        :error="!!errorMessage"
-        :label="topLabel"
-        :name="name"
-        :required="!!getRules?.required"
+        :field="inputScope"
       />
     </slot>
     <slot name="caption">
@@ -119,12 +119,12 @@ export default {
         {{ __(caption) }}
       </div>
     </slot>
-    <MRow>
+    <MRow v-bind="rowProps">
       <slot
         name="before"
         v-bind="inputScope"
       />
-      <MCol col="shrink">
+      <MCol v-bind="colProps">
         <q-field
           :error="!!errorMessage"
           :error-message="errorMessage"

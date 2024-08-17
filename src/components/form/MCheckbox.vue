@@ -37,6 +37,8 @@ type P = {
   checkedIcon?: Props['checkedIcon'];
   indeterminateIcon?: Props['indeterminateIcon'];
   topLabel?: Props['topLabel'];
+  rowProps?: Props['rowProps'];
+  colProps?: Props['colProps'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -62,14 +64,15 @@ const props = withDefaults(defineProps<P>(), {
   falseValue: () => !1,
   checkedIcon: () => 'ion-checkbox-outline',
   indeterminateIcon: undefined,
-  topLabel: undefined
+  topLabel: undefined,
+  rowProps: undefined,
+  colProps: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: [] })
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
 const helper = useInputHelper<any>(() => props, 'checkbox', () => ({ attrs }))
 const { getLabel, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
-  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel,
   type: 'checkbox',
@@ -96,7 +99,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="$attrs.class"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -111,10 +114,7 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="!!topLabel"
-        :error="!!errorMessage"
-        :label="topLabel"
-        :name="name"
-        :required="!!getRules?.required"
+        :field="inputScope"
       />
     </slot>
     <slot name="caption">
@@ -125,12 +125,12 @@ export default {
         {{ __(caption) }}
       </div>
     </slot>
-    <MRow>
+    <MRow v-bind="rowProps">
       <slot
         name="before"
         v-bind="inputScope"
       />
-      <MCol col="shrink">
+      <MCol v-bind="colProps">
         <q-field
           :error="!!errorMessage"
           :error-message="errorMessage"

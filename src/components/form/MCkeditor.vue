@@ -122,7 +122,6 @@ const { getLabel, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   validateOnMount: !1,
   validateOnValueUpdate: !1,
-  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -319,7 +318,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="$attrs.class"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -334,10 +333,7 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="!!getLabel"
-        :error="!!errorMessage"
-        :label="getLabel"
-        :name="name"
-        :required="!!getRules?.required"
+        :field="inputScope"
       />
     </slot>
     <slot name="caption">

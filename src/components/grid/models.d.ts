@@ -50,11 +50,11 @@ export type ViewModeProps = {
   /**
    * Set input to vie mode use q-field
    */
-  viewMode?: boolean;
+  readonly viewMode?: boolean;
   /**
    * View Mode value for input or modelValue.
    */
-  viewModeValue?: any;
+  readonly viewModeValue?: any;
 }
 
 export type MContainerProps = {
@@ -128,14 +128,14 @@ export type MRowSlots = {
 }
 
 export type MColProps = {
-  auto?: boolean | undefined;
-  col?: ColStyleType;
-  xs?: ColStyleType;
-  sm?: ColStyleType;
-  md?: ColStyleType;
-  lg?: ColStyleType;
-  xl?: ColStyleType;
-  name?: string;
+  readonly auto?: boolean | undefined;
+  readonly col?: ColStyleType;
+  readonly xs?: ColStyleType;
+  readonly sm?: ColStyleType;
+  readonly md?: ColStyleType;
+  readonly lg?: ColStyleType;
+  readonly xl?: ColStyleType;
+  readonly name?: string;
 }
 export type MColSlots = {
   default: () => VNode[];

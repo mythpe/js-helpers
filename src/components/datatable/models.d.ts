@@ -168,6 +168,7 @@ export type GenericMDtBtn<T extends E = E> = Record<string, any> & {
 
 // type TopSlots = { dt: MDatatableScope; item: MDtItem, index: MDtItemIndex | undefined }
 type MFormParameter = Parameters<MFormSlots['default']>[0]
+
 export interface MDatatableSlots extends Omit<QTableSlots, `body-cell-${string}`> {
   tools: ((scope: { dt: MDatatableScope, }) => VNode[]);
 

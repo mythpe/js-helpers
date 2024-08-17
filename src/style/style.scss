@@ -20,15 +20,19 @@
   }
 }
 
-$text-light-color: #000000 !default;
+$text-light-color: #111111 !default;
 $text-dark-color: #ffffff !default;
 .body--light {
+  color: $text-light-color;
+
   .text-color {
     color: $text-light-color !important;
   }
 }
 
 .body--dark {
+  color: $text-dark-color;
+
   .text-color {
     color: $text-dark-color !important;
   }
@@ -231,4 +235,21 @@ $bordered-style: $bordered-size solid $primary !default;
   .print-no-margin {
     margin: 0 !important;
   }
+}
+
+[data-input-name].m--input__required {
+  > .q-field {
+    &:not(.q-field--disabled) {
+      .q-field__label::after {
+        content: ' *';
+        color: var(--q-negative);
+      }
+    }
+  }
+
+  .m--input__top-label::after {
+      content: ' *';
+      color: var(--q-negative);
+  }
+
 }

@@ -66,7 +66,6 @@ const attrs = useAttrs()
 const helper = useInputHelper<P>(() => props, 'input', () => ({ attrs }))
 const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
-  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -91,7 +90,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="$attrs.class"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -103,13 +102,13 @@ export default {
       name="top-input"
       v-bind="inputScope"
     />
-    <slot name="top-label">
+    <slot
+      name="top-label"
+      v-bind="inputScope"
+    >
       <MInputLabel
         v-if="hasTopLabel"
-        :error="!!errorMessage"
-        :label="getLabel"
-        :name="name"
-        :required="!!getRules?.required"
+        :field="inputScope"
       />
     </slot>
     <slot name="caption">
@@ -123,18 +122,23 @@ export default {
     <component
       :is="viewMode ? QField : QInput"
       ref="input"
-      :autocomplete="getAutocompleteAttribute"
       :error="!!errorMessage"
       :error-message="errorMessage"
       :hint="__(hint)"
       :label="hasTopLabel ? undefined : getLabel"
       :model-value="value"
       :placeholder="getPlaceholder"
-      v-bind="{ ...$myth.options.input as any,...( viewMode ? $myth.options.field : {} ), ...$attrs, ...( viewMode ? { stackLabel: !0 } : {} ) }"
+      v-bind="{
+        ...$myth.options.input as any,
+        ...( viewMode ? $myth.options.field : {} ),
+        ...$attrs,
+        ...( viewMode ? { stackLabel: !0 } : {} ),
+        autocomplete:getAutocompleteAttribute
+      }"
       v-on="listeners"
     >
       <template
-        v-for="(_,slot) in ($slots as Readonly<QInputSlots>)"
+        v-for="(_,slot) in $slots as Readonly<QInputSlots>"
         :key="slot"
         #[slot]
       >

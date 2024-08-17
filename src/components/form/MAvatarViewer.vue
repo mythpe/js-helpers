@@ -75,16 +75,16 @@ const emit = defineEmits<Events>()
 const attrs = useAttrs()
 const { accepts } = useInputHelper<any>(() => props, 'avatarViewer', () => ({ attrs }))
 const errorMessage = useFieldError(() => props.name)
-const modelValue = defineModel<MAvatarViewerModelValue>({ required: !0, default: null })
+const modelValue = defineModel<MAvatarViewerModelValue>({ required: !0, default: undefined })
 
-const removedModel = defineModel<boolean>('removed', { required: !1, default: null })
+const removedModel = defineModel<boolean>('removed', { required: !1, default: undefined })
 const removedScope = useField<Props['removed']>(() => `${props.name}_removed`, undefined, {
   initialValue: removedModel,
   syncVModel: 'removed'
 })
 const { handleChange: handleRemoved } = removedScope
 
-const urlModel = defineModel<string>('url', { required: !1, default: null })
+const urlModel = defineModel<string>('url', { required: !1, default: undefined })
 const urlScope = useField<Props['url']>(() => `${props.name}_url`, undefined, {
   initialValue: urlModel,
   syncVModel: 'url'

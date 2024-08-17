@@ -37,6 +37,7 @@ interface P {
   topLabel?: Props['topLabel'];
   type?: Props['type'];
   range?: Props['range'];
+  rangeSeparator?: Props['rangeSeparator'];
   multiple?: Props['multiple'];
   btnProps?: Props['btnProps'];
   readonly?: Props['readonly'];
@@ -67,6 +68,7 @@ const props = withDefaults(defineProps<P>(), {
   topLabel: undefined,
   type: () => 'date',
   range: () => !1,
+  rangeSeparator: () => ' - ',
   multiple: () => !1,
   btnProps: undefined,
   readonly: undefined,
@@ -75,10 +77,9 @@ const props = withDefaults(defineProps<P>(), {
 
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
-const helper = useInputHelper<P>(() => props, 'input', () => ({ choose: !0, attrs }))
-const { hasTopLabel, getLabel, getPlaceholder, getRules } = helper
+const helper = useInputHelper<P>(() => props, 'picker', () => ({ choose: !0, attrs }))
+const { hasTopLabel, getLabel, getPlaceholder, getRules, getAutocompleteAttribute } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
-  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -122,7 +123,7 @@ defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ?
 <template>
   <MCol
     :auto="auto"
-    :class="$attrs.class"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -137,10 +138,7 @@ defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ?
     <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
-        :error="!!errorMessage"
-        :label="getLabel"
-        :name="name"
-        :required="!!getRules?.required"
+        :field="inputScope"
       />
     </slot>
     <slot name="caption">
@@ -153,11 +151,16 @@ defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ?
     </slot>
     <q-field
       ref="input"
+      v-model="value"
       :error="!!errorMessage"
       :error-message="errorMessage"
       :hint="__(hint)"
       :label="hasTopLabel ? undefined : getLabel"
-      v-bind="{ ...$myth.options.input as any,...$attrs, topLabel: undefined }"
+      v-bind="{
+        ...$myth.options.input as any,
+        ...$attrs,
+        autocomplete:getAutocompleteAttribute
+      }"
     >
       <template #control>
         <slot name="control">
@@ -171,7 +174,14 @@ defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ?
             <div>{{ viewModeValue?.toString() }}</div>
           </template>
           <template v-else>
-            <div>{{ value?.toString() }}</div>
+            <div>
+              <template v-if="value && Array.isArray(value)">
+                {{ value.join($myth.options.picker?.rangeSeparator || rangeSeparator) }}
+              </template>
+              <template v-else>
+                {{ value?.toString() }}
+              </template>
+            </div>
           </template>
         </slot>
       </template>
@@ -181,7 +191,7 @@ defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ?
           :icon="isDate ? 'ion-ios-calendar' : 'ion-ios-clock'"
           flat
           round
-          v-bind="{...btnProps, ...$myth.options?.pickerBtn}"
+          v-bind="{...$myth.options?.pickerBtn, ...btnProps}"
         >
           <q-popup-proxy
             cover
@@ -193,7 +203,6 @@ defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ?
             @before-hide="onBeforeHide()"
           >
             <q-card>
-              {{ dateRef }}
               <q-date
                 v-if="isDate"
                 ref="dateElm"
@@ -248,7 +257,7 @@ defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ?
       </template>
 
       <template
-        v-for="(_,slot) in ($slots as Readonly<QFieldSlots>)"
+        v-for="(_,slot) in $slots as Readonly<QFieldSlots>"
         :key="slot"
         #[slot]
       >

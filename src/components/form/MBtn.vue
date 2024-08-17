@@ -6,6 +6,16 @@
   - Github: https://github.com/mythpe
   -->
 
+<script lang="ts" setup>
+//
+</script>
+
+<script lang="ts">
+export default {
+  name: 'MBtn'
+}
+</script>
+
 <template>
   <q-btn v-bind="$myth.options.button">
     <template #loading>
@@ -132,13 +142,3 @@
     <slot />
   </q-btn>
 </template>
-
-<script lang="ts" setup>
-//
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MBtn'
-}
-</script>

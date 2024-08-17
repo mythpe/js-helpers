@@ -6,7 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import {
   openURL,
   QBtnProps,
@@ -14,7 +14,8 @@ import {
   QDialogOptions,
   QDialogProps,
   QFieldProps,
-  QIconProps, QInfiniteScroll,
+  QIconProps,
+  QInfiniteScroll,
   QItemLabelProps,
   QItemProps,
   QItemSectionProps,
@@ -48,6 +49,7 @@ import {
   MNoResultImgProps,
   MOptionsProps,
   MOtpProps,
+  MPickerProps,
   MRadioProps,
   MRowProps,
   MSelectProps,
@@ -61,8 +63,8 @@ import { I18n } from 'vue-i18n'
 import { ComputedRef, MaybeRefOrGetter, Ref, UnwrapNestedRefs } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import {
-  ApiInterface,
   ApiErrorResponse,
+  ApiInterface,
   MDtColumn,
   MDtHeadersParameter,
   ParseHeaderOptions,
@@ -73,7 +75,7 @@ import {
 import { Dates, Helpers, Str } from '../utils'
 import { MythApiServicesSchema } from './api-helpers'
 
-export type MythOptionsConfig = {
+export interface MythOptionsConfig {
   /**
    * Rules keys that can be added to Input Rules as Vue Attr
    */
@@ -161,9 +163,10 @@ export type MythOptionsConfig = {
   mobile?: Partial<MInputProps>;
   field?: Partial<QFieldProps>;
   file?: Partial<MFileProps>;
+  picker?: Partial<MPickerProps>;
+  pickerBtn?: Partial<MBtnProps>;
   date?: Partial<MDateProps>;
   time?: Partial<MTimeProps>;
-  pickerBtn?: Partial<MBtnProps>;
   select?: Partial<MSelectProps>;
   signaturePad?: Partial<MSignaturePadProps>;
   checkbox?: Partial<MCheckboxProps>;

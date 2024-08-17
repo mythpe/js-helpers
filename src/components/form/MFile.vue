@@ -69,12 +69,11 @@ const props = withDefaults(defineProps<P>(), {
   pdf: undefined,
   excel: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: null })
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
 const helper = useInputHelper<P>(() => props, 'file', () => ({ choose: !0, attrs }))
 const { hasTopLabel, getLabel, getPlaceholder, accepts, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
-  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -121,7 +120,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="$attrs.class"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -136,10 +135,7 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
-        :error="!!errorMessage"
-        :label="getLabel"
-        :name="name"
-        :required="!!getRules?.required"
+        :field="inputScope"
       />
     </slot>
     <slot name="caption">

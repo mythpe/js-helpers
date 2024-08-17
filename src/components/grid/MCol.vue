@@ -61,9 +61,7 @@ const classes = computed(() => {
   if (list.length === 1 && props.col !== !1) {
     list.push('col')
   }
-  if (props.name) {
-    list.push(`m--input__div__${props.name}`)
-  }
+
   return lodash.uniq(list)
 })
 </script>

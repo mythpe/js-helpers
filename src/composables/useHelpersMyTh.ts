@@ -38,14 +38,18 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
     // }
   })
   const getAutocompleteAttribute = computed<string | null | undefined>(() => {
-    if (props.autocomplete === undefined) return props.autocomplete
-    if (props.autocomplete === !0 || props.autocomplete === '') {
-      return lodash.kebabCase(props.name)
-    } else if (props.autocomplete === !1) {
-      return 'off'
-    } else if (props.autocomplete.length > 0) {
-      return props.autocomplete
+    const opt = inputOptions.value(key)
+    const autocomplete = 'autocomplete' in opt && opt?.autocomplete !== undefined ? opt?.autocomplete : props.autocomplete
+    if (autocomplete !== undefined) {
+      if (autocomplete === !0 || autocomplete === '') {
+        return lodash.kebabCase(props.name)
+      } else if (autocomplete === !1) {
+        return 'off'
+      } else if (autocomplete?.length > 0) {
+        return autocomplete
+      }
     }
+    return undefined
   })
   const accepts = computed(() => {
     const l = []
@@ -97,8 +101,7 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
       }
       const cases = [k, lodash.snakeCase(k), lodash.camelCase(k), lodash.kebabCase(k)]
 
-      mainFor:
-      for (const c of cases) {
+      mainFor: for (const c of cases) {
         for (const b of [attrs, props]) {
           if (c in b && (b[c] === !0 || b[c] === '')) {
             rules[lodash.snakeCase(k)] = b[c] === !0 || b[c] === '' ? !0 : b[c]

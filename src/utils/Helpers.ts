@@ -280,19 +280,21 @@ export const Helpers = {
     // })
     setVerticalScrollPosition(target, (offset + current) - 100, duration)
   },
-  async scrollToElementFromErrors (errors?: Record<string, string[]>, elm?: any, target?: any) {
+  async scrollToElementFromErrors (errors?: Partial<Record<string, string[] | string | null | undefined>>, elm?: any, target?: any) {
     if (!errors) {
       return
     }
-    const list = Object.values(errors).filter(e => !!e && e?.length > 0)
-    if (list.length > 0) {
-      const k = Object.keys(errors)[0]
-      if (!elm) {
-        const e = document.querySelector(`[data-input-name='${k}']`) as HTMLElement
-        const selector = `[data-input-name='${k}']`
-        await this.scrollToElement(e ? selector : `[name='${k}']`, { target })
-      } else {
-        await this.scrollToElement(elm, { target })
+    for (const [name, value] of Object.entries(errors)) {
+      const val = value && Array.isArray(value) ? value[0] : value
+      if (val?.toString?.()?.length) {
+        if (!elm) {
+          const selector = `[data-input-name='${name}']`
+          const e = document.querySelector(selector) as HTMLElement
+          await this.scrollToElement(e || `[name='${name}']`, { target })
+        } else {
+          await this.scrollToElement(elm, { target })
+        }
+        break
       }
     }
   },

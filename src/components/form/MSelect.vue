@@ -95,12 +95,11 @@ const props = withDefaults(defineProps<P>(), {
   axiosMode: undefined,
   hideSelected: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: null })
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
 const helper = useInputHelper<P & Props>(() => props, 'select', () => ({ choose: !0, attrs }))
 const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
-  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -159,7 +158,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="$attrs.class"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -174,10 +173,7 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
-        :error="!!errorMessage"
-        :label="getLabel"
-        :name="name"
-        :required="!!getRules?.required"
+        :field="inputScope"
       />
     </slot>
     <slot name="caption">
@@ -191,7 +187,6 @@ export default {
     <component
       :is="viewMode ? QField : QSelect"
       ref="input"
-      :autocomplete="getAutocompleteAttribute"
       :behavior="$q.platform.is.ios === !0 ? 'dialog' : behavior"
       :emit-value="emitValue"
       :error="!!errorMessage"
@@ -211,7 +206,8 @@ export default {
         multiple,
         mapOptions,
         loading,
-        useInput
+        useInput,
+        autocomplete:getAutocompleteAttribute
       }"
       @filter="filterFn"
       v-on="listeners"
@@ -285,7 +281,7 @@ export default {
       </template>
 
       <template
-        v-for="(_,slot) in ($slots as Readonly<QSelectSlots>)"
+        v-for="(_,slot) in $slots as Readonly<QSelectSlots>"
         :key="slot"
         #[slot]="inputSlot"
       >

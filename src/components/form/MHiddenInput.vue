@@ -10,38 +10,25 @@
 
 import { useField } from 'vee-validate'
 import { MHiddenInputProps as Props } from './models.d'
-import { reactive } from 'vue'
+import { reactive, useAttrs } from 'vue'
+import { useInputHelper } from '../../composables'
 
 type P = {
   name: Props['name'];
+  rules?: Props['rules'];
 }
 
 const props = withDefaults(defineProps<P>(), {
   name: () => '',
-  auto: undefined,
-  col: undefined,
-  xs: undefined,
-  sm: undefined,
-  md: undefined,
-  lg: undefined,
-  xl: undefined,
-  // modelValue: undefined,
-  label: undefined,
-  caption: undefined,
-  hint: undefined,
-  placeholder: undefined,
-  help: undefined,
-  required: undefined,
-  rules: undefined,
-  errors: undefined,
-  viewMode: () => !1,
-  viewModeValue: undefined,
-  autocomplete: undefined,
-  topLabel: undefined
+  rules: undefined
 })
-const modelValue = defineModel<Props['modelValue']>({ required: !0, default: undefined })
-const inputScope = useField<Props['modelValue']>(() => props.name, undefined, {
-  initialValue: modelValue,
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
+const attrs = useAttrs()
+const helper = useInputHelper<P>(() => props, 'input', () => ({ attrs }))
+const { getRules, getLabel } = helper
+const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
+  syncVModel: !0,
+  label: getLabel,
   validateOnValueUpdate: !1,
   validateOnMount: !1,
   controlled: !0
@@ -61,7 +48,8 @@ export default {
 
 <template>
   <input
-    :value="value"
-    type="hidden"
+    v-model="value"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
+    v-bind="{...$attrs,type: 'hidden' }"
   >
 </template>

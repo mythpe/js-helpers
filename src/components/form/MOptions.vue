@@ -32,7 +32,6 @@ type P = {
   help?: Props['help'];
   required?: Props['required'];
   rules?: Props['rules'];
-  errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
   topLabel?: Props['topLabel'];
@@ -60,7 +59,6 @@ const props = withDefaults(defineProps<P>(), {
   help: undefined,
   required: undefined,
   rules: undefined,
-  // errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   topLabel: undefined,
@@ -77,7 +75,6 @@ const attrs = useAttrs()
 const helper = useInputHelper<P>(() => props, 'options', () => ({ attrs }))
 const { getLabel, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
-  // initialValue: modelValue,
   syncVModel: !0,
   label: getLabel
 })
@@ -117,7 +114,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="$attrs.class"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -132,10 +129,7 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="!!getLabel"
-        :error="!!errorMessage"
-        :label="getLabel"
-        :name="name"
-        :required="!!getRules?.required"
+        :field="inputScope"
       >
         <MTransition>
           <q-spinner-dots
@@ -178,7 +172,7 @@ export default {
       :hint="viewMode ? __(hint) : undefined"
       :keep-color="!!errorMessage ? !0 : inputProps.keepColor"
       :label="getLabel"
-      :model-value="value || undefined"
+      :model-value="value"
       :options="options"
       :type="viewMode ? undefined : type"
       v-bind="{ ...$myth.options.options as any,...( viewMode ? $myth.options.field : {} ), ...$attrs, ...( viewMode ? { stackLabel: !0 } : {} ) }"

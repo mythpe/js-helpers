@@ -1806,7 +1806,7 @@ const getProp = computed(() => (k: keyof Props) => {
         </template>
 
         <template
-          v-for="(slotVal,slotName) in ($slots as Readonly<QTableSlots>)"
+          v-for="(slotVal,slotName) in $slots as Readonly<QTableSlots>"
           :key="slotName"
           #[slotName]="inputSlot"
         >

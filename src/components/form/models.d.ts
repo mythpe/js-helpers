@@ -30,7 +30,7 @@ import {
   QUploaderProps,
   QUploaderSlots
 } from 'quasar'
-import { FormContext, FormMeta, FormOptions, Path, SubmissionHandler } from 'vee-validate'
+import { FieldContext, FormContext, FormOptions } from 'vee-validate'
 import { ComputedGetter, MaybeRefOrGetter, UnwrapRef, VNode } from 'vue'
 import { MColProps, ViewModeProps } from '../grid/models'
 import { EditorConfig } from 'ckeditor5'
@@ -43,7 +43,7 @@ export type InputHelpProps = {
   /**
    * Information text with Icon.
    */
-  help?: string;
+  readonly help?: string;
 }
 export type InputHelpSlots = {
   /**
@@ -56,35 +56,36 @@ export type BaseInputFormProps = {
   /**
    * Input name.
    */
-  name: string;
+  readonly name: string;
   /**
    * Input model value.
+   * can be used instead of initialValue.
    */
   modelValue?: any;
   /**
    * Input Label.
    */
-  label?: string | undefined;
+  readonly label?: string | undefined;
   /**
    * Caption under label.
    */
-  caption?: string | undefined;
+  readonly caption?: string | undefined;
   /**
    * Input Hint.
    */
-  hint?: string | undefined;
+  readonly hint?: string | undefined;
   /**
    * Input Placeholder.
    */
-  placeholder?: string | undefined;
+  readonly placeholder?: string | undefined;
   /**
    * Input Required validation.
    */
-  required?: boolean;
+  readonly required?: boolean;
   /**
    * Input Validation Rules.
    */
-  rules?: InputRulesContext;
+  readonly rules?: InputRulesContext;
   /**
    * Input Error Messages.
    */
@@ -100,23 +101,23 @@ export type BaseInputFormProps = {
    * else, will set the attribute value.
    * Default: undefined.
    */
-  autocomplete?: boolean | string | undefined;
+  readonly autocomplete?: boolean | string | undefined;
   /**
    * Inputs Top Label.
    */
-  topLabel?: boolean;
+  readonly topLabel?: boolean;
   /**
    * Mobile Rule.
    */
-  mobile?: boolean | string | number | undefined;
+  readonly mobile?: boolean | string | number | undefined;
   /**
    * Email Rule.
    */
-  email?: boolean;
+  readonly email?: boolean;
   /**
    * Number Rule.
    */
-  float?: boolean;
+  readonly float?: boolean;
 }
 export type BaseInputsProps = ViewModeProps & InputHelpProps & Omit<MColProps, 'name'> & BaseInputFormProps;
 
@@ -161,7 +162,10 @@ export interface MBtnSlots extends QBtnSlots {
   loading: () => VNode[];
 }
 
-export type MInputProps = Omit<QInputProps, 'rules' | 'name' | 'modelValue' | 'label' | 'hint'> & BaseInputsProps
+export interface MInputProps extends Omit<QInputProps, 'rules' | 'name' | 'modelValue' | 'label' | 'hint'>, BaseInputsProps {
+  //
+}
+
 export type MPasswordProps = MInputProps & {
   /**
    * icon prepend it to password input.
@@ -176,7 +180,7 @@ export type MPasswordProps = MInputProps & {
 export type MInputSlots = QInputSlots & QFieldSlots & BaseInputsSlots
 
 export type MHiddenInputSlots = object
-export type MHiddenInputProps = {
+export type MHiddenInputProps = Pick<BaseInputFormProps, 'rules'> & {
   /**
    * Input name.
    */
@@ -240,10 +244,25 @@ export type MPickerProps =
   & Omit<QDateProps, 'modelValue' | 'options'>
   & Omit<QTimeProps, 'modelValue'>
   & {
+  /**
+   * Initial value of the picker.
+   * Default is: null.
+   */
   modelValue?: any;
+  /**
+   * Type of picker. 'date' or 'time'.
+   * Default is: 'date'.
+   */
   type?: 'date' | 'time';
-  btnProps?: MBtnProps;
-  range?: boolean;
+  /**
+   *  QBtn props for append button.
+   */
+  btnProps?: QBtnProps;
+  /**
+   * Value of separator for range picker.
+   * Default is: ' - '.
+   */
+  rangeSeparator?: string;
 }
 
 export type MPickerSlots = MInputSlots
@@ -254,7 +273,7 @@ export type MDateSlots = MPickerSlots
 export type MTimeProps = Omit<MPickerProps, 'type'>
 export type MTimeSlots = MPickerSlots
 
-export type MSelectProps = Omit<QSelectProps, 'rules' | 'name' | 'modelValue' | 'label' | 'hint'> & BaseInputsProps & {
+export type MSelectProps = Omit<QSelectProps, 'rules' | 'name' | 'modelValue' | 'label' | 'hint' | 'autocomplete'> & BaseInputsProps & {
   /**
    * Input search functionality. useInput prop for this feature.
    */
@@ -291,7 +310,7 @@ export type MAxiosProps = Omit<MSelectProps, 'options' | 'axiosMode'> & {
   /**
    * Send request as guest request. If false, send request as authenticated user. Default is true.
    */
-  guest?: MaybeRefOrGetter<boolean> | ComputedGetter<boolean>;
+  guest?: boolean | MaybeRefOrGetter<boolean> | ComputedGetter<boolean>;
   /**
    * Request params.
    */
@@ -310,13 +329,21 @@ export type MAxiosProps = Omit<MSelectProps, 'options' | 'axiosMode'> & {
   attributeName?: string;
 }
 export type MAxiosSlots = MSelectSlots
-
-export type MCheckboxProps = Omit<QCheckboxProps, 'name' | 'modelValue' | 'label'> & Omit<BaseInputsProps, 'topLabel'> & {
+export type BaseCheckboxProps = Omit<BaseInputsProps, 'topLabel'> & {
   /**
    * Top of input label.
    */
   topLabel?: string | null | undefined;
+  /**
+   * Input row props.
+   */
+  rowProps?: Record<string, any>;
+  /**
+   * Input column props.
+   */
+  colProps?: Record<string, any>;
 }
+export type MCheckboxProps = Omit<QCheckboxProps, 'name' | 'modelValue' | 'label'> & BaseCheckboxProps
 export type MCheckboxSlots = BaseInputsSlots & {
   /**
    * VNode before field main content.
@@ -346,23 +373,19 @@ export type MToggleProps =
    * Set labels of toggle to status, Active & Inactive.
    */
   status?: boolean;
+  /**
+   * Input row props.
+   */
+  rowProps?: Record<string, any>;
+  /**
+   * Input column props.
+   */
+  colProps?: Record<string, any>;
 }
 export type MToggleSlots = MCheckboxSlots
 
-export type MRadioProps = Omit<QRadioProps, 'name' | 'modelValue' | 'label'> & MCheckboxProps
+export type MRadioProps = Omit<QRadioProps, 'name' | 'modelValue' | 'label'> & BaseCheckboxProps
 export type MRadioSlots = MCheckboxSlots
-
-type GenericObject = Record<string, any>;
-type FormErrors<TValues extends GenericObject> = Partial<Record<Path<TValues>, string | undefined>>;
-type FormSlotProps =
-  UnwrapRef<Pick<FormContext, 'meta' | 'errors' | 'errorBag' | 'values' | 'isSubmitting' | 'isValidating' | 'submitCount' | 'validate' | 'validateField' | 'handleReset' | 'setErrors' | 'setFieldError' | 'setFieldValue' | 'setValues' | 'setFieldTouched' | 'setTouched' | 'resetForm' | 'resetField' | 'controlledValues'>>
-  & {
-  handleSubmit: (evt: Event | SubmissionHandler, onSubmit?: SubmissionHandler) => Promise<unknown>;
-  submitForm (evt?: Event): void;
-  getValues<TValues extends GenericObject = GenericObject> (): TValues;
-  getMeta<TValues extends GenericObject = GenericObject> (): FormMeta<TValues>;
-  getErrors<TValues extends GenericObject = GenericObject> (): FormErrors<TValues>;
-};
 
 export interface MFormProps {
   formProps?: Record<string, any>;
@@ -651,10 +674,22 @@ export interface MOtpSlots extends QInputSlots {
 }
 
 export type MInputLabelProps = {
-  name: string;
-  label?: string | null | undefined;
-  error?: boolean;
-  required?: boolean;
+  /**
+   * Context of field input.
+   */
+  field: FieldContext;
+  // /**
+  //  * Input name.
+  //  */
+  // name: string;
+  // /**
+  //  * Input Label text.
+  //  */
+  // label?: string | null | undefined;
+  // /**
+  //  * Input is required.
+  //  */
+  // required?: boolean;
 }
 export type MInputLabelSlots = {
   default: () => VNode[];

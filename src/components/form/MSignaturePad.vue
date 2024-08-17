@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MSignaturePadProps as Props, SignaturePadWaterMark } from './models.d'
-import { computed, ref, useAttrs } from 'vue'
+import { computed, onMounted, ref, useAttrs } from 'vue'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
 import Vue3Signature from 'vue3-signature'
@@ -83,7 +83,7 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
   label: getLabel
 })
-const { value, errorMessage, handleChange, handleReset } = inputScope
+const { value, errorMessage, handleChange } = inputScope
 
 const padRef = ref<InstanceType<typeof Vue3Signature>>()
 const confirmed = ref(!1)
@@ -98,9 +98,10 @@ const save = (type: 'image/jpeg' | 'image/svg+xml') => {
     myth.alertError(myth.__('validation.messages.required', { field: myth.__(props.label || myth.__('signature')) }))
     return
   }
-  handleReset()
+  // handleReset()
   confirmed.value = !0
-  handleChange(padRef.value?.save(type) || null, !0)
+  const v = padRef.value?.save(type)
+  handleChange(v || null, !0)
 }
 const clear = () => {
   padRef.value?.clear()
@@ -132,13 +133,16 @@ const undo = () => {
 //   padRef.value.fromDataURL('https://avatars2.githubusercontent.com/u/17644818?s=460&v=4')
 // }
 
-// const handleDisabled = () => {
-//   state.disabled = !state.disabled
-// }
 const isEmpty = () => !!padRef.value?.isEmpty()
 const addWaterMark = (opt: SignaturePadWaterMark) => padRef.value?.addWaterMark(opt)
 const fromDataURL = (url: string) => padRef.value?.fromDataURL(url)
 defineExpose({ reset, save, clear, undo, disabled: isDisabled, isEmpty, addWaterMark, fromDataURL, padRef })
+
+onMounted(() => {
+  if (props.url) {
+    confirmed.value = !0
+  }
+})
 </script>
 
 <script lang="ts">
@@ -151,7 +155,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="$attrs.class"
+    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -194,7 +198,10 @@ export default {
         key="signature-errors"
         class="text-negative text-caption q-mb-sm"
       >
-        <q-icon name="ion-ios-alert" />
+        <q-icon
+          name="ion-ios-information-circle-outline"
+          size="18px"
+        />
         {{ errorMessage }}
       </div>
       <div
@@ -205,21 +212,15 @@ export default {
         }"
       >
         <div>
-          <q-img
-            v-if="!!value"
-            :src="value"
-            fit="contain"
-          />
           <slot
             name="pad"
             v-bind="{ width, height, reset, save, clear, undo }"
           >
             <Vue3Signature
-              v-show="!value"
               ref="padRef"
               :class="{'q-mx-auto': !0, 'hidden': !!$slots.pad}"
               :clear-on-resize="clearOnResize"
-              :default-url="url || undefined"
+              :default-url="url"
               :disabled="isDisabled"
               :h="height"
               :sig-option="{

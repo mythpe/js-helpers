@@ -8,31 +8,18 @@
 
 <script lang="ts" setup>
 import { MDateProps as Props, MInputSlots } from './models'
-import { ref, useAttrs } from 'vue'
+import { ref } from 'vue'
 import MPicker from './MPicker.vue'
-import { useInputHelper } from '../../composables'
-import { useField } from 'vee-validate'
 
 type P = {
   name: Props['name'];
   rules?: Props['rules'];
 }
-
-const props = withDefaults(defineProps<P>(), {
+withDefaults(defineProps<P>(), {
   name: () => '',
   rules: undefined
 })
-
-defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const attrs = useAttrs()
-const helper = useInputHelper<P>(() => props, 'input', () => ({ attrs }))
-const { getLabel, getRules } = helper
-const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
-  syncVModel: !0,
-  label: getLabel
-})
-const { value } = inputScope
-
+const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const input = ref<InstanceType<typeof MPicker> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
 </script>
@@ -46,12 +33,12 @@ export default {
 <template>
   <MPicker
     ref="input"
-    v-model="value"
+    v-model="modelValue"
     :name="name"
     type="date"
   >
     <template
-      v-for="(_,slot) in ($slots as Readonly<MInputSlots>)"
+      v-for="(_,slot) in $slots as Readonly<MInputSlots>"
       :key="slot"
       #[slot]
     >
