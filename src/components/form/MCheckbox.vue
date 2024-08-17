@@ -62,7 +62,7 @@ const props = withDefaults(defineProps<P>(), {
   dense: undefined,
   trueValue: () => !0,
   falseValue: () => !1,
-  checkedIcon: () => 'ion-checkbox-outline',
+  checkedIcon: undefined,
   indeterminateIcon: undefined,
   topLabel: undefined,
   rowProps: undefined,

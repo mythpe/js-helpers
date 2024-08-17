@@ -42,8 +42,6 @@ const search = defineModel<string>('search', { required: !1, default: '' })
 const myth = useMyth()
 const loading = defineModel<Props['loading']>('loading', { required: !1, default: !1 })
 const items = defineModel<Props['items']>('items', { required: !1, default: [] })
-const cached = ref<Props['items']>([])
-const mounted = ref(!1)
 const prepare = async () => {
   if (!props.service || loading.value) {
     return
@@ -66,19 +64,29 @@ const prepare = async () => {
   method({ params })
     .then(({ _data }: any) => {
       items.value = _data || []
-      if (!mounted.value) {
-        mounted.value = !0
-        cached.value = _data || []
-      }
+      // if (!mounted.value) {
+      //   mounted.value = !0
+      //   cached.value = _data || []
+      // }
     })
     .catch((e: any) => {
       console.log(e)
+      myth.alertError(e?.message || 'An error occurred')
     })
     .finally(() => {
       loading.value = !1
     })
 }
-const onSearch = () => prepare()
+const onSearch = () => {
+  prepare()
+}
+const filterFn = (val: any, update: any) => {
+  if ((!val && search.value === val)) {
+    update()
+    return
+  }
+  update(() => onSearch())
+}
 onMounted(() => {
   if (props.viewMode) {
     return
@@ -92,6 +100,7 @@ defineExpose<{ input: typeof input }>({ input })
 
 <script lang="ts">
 export default {
+  name: 'MAxios',
   inheritAttrs: !1
 }
 </script>
@@ -110,7 +119,8 @@ export default {
     :view-mode-value="viewModeValue"
     axios-mode
     v-bind="$attrs"
-    @update:search="onSearch"
+    no-filter
+    @update:search="onSearch()"
   >
     <template
       v-for="(_,slot) in $slots as Readonly<QSelectSlots>"

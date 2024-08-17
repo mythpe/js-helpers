@@ -53,6 +53,7 @@ type P = {
   searchLength?: Props['searchLength'];
   axiosMode?: Props['axiosMode'];
   hideSelected?: Props['hideSelected'];
+  onFilter?: Props['onFilter'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -93,7 +94,8 @@ const props = withDefaults(defineProps<P>(), {
   useChips: undefined,
   searchLength: () => 1,
   axiosMode: undefined,
-  hideSelected: undefined
+  hideSelected: undefined,
+  onFilter: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
@@ -125,14 +127,16 @@ const getOptions = computed(() => {
   }
   return props.options
 })
-const filterFn = (val: any, update: any) => {
-  if ((!val && search.value === val) || props.noFilter === !0) {
-    update()
-    return
+const filterFn: Props['onFilter'] = (val: string, update, abortFn) => {
+  if (props.onFilter) {
+    return props.onFilter(val, update, abortFn)
   }
-  update(() => {
-    search.value = val.toString()
-  })
+  update(() => void 0)
+  // if ((!val && search.value === val) || props.noFilter === !0) {
+  //   update(() => void 0)
+  //   return
+  // }
+  // update(() => (search.value = val))
 }
 const onDoneOptions = () => {
   const e = input.value as QSelect
@@ -140,9 +144,15 @@ const onDoneOptions = () => {
   e?.hidePopup()
 }
 const listeners = {
-  blur: (v: any) => handleBlur(v, !1),
+  blur: (v: any) => {
+    handleBlur(v, !1)
+    // if (search.value) {
+    //   search.value = ''
+    // }
+  },
   'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value),
-  filterFn
+  inputValue: (v: string) => (search.value = v?.toString() || ''),
+  filter: filterFn
 }
 const input = ref<InstanceType<typeof QSelect | typeof QField> | null>(null)
 const scopes = reactive(inputScope)
@@ -209,7 +219,6 @@ export default {
         useInput,
         autocomplete:getAutocompleteAttribute
       }"
-      @filter="filterFn"
       v-on="listeners"
     >
       <template
