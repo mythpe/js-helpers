@@ -144,12 +144,7 @@ const onDoneOptions = () => {
   e?.hidePopup()
 }
 const listeners = {
-  blur: (v: any) => {
-    handleBlur(v, !1)
-    // if (search.value) {
-    //   search.value = ''
-    // }
-  },
+  blur: (v: any) => handleBlur(v, !0),
   'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value),
   inputValue: (v: string) => (search.value = v?.toString() || ''),
   filter: filterFn
