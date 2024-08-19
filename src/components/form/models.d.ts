@@ -188,7 +188,7 @@ export type MHiddenInputProps = Pick<BaseInputFormProps, 'rules'> & {
   /**
    * Input model value.
    */
-  modelValue: any;
+  modelValue?: any;
 }
 
 export type MOptionsOptionContext = Omit<QToggleProps, 'modelValue'> & Omit<QRadioProps, 'modelValue'> & Omit<QCheckboxProps, 'modelValue'> & {
