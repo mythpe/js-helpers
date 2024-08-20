@@ -180,7 +180,7 @@ export type MPasswordProps = MInputProps & {
 export type MInputSlots = QInputSlots & QFieldSlots & BaseInputsSlots
 
 export type MHiddenInputSlots = object
-export type MHiddenInputProps = Pick<BaseInputFormProps, 'rules'> & {
+export type MHiddenInputProps = Pick<BaseInputFormProps, 'rules' | 'required'> & {
   /**
    * Input name.
    */

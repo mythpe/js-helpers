@@ -16,11 +16,13 @@ import { useInputHelper } from '../../composables'
 type P = {
   name: Props['name'];
   rules?: Props['rules'];
+  required?: Props['required'];
 }
 
 const props = withDefaults(defineProps<P>(), {
   name: () => '',
-  rules: undefined
+  rules: undefined,
+  required: () => !1
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
