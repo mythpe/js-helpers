@@ -198,7 +198,7 @@ export default {
       :error-message="errorMessage"
       :hide-selected="hideSelected !== undefined ? hideSelected : search.length > 0"
       :hint="__(hint)"
-      :label="loading ? undefined : getPlaceholder"
+      :label="viewMode && hasTopLabel ? undefined : (loading ? undefined : getPlaceholder)"
       :model-value="value"
       :options="getOptions"
       :readonly="readonly"

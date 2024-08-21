@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MSignaturePadProps as Props, SignaturePadWaterMark } from './models.d'
-import { computed, onMounted, ref, useAttrs } from 'vue'
+import { computed, onUnmounted, ref, useAttrs, watch } from 'vue'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
 import Vue3Signature from 'vue3-signature'
@@ -138,10 +138,16 @@ const addWaterMark = (opt: SignaturePadWaterMark) => padRef.value?.addWaterMark(
 const fromDataURL = (url: string) => padRef.value?.fromDataURL(url)
 defineExpose({ reset, save, clear, undo, disabled: isDisabled, isEmpty, addWaterMark, fromDataURL, padRef })
 
-onMounted(() => {
-  if (props.url) {
-    confirmed.value = !0
+const watchStopHandle = watch(() => props.url, (url) => {
+  if (url) {
+    fromDataURL(url)
+    if (!confirmed.value) {
+      confirmed.value = !0
+    }
   }
+})
+onUnmounted(() => {
+  watchStopHandle?.()
 })
 </script>
 

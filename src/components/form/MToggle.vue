@@ -12,7 +12,7 @@ import { computed, reactive, ref, useAttrs } from 'vue'
 import { useField } from 'vee-validate'
 import { MToggleProps as Props } from './models'
 import { useInputHelper } from '../../composables'
-import { QToggle } from 'quasar'
+import { QRadio, QToggle } from 'quasar'
 
 interface P {
   auto?: Props['auto'];
@@ -46,6 +46,7 @@ interface P {
   required?: Props['required'];
   rowProps?: Props['rowProps'];
   colProps?: Props['colProps'];
+  viewMode?: Props['viewMode'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -79,7 +80,8 @@ const props = withDefaults(defineProps<P>(), {
   keepColor: undefined,
   required: undefined,
   rowProps: undefined,
-  colProps: undefined
+  colProps: undefined,
+  viewMode: () => !1
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const { __ } = useMyth()
@@ -166,6 +168,7 @@ export default {
             :label="getLabel"
             :model-value="value"
             :true-value="trueValue"
+            :disable="viewMode"
             v-bind="{
               ...$myth.options.toggle,
               ...$attrs,

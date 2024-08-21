@@ -39,6 +39,7 @@ type P = {
   topLabel?: Props['topLabel'];
   rowProps?: Props['rowProps'];
   colProps?: Props['colProps'];
+  viewMode?: Props['viewMode'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -66,7 +67,8 @@ const props = withDefaults(defineProps<P>(), {
   indeterminateIcon: undefined,
   topLabel: undefined,
   rowProps: undefined,
-  colProps: undefined
+  colProps: undefined,
+  viewMode: () => !1
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
@@ -147,6 +149,7 @@ export default {
         >
           <q-checkbox
             ref="input"
+            :disable="viewMode"
             :label="getLabel"
             :model-value="value"
             :val="val"
