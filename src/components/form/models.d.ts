@@ -231,10 +231,11 @@ export type MOptionsSlots = QOptionGroupSlots & QFieldSlots & BaseInputsSlots
 
 export type MFileProps = Omit<QFileProps, 'rules' | 'name' | 'label' | 'hint'> & Omit<BaseInputsProps, 'modelValue' | 'autocomplete'> & {
   accept?: string | undefined;
-  images?: boolean | undefined;
-  video?: boolean | undefined;
-  pdf?: boolean | undefined;
-  excel?: boolean | undefined;
+  images?: boolean;
+  svg?: boolean;
+  video?: boolean;
+  pdf?: boolean;
+  excel?: boolean;
 }
 
 export type MFileSlots = BaseInputsSlots
@@ -410,6 +411,10 @@ export type MAvatarViewerProps = QAvatarProps & MColProps & {
    */
   images?: boolean;
   /**
+   * Add accept svg type.
+   */
+  svg?: boolean;
+  /**
    * Add accept video type.
    */
   video?: boolean;
@@ -532,6 +537,8 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
   accept?: string;
   /** Support for uploading images */
   images?: boolean;
+  /** Support for uploading svg */
+  svg?: boolean;
   /** Support for uploading videos  */
   video?: boolean;
   /** Support for uploading pdf  */

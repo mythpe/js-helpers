@@ -21,6 +21,7 @@ export const initComponents = (app: App) => {
   app.component('MBtn', defineAsyncComponent(() => import('../components/form/MBtn.vue')))
   app.component('MCheckbox', defineAsyncComponent(() => import('../components/form/MCheckbox.vue')))
   app.component('MCkeditor', defineAsyncComponent(() => import('../components/form/MCkeditor.vue')))
+  app.component('MColor', defineAsyncComponent(() => import('../components/form/MColor.vue')))
   app.component('MRadio', defineAsyncComponent(() => import('../components/form/MRadio.vue')))
   app.component('MDate', defineAsyncComponent(() => import('../components/form/MDate.vue')))
   app.component('MEditor', defineAsyncComponent(() => import('../components/form/MEditor.vue')))

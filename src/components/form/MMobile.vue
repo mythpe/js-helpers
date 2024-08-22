@@ -11,15 +11,6 @@ import { MDateProps as Props, MInputSlots } from './models'
 import { ref } from 'vue'
 import MInput from './MInput.vue'
 
-type P = {
-  name: Props['name'];
-  rules?: Props['rules'];
-}
-
-const props = withDefaults(defineProps<P>(), {
-  name: () => '',
-  rules: undefined
-})
 const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const input = ref<InstanceType<typeof MInput> | null>(null)
 defineExpose<{ input: typeof input }>({ input })

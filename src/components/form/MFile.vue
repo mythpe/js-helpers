@@ -38,6 +38,7 @@ interface P {
   topLabel?: Props['topLabel'];
   accept?: Props['accept'];
   images?: Props['images'];
+  svg?: Props['svg'];
   video?: Props['video'];
   pdf?: Props['pdf'];
   excel?: Props['excel'];
@@ -65,10 +66,11 @@ const props = withDefaults(defineProps<P>(), {
   viewModeValue: undefined,
   topLabel: undefined,
   accept: undefined,
-  images: undefined,
-  video: undefined,
-  pdf: undefined,
-  excel: undefined
+  images: () => !1,
+  svg: () => !1,
+  video: () => !1,
+  pdf: () => !1,
+  excel: () => !1
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()

@@ -11,7 +11,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, useAttrs, watch } from 'vue'
 
 import MFile from './MFile.vue'
-import { MAvatarViewerModelValue, MAvatarViewerProps as Props } from './models'
+import { MAvatarViewerProps as Props } from './models'
 import { useField, useFieldError } from 'vee-validate'
 import { useInputHelper } from '../../composables'
 
@@ -25,6 +25,7 @@ interface P {
   xl?: Props['xl'];
   accept?: Props['accept'];
   images?: Props['images'];
+  svg?: Props['svg'];
   video?: Props['video'];
   pdf?: Props['pdf'];
   excel?: Props['excel'];
@@ -52,6 +53,7 @@ const props = withDefaults(defineProps<P>(), {
   xl: undefined,
   accept: undefined,
   images: !0,
+  svg: !0,
   video: !1,
   pdf: !1,
   excel: !1,
@@ -74,38 +76,24 @@ type Events = {
 const emit = defineEmits<Events>()
 const attrs = useAttrs()
 const { accepts } = useInputHelper<any>(() => props, 'avatarViewer', () => ({ attrs }))
-const errorMessage = useFieldError(() => props.name)
-const modelValue = defineModel<MAvatarViewerModelValue>({ required: !0, default: undefined })
+const modelValueScope = useField<Props['modelValue']>(() => props.name, undefined, {
+  syncVModel: !0
+})
+const { value: modelValue, errorMessage, setErrors } = modelValueScope
 
-const removedModel = defineModel<boolean>('removed', { required: !1, default: undefined })
 const removedScope = useField<Props['removed']>(() => `${props.name}_removed`, undefined, {
-  initialValue: removedModel,
   syncVModel: 'removed'
 })
 const { handleChange: handleRemoved } = removedScope
 
-const urlModel = defineModel<string>('url', { required: !1, default: undefined })
 const urlScope = useField<Props['url']>(() => `${props.name}_url`, undefined, {
-  initialValue: urlModel,
   syncVModel: 'url'
 })
 const { value: url, handleChange: handleUrl } = urlScope
 
-const errors = defineModel<Props['errors']>('errors', { required: true, default: () => ({}) })
-
-const getErrors = computed<string[]>(() => {
-  let e = errors.value || []
-  if (props.formErrors?.[props.name]) {
-    e = [...e, ...props.formErrors[props.name]]
-  }
-  return e
-})
-
 const fileRef = ref<typeof MFile | null | undefined>()
 const pickFiles = () => fileRef.value?.pickFiles()
 const removeFile = () => fileRef.value?.removeAtIndex(0)
-
-const hasErrors = computed(() => getErrors.value.length > 0)
 
 /**
  * Blob file to url helpers
@@ -137,7 +125,7 @@ const isFile = computed(() => {
 })
 const getAvatarText = computed(() => props.avatarText ? props.avatarText.slice(0, 1).toUpperCase() : undefined)
 const onClick = (e?: Event) => {
-  errors.value = []
+  setErrors()
   if (props.clearable && hasSrc.value) {
     onClearInput()
     return
@@ -157,7 +145,6 @@ onBeforeUnmount(() => {
 })
 watch(modelValue, (v) => {
   if (v instanceof File) {
-    errors.value = []
     nextTick(() => toUrl(v))
   }
 })
@@ -187,7 +174,7 @@ export default {
           v-if="label"
           key="label"
         >
-          <div :class="`text-h6 q-px-sm rounded-borders q-mb-sm ${hasErrors ? 'text-negative' : ''}`">
+          <div :class="`text-h6 q-px-sm rounded-borders q-mb-sm ${!!errorMessage ? 'text-negative' : ''}`">
             {{ label }}
             <span
               v-if="!clearable"
@@ -211,10 +198,10 @@ export default {
         </slot>
         <div
           key="avatar"
-          :class="`rounded-borders q-mb-sm ${hasErrors ? 'q-pa-xs bg-negative' : ''}`"
+          :class="`rounded-borders q-mb-sm ${!!errorMessage ? 'q-pa-xs bg-negative' : ''}`"
         >
           <q-avatar
-            :color="hasErrors ? 'negative' : ((!isLoaded || !hasSrc || isFile) ? 'primary' : undefined)"
+            :color="!!errorMessage ? 'negative' : ((!isLoaded || !hasSrc || isFile) ? 'primary' : undefined)"
             :icon="isFile ? 'o_description' : undefined"
             :rounded="rounded === undefined ? hasSrc : rounded"
             :size="size"

@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { computed, defineEmits, nextTick, onMounted, reactive, ref, toRef, useSlots, watch } from 'vue'
-import { extend, is as quasarHelpers, QTable, QTableSlots, useQuasar } from 'quasar'
+import { is as quasarHelpers, QCardSection, QTable, QTableSlots, useQuasar } from 'quasar'
 import lodash from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
 import {
@@ -172,7 +172,24 @@ const slots = useSlots()
 const router = useRouter()
 const route = useRoute()
 const $q = useQuasar()
-const formRef = useForm({ initialValues: {} })
+const defaultItem = computed(() => props.defaultItem)
+const formRef = useForm<any, any>()
+const { resetForm: resetDialogForm, setValues } = formRef
+watch(() => props.defaultItem, (v) => {
+  resetDialogForm({
+    values: { ...v || {} }
+  }, {
+    force: !0
+  })
+}, { immediate: !0 })
+const resetForm = (attrs?: Record<string, any>) => {
+  resetDialogForm({
+    values: props.defaultItem || {}
+  }, {
+    force: !0
+  })
+  attrs && setValues(attrs, !1)
+}
 const serviceName = computed(() => props.serviceName)
 const exportToBlob = computed(() => {
   if (props.exportUrl === undefined && myth.options.datatable?.exportUrl === undefined) {
@@ -318,7 +335,6 @@ const getFormTitle = computed(() => {
     '/').pop()))}`, 1) : ''
   return __(`replace.${formMode.value}`, { name })
 })
-const defaultItem = computed(() => props.defaultItem)
 const isGrid = computed(() => {
   if (props.grid !== undefined) {
     return props.grid
@@ -375,9 +391,7 @@ const refreshNoUpdate = (done?: () => void) => {
     }
   })
 }
-const refresh = (done?: () => void) => {
-  return refreshNoUpdate(done)
-}
+const refresh = (done?: () => void) => refreshNoUpdate(done)
 const getRequestWith = (type: 'withIndex' | 'withShow' | 'withUpdate' | 'withStore'): string | null => {
   let v: any = []
   const params: { [k: string]: string } & string | (() => string | object) = props[type] as any
@@ -693,13 +707,11 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
     .then(({ _data }) => {
       dialogs.item = _data
       dialogs.index = index
-      const item = extend<Record<string, any>>(!0, { ...defaultItem.value }, { ...defaultItem.value }, { ..._data })
-      formRef.resetForm({ values: { ...item } })
-      formRef.handleReset()
       if (_data && (index || index === 0)) {
         getRows.value[index] = { ..._data } as any
       }
-      setTimeout(() => (dialogs.form = !0), openDialogTimeout)
+      dialogs.form = !0
+      setTimeout(() => resetForm(_data), openDialogTimeout)
     })
     .catch((e) => {
       const message = e?._message || e?.message
@@ -721,28 +733,21 @@ const openCreateDialog = async (dtItem?: MDtItem) => {
     }
     return
   }
-  // const item = extend<Record<string, any>>(!0, {}, { ...defaultItem.value }, { ...dtItem })
-  const item = { ...defaultItem.value, ...dtItem }
-  formRef.resetForm({ values: {} })
-  formRef.handleReset()
+  // const item = { ...defaultItem.value, ...dtItem }
   isUpdateMode.value = !1
-  dialogs.item = { ...item } as MDtItem
+  dialogs.item = { ...defaultItem.value, ...dtItem } as MDtItem
   dialogs.index = undefined
   await nextTick()
-  setTimeout(() => (dialogs.form = !0), openDialogTimeout)
+  dialogs.form = !0
+  setTimeout(() => resetForm(dtItem), openDialogTimeout)
 }
-const closeFormDialog = () => {
-  // dialogs.form = !1
-  // nextTick(() => {
-  //   isUpdateMode.value = !1
-  //   dialogs.item = undefined
-  //   dialogs.index = undefined
-  // })
-  // formRef.resetForm({ values: { ...defaultItem.value } })
-  formRef.resetForm({ values: { } })
-  formRef.setValues({ })
-  // formRef.setValues({ ...defaultItem.value })
-  // formRef.handleReset()
+const closeFormDialog = async () => {
+  dialogs.form = !1
+  isUpdateMode.value = !1
+  dialogs.item = undefined
+  dialogs.index = undefined
+  await nextTick()
+  setTimeout(() => resetForm(), openDialogTimeout)
 }
 /**
  * Form Dialog
@@ -769,13 +774,8 @@ const removeDtItem = (i: MDtItem | number) => {
 }
 const ignoreKeysProps = computed(() => props.ignoreKeys)
 
-const onSuccess: SubmissionHandler = async (values) => {
-  console.log(values)
-  return
-  // let form = { ..._form, ...(dialogs.itemForm || {}) }
-  // let form = { ...(props.formModel ? props.formModel : {}) }
-  // let form: { [K: string | number | symbol]: any } = { requestWith: undefined, fdt: undefined, ...values } as any
-  let form = extend<Record<string, any>>(!0, defaultItem.value, values)
+const formDialogCartSection = ref<InstanceType<typeof QCardSection> | null>(null)
+const onSuccess: SubmissionHandler = async (form) => {
   if (loading.value) {
     return
   }
@@ -822,28 +822,30 @@ const onSuccess: SubmissionHandler = async (values) => {
       if (isUpdateMode.value) {
         _data && updateDatatableItem(_data, dialogs.index)
       } else {
-        await nextTick()
-        refresh()
+        setTimeout(() => refresh(), openDialogTimeout)
       }
-      await nextTick()
-      closeFormDialog()
+      // await nextTick()
+      await closeFormDialog()
     }
   } catch (e: any) {
     const { _message, _errors } = e || {}
     dialogs.errors = _errors || {}
-    await myth.helpers.scrollToElementFromErrors(_errors)
+    await myth.helpers.scrollToElementFromErrors(_errors, undefined, '.m--datatable__dialog-form-container')
     _message && myth.alertError(_message)
+    if (_errors) {
+      formRef.setErrors(_errors)
+    }
   } finally {
     loading.value = !1
   }
 }
-const onInvalidSubmit: InvalidSubmissionHandler = ({ errors, values }) => {
-  console.log(values)
+const onInvalidSubmit: InvalidSubmissionHandler = ({ errors }) => {
   const keys: (keyof typeof errors)[] = Object.keys(errors)
   if (keys.length) {
     const message = errors[keys[0]] as string || myth.__('messages.the_given_data_was_invalid')
     myth.helpers.scrollToElementFromErrors({ [keys[0]]: [message] }, undefined, '.m--datatable__dialog-form-container')
-    myth.alertError(message)
+    // console.log(formDialogCartSection.value?.$el)
+    // myth.alertError(message)
   }
 }
 const defaultSubmitItem = formRef.handleSubmit.withControlled(onSuccess, onInvalidSubmit)
@@ -1157,7 +1159,6 @@ const getProp = computed(() => (k: keyof Props) => {
       color="primary"
       @refresh="refresh"
     >
-      <div>{{ formRef.values }}</div>
       <q-table
         ref="table"
         v-model:fullscreen="tableOptions.fullscreen"
@@ -1915,7 +1916,6 @@ const getProp = computed(() => (k: keyof Props) => {
           class="m--form column full-height justify-between no-wrap"
           @submit="defaultSubmitItem"
         >
-          <div>{{ formRef.values }}</div>
           <!--<MForm-->
           <!--  v-slot="form"-->
           <!--  :errors="dialogs.errors"-->
@@ -1968,6 +1968,7 @@ const getProp = computed(() => (k: keyof Props) => {
             </q-card-section>
             <q-separator />
             <q-card-section
+              ref="formDialogCartSection"
               :style="`height: ${($q.screen.height || 100) - 3 - (($refs.formActions as any)?.$el?.offsetHeight || 60) - (($refs.formTitle as any)?.$el?.offsetHeight || 80)}px`"
               class="scroll m--datatable__dialog-form-container"
             >

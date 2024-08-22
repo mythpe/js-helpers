@@ -59,6 +59,9 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
     if (props.images) {
       l.push('image/png,image/jpg,image/jpeg')
     }
+    if (props.svg) {
+      l.push('image/svg+xml')
+    }
     if (props.video) {
       l.push('video/mp4,video/x-m4v,video/*')
     }

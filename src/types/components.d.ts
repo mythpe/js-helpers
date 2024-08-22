@@ -102,6 +102,7 @@ declare module '@vue/runtime-core' {
     MCheckbox: GlobalComponentConstructor<MCheckboxProps, MCheckboxSlots>;
     MCkeditor: GlobalComponentConstructor<MCkeditorProps, MCkeditorSlots>;
     MRadio: GlobalComponentConstructor<MRadioProps, MRadioSlots>;
+    MColor: GlobalComponentConstructor<MInputProps, MInputSlots>;
     MDate: GlobalComponentConstructor<MDateProps, MDateSlots>;
     MEditor: GlobalComponentConstructor<MEditorProps, MEditorSlots>;
     MEmail: GlobalComponentConstructor<MInputProps, MInputSlots>;

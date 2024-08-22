@@ -27,6 +27,7 @@ interface P {
   readonly?: Props['readonly'];
   accept?: Props['accept'];
   images?: Props['images'];
+  svg?: Props['svg'];
   video?: Props['video'];
   pdf?: Props['pdf'];
   excel?: Props['excel'];
@@ -71,10 +72,11 @@ const props = withDefaults(defineProps<P>(), {
   readonly: undefined,
   disable: undefined,
   accept: undefined,
-  images: undefined,
-  video: undefined,
-  pdf: undefined,
-  excel: undefined,
+  images: () => !1,
+  svg: () => !1,
+  video: () => !1,
+  pdf: () => !1,
+  excel: () => !1,
   autoUpload: () => !0,
   fieldName: 'attachment',
   collection: undefined,

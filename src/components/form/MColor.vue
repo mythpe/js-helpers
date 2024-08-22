@@ -20,10 +20,27 @@ defineExpose<{ input: typeof input }>({ input })
   <MInput
     ref="input"
     v-model="modelValue"
-    email
-    type="email"
     v-bind="$attrs"
   >
+    <template #prepend>
+      <div :style="`width: 20px; height: 20px; background-color: ${modelValue}`" />
+    </template>
+    <template #append>
+      <q-icon
+        class="cursor-pointer"
+        name="colorize"
+      >
+        <q-popup-proxy
+          cover
+          transition-hide="scale"
+          transition-show="scale"
+        >
+          <q-color
+            v-model="modelValue"
+          />
+        </q-popup-proxy>
+      </q-icon>
+    </template>
     <template
       v-for="(_,slot) in $slots as Readonly<MInputSlots>"
       :key="slot"
@@ -36,7 +53,7 @@ defineExpose<{ input: typeof input }>({ input })
 
 <script lang="ts">
 export default {
-  name: 'MEmail',
+  name: 'MColor',
   inheritAttrs: !1
 }
 </script>
