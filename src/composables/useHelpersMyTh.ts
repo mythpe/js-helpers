@@ -92,6 +92,9 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
   const { messages, locale } = useI18n({ useScope: 'global' })
   const validations = (messages.value as any)?.[locale.value]?.validation?.messages || {}
   const getRules = computed<any>(() => {
+    if (props.viewMode) {
+      return {}
+    }
     const rules: any = { ...convertRules(toValue(props.rules)) }
     const attrs = toValue(opts.attrs) || {}
     const keys = lodash.uniq<string>(['required', 'email', 'numeric', 'integer', 'float', ...(options.inputRules ?? []), ...Object.keys(validations)])

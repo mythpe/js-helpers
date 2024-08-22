@@ -13,6 +13,7 @@ import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
 import { defineProps, reactive, ref, useAttrs } from 'vue'
 import { MFileProps as Props } from './models'
+import MInputFieldControl from './MInputFieldControl.vue'
 
 interface P {
   name: Props['name'];
@@ -153,7 +154,7 @@ export default {
       :error="!!errorMessage"
       :error-message="errorMessage"
       :hint="__(hint)"
-      :label="hasTopLabel ? getPlaceholder : getLabel"
+      :label="hasTopLabel ? (viewMode ? undefined : getPlaceholder) : getLabel"
       :model-value="value"
       v-bind="{ ...$myth.options.file as any,...( viewMode ? $myth.options.field : {} ), ...$attrs, ...( viewMode ? { stackLabel: !0 } : {} ) }"
       v-on="listeners"
@@ -180,12 +181,9 @@ export default {
         #control
       >
         <slot name="control">
-          <div
-            class="self-center full-width no-outline"
-            tabindex="0"
-          >
+          <MInputFieldControl>
             {{ viewModeValue ?? value }}
-          </div>
+          </MInputFieldControl>
         </slot>
       </template>
     </component>

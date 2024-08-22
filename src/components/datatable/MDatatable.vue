@@ -30,9 +30,7 @@ import { useMyth } from '../../vue3'
 import MDtContextmenuItems from './MDtContextmenuItems.vue'
 import MDtBtn from './MDtBtn.vue'
 import { AxiosRequestConfig } from 'axios'
-import MForm from '../form/MForm.vue'
-import { MFormScope } from 'src/components/form/models'
-import { InvalidSubmissionHandler, SubmissionHandler } from 'vee-validate'
+import { InvalidSubmissionHandler, SubmissionHandler, useForm } from 'vee-validate'
 import MDialog from '../modal/MDialog.vue'
 
 const initPaginationOptions: MDatatablePagination = {
@@ -174,6 +172,7 @@ const slots = useSlots()
 const router = useRouter()
 const route = useRoute()
 const $q = useQuasar()
+const formRef = useForm({ initialValues: {} })
 const serviceName = computed(() => props.serviceName)
 const exportToBlob = computed(() => {
   if (props.exportUrl === undefined && myth.options.datatable?.exportUrl === undefined) {
@@ -566,7 +565,9 @@ const exportData = (type: MDtExportOptions) => {
 /** Methods */
 
 const openDialogTimeout = 100
-/** Filter Dialog */
+/**
+ * Filter Dialog
+ */
 const openFilterDialog = () => {
   dialogs.filter = !0
   tempFilterForm.value = { ...tableOptions.filter }
@@ -597,8 +598,13 @@ const updateFilterOptions = (data: Record<string, any>) => {
     ...data
   }
 }
-/** Filter Dialog */
-/** Show Dialog */
+/**
+ * Filter Dialog
+ */
+
+/**
+ * Show Dialog
+ */
 const openShowDialogNoIndex = async (i: MDtItem) => {
   const item = toRef(i)
   const index = getRows.value.findIndex(e => e.id === item.value.id)
@@ -646,9 +652,13 @@ const closeShowDialog = () => {
   dialogs.item = undefined
   dialogs.index = undefined
 }
-/** Show Dialog */
+/**
+ * Show Dialog
+ */
 
-/** Form Dialog */
+/**
+ * Form Dialog
+ */
 const updateRouteProp = computed(() => props.updateRoute)
 const openUpdateDialogNoIndex = (i: MDtItem) => {
   const item = toRef(i)
@@ -683,6 +693,9 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
     .then(({ _data }) => {
       dialogs.item = _data
       dialogs.index = index
+      const item = extend<Record<string, any>>(!0, { ...defaultItem.value }, { ...defaultItem.value }, { ..._data })
+      formRef.resetForm({ values: { ...item } })
+      formRef.handleReset()
       if (_data && (index || index === 0)) {
         getRows.value[index] = { ..._data } as any
       }
@@ -708,7 +721,10 @@ const openCreateDialog = async (dtItem?: MDtItem) => {
     }
     return
   }
+  // const item = extend<Record<string, any>>(!0, {}, { ...defaultItem.value }, { ...dtItem })
   const item = { ...defaultItem.value, ...dtItem }
+  formRef.resetForm({ values: {} })
+  formRef.handleReset()
   isUpdateMode.value = !1
   dialogs.item = { ...item } as MDtItem
   dialogs.index = undefined
@@ -716,14 +732,21 @@ const openCreateDialog = async (dtItem?: MDtItem) => {
   setTimeout(() => (dialogs.form = !0), openDialogTimeout)
 }
 const closeFormDialog = () => {
-  dialogs.form = !1
-  nextTick(() => {
-    isUpdateMode.value = !1
-    dialogs.item = undefined
-    dialogs.index = undefined
-  })
+  // dialogs.form = !1
+  // nextTick(() => {
+  //   isUpdateMode.value = !1
+  //   dialogs.item = undefined
+  //   dialogs.index = undefined
+  // })
+  // formRef.resetForm({ values: { ...defaultItem.value } })
+  formRef.resetForm({ values: { } })
+  formRef.setValues({ })
+  // formRef.setValues({ ...defaultItem.value })
+  // formRef.handleReset()
 }
-/** Form Dialog */
+/**
+ * Form Dialog
+ */
 
 const updateDatatableItem = (i: MDtItem, index?: MDtItemIndex) => {
   const item = toRef(i)
@@ -746,84 +769,85 @@ const removeDtItem = (i: MDtItem | number) => {
 }
 const ignoreKeysProps = computed(() => props.ignoreKeys)
 
-const defaultSubmitItem = async (evt?: Event, { handleSubmit }: MFormScope) => {
-  const onSuccess: SubmissionHandler = async (values) => {
-    // let form = { ..._form, ...(dialogs.itemForm || {}) }
-    // let form = { ...(props.formModel ? props.formModel : {}) }
-    // let form: { [K: string | number | symbol]: any } = { requestWith: undefined, fdt: undefined, ...values } as any
-    let form = extend<Record<string, any>>(!0, defaultItem.value, values)
-    if (loading.value) {
-      return
+const onSuccess: SubmissionHandler = async (values) => {
+  console.log(values)
+  return
+  // let form = { ..._form, ...(dialogs.itemForm || {}) }
+  // let form = { ...(props.formModel ? props.formModel : {}) }
+  // let form: { [K: string | number | symbol]: any } = { requestWith: undefined, fdt: undefined, ...values } as any
+  let form = extend<Record<string, any>>(!0, defaultItem.value, values)
+  if (loading.value) {
+    return
+  }
+  loading.value = !0
+  const api = getMythApiServicesSchema()
+  form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withStore')
+  if (!form.requestWith) {
+    delete form.requestWith
+  }
+  const fdt = isUpdateMode.value ? 'u' : 'c'
+  form.fdt = fdt
+  if (ignoreKeysProps.value) {
+    if (typeof ignoreKeysProps.value === 'function') {
+      form = ignoreKeysProps.value(form) as any
+    } else {
+      for (const k in ignoreKeysProps.value) {
+        delete form[ignoreKeysProps.value[k] as any]
+      }
     }
-    loading.value = !0
-    const api = getMythApiServicesSchema()
-    form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withStore')
-    if (!form.requestWith) {
-      delete form.requestWith
+  }
+
+  const ignoreKeys = [
+    '_to_string',
+    '_to_number_format',
+    '_to_date_format',
+    'toString',
+    'toNumberFormat',
+    'toDateFormat'
+  ]
+
+  for (const i in ignoreKeys) {
+    for (const k in form) {
+      if (k.slice(-ignoreKeys[i].length) === ignoreKeys[i]) {
+        delete form[k]
+      }
     }
-    const fdt = isUpdateMode.value ? 'u' : 'c'
-    form.fdt = fdt
-    if (ignoreKeysProps.value) {
-      if (typeof ignoreKeysProps.value === 'function') {
-        form = ignoreKeysProps.value(form) as any
+  }
+  const _conf: any = { params: { fdt } }
+  const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form, _conf) : await api.store(form, _conf)
+  try {
+    const { _data, _message, _success }: any = await method()
+    _message && myth.alertSuccess(_message)
+    if (_success) {
+      if (isUpdateMode.value) {
+        _data && updateDatatableItem(_data, dialogs.index)
       } else {
-        for (const k in ignoreKeysProps.value) {
-          delete form[ignoreKeysProps.value[k] as any]
-        }
-      }
-    }
-
-    const ignoreKeys = [
-      '_to_string',
-      '_to_number_format',
-      '_to_date_format',
-      'toString',
-      'toNumberFormat',
-      'toDateFormat'
-    ]
-
-    for (const i in ignoreKeys) {
-      for (const k in form) {
-        if (k.slice(-ignoreKeys[i].length) === ignoreKeys[i]) {
-          delete form[k]
-        }
-      }
-    }
-    const _conf: any = { params: { fdt } }
-    const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form, _conf) : await api.store(form, _conf)
-    try {
-      const { _data, _message, _success }: any = await method()
-      _message && myth.alertSuccess(_message)
-      if (_success) {
-        if (isUpdateMode.value) {
-          _data && updateDatatableItem(_data, dialogs.index)
-        } else {
-          await nextTick()
-          refresh()
-        }
         await nextTick()
-        closeFormDialog()
+        refresh()
       }
-    } catch (e: any) {
-      const { _message, _errors } = e || {}
-      dialogs.errors = _errors || {}
-      await myth.helpers.scrollToElementFromErrors(_errors)
-      _message && myth.alertError(_message)
-    } finally {
-      loading.value = !1
+      await nextTick()
+      closeFormDialog()
     }
+  } catch (e: any) {
+    const { _message, _errors } = e || {}
+    dialogs.errors = _errors || {}
+    await myth.helpers.scrollToElementFromErrors(_errors)
+    _message && myth.alertError(_message)
+  } finally {
+    loading.value = !1
   }
-  const onInvalidSubmit: InvalidSubmissionHandler = ({ errors }) => {
-    const keys: (keyof typeof errors)[] = Object.keys(errors)
-    if (keys.length) {
-      const message = errors[keys[0]] as string || myth.__('messages.the_given_data_was_invalid')
-      myth.helpers.scrollToElementFromErrors({ [keys[0]]: [message] }, undefined, '.m--datatable__dialog-form-container')
-      myth.alertError(message)
-    }
-  }
-  const onSubmit = handleSubmit(onSuccess, onInvalidSubmit)
-  await onSubmit(evt)
 }
+const onInvalidSubmit: InvalidSubmissionHandler = ({ errors, values }) => {
+  console.log(values)
+  const keys: (keyof typeof errors)[] = Object.keys(errors)
+  if (keys.length) {
+    const message = errors[keys[0]] as string || myth.__('messages.the_given_data_was_invalid')
+    myth.helpers.scrollToElementFromErrors({ [keys[0]]: [message] }, undefined, '.m--datatable__dialog-form-container')
+    myth.alertError(message)
+  }
+}
+const defaultSubmitItem = formRef.handleSubmit.withControlled(onSuccess, onInvalidSubmit)
+
 const hideAutoMessage = computed(() => props.hideAutoMessage)
 const onDeleteItem = (i: MDtItem, index: number) => {
   const item = toRef(i)
@@ -899,7 +923,9 @@ const logoutDatatable = () => {
   //   this.$router.replace({ name })
   // }
 }
-/** --- */
+/**
+ * ---
+ */
 
 /**
  * Dom
@@ -958,6 +984,9 @@ const endReach = computed<boolean>(() => Boolean(props.endReach))
 const rowsPerPageOptions = computed(() => props.rowsPerPageOptions)
 const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))
 
+/**
+ * Image Dialog
+ */
 const imageDialog = reactive<MDatatableScope['imageDialog']>({
   value: !1,
   src: undefined,
@@ -977,6 +1006,9 @@ const closeImageDialog = () => {
     imageDialog.asAttachment = undefined
   })
 }
+/**
+ * Image Dialog
+ */
 
 onMounted(() => {
   refresh()
@@ -996,10 +1028,6 @@ watch(() => $q.lang.nativeName, () => {
   refreshNoUpdate()
 })
 
-// Watch on Form dialog
-// watch(() => dialogs.item, (v) => {
-//   dialogs.itemForm = v ? { ...v } : v
-// })
 watch(formDialogModel, (v) => {
   if (!v) {
     dialogs.errors = {}
@@ -1129,6 +1157,7 @@ const getProp = computed(() => (k: keyof Props) => {
       color="primary"
       @refresh="refresh"
     >
+      <div>{{ formRef.values }}</div>
       <q-table
         ref="table"
         v-model:fullscreen="tableOptions.fullscreen"
@@ -1310,7 +1339,7 @@ const getProp = computed(() => (k: keyof Props) => {
                   </MCol>
                 </slot>
                 <MInput
-                  v-if="!hideSearch"
+                  v-if="!hideSearch && !dialogs.form"
                   v-model="tableOptions.search"
                   :debounce="searchDebounce"
                   :dense="dense === undefined ? ($myth.options.datatable?.dense !== undefined ? $myth.options.datatable?.dense : !0) : dense"
@@ -1879,122 +1908,132 @@ const getProp = computed(() => (k: keyof Props) => {
       v-model="dialogs.form"
       v-bind="$myth.options.dt?.formDialogProps"
     >
-      <MForm
-        v-slot="form"
-        :errors="dialogs.errors"
-        :form="dialogs.item"
-        :form-props="{class: 'column full-height justify-between no-wrap'}"
-        class="full-height no-wrap"
-        @submit="defaultSubmitItem"
+      <div
+        class="m--form__container full-height no-wrap"
       >
-        <q-card class="m--dialog-card">
-          <q-card-section ref="formTitle">
-            <q-toolbar :class="{'q-pa-none': $q.screen.lt.md}">
-              <slot
-                :dt="datatableItemsScope"
-                :index="dialogItemIndex"
-                :item="dialogItem"
-                name="form-title-left"
-              />
-              <slot
-                :dt="datatableItemsScope"
-                :index="dialogItemIndex"
-                :item="dialogItem"
-                name="form-title"
-              >
-                <q-toolbar-title>
-                  <template v-if="tableOptions.loading && !dialogs.item">
-                    <q-skeleton width="200px" />
-                  </template>
-                  <template v-else>
-                    <q-btn
-                      :icon="`ion-ios-arrow-${$q.lang.rtl ? 'forward' : 'back'}`"
-                      fab-mini
-                      flat
-                      @click="closeFormDialog"
-                    >
-                      <q-tooltip class="m--dt-btn-tooltip">
-                        {{ __('myth.titles.back') }}
-                      </q-tooltip>
-                    </q-btn>
-                    {{ getFormTitle }}
-                  </template>
-                </q-toolbar-title>
-              </slot>
-              <slot
-                :dt="datatableItemsScope"
-                :index="dialogItemIndex"
-                :item="dialogItem"
-                name="form-title-right"
-              />
-            </q-toolbar>
-          </q-card-section>
-          <q-separator />
-          <q-card-section
-            :style="`height: ${($q.screen.height || 100) - 3 - (($refs.formActions as any)?.$el?.offsetHeight || 60) - (($refs.formTitle as any)?.$el?.offsetHeight || 80)}px`"
-            class="scroll m--datatable__dialog-form-container"
-          >
-            <MContainer v-if="tableOptions.loading && !dialogs.item">
-              <MRow
-                v-if="tableOptions.loading"
-                col
-              >
-                <template
-                  v-for="ai in 15"
-                  :key="`form-skeleton-${ai}`"
+        <form
+          class="m--form column full-height justify-between no-wrap"
+          @submit="defaultSubmitItem"
+        >
+          <div>{{ formRef.values }}</div>
+          <!--<MForm-->
+          <!--  v-slot="form"-->
+          <!--  :errors="dialogs.errors"-->
+          <!--  :form="dialogs.item"-->
+          <!--  :form-props="{class: 'column full-height justify-between no-wrap'}"-->
+          <!--  class="full-height no-wrap"-->
+          <!--  @submit="defaultSubmitItem"-->
+          <!--&gt;-->
+          <q-card class="m--dialog-card">
+            <q-card-section ref="formTitle">
+              <q-toolbar :class="{'q-pa-none': $q.screen.lt.md}">
+                <slot
+                  :dt="datatableItemsScope"
+                  :index="dialogItemIndex"
+                  :item="dialogItem"
+                  name="form-title-left"
+                />
+                <slot
+                  :dt="datatableItemsScope"
+                  :index="dialogItemIndex"
+                  :item="dialogItem"
+                  name="form-title"
                 >
-                  <MCol
-                    col="12"
-                    md="6"
-                  >
-                    <q-skeleton type="QInput" />
-                  </MCol>
-                </template>
-              </MRow>
-            </MContainer>
-            <slot
-              v-else
-              :form="form"
-              :index="dialogs.index"
-              :item="dialogs.item"
-              name="form"
-              v-bind="datatableItemsScope"
-            />
-          </q-card-section>
-          <q-separator />
-          <q-card-actions
-            ref="formActions"
-            class="m--datatable-form-actions print-hide"
-          >
-            <slot
-              :form="form"
-              :index="dialogs.index"
-              :item="dialogs.item"
-              name="form-actions"
-              v-bind="datatableItemsScope"
+                  <q-toolbar-title>
+                    <template v-if="tableOptions.loading && !dialogs.item">
+                      <q-skeleton width="200px" />
+                    </template>
+                    <template v-else>
+                      <q-btn
+                        :icon="`ion-ios-arrow-${$q.lang.rtl ? 'forward' : 'back'}`"
+                        fab-mini
+                        flat
+                        @click="closeFormDialog"
+                      >
+                        <q-tooltip class="m--dt-btn-tooltip">
+                          {{ __('myth.titles.back') }}
+                        </q-tooltip>
+                      </q-btn>
+                      {{ getFormTitle }}
+                    </template>
+                  </q-toolbar-title>
+                </slot>
+                <slot
+                  :dt="datatableItemsScope"
+                  :index="dialogItemIndex"
+                  :item="dialogItem"
+                  name="form-title-right"
+                />
+              </q-toolbar>
+            </q-card-section>
+            <q-separator />
+            <q-card-section
+              :style="`height: ${($q.screen.height || 100) - 3 - (($refs.formActions as any)?.$el?.offsetHeight || 60) - (($refs.formTitle as any)?.$el?.offsetHeight || 80)}px`"
+              class="scroll m--datatable__dialog-form-container"
             >
-              <MBtn
-                :class="{'full-width': $q.screen.lt.sm}"
-                :label="__('myth.titles.' + (isUpdateMode ? 'save' : 'store'))"
-                :loading="tableOptions.loading"
-                color="positive"
-                no-caps
-                type="submit"
-                v-bind="$myth.options.dt?.dialogButtonsProps"
+              <MContainer v-if="tableOptions.loading && !dialogs.item">
+                <MRow
+                  v-if="tableOptions.loading"
+                  col
+                >
+                  <template
+                    v-for="ai in 15"
+                    :key="`form-skeleton-${ai}`"
+                  >
+                    <MCol
+                      col="12"
+                      md="6"
+                    >
+                      <q-skeleton type="QInput" />
+                    </MCol>
+                  </template>
+                </MRow>
+              </MContainer>
+              <slot
+                v-else
+                :form="formRef"
+                :index="dialogs.index"
+                :item="dialogs.item"
+                name="form"
+                v-bind="datatableItemsScope"
               />
-            </slot>
-            <MBtn
-              v-if="$q.screen.gt.sm"
-              :disable="tableOptions.loading"
-              :label="__('myth.titles.close')"
-              color="negative"
-              no-caps
-              v-bind="$myth.options.dt?.dialogButtonsProps"
-              @click="closeFormDialog"
-            />
-          </q-card-actions>
-        </q-card>
-      </MForm>
+            </q-card-section>
+            <q-separator />
+            <q-card-actions
+              ref="formActions"
+              class="m--datatable-form-actions print-hide"
+            >
+              <slot
+                :form="formRef"
+                :index="dialogs.index"
+                :item="dialogs.item"
+                name="form-actions"
+                v-bind="datatableItemsScope"
+              >
+                <MBtn
+                  :class="{'full-width': $q.screen.lt.sm}"
+                  :label="__('myth.titles.' + (isUpdateMode ? 'save' : 'store'))"
+                  :loading="tableOptions.loading"
+                  color="positive"
+                  no-caps
+                  type="submit"
+                  v-bind="$myth.options.dt?.dialogButtonsProps"
+                />
+              </slot>
+              <MBtn
+                v-if="$q.screen.gt.sm"
+                :disable="tableOptions.loading"
+                :label="__('myth.titles.close')"
+                color="negative"
+                no-caps
+                v-bind="$myth.options.dt?.dialogButtonsProps"
+                @click="closeFormDialog"
+              />
+            </q-card-actions>
+          </q-card>
+          <!--</MForm>-->
+        </form>
+      </div>
     </MDialog>
 
     <!-- Image Dialog -->

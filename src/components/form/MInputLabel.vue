@@ -15,24 +15,25 @@ type P = {
   field: Props['field'];
 }
 
-const props = withDefaults(defineProps<P>(), {
+withDefaults(defineProps<P>(), {
   field: () => ({} as Props['field'])
 })
-const meta = computed<P['field']['meta']>(() => props.field.meta || {})
-const label = computed<P['field']['label']>(() => props.field.label || undefined)
-const errorMessage = computed(() => props.field.errorMessage.value || undefined)
+// const meta = computed<P['field']['meta']>(() => props.field.meta || {})
+// const label = computed<P['field']['label']>(() => props.field.label || undefined)
+// const errorMessage = computed(() => props.field.errorMessage.value || undefined)
+
 </script>
 
 <template>
   <div
     :class="{
       'm--input__top-label' : !0,
-      'm--input__top-label__invalid' : !meta?.valid && meta?.dirty,
-      'text-negative' : !!errorMessage
+      'm--input__top-label__invalid' : !field.meta?.valid && field.meta?.dirty,
+      'text-negative' : !!field.errorMessage?.length
     }"
     v-bind="$attrs"
   >
-    {{ label }}
+    {{ field.label }}
     <slot />
   </div>
 </template>

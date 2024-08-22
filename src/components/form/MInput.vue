@@ -13,6 +13,7 @@ import { MInputProps as Props } from './models.d'
 import { reactive, ref, useAttrs } from 'vue'
 import { QField, QInput, QInputSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
+import MInputFieldControl from './MInputFieldControl.vue'
 
 type P = {
   name: Props['name'];
@@ -149,12 +150,9 @@ export default {
         #control
       >
         <slot name="control">
-          <div
-            class="self-center full-width no-outline"
-            tabindex="0"
-          >
+          <MInputFieldControl>
             {{ viewModeValue ?? value }}
-          </div>
+          </MInputFieldControl>
         </slot>
       </template>
     </component>
