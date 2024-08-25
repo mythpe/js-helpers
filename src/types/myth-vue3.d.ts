@@ -6,7 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance, AxiosRequestConfig } from 'axios'
+import { AxiosInstance } from 'axios'
 import {
   openURL,
   QBtnProps,
@@ -60,7 +60,7 @@ import {
   MUploaderProps
 } from '../components'
 import { I18n } from 'vue-i18n'
-import { ComputedRef, MaybeRefOrGetter, Ref, UnwrapNestedRefs } from 'vue'
+import { ComputedRef, MaybeRefOrGetter, Ref } from 'vue'
 import { RouteLocationNormalizedLoaded } from 'vue-router'
 import {
   ApiErrorResponse,
@@ -258,18 +258,17 @@ export type InstallPluginOptions = {
   options: MythOptionsConfig;
 }
 
-export type UseModelsOptionsArg<T extends ApiInterface = ApiInterface> = {
+export type UseModelsOptionsArg = {
   lazy?: boolean;
-  isPanel?: MaybeRefOrGetter<boolean>;
-  method?: MaybeRefOrGetter<string>;
+  search?: ComputedRef<string | null | undefined> | Ref<string | null | undefined>;
+  filter?: ComputedRef<Record<string, any>> | Ref<Record<string, any>>;
+  isPanel?: boolean | MaybeRefOrGetter<boolean>;
+  method?: string | MaybeRefOrGetter<string>;
   timeout?: number;
-  qInfiniteScroll?: Ref<QInfiniteScroll | undefined>;
+  qInfiniteScroll?: Ref<QInfiniteScroll | null>;
   onSuccess?: (data: ApiInterface) => void;
   onError?: (e: ApiErrorResponse) => void;
-  config?: MaybeRefOrGetter<AxiosRequestConfig>
 }
-
-export type UseModelsOptions<T> = UnwrapNestedRefs<UseModelsOptionsArg<T>> | Ref<UseModelsOptionsArg<T>> | UseModelsOptionsArg<T>
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {

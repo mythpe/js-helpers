@@ -22,8 +22,10 @@ import MEditor from './form/MEditor.vue'
 import MEmail from './form/MEmail.vue'
 import MFile from './form/MFile.vue'
 import MForm from './form/MForm.vue'
+import MHidden from './form/MHidden.vue'
 import MHiddenInput from './form/MHiddenInput.vue'
 import MInput from './form/MInput.vue'
+import MInputFieldControl from './form/MInputFieldControl.vue'
 import MInputLabel from './form/MInputLabel.vue'
 import MMobile from './form/MMobile.vue'
 import MOptions from './form/MOptions.vue'
@@ -76,8 +78,10 @@ export {
   MEmail,
   MFile,
   MForm,
+  MHidden,
   MHiddenInput,
   MInput,
+  MInputFieldControl,
   MInputLabel,
   MMobile,
   MOptions,

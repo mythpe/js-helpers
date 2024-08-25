@@ -9,7 +9,6 @@
 <script lang="ts" setup>
 
 import { MInputLabelProps as Props } from './models'
-import { computed } from 'vue'
 
 type P = {
   field: Props['field'];
@@ -18,28 +17,19 @@ type P = {
 withDefaults(defineProps<P>(), {
   field: () => ({} as Props['field'])
 })
-// const meta = computed<P['field']['meta']>(() => props.field.meta || {})
-// const label = computed<P['field']['label']>(() => props.field.label || undefined)
-// const errorMessage = computed(() => props.field.errorMessage.value || undefined)
-
 </script>
 
 <template>
   <div
     :class="{
-      'm--input__top-label' : !0,
+      'row items-center m--input__top-label' : !0,
       'm--input__top-label__invalid' : !field.meta?.valid && field.meta?.dirty,
-      'text-negative' : !!field.errorMessage?.length
     }"
     v-bind="$attrs"
   >
-    {{ field.label }}
+    <div class="m--input__top-label__content">
+      {{ field.label }}
+    </div>
     <slot />
   </div>
 </template>
-
-<script lang="ts">
-export default {
-  name: 'MInputLabel'
-}
-</script>

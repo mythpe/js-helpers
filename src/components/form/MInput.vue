@@ -10,10 +10,9 @@
 
 import { useField } from 'vee-validate'
 import { MInputProps as Props } from './models.d'
-import { reactive, ref, useAttrs } from 'vue'
+import { reactive, ref, toValue, useAttrs } from 'vue'
 import { QField, QInput, QInputSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
-import MInputFieldControl from './MInputFieldControl.vue'
 
 type P = {
   name: Props['name'];
@@ -24,7 +23,6 @@ type P = {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  // modelValue?: Props['modelValue'];
   label?: Props['label'];
   caption?: Props['caption'];
   hint?: Props['hint'];
@@ -32,11 +30,12 @@ type P = {
   help?: Props['help'];
   required?: Props['required'];
   rules?: Props['rules'];
-  // errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
   autocomplete?: Props['autocomplete'];
   topLabel?: Props['topLabel'];
+  fieldOptions?: Props['fieldOptions'];
+  clearable?: Props['clearable'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -48,7 +47,6 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  // modelValue: undefined,
   label: undefined,
   caption: undefined,
   hint: undefined,
@@ -56,11 +54,12 @@ const props = withDefaults(defineProps<P>(), {
   help: undefined,
   required: undefined,
   rules: undefined,
-  // errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   autocomplete: undefined,
-  topLabel: undefined
+  topLabel: undefined,
+  fieldOptions: undefined,
+  clearable: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
@@ -68,7 +67,8 @@ const helper = useInputHelper<P>(() => props, 'input', () => ({ attrs }))
 const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
-  label: getLabel
+  label: getLabel,
+  ...toValue<any>(props.fieldOptions)
 })
 const { value, errorMessage, handleChange, handleBlur } = inputScope
 
@@ -91,7 +91,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
+    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage,'m--input__view':viewMode}]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -101,16 +101,21 @@ export default {
   >
     <slot
       name="top-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
     <slot
       name="top-label"
-      v-bind="inputScope"
+      v-bind="scopes"
     >
       <MInputLabel
         v-if="hasTopLabel"
-        :field="inputScope"
-      />
+        :field="scopes"
+      >
+        <MHelpRow
+          :text="help"
+          tooltip
+        />
+      </MInputLabel>
     </slot>
     <slot name="caption">
       <div
@@ -134,7 +139,8 @@ export default {
         ...( viewMode ? $myth.options.field : {} ),
         ...$attrs,
         ...( viewMode ? { stackLabel: !0 } : {} ),
-        autocomplete:getAutocompleteAttribute
+        autocomplete:getAutocompleteAttribute,
+        clearable: viewMode ? !1 : clearable
       }"
       v-on="listeners"
     >
@@ -158,13 +164,16 @@ export default {
     </component>
     <slot
       name="help"
-      v-bind="inputScope"
+      v-bind="scopes"
     >
-      <MHelpRow :text="help" />
+      <MHelpRow
+        v-if="!hasTopLabel"
+        :text="help"
+      />
     </slot>
     <slot
       name="bottom-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
   </MCol>
 </template>

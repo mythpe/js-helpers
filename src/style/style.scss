@@ -237,19 +237,33 @@ $bordered-style: $bordered-size solid $primary !default;
   }
 }
 
-[data-input-name].m--input__required {
+[data-input-name].m--input__error {
   > .q-field {
     &:not(.q-field--disabled) {
       .q-field__label::after {
-        content: ' *';
         color: var(--q-negative);
       }
     }
   }
 
-  .m--input__top-label::after {
-      content: ' *';
-      color: var(--q-negative);
+  .m--input__top-label__content {
+    color: var(--q-negative);
+  }
+}
+
+[data-input-name].m--input__required {
+  &:not(.m--input__is-top-label) {
+    > .q-field {
+      &:not(.q-field--disabled) {
+        .q-field__label::after {
+          content: ' *';
+        }
+      }
+    }
+  }
+
+  .m--input__top-label__content::after {
+    content: ' *';
   }
 
 }

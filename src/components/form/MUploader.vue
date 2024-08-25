@@ -8,15 +8,16 @@
 <script lang="ts" setup>
 import { QList, QUploader, useQuasar } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
-import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { computed, defineProps, nextTick, ref, toValue, watch, withDefaults } from 'vue'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
 import { MUploaderMediaItem, MUploaderProps as Props, MUploaderXhrInfo } from './models'
 import { QUploaderFactoryObject } from 'quasar/dist/types/api/quploader'
+import { useField, useFieldValue } from 'vee-validate'
 
 interface P {
-  auto?: boolean | undefined;
+  name?: Props['name'];
+  auto?: Props['auto'];
   col?: Props['col'];
   xs?: Props['xs'];
   sm?: Props['sm'];
@@ -39,11 +40,10 @@ interface P {
   formFields?: Props['formFields'];
   headers?: Props['headers'];
   label?: Props['label'];
-  // modelValue: Props['modelValue'];
   hideDeleteMedia?: Props['hideDeleteMedia'];
   hideUploadBtn?: Props['hideUploadBtn'];
   service: Props['service'];
-  modelId: Props['modelId'];
+  modelId?: Props['modelId'];
   uploading?: Props['uploading'];
   useQuasarLoading?: Props['useQuasarLoading'];
   batch?: Props['batch'];
@@ -59,9 +59,11 @@ interface P {
   iconsSize?: Props['iconsSize'];
   displayMode?: Props['displayMode'];
   shadow?: Props['shadow'];
+  fieldOptions?: Props['fieldOptions'];
 }
 
 const props = withDefaults(defineProps<P>(), {
+  name: () => 'attachments',
   auto: undefined,
   col: undefined,
   xs: undefined,
@@ -85,7 +87,6 @@ const props = withDefaults(defineProps<P>(), {
   formFields: undefined,
   headers: undefined,
   label: undefined,
-  // modelValue: () => ([]),
   hideDeleteMedia: undefined,
   hideUploadBtn: undefined,
   service: undefined,
@@ -104,7 +105,8 @@ const props = withDefaults(defineProps<P>(), {
   batch: () => !1,
   iconsSize: () => '30px',
   displayMode: () => 'card',
-  shadow: () => 'shadow-5'
+  shadow: () => 'shadow-5',
+  fieldOptions: undefined
 })
 
 interface Events {
@@ -118,19 +120,22 @@ interface Events {
 
   (e: 'remove-file', File: File): void;
 
-  // (e: 'update:modelValue', value: MUploaderMediaItem[]): void;
-
   (e: 'update:uploading', value: boolean): void;
 }
 
 const emit = defineEmits<Events>()
 const $q = useQuasar()
-const $myth = useMyth()
-const { alertError, alertSuccess, confirmMessage } = $myth
-const { t } = useI18n({ useScope: 'global' })
-
+const myth = useMyth()
+const { alertError, alertSuccess, confirmMessage, __ } = myth
+const fieldId = useFieldValue<string | undefined>('id')
+const modelIdProp = computed(() => props.modelId !== undefined ? props.modelId : fieldId.value)
+const fieldNameProp = computed(() => props.fieldName)
+const { value: modelValue, errorMessage, setErrors, resetField } = useField<Props['modelValue']>(() => props.name, undefined, {
+  syncVModel: !0,
+  label: () => __(props.label),
+  ...toValue<any>(props.fieldOptions)
+})
 const uploader = ref<InstanceType<typeof QUploader>>()
-const modelValue = defineModel<Props['modelValue']>({ required: !1, default: [] })
 const { accepts } = useInputHelper<any>(() => props, 'uploader')
 const quasarLoading = computed<boolean | undefined>({
   get: () => $q.loading.isActive,
@@ -141,20 +146,22 @@ const returnTypeProp = computed(() => props.returnType)
 const collectionProp = computed(() => props.collection)
 const formFieldsProp = computed(() => props.formFields)
 const serviceProp = computed(() => props.service)
-const modelIdProp = computed(() => props.modelId)
 const headersProp = computed(() => props.headers)
 const hideDeleteMediaProp = computed(() => props.hideDeleteMedia)
 const useQuasarLoadingProp = computed(() => props.useQuasarLoading)
-const iconsSizeProp = computed(() => $myth.options.uploaderOptions?.iconsSize || props.iconsSize)
-const fieldNameProp = computed(() => props.fieldName)
-const errors = ref<any>([])
+const iconsSizeProp = computed(() => myth.options.uploaderOptions?.iconsSize || props.iconsSize)
+// const errors = ref<any>([])
 /* Events Callback */
 const startUpload = async (files: readonly File[]): Promise<QUploaderFactoryObject> => {
   return new Promise((resolve, reject) => {
+    if (!modelIdProp.value) {
+      reject()
+      return
+    }
     try {
-      const common = $myth.axios?.defaults?.headers.common || {}
+      const common = myth.axios?.defaults?.headers.common || {}
       const headers = []
-      errors.value = []
+      setErrors([])
       for (const i in common) {
         if (common[i]) {
           headers.push({
@@ -193,13 +200,11 @@ const startUpload = async (files: readonly File[]): Promise<QUploaderFactoryObje
       if (returnTypeProp.value) {
         formFields.push({ name: 'return', value: returnTypeProp.value })
       }
-      let url: string
-      url = typeof serviceProp.value !== 'object' ? $myth.services[serviceProp.value].getUploadAttachmentsUrl(modelIdProp.value) : serviceProp.value.uploadAttachments(
-        modelIdProp.value,
-        files)
-      url = `${$myth.baseUrl}/${url}`
+      const url: string = typeof serviceProp.value !== 'object'
+        ? myth.services[serviceProp.value].getUploadAttachmentsUrl(modelIdProp.value)
+        : serviceProp.value.uploadAttachments(modelIdProp.value, files)
       resolve({
-        url,
+        url: `${myth.baseUrl}/${url}`,
         method: 'POST',
         headers,
         formFields
@@ -211,7 +216,7 @@ const startUpload = async (files: readonly File[]): Promise<QUploaderFactoryObje
   })
 }
 const onReject = (rejectedEntries: QRejectedEntry[]) => {
-  alertError(t('myth.errors.uploaderRejectedEntries', { c: rejectedEntries.length }))
+  alertError(__('myth.errors.uploaderRejectedEntries', { c: rejectedEntries.length }))
   nextTick(() => emit('rejected', rejectedEntries))
 }
 const onError = (info: MUploaderXhrInfo) => {
@@ -222,9 +227,11 @@ const onError = (info: MUploaderXhrInfo) => {
       response?.message && alertError(response.message)
       if (response.errors) {
         if (typeof fieldNameProp.value !== 'function' && response.errors[fieldNameProp.value]) {
-          errors.value = response.errors[fieldNameProp.value]
+          setErrors(response.errors[fieldNameProp.value])
+          // errors.value = response.errors[fieldNameProp.value]
         } else {
-          errors.value = Object.values(response.errors)[0]
+          setErrors(Object.values(response.errors) || [])
+          // errors.value = Object.values(response.errors)[0]
         }
       }
     }
@@ -238,11 +245,11 @@ const onFinishUpload = ({ files, xhr }: MUploaderXhrInfo) => {
     if (xhr.responseText) {
       const response = JSON.parse(xhr.responseText)
       if (response?.data?.length !== undefined) {
-        modelValue.value = response.data
+        resetField({ value: response.data })
         files.forEach(f => uploader.value?.removeFile(f))
       }
       if (response?.message) {
-        $myth.alertSuccess(response.message)
+        alertSuccess(response.message)
       }
     }
   } catch (e: any) {
@@ -269,7 +276,7 @@ const deleteMedia = (media: MUploaderMediaItem) => {
       if (!config.params.return) {
         delete config.params.return
       }
-      const method = async (file: MUploaderMediaItem) => typeof serviceProp.value !== 'object' ? await $myth.services[serviceProp.value].deleteAttachment(
+      const method = async (file: MUploaderMediaItem) => typeof serviceProp.value !== 'object' ? await myth.services[serviceProp.value].deleteAttachment(
         modelIdProp.value,
         file.id,
         config) : serviceProp.value.deleteAttachment(media, config)
@@ -277,7 +284,7 @@ const deleteMedia = (media: MUploaderMediaItem) => {
         const { _message, _success, _data }: any = await method(media)
         _message && alertSuccess(_message)
         r = Boolean(_success)
-        modelValue.value = _data ?? []
+        resetField({ value: _data ?? [] })
       }
     } catch (e: any) {
       alertError(e?._message || e?.message)
@@ -298,7 +305,7 @@ const deleteUploaderFile = (file: File) => {
 }
 const onClickDeleteAttachment = (file: File | MUploaderMediaItem) => {
   if (file instanceof File) {
-    $myth.confirmMessage().onOk(() => {
+    confirmMessage().onOk(() => {
       deleteUploaderFile(file)
     })
   } else {
@@ -324,26 +331,28 @@ export default {
 
 <template>
   <MCol
+    v-if="!!modelIdProp"
     :auto="auto"
     :class="$attrs.class"
     :col="col"
     :lg="lg"
     :md="md"
+    :name="name"
     :sm="sm"
     :xs="xs"
   >
-    <MTransition>
+    <MFadeTransition>
       <div
-        v-if="Object.values(errors).length > 0"
+        v-if="!!errorMessage"
         class="row items-center q-pa-sm bg-negative text-white q-mb-xs rounded-borders"
       >
         <q-icon
           :name="errorsIcon"
           left
         />
-        {{ Object.values(errors)[0] }}
+        {{ errorMessage }}
       </div>
-    </MTransition>
+    </MFadeTransition>
     <q-uploader
       ref="uploader"
       :accept="accepts.join(',')"
@@ -352,7 +361,7 @@ export default {
       :disable="disable"
       :factory="startUpload"
       :field-name="fieldName"
-      :label="label"
+      :label="__(label)"
       :readonly="readonly"
       style="width: 100%;max-height: 450px;"
       v-bind="{...$myth.options.uploader as any,...$attrs}"
@@ -368,7 +377,7 @@ export default {
           />
           <div class="col">
             <div class="q-uploader__title">
-              {{ label }}
+              {{ __(label) }}
             </div>
             <div class="q-uploader__subtitle">
               {{ scope.uploadSizeLabel }} / {{ scope.uploadProgressLabel }}
@@ -425,7 +434,7 @@ export default {
 
       <template #list="scope">
         <div
-          v-if="!scope.files.length && !modelValue.length"
+          v-if="!scope.files.length && !modelValue?.length"
           key="m--uploader-no-data"
           class="absolute-full"
         >
@@ -444,7 +453,7 @@ export default {
             </MRow>
           </div>
         </div>
-        <template v-else-if="$slots.list">
+        <template v-else-if="!!$slots.list">
           <slot
             :items="modelValue"
             name="list"
@@ -452,11 +461,11 @@ export default {
           />
         </template>
         <MRow
-          v-else-if="$slots['item-list']"
+          v-else-if="!!$slots['item-list']"
           class="q-col-gutter-sm"
         >
           <template
-            v-for="(file,i) in [...scope.files,...modelValue]"
+            v-for="(file,i) in [...scope.files,...(modelValue || [])]"
             :key="`item-${i}`"
           >
             <slot
@@ -466,14 +475,13 @@ export default {
             />
           </template>
         </MRow>
-        <component
-          :is="displayMode === 'card' ? QList : QList"
-          v-else-if="displayMode === 'list' || displayMode === 'card'"
+        <q-list
+          v-else
           :class="{'row': displayMode === 'card','q-gutter-sm': displayMode === 'card'}"
           :separator="displayMode === 'list' ? !0 : undefined"
         >
           <template
-            v-for="(file,i) in [...scope.files,...modelValue]"
+            v-for="(file,i) in [...scope.files,...(modelValue || [])]"
             :key="`item-${i}`"
           >
             <q-item
@@ -510,7 +518,7 @@ export default {
                   {{ file.file_name }}
                 </q-item-label>
                 <q-item-label v-else-if="!!file.label">
-                  {{ file.label }}
+                  {{ __(file.label) }}
                 </q-item-label>
                 <q-item-label v-if="!!file.user_id_to_string">
                   <q-icon
@@ -608,7 +616,7 @@ export default {
               </q-item-section>
             </q-item>
           </template>
-        </component>
+        </q-list>
       </template>
     </q-uploader>
   </MCol>

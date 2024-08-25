@@ -174,7 +174,8 @@ const route = useRoute()
 const $q = useQuasar()
 const defaultItem = computed(() => props.defaultItem)
 const formRef = useForm<any, any>()
-const { resetForm: resetDialogForm, setValues } = formRef
+const formScope = reactive(formRef)
+const { resetForm: resetDialogForm, setValues, handleSubmit } = formRef
 watch(() => props.defaultItem, (v) => {
   resetDialogForm({
     values: { ...v || {} }
@@ -182,12 +183,12 @@ watch(() => props.defaultItem, (v) => {
     force: !0
   })
 }, { immediate: !0 })
-const resetForm = (attrs?: Record<string, any>) => {
-  resetDialogForm({
-    values: props.defaultItem || {}
-  }, {
-    force: !0
-  })
+const resetForm = async (attrs?: Record<string, any>) => {
+  const init: any = {}
+  for (const k in props.defaultItem) {
+    init[k] = attrs && k in attrs ? attrs[k] : props.defaultItem[k]
+  }
+  resetDialogForm({ values: init || {} }, { force: !0 })
   attrs && setValues(attrs, !1)
 }
 const serviceName = computed(() => props.serviceName)
@@ -652,7 +653,7 @@ const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
     .then(({ _data }) => {
       dialogs.item = _data
       dialogs.index = index
-      getRows.value[index as any] = _data
+      getRows.value[index as any] = _data as any
       setTimeout(() => (dialogs.show = !0), openDialogTimeout)
     })
     .catch((e: any) => {
@@ -710,8 +711,11 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
       if (_data && (index || index === 0)) {
         getRows.value[index] = { ..._data } as any
       }
-      dialogs.form = !0
-      setTimeout(() => resetForm(_data), openDialogTimeout)
+      setTimeout(async () => {
+        await resetForm(_data)
+        await nextTick()
+        dialogs.form = !0
+      }, openDialogTimeout)
     })
     .catch((e) => {
       const message = e?._message || e?.message
@@ -738,8 +742,11 @@ const openCreateDialog = async (dtItem?: MDtItem) => {
   dialogs.item = { ...defaultItem.value, ...dtItem } as MDtItem
   dialogs.index = undefined
   await nextTick()
-  dialogs.form = !0
-  setTimeout(() => resetForm(dtItem), openDialogTimeout)
+  setTimeout(async () => {
+    await resetForm(dtItem)
+    await nextTick()
+    dialogs.form = !0
+  }, openDialogTimeout)
 }
 const closeFormDialog = async () => {
   dialogs.form = !1
@@ -781,12 +788,7 @@ const onSuccess: SubmissionHandler = async (form) => {
   }
   loading.value = !0
   const api = getMythApiServicesSchema()
-  form.requestWith = getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withStore')
-  if (!form.requestWith) {
-    delete form.requestWith
-  }
   const fdt = isUpdateMode.value ? 'u' : 'c'
-  form.fdt = fdt
   if (ignoreKeysProps.value) {
     if (typeof ignoreKeysProps.value === 'function') {
       form = ignoreKeysProps.value(form) as any
@@ -813,7 +815,7 @@ const onSuccess: SubmissionHandler = async (form) => {
       }
     }
   }
-  const _conf: any = { params: { fdt } }
+  const _conf: any = { params: { fdt, requestWith: getRequestWith(isUpdateMode.value ? 'withUpdate' : 'withStore') || undefined } }
   const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form, _conf) : await api.store(form, _conf)
   try {
     const { _data, _message, _success }: any = await method()
@@ -848,7 +850,7 @@ const onInvalidSubmit: InvalidSubmissionHandler = ({ errors }) => {
     // myth.alertError(message)
   }
 }
-const defaultSubmitItem = formRef.handleSubmit.withControlled(onSuccess, onInvalidSubmit)
+const defaultSubmitItem = handleSubmit(onSuccess, onInvalidSubmit)
 
 const hideAutoMessage = computed(() => props.hideAutoMessage)
 const onDeleteItem = (i: MDtItem, index: number) => {
@@ -1992,7 +1994,7 @@ const getProp = computed(() => (k: keyof Props) => {
               </MContainer>
               <slot
                 v-else
-                :form="formRef"
+                :form="formScope"
                 :index="dialogs.index"
                 :item="dialogs.item"
                 name="form"
@@ -2005,7 +2007,7 @@ const getProp = computed(() => (k: keyof Props) => {
               class="m--datatable-form-actions print-hide"
             >
               <slot
-                :form="formRef"
+                :form="formScope"
                 :index="dialogs.index"
                 :item="dialogs.item"
                 name="form-actions"

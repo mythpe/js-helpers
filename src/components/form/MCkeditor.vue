@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MCkeditorProps as Props } from './models.d'
-import { computed, reactive, ref, useAttrs } from 'vue'
+import { computed, reactive, ref, toValue, useAttrs } from 'vue'
 import { useInputHelper } from '../../composables'
 
 import {
@@ -85,9 +85,9 @@ type P = {
   help?: Props['help'];
   required?: Props['required'];
   rules?: Props['rules'];
-  // errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
+  fieldOptions?: Props['fieldOptions'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -110,11 +110,11 @@ const props = withDefaults(defineProps<P>(), {
   help: undefined,
   required: undefined,
   rules: undefined,
-  // errors: undefined,
   viewMode: () => !1,
-  viewModeValue: undefined
+  viewModeValue: undefined,
+  fieldOptions: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: '', type: String })
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const { __ } = useMyth()
 const attrs = useAttrs()
 const helper = useInputHelper<any>(() => props, 'ckeditor', () => ({ attrs }))
@@ -123,7 +123,8 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   validateOnMount: !1,
   validateOnValueUpdate: !1,
   syncVModel: !0,
-  label: getLabel
+  label: getLabel,
+  ...toValue<any>(props.fieldOptions)
 })
 const { value, errorMessage, handleChange } = inputScope
 
@@ -318,7 +319,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
+    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage,'m--input__view':viewMode}]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -328,13 +329,18 @@ export default {
   >
     <slot
       name="top-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
     <slot name="top-label">
       <MInputLabel
         v-if="!!getLabel"
-        :field="inputScope"
-      />
+        :field="scopes"
+      >
+        <MHelpRow
+          :text="help"
+          tooltip
+        />
+      </MInputLabel>
     </slot>
     <slot name="caption">
       <div
@@ -346,9 +352,12 @@ export default {
     </slot>
     <slot
       name="help"
-      v-bind="inputScope"
+      v-bind="scopes"
     >
-      <MHelpRow :text="help" />
+      <MHelpRow
+        v-if="!getLabel"
+        :text="help"
+      />
     </slot>
     <MTransition>
       <div
@@ -388,7 +397,7 @@ export default {
     </div>
     <slot
       name="bottom-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
   </MCol>
 </template>

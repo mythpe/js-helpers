@@ -12,7 +12,7 @@ import { computed, nextTick, onBeforeUnmount, ref, useAttrs, watch } from 'vue'
 
 import MFile from './MFile.vue'
 import { MAvatarViewerProps as Props } from './models'
-import { useField, useFieldError } from 'vee-validate'
+import { useField } from 'vee-validate'
 import { useInputHelper } from '../../composables'
 
 interface P {
@@ -41,6 +41,7 @@ interface P {
   hint?: Props['hint'];
   hintProps?: Props['hintProps'];
   formErrors?: Props['formErrors'];
+  help?: Props['help'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -68,7 +69,8 @@ const props = withDefaults(defineProps<P>(), {
   hintProps: undefined,
   caption: undefined,
   captionProps: undefined,
-  formErrors: () => ({})
+  formErrors: () => ({}),
+  help: undefined
 })
 type Events = {
   (e: 'click', evt?: Event): void;
@@ -79,7 +81,7 @@ const { accepts } = useInputHelper<any>(() => props, 'avatarViewer', () => ({ at
 const modelValueScope = useField<Props['modelValue']>(() => props.name, undefined, {
   syncVModel: !0
 })
-const { value: modelValue, errorMessage, setErrors } = modelValueScope
+const { value: modelValue, errorMessage, handleReset } = modelValueScope
 
 const removedScope = useField<Props['removed']>(() => `${props.name}_removed`, undefined, {
   syncVModel: 'removed'
@@ -125,7 +127,7 @@ const isFile = computed(() => {
 })
 const getAvatarText = computed(() => props.avatarText ? props.avatarText.slice(0, 1).toUpperCase() : undefined)
 const onClick = (e?: Event) => {
-  setErrors()
+  handleReset()
   if (props.clearable && hasSrc.value) {
     onClearInput()
     return
@@ -171,16 +173,22 @@ export default {
     <MColumn class="items-center">
       <MTransition>
         <div
-          v-if="label"
+          v-if="!!label"
           key="label"
+          class="row items-center"
         >
           <div :class="`text-h6 q-px-sm rounded-borders q-mb-sm ${!!errorMessage ? 'text-negative' : ''}`">
-            {{ label }}
+            {{ __(label) }}
             <span
               v-if="!clearable"
               class="text-negative"
             >*</span>
           </div>
+          <MHelpRow
+            v-if="!!help"
+            tooltip
+            :text="help"
+          />
         </div>
         <slot name="hint">
           <div
@@ -189,10 +197,6 @@ export default {
             class="m--input__hint"
             v-bind="hintProps"
           >
-            <q-icon
-              left
-              name="ion-help-circle-outline"
-            />
             <span>{{ __(hint) }}</span>
           </div>
         </slot>

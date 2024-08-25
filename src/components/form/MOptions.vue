@@ -10,11 +10,10 @@
 
 import { useField } from 'vee-validate'
 import { MOptionsOptionContext, MOptionsProps as Props } from './models.d'
-import { reactive, ref, useAttrs } from 'vue'
+import { reactive, ref, toValue, useAttrs } from 'vue'
 import { QField, QOptionGroup, QOptionGroupSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
-import MInputFieldControl from './MInputFieldControl.vue'
 
 type P = {
   name: Props['name'];
@@ -25,7 +24,6 @@ type P = {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  // modelValue?: Props['modelValue'];
   label?: Props['label'];
   caption?: Props['caption'];
   hint?: Props['hint'];
@@ -41,6 +39,8 @@ type P = {
   keepColor?: Props['keepColor'];
   service?: Props['service'];
   fullWidth?: Props['fullWidth'];
+  fitWidth?: Props['fullWidth'];
+  fieldOptions?: Props['fieldOptions'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -52,7 +52,6 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  // modelValue: null,
   label: undefined,
   caption: undefined,
   hint: undefined,
@@ -67,7 +66,9 @@ const props = withDefaults(defineProps<P>(), {
   type: 'radio',
   keepColor: undefined,
   service: undefined,
-  fullWidth: () => !1
+  fullWidth: () => !1,
+  fitWidth: () => !1,
+  fieldOptions: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const loading = defineModel<Props['loading']>('loading', { required: !1, default: !1 })
@@ -77,7 +78,8 @@ const helper = useInputHelper<P>(() => props, 'options', () => ({ attrs }))
 const { getLabel, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
-  label: getLabel
+  label: getLabel,
+  ...toValue<any>(props.fieldOptions)
 })
 const { value, errorMessage, handleChange, handleBlur } = inputScope
 
@@ -115,7 +117,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
+    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage,'m--input__view':viewMode}]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -125,13 +127,17 @@ export default {
   >
     <slot
       name="top-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
     <slot name="top-label">
       <MInputLabel
         v-if="!!getLabel"
-        :field="inputScope"
+        :field="scopes"
       >
+        <MHelpRow
+          :text="help"
+          tooltip
+        />
         <MTransition>
           <q-spinner-dots
             v-if="loading"
@@ -166,7 +172,7 @@ export default {
     <component
       :is="viewMode ? QField : QOptionGroup"
       ref="input"
-      :class="{'m--options': !0,'m--options__full_width': fullWidth }"
+      :class="{'m--options': !0, 'm--options__full_width': fullWidth, 'm--options__fit_width': fitWidth }"
       :color="!!errorMessage ? 'negative' : inputProps.color"
       :error="viewMode ? !!errorMessage : undefined"
       :error-message="viewMode ? errorMessage : undefined"
@@ -202,22 +208,27 @@ export default {
     </component>
     <slot
       name="help"
-      v-bind="inputScope"
+      v-bind="scopes"
     >
-      <MHelpRow :text="help" />
+      <MHelpRow
+        v-if="!getLabel"
+        :text="help"
+      />
     </slot>
     <slot
       name="bottom-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
     <slot
       :options="options"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
   </MCol>
 </template>
 
 <style lang="sass">
+$c: calc(100% /3)
+
 .m--options
   .q-checkbox__inner,
   .q-radio__inner,
@@ -233,8 +244,10 @@ export default {
       .q-radio__label,
       .q-toggle__label
         width: 100%
-// &.q-option-group--inline
-//   > div
-//     background-color: red
-//     width: 49.3333333%
+
+  &__fit_width
+    margin-left: 0
+    > div
+      width: calc(100% /3)
+      margin-left: 0
 </style>

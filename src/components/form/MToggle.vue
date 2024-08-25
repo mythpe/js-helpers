@@ -8,11 +8,11 @@
 
 <script lang="ts" setup>
 import { useMyth } from '../../vue3'
-import { computed, reactive, ref, useAttrs } from 'vue'
+import { computed, reactive, ref, toValue, useAttrs } from 'vue'
 import { useField } from 'vee-validate'
 import { MToggleProps as Props } from './models'
 import { useInputHelper } from '../../composables'
-import { QRadio, QToggle } from 'quasar'
+import { QToggle } from 'quasar'
 
 interface P {
   auto?: Props['auto'];
@@ -22,7 +22,6 @@ interface P {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  // modelValue?: Props['modelValue'];
   val?: Props['val'];
   name: Props['name'];
   label?: Props['label'];
@@ -39,7 +38,6 @@ interface P {
   indeterminateIcon?: Props['indeterminateIcon'];
   uncheckedIcon?: Props['uncheckedIcon'];
   status?: Props['status'];
-  // errors?: Props['errors'];
   rules?: Props['rules'];
   dense?: Props['dense'];
   keepColor?: Props['keepColor'];
@@ -47,6 +45,7 @@ interface P {
   rowProps?: Props['rowProps'];
   colProps?: Props['colProps'];
   viewMode?: Props['viewMode'];
+  fieldOptions?: Props['fieldOptions'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -57,7 +56,6 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  // modelValue: undefined,
   val: undefined,
   name: () => '',
   label: undefined,
@@ -74,14 +72,14 @@ const props = withDefaults(defineProps<P>(), {
   activeLabel: () => 'yes',
   inactiveLabel: () => 'no',
   status: () => !1,
-  // errors: undefined,
   rules: undefined,
   dense: undefined,
   keepColor: undefined,
   required: undefined,
   rowProps: undefined,
   colProps: undefined,
-  viewMode: () => !1
+  viewMode: () => !1,
+  fieldOptions: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const { __ } = useMyth()
@@ -90,7 +88,8 @@ const helper = useInputHelper<P>(() => props, 'toggle', () => ({ choose: !0, att
 const { inputProps, getLabel: toggleLabel, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
-  label: toggleLabel
+  label: toggleLabel,
+  ...toValue<any>(props.fieldOptions)
 })
 const { value, errorMessage, handleChange } = inputScope
 
@@ -124,7 +123,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
+    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage,'m--input__view':viewMode}]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -134,13 +133,18 @@ export default {
   >
     <slot
       name="top-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
     <slot name="top-label">
       <MInputLabel
-        :field="inputScope"
+        :field="scopes"
         class="no-margin"
-      />
+      >
+        <MHelpRow
+          :text="help"
+          tooltip
+        />
+      </MInputLabel>
     </slot>
     <slot name="caption">
       <div
@@ -153,7 +157,7 @@ export default {
     <MRow v-bind="rowProps">
       <slot
         name="before"
-        v-bind="inputScope"
+        v-bind="scopes"
       />
       <MCol v-bind="colProps">
         <q-field
@@ -163,12 +167,12 @@ export default {
           v-bind="{...$myth.options.input as any,...$myth.options.field,...$attrs, borderless: !0, outlined: !1, dense: inputProps.dense}"
         >
           <q-toggle
+            :disable="viewMode"
             :false-value="falseValue"
             :indeterminate-value="indeterminateValue"
             :label="getLabel"
             :model-value="value"
             :true-value="trueValue"
-            :disable="viewMode"
             v-bind="{
               ...$myth.options.toggle,
               ...$attrs,
@@ -187,18 +191,12 @@ export default {
       </MCol>
       <slot
         name="after"
-        v-bind="inputScope"
+        v-bind="scopes"
       />
     </MRow>
     <slot
-      name="help"
-      v-bind="inputScope"
-    >
-      <MHelpRow :text="help" />
-    </slot>
-    <slot
       name="bottom-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
   </MCol>
 </template>

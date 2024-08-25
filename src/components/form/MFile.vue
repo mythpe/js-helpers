@@ -11,9 +11,8 @@
 import { QField, QFile, QFileSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
-import { defineProps, reactive, ref, useAttrs } from 'vue'
+import { defineProps, reactive, ref, toValue, useAttrs } from 'vue'
 import { MFileProps as Props } from './models'
-import MInputFieldControl from './MInputFieldControl.vue'
 
 interface P {
   name: Props['name'];
@@ -24,7 +23,6 @@ interface P {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  // modelValue?: Props['modelValue'];
   label?: Props['label'];
   caption?: Props['caption'];
   hint?: Props['hint'];
@@ -32,7 +30,6 @@ interface P {
   help?: Props['help'];
   required?: Props['required'];
   rules?: Props['rules'];
-  // errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
   topLabel?: Props['topLabel'];
@@ -42,6 +39,7 @@ interface P {
   video?: Props['video'];
   pdf?: Props['pdf'];
   excel?: Props['excel'];
+  fieldOptions?: Props['fieldOptions'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -53,7 +51,6 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  // modelValue: undefined,
   label: undefined,
   caption: undefined,
   hint: undefined,
@@ -61,7 +58,6 @@ const props = withDefaults(defineProps<P>(), {
   help: undefined,
   required: undefined,
   rules: undefined,
-  // errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   topLabel: undefined,
@@ -70,7 +66,8 @@ const props = withDefaults(defineProps<P>(), {
   svg: () => !1,
   video: () => !1,
   pdf: () => !1,
-  excel: () => !1
+  excel: () => !1,
+  fieldOptions: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
@@ -78,7 +75,8 @@ const helper = useInputHelper<P>(() => props, 'file', () => ({ choose: !0, attrs
 const { hasTopLabel, getLabel, getPlaceholder, accepts, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
-  label: getLabel
+  label: getLabel,
+  ...toValue<any>(props.fieldOptions)
 })
 const { value, errorMessage, handleChange, handleBlur } = inputScope
 
@@ -123,7 +121,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
+    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage,'m--input__view':viewMode}]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -133,13 +131,18 @@ export default {
   >
     <slot
       name="top-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
     <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
-        :field="inputScope"
-      />
+        :field="scopes"
+      >
+        <MHelpRow
+          :text="help"
+          tooltip
+        />
+      </MInputLabel>
     </slot>
     <slot name="caption">
       <div
@@ -191,17 +194,20 @@ export default {
     </component>
     <slot
       name="help"
-      v-bind="inputScope"
+      v-bind="scopes"
     >
-      <MHelpRow :text="help" />
+      <MHelpRow
+        v-if="!hasTopLabel"
+        :text="help"
+      />
     </slot>
     <slot
       name="bottom-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
   </MCol>
   <slot
     name="hidden"
-    v-bind="inputScope"
+    v-bind="scopes"
   />
 </template>

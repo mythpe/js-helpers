@@ -9,22 +9,38 @@
 <script lang="ts" setup>
 
 import { useField } from 'vee-validate'
-import { MHiddenInputProps as Props } from './models.d'
+import { MHiddenProps as Props } from './models.d'
 import { reactive, toValue, useAttrs } from 'vue'
 import { useInputHelper } from '../../composables'
 
 type P = {
   name: Props['name'];
+  auto?: Props['auto'];
+  col?: Props['col'];
+  xs?: Props['xs'];
+  sm?: Props['sm'];
+  md?: Props['md'];
+  lg?: Props['lg'];
+  xl?: Props['xl'];
   rules?: Props['rules'];
   required?: Props['required'];
   fieldOptions?: Props['modelValue'];
+  viewMode?: Props['viewMode'];
 }
 
 const props = withDefaults(defineProps<P>(), {
   name: () => '',
+  auto: undefined,
+  col: undefined,
+  xs: undefined,
+  sm: undefined,
+  md: undefined,
+  lg: undefined,
+  xl: undefined,
   rules: undefined,
   required: () => !1,
-  fieldOptions: undefined
+  fieldOptions: undefined,
+  viewMode: () => !1
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
@@ -38,7 +54,7 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   controlled: !0,
   ...toValue<any>(props.fieldOptions)
 })
-const { value } = inputScope
+const { value, errorMessage } = inputScope
 
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes>({ ...scopes })
@@ -46,14 +62,26 @@ defineExpose<typeof scopes>({ ...scopes })
 
 <script lang="ts">
 export default {
-  name: 'MHiddenInput',
+  name: 'MHidden',
   inheritAttrs: !1
 }
 </script>
 
 <template>
-  <input
-    v-model="value"
-    v-bind="{...$attrs,type: 'hidden' }"
+  <MCol
+    :auto="auto"
+    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage,'m--input__view':viewMode}]"
+    :col="col"
+    :lg="lg"
+    :md="md"
+    :name="name"
+    :sm="sm"
+    :xs="xs"
   >
+    <input
+      v-model="value"
+      v-bind="{...$attrs,type: 'hidden' }"
+    >
+    <slot />
+  </MCol>
 </template>

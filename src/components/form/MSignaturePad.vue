@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MSignaturePadProps as Props, SignaturePadWaterMark } from './models.d'
-import { computed, onUnmounted, ref, useAttrs, watch } from 'vue'
+import { computed, onUnmounted, ref, toValue, useAttrs, watch } from 'vue'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
 import Vue3Signature from 'vue3-signature'
@@ -39,6 +39,7 @@ type P = {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
+  fieldOptions?: Props['fieldOptions'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -64,7 +65,8 @@ const props = withDefaults(defineProps<P>(), {
   labelProps: undefined,
   url: undefined,
   noBtn: () => !1,
-  waterMark: undefined
+  waterMark: undefined,
+  fieldOptions: undefined
 })
 
 type Emits = {
@@ -81,9 +83,10 @@ const helper = useInputHelper<P & { name: string; }>(() => props, 'signaturePad'
 const { getLabel, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
-  label: getLabel
+  label: getLabel,
+  ...toValue<any>(props.fieldOptions)
 })
-const { value, errorMessage, handleChange } = inputScope
+const { errorMessage, handleChange } = inputScope
 
 const padRef = ref<InstanceType<typeof Vue3Signature>>()
 const confirmed = ref(!1)
@@ -161,7 +164,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
+    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage,'m--input__view':viewMode}]"
     :col="col"
     :lg="lg"
     :md="md"

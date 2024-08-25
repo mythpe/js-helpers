@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { useField } from 'vee-validate'
-import { defineProps, reactive, ref, useAttrs } from 'vue'
+import { defineProps, reactive, ref, toValue, useAttrs } from 'vue'
 import { useInputHelper } from '../../composables'
 import { MCheckboxProps as Props } from './models'
 import { QCheckbox, QField } from 'quasar'
@@ -21,7 +21,6 @@ type P = {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  // modelValue?: Props['modelValue'];
   name: Props['name'];
   label?: Props['label'];
   caption?: Props['caption'];
@@ -30,7 +29,6 @@ type P = {
   val?: Props['val'];
   required?: Props['required'];
   rules?: Props['rules'];
-  // errors?: Props['errors'];
   dense?: Props['dense'];
   trueValue?: Props['trueValue'];
   falseValue?: Props['falseValue'];
@@ -40,6 +38,7 @@ type P = {
   rowProps?: Props['rowProps'];
   colProps?: Props['colProps'];
   viewMode?: Props['viewMode'];
+  fieldOptions?: Props['fieldOptions'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -50,7 +49,6 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  // modelValue: undefined,
   name: () => '',
   label: undefined,
   caption: undefined,
@@ -59,7 +57,6 @@ const props = withDefaults(defineProps<P>(), {
   val: undefined,
   required: undefined,
   rules: undefined,
-  // errors: undefined,
   dense: undefined,
   trueValue: () => !0,
   falseValue: () => !1,
@@ -68,7 +65,8 @@ const props = withDefaults(defineProps<P>(), {
   topLabel: undefined,
   rowProps: undefined,
   colProps: undefined,
-  viewMode: () => !1
+  viewMode: () => !1,
+  fieldOptions: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
@@ -78,7 +76,8 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
   label: getLabel,
   type: 'checkbox',
-  checkedValue: () => props.val
+  checkedValue: () => props.val,
+  ...toValue<any>(props.fieldOptions)
 })
 const { value, errorMessage, handleChange } = inputScope
 
@@ -101,7 +100,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
+    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage,'m--input__view':viewMode}]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -111,13 +110,18 @@ export default {
   >
     <slot
       name="top-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
     <slot name="top-label">
       <MInputLabel
         v-if="!!topLabel"
-        :field="inputScope"
-      />
+        :field="scopes"
+      >
+        <MHelpRow
+          :text="help"
+          tooltip
+        />
+      </MInputLabel>
     </slot>
     <slot name="caption">
       <div
@@ -130,7 +134,7 @@ export default {
     <MRow v-bind="rowProps">
       <slot
         name="before"
-        v-bind="inputScope"
+        v-bind="scopes"
       />
       <MCol v-bind="colProps">
         <q-field
@@ -163,22 +167,25 @@ export default {
             v-on="listeners"
           />
         </q-field>
-        <slot v-bind="inputScope" />
+        <slot v-bind="scopes" />
       </MCol>
       <slot
         name="after"
-        v-bind="inputScope"
+        v-bind="scopes"
       />
     </MRow>
     <slot
       name="help"
-      v-bind="inputScope"
+      v-bind="scopes"
     >
-      <MHelpRow :text="help" />
+      <MHelpRow
+        v-if="!topLabel"
+        :text="help"
+      />
     </slot>
     <slot
       name="bottom-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
   </MCol>
 </template>

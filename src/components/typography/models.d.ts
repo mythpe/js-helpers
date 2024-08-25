@@ -8,6 +8,7 @@
 
 import { TypedOptions } from 'typed.js'
 import { VNode } from 'vue'
+import { QItemProps } from 'quasar'
 
 export type MTypingStringProps = {
   name: number | string;
@@ -23,9 +24,10 @@ export type MTypingStringSlots = {
   //
 }
 
-export type MHelpRowProps = {
+export type MHelpRowProps = QItemProps & {
   text?: string | null | undefined;
   icon?: string;
+  tooltip?: boolean;
 }
 
 export type MHelpRowSlots = {

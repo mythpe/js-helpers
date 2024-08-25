@@ -48,8 +48,12 @@ import {
   MGoogleMapsSlots,
   MHelpRowProps,
   MHelpRowSlots,
+  MHiddenProps,
+  MHiddenSlots,
   MHiddenInputProps,
   MHiddenInputSlots,
+  MInputFieldControlProps,
+  MInputFieldControlSlots,
   MInputLabelProps,
   MInputLabelSlots,
   MInputProps,
@@ -108,6 +112,7 @@ declare module '@vue/runtime-core' {
     MEmail: GlobalComponentConstructor<MInputProps, MInputSlots>;
     MFile: GlobalComponentConstructor<MFileProps, MFileSlots>;
     MForm: GlobalComponentConstructor<MFormProps, MFormSlots>;
+    MHidden: GlobalComponentConstructor<MHiddenProps, MHiddenSlots>;
     MHiddenInput: GlobalComponentConstructor<MHiddenInputProps, MHiddenInputSlots>;
     MInput: GlobalComponentConstructor<MInputProps, MInputSlots>;
     MMobile: GlobalComponentConstructor<MInputProps, MInputSlots>;
@@ -136,6 +141,7 @@ declare module '@vue/runtime-core' {
     MTooltip: GlobalComponentConstructor<MTooltipProps, MTooltipSlots>;
     MDialog: GlobalComponentConstructor<MDialogProps, MDialogSlots>;
     MTypingString: GlobalComponentConstructor<MTypingStringProps, MTypingStringSlots>;
+    MInputFieldControl: GlobalComponentConstructor<MInputFieldControlProps, MInputFieldControlSlots>;
     MInputLabel: GlobalComponentConstructor<MInputLabelProps, MInputLabelSlots>;
     MHelpRow: GlobalComponentConstructor<MHelpRowProps, MHelpRowSlots>;
   }

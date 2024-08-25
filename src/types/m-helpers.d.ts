@@ -98,11 +98,11 @@ type Generic = Record<any, any>;
 
 export type ApiMetaInterface = {
   // server current page
-  current_page: number | null;
+  current_page: number;
   // server last page
-  last_page: number | null;
+  last_page: number;
   // server total items
-  total: number | null;
+  total: number;
   [K: any]: any;
 };
 export type ApiErrorInterface = Record<string, string[]>;

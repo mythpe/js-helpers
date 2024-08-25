@@ -11,7 +11,7 @@ import { QEditor, QField, useQuasar } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
 import { MEditorProps as Props } from './models'
-import { reactive, ref, useAttrs } from 'vue'
+import { reactive, ref, toValue, useAttrs } from 'vue'
 
 const $q = useQuasar()
 const _toolbar = [
@@ -140,10 +140,10 @@ interface P {
   toolbar?: Props['toolbar'];
   fonts?: Props['fonts'];
   rules?: Props['rules'];
-  // errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   topLabel?: Props['topLabel'];
   required?: Props['required'];
+  fieldOptions?: Props['fieldOptions'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -165,18 +165,19 @@ const props = withDefaults(defineProps<P>(), {
   toolbar: undefined,
   fonts: undefined,
   rules: undefined,
-  // errors: undefined,
   topLabel: undefined,
   viewMode: undefined,
-  required: undefined
+  required: undefined,
+  fieldOptions: undefined
 })
-defineModel<Props['modelValue']>({ required: !1, default: '', type: String })
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const attrs = useAttrs()
 const helper = useInputHelper<any>(() => props, 'editor', () => ({ attrs }))
 const { hasTopLabel, getLabel, getPlaceholder, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
-  label: getLabel
+  label: getLabel,
+  ...toValue<any>(props.fieldOptions)
 })
 const { value, errorMessage, handleChange } = inputScope
 
@@ -199,7 +200,7 @@ export default {
 <template>
   <MCol
     :auto="auto"
-    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
+    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage,'m--input__view':viewMode}]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -214,8 +215,13 @@ export default {
     <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
-        :field="inputScope"
-      />
+        :field="scopes"
+      >
+        <MHelpRow
+          :text="help"
+          tooltip
+        />
+      </MInputLabel>
     </slot>
     <slot name="caption">
       <div
@@ -250,6 +256,15 @@ export default {
       }"
       v-on="listeners"
     />
+    <slot
+      name="help"
+      v-bind="scopes"
+    >
+      <MHelpRow
+        v-if="!hasTopLabel"
+        :text="help"
+      />
+    </slot>
     <slot
       name="bottom-input"
       v-bind="inputScope"

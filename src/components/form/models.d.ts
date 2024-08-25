@@ -30,10 +30,18 @@ import {
   QUploaderProps,
   QUploaderSlots
 } from 'quasar'
-import { FieldContext, FormContext, FormOptions } from 'vee-validate'
-import { ComputedGetter, MaybeRefOrGetter, UnwrapRef, VNode } from 'vue'
+import { FieldContext, FieldOptions, FormContext, FormOptions } from 'vee-validate'
+import { ComputedGetter, MaybeRefOrGetter, UnwrapNestedRefs, UnwrapRef, VNode } from 'vue'
 import { MColProps, ViewModeProps } from '../grid/models'
 import { EditorConfig } from 'ckeditor5'
+
+export type BaseInputFieldPropContext = FieldContext<any>;
+export type BaseInputFieldProps = {
+  /**
+   * Context of field input.
+   */
+  field: UnwrapNestedRefs<BaseInputFieldPropContext>;
+}
 
 export type InputRulesContext = string | string[] | Record<string, any> | undefined;
 export type InputErrorsContext = string[];
@@ -118,6 +126,10 @@ export type BaseInputFormProps = {
    * Number Rule.
    */
   readonly float?: boolean;
+  /**
+   * vee-validate Field Options.
+   */
+  readonly fieldOptions?: FieldOptions | MaybeRefOrGetter<FieldOptions>;
 }
 export type BaseInputsProps = ViewModeProps & InputHelpProps & Omit<MColProps, 'name'> & BaseInputFormProps;
 
@@ -179,6 +191,9 @@ export type MPasswordProps = MInputProps & {
 
 export type MInputSlots = QInputSlots & QFieldSlots & BaseInputsSlots
 
+export type MFieldProps = Omit<MInputProps, 'viewMode'>
+export type MFieldSlots = MInputSlots
+
 export type MHiddenInputSlots = object
 export type MHiddenInputProps = Pick<BaseInputFormProps, 'rules' | 'required'> & {
   /**
@@ -189,6 +204,14 @@ export type MHiddenInputProps = Pick<BaseInputFormProps, 'rules' | 'required'> &
    * Input model value.
    */
   modelValue?: any;
+}
+
+export type MHiddenProps = MHiddenInputProps & Pick<ViewModeProps, 'viewMode'> & Omit<MColProps, 'name'>
+export type MHiddenSlots = {
+  /**
+   * Field main content
+   */
+  default: () => VNode[];
 }
 
 export type MOptionsOptionContext = Omit<QToggleProps, 'modelValue'> & Omit<QRadioProps, 'modelValue'> & Omit<QCheckboxProps, 'modelValue'> & {
@@ -226,6 +249,11 @@ export type MOptionsProps = Omit<QOptionGroupProps, 'name' | 'modelValue' | 'opt
    * Set content to be full width.
    */
   fullWidth?: boolean;
+  /**
+   * Set width of content to be equals.
+   * Default is: 33.33333333%
+   */
+  fitWidth?: boolean;
 }
 export type MOptionsSlots = QOptionGroupSlots & QFieldSlots & BaseInputsSlots
 
@@ -477,8 +505,13 @@ export type MAvatarViewerProps = QAvatarProps & MColProps & {
    */
   hint?: string;
   hintProps?: Record<string, any>;
+
   caption?: string;
   captionProps?: Record<string, any>;
+  /**
+   * Help text after label.
+   */
+  help?: string;
 }
 
 export interface MAvatarViewerSlots extends QAvatarSlots {
@@ -522,7 +555,12 @@ export type MUploaderServiceType = string | {
   deleteAttachment: (media: MUploaderMediaItem, config?: AxiosRequestConfig) => Promise<any>;
 }
 
-export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'headers' | 'url'>, MColProps {
+export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'headers' | 'url'>, MColProps, Pick<BaseInputsProps, 'fieldOptions'> {
+  /**
+   * Name fo field input, Attachments key name.
+   * Default is: 'attachments'
+   */
+  name?: string;
   /**
    * Put component in disabled mode
    */
@@ -579,9 +617,9 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
   /**
    * Label for the uploader
    */
-  label?: string;
+  label?: string | null | undefined;
   /** The Attachments list */
-  modelValue: MUploaderMediaItem[] | any[];
+  modelValue?: MUploaderMediaItem[] | any[];
   /**
    *  Hide delete media items from uploader, no delete media For API
    */
@@ -593,7 +631,7 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
   /**
    * The ID of model will use in attachments
    */
-  modelId: string | number;
+  modelId?: string | number | undefined;
   uploading?: boolean | undefined;
   readonly useQuasarLoading?: boolean | undefined;
   defaultFileIcon?: string | undefined;
@@ -680,24 +718,12 @@ export interface MOtpSlots extends QInputSlots {
   'after-input': () => VNode[];
 }
 
-export type MInputLabelProps = {
-  /**
-   * Context of field input.
-   */
-  field: FieldContext;
-  // /**
-  //  * Input name.
-  //  */
-  // name: string;
-  // /**
-  //  * Input Label text.
-  //  */
-  // label?: string | null | undefined;
-  // /**
-  //  * Input is required.
-  //  */
-  // required?: boolean;
+export type MInputFieldControlProps = any;
+export type MInputFieldControlSlots = {
+  default: () => VNode[];
 }
+
+export type MInputLabelProps = BaseInputFieldProps;
 export type MInputLabelSlots = {
   default: () => VNode[];
 }
@@ -748,7 +774,7 @@ export type SignaturePadWaterMark = {
    */
   sy: number;
 }
-export type MSignaturePadProps = Omit<MColProps, 'name'> & {
+export type MSignaturePadProps = Omit<MColProps, 'name'> & Pick<BaseInputsProps, 'fieldOptions'> & {
   /**
    * Base64 data of the signature.
    */

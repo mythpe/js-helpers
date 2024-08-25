@@ -80,19 +80,7 @@ const prepare = async () => {
 const onSearch = () => {
   prepare()
 }
-const filterFn = (val: any, update: any) => {
-  if ((!val && search.value === val)) {
-    update()
-    return
-  }
-  update(() => onSearch())
-}
-onMounted(() => {
-  if (props.viewMode) {
-    return
-  }
-  prepare()
-})
+onMounted(() => prepare())
 
 const input = ref<InstanceType<typeof MSelect> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
@@ -106,6 +94,8 @@ export default {
 </script>
 
 <template>
+  {{ modelValue }}
+  {{ name }}
   <MSelect
     ref="input"
     v-model="modelValue"
@@ -118,8 +108,8 @@ export default {
     :view-mode="viewMode"
     :view-mode-value="viewModeValue"
     axios-mode
-    v-bind="$attrs"
     no-filter
+    v-bind="$attrs"
     @update:search="onSearch()"
   >
     <template

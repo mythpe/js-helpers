@@ -14,28 +14,58 @@ import { MHelpRowProps as Props } from './models'
 interface P {
   icon?: Props['icon'];
   text?: Props['text'];
+  tooltip?: Props['tooltip'];
 }
 
 const props = withDefaults(defineProps<P>(), {
   icon: undefined,
-  text: undefined
+  text: undefined,
+  tooltip: () => !1
 })
 const { inputProps } = useInputHelper(() => props, 'helpRow')
 </script>
 
 <template>
-  <MRow
-    v-if="!!text"
-    class="items-center m--input__help"
+  <q-icon
+    v-if="!!text && tooltip"
+    class="cursor-pointer"
+    name="ion-ios-information-circle-outline"
+    right
+    size="19px"
+  >
+    <q-tooltip
+      anchor="center end"
+      class="bg-transparent text-black text-justify"
+      self="center start"
+      transition-hide="jump-right"
+      transition-show="jump-left"
+    >
+      <q-card style="max-width: 280px">
+        <q-card-section style="font-size: 13px">
+          {{ __(text) }}
+        </q-card-section>
+      </q-card>
+    </q-tooltip>
+  </q-icon>
+  <q-item
+    v-else-if="!!text && !tooltip"
+    dense
     v-bind="$myth.options.helpRow"
   >
-    <slot>
+    <q-item-section
+      side
+      thumbnail
+      top
+    >
       <q-icon
-        :name="inputProps.icon || 'ion-ios-help-circle-outline'"
-        left
-        size="20px"
+        :name="inputProps.icon || 'ion-ios-information-circle-outline'"
+        size="19px"
       />
-      <span class="text-caption">{{ __(text) }}</span>
-    </slot>
-  </MRow>
+    </q-item-section>
+    <q-item-section top>
+      <q-item-label caption>
+        {{ __(text) }}
+      </q-item-label>
+    </q-item-section>
+  </q-item>
 </template>

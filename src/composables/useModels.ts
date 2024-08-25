@@ -6,36 +6,41 @@
  * Github: https://github.com/mythpe
  */
 
-import { computed, MaybeRefOrGetter, nextTick, onMounted, onUnmounted, reactive, Ref, ref, toRefs, toValue, watch } from 'vue'
+import { computed, MaybeRefOrGetter, nextTick, onMounted, onUnmounted, reactive, ref, toValue, watch } from 'vue'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useMyth } from '../vue3'
-import { ApiFulfilledResponse, ApiInterface, ApiMetaInterface, ApiModel, UseModelsOptions as Options } from '../types'
+import { ApiFulfilledResponse, ApiInterface, ApiMetaInterface, ApiModel, UseModelsOptionsArg as Options } from '../types'
+import { extend } from 'quasar'
 
-const itemsPerPage = 50
+const itemsPerPage = 1
+const defMeta = {
+  per_page: 0,
+  total: 0,
+  current_page: 0,
+  last_page: 0
+}
 type Item = ApiModel & object
 
-export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<string>, options?: Options<T>, search?: string | Ref<string>, filter?: Record<string, any>, config?: AxiosRequestConfig | undefined) {
-  const { name, options: opts, params, axiosConfig } = toRefs(reactive({
-    name: toValue(n),
-    options: toValue(options),
-    params: computed(() => ({ search: toValue(search), filter: toValue(filter) })),
-    axiosConfig: computed(() => toValue(config))
-  }))
-  // const opts = reactive<UseModelsOptionsArg | Record<string, any>>(options || {})
-  // const params = reactive({ search, filter })
-  // const axiosConfig = reactive<AxiosRequestConfig>(config || {})
-  const models = ref<T[]>([])
-  const defMeta = {
-    per_page: 0,
-    total: 0,
-    current_page: 0,
-    last_page: 0
-  }
+export function useModels<T extends Partial<Item> = Item> (Name: MaybeRefOrGetter<string>, opts: MaybeRefOrGetter<Options> = {}, axiosRequestConfig: MaybeRefOrGetter<AxiosRequestConfig> = {}) {
+  const name = toValue(Name)
+  const options = toValue<Options>(opts)
+  const { search, filter } = options
   const meta = ref<ApiMetaInterface>({ ...defMeta })
+  const requestConfig = computed<AxiosRequestConfig>(() => extend(!0, { itemsPerPage, page: meta.value.current_page }, toValue(axiosRequestConfig), {
+    params: {
+      search: search?.value || undefined,
+      filter: filter?.value || undefined
+    }
+  }))
+  const models = ref<T[]>([])
   const fetching = ref(!1)
   const fetched = ref(!1)
-  const perPage = ref(axiosConfig.value?.params?.itemsPerPage || itemsPerPage)
-  const page = ref(axiosConfig.value?.params?.page || 0)
+  const page = computed({
+    get: () => meta.value.current_page,
+    set: (v) => {
+      meta.value.current_page = v
+    }
+  })
   const canLoadMore = computed(() => {
     if (!fetched.value) {
       return !0
@@ -45,39 +50,38 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
   })
   const myth = useMyth()
 
-  const fetch = (extraConfig: AxiosRequestConfig = {}) => new Promise<Record<string, any>>((resolve, reject) => {
+  const fetch = (config: AxiosRequestConfig = {}) => new Promise<Record<string, any>>((resolve, reject) => {
     if (fetching.value || !canLoadMore.value) {
       resolve({})
       return
     }
     fetching.value = !0
-    const config = {
-      ...(axiosConfig),
-      ...(extraConfig),
-      params: {
-        ...(axiosConfig.value?.params || {}),
-        ...(extraConfig?.params || {}),
-        itemsPerPage: perPage.value,
-        page: page.value,
-        search: params.value.search,
-        filter: params.value.filter
-      }
-    }
-    const f: any = opts.value?.method ? myth.services[name.value][toValue(opts.value.method)] : (opts.value?.isPanel ? myth.services[name.value].index : myth.services[name.value].staticIndex)
-    return f(config)
+    const def = {}
+    extend(!0, def, requestConfig.value, config)
+    const service = myth.services[name]
+    const method = options?.method ? toValue(options?.method) : (options?.isPanel ? 'index' : 'staticIndex')
+    const action = service[method]
+    return action(def)
       .then((res: ApiInterface) => {
         const { _data, _meta } = res
-        models.value.push(...(_data || []) as any)
+        models.value = [
+          ...models.value,
+          ...(_data || []) as any
+        ]
         meta.value = _meta || { ...defMeta }
-        page.value = _meta?.current_page ?? 0
         resolve(res)
-        if (opts.value?.onSuccess) {
-          opts.value?.onSuccess(res)
-        }
+        options?.onSuccess?.(res)
+        return res
       })
-      .catch((e: any) => reject(e))
+      .catch((e: any) => {
+        reject(e)
+        options?.onError?.(e)
+        return e
+      })
       .finally(() => {
-        fetching.value = !1
+        if (fetching.value) {
+          fetching.value = !1
+        }
         if (!fetched.value) {
           fetched.value = !0
         }
@@ -85,9 +89,10 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
   })
   const reset = () => {
     models.value = []
-    fetched.value = !1
     meta.value = { ...defMeta }
-    page.value = 0
+    if (fetched.value) {
+      fetched.value = !1
+    }
   }
   const nextPage = (config: AxiosRequestConfig = {}) => {
     if (!canLoadMore.value) {
@@ -105,25 +110,18 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
   }
   const beginningFetch = (config: AxiosRequestConfig = {}) => {
     reset()
-    if (opts.value?.qInfiniteScroll) {
+    if (options.qInfiniteScroll?.value) {
       return new Promise(resolve => {
-        opts.value?.qInfiniteScroll?.reset()
+        options.qInfiniteScroll?.value?.reset()
         nextTick(() => {
-          opts.value?.qInfiniteScroll?.trigger()
+          options.qInfiniteScroll?.value?.trigger()
         })
         resolve({})
       })
     }
     return nextPage(config)
   }
-  try {
-    onMounted(() => {
-      !opts.value?.lazy && nextPage()
-    })
-  } catch (e) {
-    console.log(e)
-  }
-  const onRefresh = (done: (() => void)) => beginningFetch().finally(() => done())
+  const onRefresh = (done?: (() => void)) => beginningFetch().finally(() => done?.())
   const onLoad = (index: any, done: any) => {
     return new Promise<{ index: number }>(resolve => {
       if (!canLoadMore.value) {
@@ -141,12 +139,16 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
   const removeItem = (item: Item) => {
     models.value = models.value.filter(e => e.value !== item.value)
   }
-  const un = watch(() => params.value.search, () => onSearch())
-  onUnmounted(() => {
-    if (un) {
-      un()
-    }
-  })
+  const watchers = []
+  if (filter) {
+    watchers.push(filter)
+  }
+  if (search) {
+    watchers.push(search)
+  }
+  const stopWatch = watch(watchers, () => onSearch(), { deep: !0 })
+  onUnmounted(() => stopWatch?.())
+  onMounted(() => !options.lazy && nextPage())
   return {
     models,
     meta,
@@ -167,34 +169,38 @@ export function useModels<T extends Partial<Item> = Item> (n: MaybeRefOrGetter<s
 
 type ItemModel<T extends object = any> = ApiModel<T>;
 
-export function useModel<T extends Partial<ItemModel<T>> = ItemModel> (name: string, id: any, opts: Options<T> = {}) {
+export function useModel<T extends Partial<ItemModel<T>> = ItemModel> (Name: string, Id: MaybeRefOrGetter<string | number>, Options: MaybeRefOrGetter<Options> = {}, axiosRequestConfig: MaybeRefOrGetter<AxiosRequestConfig> = {}) {
   const api = useMyth()
   const model = ref<T>({} as T)
   const fetching = ref(!0)
   const fetched = ref(!1)
-  const args = reactive({ id, model, name, opts })
+  const name = toValue(Name)
+  const id = toValue(Id)
+  const options = toValue<Options>(Options)
+  const config = toValue(axiosRequestConfig)
   const fetch = () => new Promise<AxiosResponse<T> | ApiFulfilledResponse>((resolve, reject) => {
-    if ((fetching.value && fetched.value) || !args.id) {
+    if ((fetching.value && fetched.value) || !id) {
       resolve({} as any)
       return
     }
     if (!fetching.value) {
       fetching.value = !0
     }
-    const m = args.opts?.method ? api.services[args.name][toValue(args.opts.method)] : api.services[args.name][!args.opts?.isPanel ? 'staticShow' : 'show']
-    return m(args.id, toValue(args.opts?.config))
-      .then((r) => {
+    const service = api.services[name]
+    const method = options.method ? toValue(options.method) : (!options.isPanel ? 'staticShow' : 'show')
+    const action = service[method]
+    return action(id, config)
+      .then((r: any) => {
         const { _data } = r
         model.value = (_data as any)
         resolve(r)
-        if (args.opts?.onSuccess) {
-          args.opts?.onSuccess(r as any)
-        }
+        options?.onSuccess?.(r as any)
         return r
       })
       .catch(e => {
-        args.opts?.onError?.(e)
+        options?.onError?.(e)
         reject(e)
+        return e
       })
       .finally(() => {
         if (!fetched.value) {
@@ -204,18 +210,19 @@ export function useModel<T extends Partial<ItemModel<T>> = ItemModel> (name: str
           if (fetching.value) {
             fetching.value = !1
           }
-        }, args.opts?.timeout !== undefined ? args.opts?.timeout : 100)
+        }, options?.timeout !== undefined ? options?.timeout : 100)
       })
   })
-  !args.opts?.lazy && onMounted(() => {
-    fetch()
-  })
-  // !args.opts?.lazy && watchEffect(() => args.id && fetch())
-  const un = watch([() => args.name, () => args.id, () => args.opts.config], () => {
-    fetch()
-  }, { deep: !0 })
-  onUnmounted(() => {
-    un?.()
-  })
+  !options?.lazy && onMounted(() => fetch())
+  const { search, filter } = options
+  const watchers: any[] = [() => toValue(Name), () => toValue(Id), () => toValue(axiosRequestConfig)]
+  if (filter) {
+    watchers.push(filter)
+  }
+  if (search) {
+    watchers.push(search)
+  }
+  const stopWatch = watch(watchers, () => fetch(), { deep: !0 })
+  onUnmounted(() => stopWatch())
   return { model, fetching, fetch, fetched }
 }

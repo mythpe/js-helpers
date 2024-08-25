@@ -7,7 +7,7 @@
   -->
 
 <script lang="ts" setup>
-import { computed, ref, useAttrs } from 'vue'
+import { computed, reactive, ref, toValue, useAttrs } from 'vue'
 import { MPickerProps as Props } from './models'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
@@ -22,7 +22,6 @@ interface P {
   md?: Props['md'];
   lg?: Props['lg'];
   xl?: Props['xl'];
-  // modelValue?: Props['modelValue'];
   label?: Props['label'];
   caption?: Props['caption'];
   hint?: Props['hint'];
@@ -30,7 +29,6 @@ interface P {
   help?: Props['help'];
   required?: Props['required'];
   rules?: Props['rules'];
-  // errors?: Props['errors'];
   viewMode?: Props['viewMode'];
   viewModeValue?: Props['viewModeValue'];
   autocomplete?: Props['autocomplete'];
@@ -42,6 +40,7 @@ interface P {
   btnProps?: Props['btnProps'];
   readonly?: Props['readonly'];
   disable?: Props['disable'];
+  fieldOptions?: Props['fieldOptions'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -53,7 +52,6 @@ const props = withDefaults(defineProps<P>(), {
   md: undefined,
   lg: undefined,
   xl: undefined,
-  // modelValue: undefined,
   label: undefined,
   caption: undefined,
   hint: undefined,
@@ -61,7 +59,6 @@ const props = withDefaults(defineProps<P>(), {
   help: undefined,
   required: undefined,
   rules: undefined,
-  // errors: undefined,
   viewMode: () => !1,
   viewModeValue: undefined,
   autocomplete: undefined,
@@ -72,7 +69,8 @@ const props = withDefaults(defineProps<P>(), {
   multiple: () => !1,
   btnProps: undefined,
   readonly: undefined,
-  disable: undefined
+  disable: undefined,
+  fieldOptions: undefined
 })
 
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
@@ -81,8 +79,10 @@ const helper = useInputHelper<P>(() => props, 'picker', () => ({ choose: !0, att
 const { hasTopLabel, getLabel, getPlaceholder, getRules, getAutocompleteAttribute } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
-  label: getLabel
+  label: getLabel,
+  ...toValue<any>(props.fieldOptions)
 })
+const scopes = reactive(inputScope)
 const { value, errorMessage, handleChange } = inputScope
 
 const isDate = computed(() => props.type === 'date')
@@ -123,7 +123,7 @@ defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ?
 <template>
   <MCol
     :auto="auto"
-    :class="[$attrs.class, {'m--input__required': !!getRules?.required && !value }]"
+    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage,'m--input__view':viewMode}]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -133,13 +133,18 @@ defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ?
   >
     <slot
       name="top-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
     <slot name="top-label">
       <MInputLabel
         v-if="hasTopLabel"
-        :field="inputScope"
-      />
+        :field="scopes"
+      >
+        <MHelpRow
+          :text="help"
+          tooltip
+        />
+      </MInputLabel>
     </slot>
     <slot name="caption">
       <div
@@ -266,13 +271,16 @@ defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ?
     </q-field>
     <slot
       name="help"
-      v-bind="inputScope"
+      v-bind="scopes"
     >
-      <MHelpRow :text="help" />
+      <MHelpRow
+        v-if="!hasTopLabel"
+        :text="help"
+      />
     </slot>
     <slot
       name="bottom-input"
-      v-bind="inputScope"
+      v-bind="scopes"
     />
   </MCol>
 </template>
