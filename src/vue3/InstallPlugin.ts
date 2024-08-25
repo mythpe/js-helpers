@@ -17,13 +17,13 @@ import {
   Vue3MAlertMessageOptions,
   Vue3MConfirmMessage
 } from '../types'
-import { RouteLocationNormalizedLoaded } from 'vue-router'
-import { INJECT_KEY } from './Const'
+import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
+import { INJECT_KEY, INJECT_KEY_MYTH } from './Const'
 import { Dates, Helpers, Str } from '../utils'
 import lodash from 'lodash'
 import { copyToClipboard, Dialog, Notify, openURL, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { initComponents } from './Component'
-import { VueI18n } from 'vue-i18n'
+import { useI18n, VueI18n } from 'vue-i18n'
 
 export const useStrTranslate = (i18n: any, string: string | { text: string; } | any, ...args: any[]) => {
   const defaultValue = ''
@@ -61,6 +61,12 @@ export const useStrTranslate = (i18n: any, string: string | { text: string; } | 
     }
   }
   return string
+}
+
+export const useMyth = () => inject<UseMythVue>(INJECT_KEY, {} as UseMythVue) as UseMythVue
+
+export function useAhmed () {
+  return inject<UseMythVue>(INJECT_KEY_MYTH, {} as UseMythVue) as UseMythVue
 }
 
 export default async function installPlugin (app: App, pluginOptions: InstallPluginOptions) {
@@ -405,9 +411,53 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
     ...helpers
   })
   app.provide(INJECT_KEY, r)
+
+  const ahmed = {
+    __ (string: string | { text: string; } | any, ...args: any[]) {
+      const defaultValue = ''
+      if (!string) {
+        return string
+      }
+      const { t, te } = useI18n({ useScope: 'global' })
+      const key = typeof string === 'object' ? (Str.strBefore(string.text) || '') : Str.strBefore(string)
+      if (!key) {
+        return defaultValue
+      }
+      let transKey: string
+      if (te) {
+        if (te((transKey = `attributes.${key}`)) && lodash.isString(t(transKey))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return t(transKey, ...args)
+        }
+
+        if (te((transKey = `choice.${key}`)) && lodash.isString(t(transKey))) {
+          args = args || [2]
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return t(transKey, ...args)
+        }
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (te(key) && lodash.isString(t(key))) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return t(key, ...args)
+        }
+      }
+      return string
+    },
+    page () {
+      const route = useRoute()
+      return route.name
+    }
+  }
+  app.provide(INJECT_KEY_MYTH, ahmed)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   app.config.globalProperties.$myth = r
+  app.config.globalProperties.$ahmed = ahmed
   app.config.globalProperties.openWindow = function <F extends (...args: any[]) => any> (
     url: string,
     reject?: F,
@@ -421,9 +471,8 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
   app.config.globalProperties.getPageTitle = function (number?: number | string, route?: RouteLocationNormalizedLoaded): string {
     return this.$myth.getPageTitle(route || this.$route, number)
   }
+
   initComponents(app)
 }
-
-export const useMyth = () => inject<UseMythVue>(INJECT_KEY, {} as UseMythVue) as UseMythVue
 
 export { installPlugin }

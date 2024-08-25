@@ -9,6 +9,6 @@
 export * from './Dates'
 export * from './Helpers'
 export * from './Str'
-export * from './Vee-Rules'
+export * from './VeeRules'
 
 export default {}

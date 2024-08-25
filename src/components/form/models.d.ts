@@ -417,11 +417,27 @@ export type MRadioProps = Omit<QRadioProps, 'name' | 'modelValue' | 'label'> & B
 export type MRadioSlots = MCheckboxSlots
 
 export interface MFormProps {
+  /**
+   * Form HTML element attributes.
+   */
   formProps?: Record<string, any>;
-  opts?: FormOptions;
+  /**
+   * Default options of useForm.
+   */
+  opts?: FormOptions<Record<string, any>>;
+  /**
+   * The target to which the page will be scrolled.
+   * Default is: Window.
+   */
+  target?: HTMLElement | string | undefined;
+  /**
+   * Emit values instead controlled values.
+   * Default is: false.
+   */
+  emitValues?: boolean;
 }
 
-export type MFormScope = FormContext;
+export type MFormScope = FormContext<Record<string, any>>;
 
 export interface MFormSlots {
   default: (scope: MFormScope) => VNode[];

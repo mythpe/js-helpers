@@ -7,51 +7,54 @@
   -->
 
 <script lang="ts" setup>
-import { useForm } from 'vee-validate'
-import { MFormProps as Props, MFormScope } from './models'
+import { InvalidSubmissionHandler, SubmissionContext, SubmissionHandler, useForm } from 'vee-validate'
+import { MFormProps as Props } from './models'
 import { reactive } from 'vue'
+import { useMyth } from '../../vue3'
 
 interface P {
   formProps?: Props['formProps'];
   opts?: Props['opts'];
+  target?: Props['target'];
+  emitValues?: Props['emitValues'];
 }
 
 const props = withDefaults(defineProps<P>(), {
   formProps: undefined,
-  opts: undefined
+  opts: undefined,
+  target: undefined,
+  emitValues: () => !1
 })
-
-const formContext = useForm(props.opts)
+const formScope = useForm(props.opts)
+const myth = useMyth()
+const { handleSubmit } = formScope
 type Emits = {
-  (e: 'submit', evt?: Event, ctx: MFormScope): void;
+  // (e: 'submit', ctx: SubmissionContext, evt?: Event): void;
+  (e: 'submit', values: Record<string, any>, ctx: SubmissionContext, s: typeof formScope): void;
 }
 const emit = defineEmits<Emits>()
-
-// const onSuccess: SubmissionHandler = (values, ctx) => {
-//   console.log(ctx)
-// }
-// const onInvalidSubmit: InvalidSubmissionHandler = ({ errors }) => {
-//   const keys: (keyof typeof errors)[] = Object.keys(errors)
-//   if (keys.length) {
-//     console.log(errors[keys[0]])
-//     // console.log(keys[0])
-//     helpers.scrollToElementFromErrors({
-//       [keys[0]]: [
-//         errors[keys[0]] as string
-//       ]
-//     })
-//   }
-//   // console.log(keys, errors) // current form values
-//   // console.log(errors) // a map of field names and their first error message
-//   // console.log(results) // a detailed map of field names and their validation results
-// }
-const scope = reactive(formContext)
-const submit = (e?: Event) => {
-  e?.preventDefault()
-  e?.stopImmediatePropagation()
-  emit('submit', e, formContext)
+const onSuccessSubmission: SubmissionHandler = async (values, ctx) => emit('submit', values, ctx, formScope)
+const onErrorSubmission: InvalidSubmissionHandler = ({ errors }) => {
+  const keys: (keyof typeof errors)[] = Object.keys(errors)
+  if (keys.length) {
+    const message = errors[keys[0]] as string || myth.__('messages.the_given_data_was_invalid')
+    myth.helpers.scrollToElementFromErrors({ [keys[0]]: [message] }, undefined, props.target)
+  }
 }
+const defaultSubmit = props.emitValues
+  ? handleSubmit(onSuccessSubmission, onErrorSubmission)
+  : handleSubmit.withControlled(onSuccessSubmission, onErrorSubmission)
+// const submit = (e?: Event) => {
+//   e?.preventDefault()
+//   e?.stopImmediatePropagation()
+//   emit('submit', formScope, e)
+// }
+const scope = reactive(formScope)
 defineExpose({ ...scope })
+
+// watch(form, (v) => {
+//   console.log(v)
+// }, { once: !0, deep: !0 })
 </script>
 
 <script lang="ts">
@@ -69,9 +72,11 @@ export default {
     <form
       class="m--form"
       v-bind="formProps"
-      @submit="submit"
+      @submit="defaultSubmit"
     >
-      <slot v-bind="formContext" />
+      <slot
+        v-bind="scope"
+      />
     </form>
   </div>
 </template>

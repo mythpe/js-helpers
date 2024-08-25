@@ -6,10 +6,10 @@
  * Github: https://github.com/mythpe
  */
 
-import { computed, MaybeRefOrGetter, nextTick, onMounted, onUnmounted, reactive, ref, toValue, watch } from 'vue'
+import { computed, ComputedRef, MaybeRefOrGetter, nextTick, onMounted, onUnmounted, ref, toValue, watch } from 'vue'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useMyth } from '../vue3'
-import { ApiFulfilledResponse, ApiInterface, ApiMetaInterface, ApiModel, UseModelsOptionsArg as Options } from '../types'
+import { ApiFulfilledResponse, ApiInterface, ApiMetaInterface, ApiModel, UseModelsOptionsArg } from '../types'
 import { extend } from 'quasar'
 
 const itemsPerPage = 1
@@ -21,9 +21,9 @@ const defMeta = {
 }
 type Item = ApiModel & object
 
-export function useModels<T extends Partial<Item> = Item> (Name: MaybeRefOrGetter<string>, opts: MaybeRefOrGetter<Options> = {}, axiosRequestConfig: MaybeRefOrGetter<AxiosRequestConfig> = {}) {
+export function useModels<T extends Partial<Item> = Item> (Name: MaybeRefOrGetter<string>, opts: MaybeRefOrGetter<UseModelsOptionsArg> = {}, axiosRequestConfig: MaybeRefOrGetter<AxiosRequestConfig> = {}) {
   const name = toValue(Name)
-  const options = toValue<Options>(opts)
+  const options = toValue<UseModelsOptionsArg>(opts)
   const { search, filter } = options
   const meta = ref<ApiMetaInterface>({ ...defMeta })
   const requestConfig = computed<AxiosRequestConfig>(() => extend(!0, { itemsPerPage, page: meta.value.current_page }, toValue(axiosRequestConfig), {
@@ -169,14 +169,14 @@ export function useModels<T extends Partial<Item> = Item> (Name: MaybeRefOrGette
 
 type ItemModel<T extends object = any> = ApiModel<T>;
 
-export function useModel<T extends Partial<ItemModel<T>> = ItemModel> (Name: string, Id: MaybeRefOrGetter<string | number>, Options: MaybeRefOrGetter<Options> = {}, axiosRequestConfig: MaybeRefOrGetter<AxiosRequestConfig> = {}) {
+export function useModel<T extends Partial<ItemModel<T>> = ItemModel> (Name: string, Id: MaybeRefOrGetter<string | number> | ComputedRef<string | number>, Options: MaybeRefOrGetter<UseModelsOptionsArg> = {}, axiosRequestConfig: MaybeRefOrGetter<AxiosRequestConfig> = {}) {
   const api = useMyth()
   const model = ref<T>({} as T)
   const fetching = ref(!0)
   const fetched = ref(!1)
   const name = toValue(Name)
   const id = toValue(Id)
-  const options = toValue<Options>(Options)
+  const options = toValue<UseModelsOptionsArg>(Options)
   const config = toValue(axiosRequestConfig)
   const fetch = () => new Promise<AxiosResponse<T> | ApiFulfilledResponse>((resolve, reject) => {
     if ((fetching.value && fetched.value) || !id) {

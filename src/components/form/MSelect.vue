@@ -157,6 +157,7 @@ defineExpose<typeof scopes & { input: typeof input, onDoneOptions: typeof onDone
 
 <script lang="ts">
 export default {
+  name: 'MSelect',
   inheritAttrs: !1
 }
 </script>

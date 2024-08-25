@@ -35,9 +35,7 @@ defineExpose<{ input: typeof input }>({ input })
           transition-hide="scale"
           transition-show="scale"
         >
-          <q-color
-            v-model="modelValue"
-          />
+          <q-color v-model="modelValue" />
         </q-popup-proxy>
       </q-icon>
     </template>

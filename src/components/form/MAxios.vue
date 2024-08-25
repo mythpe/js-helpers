@@ -94,8 +94,6 @@ export default {
 </script>
 
 <template>
-  {{ modelValue }}
-  {{ name }}
   <MSelect
     ref="input"
     v-model="modelValue"

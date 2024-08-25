@@ -8,7 +8,6 @@
 
 import lodash from 'lodash'
 import { patterns } from 'quasar'
-
 const { testPattern } = patterns
 
 export const VeeRules = {
@@ -28,3 +27,5 @@ export const VeeRules = {
   hexaOrRgbaColor: (v: any) => testPattern.hexaOrRgbaColor(v),
   color: (v: any) => testPattern.anyColor(v)
 }
+
+export default {}

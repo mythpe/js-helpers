@@ -132,6 +132,7 @@ const modelIdProp = computed(() => props.modelId !== undefined ? props.modelId :
 const fieldNameProp = computed(() => props.fieldName)
 const { value: modelValue, errorMessage, setErrors, resetField } = useField<Props['modelValue']>(() => props.name, undefined, {
   syncVModel: !0,
+  controlled: !1,
   label: () => __(props.label),
   ...toValue<any>(props.fieldOptions)
 })

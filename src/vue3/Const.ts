@@ -7,3 +7,4 @@
  */
 
 export const INJECT_KEY = 'myth'
+export const INJECT_KEY_MYTH = 'mythKey'

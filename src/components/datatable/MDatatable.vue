@@ -850,7 +850,7 @@ const onInvalidSubmit: InvalidSubmissionHandler = ({ errors }) => {
     // myth.alertError(message)
   }
 }
-const defaultSubmitItem = handleSubmit(onSuccess, onInvalidSubmit)
+const defaultSubmitItem = handleSubmit.withControlled(onSuccess, onInvalidSubmit)
 
 const hideAutoMessage = computed(() => props.hideAutoMessage)
 const onDeleteItem = (i: MDtItem, index: number) => {
