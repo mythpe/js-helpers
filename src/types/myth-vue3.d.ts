@@ -207,7 +207,7 @@ export type MythApiConfig = {
   services: MythApiServicesSchema
 }
 
-export type MythI18nType = I18n;
+export type MythI18nType = I18n<false>;
 
 export type UseMythVue = {
   i18n: MythI18nType;

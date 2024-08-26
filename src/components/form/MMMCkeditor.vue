@@ -68,29 +68,29 @@ import arTranslations from 'ckeditor5/translations/ar.js'
 // @ts-ignore
 import enTranslations from 'ckeditor5/translations/en.js'
 
-type P = {
-  name: Props['name'];
-  lang: Props['lang'];
-  config?: Props['config'];
-  tagName?: Props['tagName'];
-  disabled?: Props['disabled'];
-  disableTwoWayDataBinding?: Props['disableTwoWayDataBinding'];
-  auto?: Props['auto'];
-  col?: Props['col'];
-  xs?: Props['xs'];
-  sm?: Props['sm'];
-  md?: Props['md'];
-  lg?: Props['lg'];
-  xl?: Props['xl'];
-  label?: Props['label'];
-  caption?: Props['caption'];
-  help?: Props['help'];
-  required?: Props['required'];
-  rules?: Props['rules'];
-  viewMode?: Props['viewMode'];
-  viewModeValue?: Props['viewModeValue'];
-  fieldOptions?: Props['fieldOptions'];
-}
+// type P = {
+//   name: Props['name'];
+//   lang: Props['lang'];
+//   config?: Props['config'];
+//   tagName?: Props['tagName'];
+//   disabled?: Props['disabled'];
+//   disableTwoWayDataBinding?: Props['disableTwoWayDataBinding'];
+//   auto?: Props['auto'];
+//   col?: Props['col'];
+//   xs?: Props['xs'];
+//   sm?: Props['sm'];
+//   md?: Props['md'];
+//   lg?: Props['lg'];
+//   xl?: Props['xl'];
+//   label?: Props['label'];
+//   caption?: Props['caption'];
+//   help?: Props['help'];
+//   required?: Props['required'];
+//   rules?: Props['rules'];
+//   viewMode?: Props['viewMode'];
+//   viewModeValue?: Props['viewModeValue'];
+//   fieldOptions?: Props['fieldOptions'];
+// }
 
 export default {
   setup: (props) => {
