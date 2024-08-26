@@ -31,7 +31,7 @@ import {
   QUploaderSlots
 } from 'quasar'
 import { FieldContext, FieldOptions, FormContext, FormOptions } from 'vee-validate'
-import { ComputedGetter, MaybeRefOrGetter, UnwrapNestedRefs, UnwrapRef, VNode } from 'vue'
+import { ComputedGetter, MaybeRefOrGetter, UnwrapNestedRefs, VNode } from 'vue'
 import { MColProps, ViewModeProps } from '../grid/models'
 import { EditorConfig } from 'ckeditor5'
 
@@ -694,7 +694,7 @@ export type MCkeditorProps = Omit<BaseInputsProps, 'hint' | 'topLabel' | 'placeh
    * Specifies the configuration of the editor.
    * https://ckeditor.com/docs/ckeditor5/latest/api/module_core_editor_editorconfig-EditorConfig.html
    */
-  config?: ((config: UnwrapRef<EditorConfig>) => EditorConfig) | undefined;
+  config?: ((config: EditorConfig) => EditorConfig) | undefined;
   /**
    * By default, the editor component creates a <div> container which is used as an element passed to the editor (for example, ClassicEditor#element).
    * The element can be configured, so for example to create a <textarea>, use the following directive:

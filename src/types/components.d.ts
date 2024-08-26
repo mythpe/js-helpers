@@ -48,10 +48,10 @@ import {
   MGoogleMapsSlots,
   MHelpRowProps,
   MHelpRowSlots,
-  MHiddenProps,
-  MHiddenSlots,
   MHiddenInputProps,
   MHiddenInputSlots,
+  MHiddenProps,
+  MHiddenSlots,
   MInputFieldControlProps,
   MInputFieldControlSlots,
   MInputLabelProps,
@@ -77,6 +77,8 @@ import {
   MRowSlots,
   MSelectProps,
   MSelectSlots,
+  MSignaturePadProps,
+  MSignaturePadSlots,
   MTimeProps,
   MTimeSlots,
   MToggleProps,
@@ -88,9 +90,7 @@ import {
   MTypingStringProps,
   MTypingStringSlots,
   MUploaderProps,
-  MUploaderSlots,
-  MSignaturePadProps,
-  MSignaturePadSlots
+  MUploaderSlots
 } from '../components'
 import { TransitionProps } from 'vue'
 

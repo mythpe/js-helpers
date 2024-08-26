@@ -6,11 +6,11 @@
   - Github: https://github.com/mythpe
   -->
 
-<script lang="ts">
-import { computed, reactive, ref, toValue, useAttrs } from 'vue'
+<script lang="ts" setup>
 
 import { useField } from 'vee-validate'
 import { MCkeditorProps as Props } from './models.d'
+import { computed, reactive, ref, toValue, useAttrs } from 'vue'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
 
@@ -22,6 +22,7 @@ import {
   Bold,
   CKFinder,
   CKFinderUploadAdapter,
+  ClassicEditor,
   CloudServices,
   Code,
   CodeBlock,
@@ -60,6 +61,7 @@ import {
   TodoList,
   Underline
 } from 'ckeditor5'
+// import { Ckeditor } from '@ckeditor/ckeditor5-vue'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import arTranslations from 'ckeditor5/translations/ar.js'
@@ -68,8 +70,8 @@ import arTranslations from 'ckeditor5/translations/ar.js'
 import enTranslations from 'ckeditor5/translations/en.js'
 
 type P = {
-  // name: Props['name'];
-  // lang: Props['lang'];
+  name: Props['name'];
+  lang: Props['lang'];
   config?: Props['config'];
   tagName?: Props['tagName'];
   disabled?: Props['disabled'];
@@ -91,267 +93,228 @@ type P = {
   viewModeValue?: Props['viewModeValue'];
   fieldOptions?: Props['fieldOptions'];
 }
+const props = withDefaults(defineProps<P>(), {
+  name: () => '',
+  lang: () => 'ar',
+  config: undefined,
+  tagName: () => 'div',
+  disabled: () => !1,
+  disableTwoWayDataBinding: () => !1,
 
-export default {
-  name: 'MCkeditor',
-  setup () {
-    // const props = withDefaults(defineProps<P>(), {
-    //   name: () => '',
-    //   lang: () => 'ar',
-    //   config: undefined,
-    //   tagName: () => 'div',
-    //   disabled: () => !1,
-    //   disableTwoWayDataBinding: () => !1,
-    //
-    //   auto: undefined,
-    //   col: undefined,
-    //   xs: undefined,
-    //   sm: undefined,
-    //   md: undefined,
-    //   lg: undefined,
-    //   xl: undefined,
-    //   label: undefined,
-    //   caption: undefined,
-    //   help: undefined,
-    //   required: undefined,
-    //   rules: undefined,
-    //   viewMode: () => !1,
-    //   viewModeValue: undefined,
-    //   fieldOptions: undefined
-    // })
-    defineModel<Props['modelValue']>({ required: !1, default: undefined })
-    const { __ } = useMyth()
-    const attrs = useAttrs()
-    const helper = useInputHelper<any>(() => props, 'ckeditor', () => ({ attrs }))
-    const { getLabel, getRules } = helper
-    const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
-      validateOnMount: !1,
-      validateOnValueUpdate: !1,
-      syncVModel: !0,
-      label: getLabel,
-      ...toValue<any>(props.fieldOptions)
-    })
-    const { value, errorMessage, handleChange } = inputScope
+  auto: undefined,
+  col: undefined,
+  xs: undefined,
+  sm: undefined,
+  md: undefined,
+  lg: undefined,
+  xl: undefined,
+  label: undefined,
+  caption: undefined,
+  help: undefined,
+  required: undefined,
+  rules: undefined,
+  viewMode: () => !1,
+  viewModeValue: undefined,
+  fieldOptions: undefined
+})
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
+const { __ } = useMyth()
+const attrs = useAttrs()
+const helper = useInputHelper<any>(() => props, 'ckeditor', () => ({ attrs }))
+const { getLabel, getRules } = helper
+const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
+  validateOnMount: !1,
+  validateOnValueUpdate: !1,
+  syncVModel: !0,
+  label: getLabel,
+  ...toValue<any>(props.fieldOptions)
+})
+const { value, errorMessage, handleChange } = inputScope
 
-    const listeners = {
-      'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
-    }
-
-    // const isRtl = computed(() => props.lang === 'ar')
-    const inpConfig = reactive<EditorConfig>({
-      language: {
-        ui: computed(() => props.lang).value,
-        content: computed(() => props.lang).value,
-        textPartLanguage: [
-          {
-            title: __('ar'),
-            languageCode: 'ar',
-            textDirection: 'rtl'
-          },
-          {
-            title: __('en'),
-            languageCode: 'en',
-            textDirection: 'ltr'
-          }
-        ]
-      },
-      translations: [
-        arTranslations,
-        enTranslations
+const isRtl = computed(() => props.lang === 'ar')
+const getConfig = computed<EditorConfig>(() => {
+  const inpConfig = {
+    language: {
+      ui: props.lang as string,
+      content: props.lang as string,
+      textPartLanguage: [
+        {
+          title: __('ar'),
+          languageCode: 'ar',
+          textDirection: 'rtl'
+        },
+        {
+          title: __('en'),
+          languageCode: 'en',
+          textDirection: 'ltr'
+        }
+      ]
+    },
+    translations: [
+      arTranslations,
+      enTranslations
+    ],
+    plugins: [
+      Autoformat,
+      BlockQuote,
+      Bold,
+      CKFinder,
+      CKFinderUploadAdapter,
+      CloudServices,
+      Essentials,
+      Heading,
+      Image,
+      ImageCaption,
+      ImageResize,
+      ImageStyle,
+      ImageToolbar,
+      ImageUpload,
+      Base64UploadAdapter,
+      Indent,
+      IndentBlock,
+      Italic,
+      Link,
+      List,
+      MediaEmbed,
+      Mention,
+      Paragraph,
+      PasteFromOffice,
+      PictureEditing,
+      Table,
+      TableColumnResize,
+      TableToolbar,
+      TextTransformation,
+      Underline,
+      FontSize,
+      FontFamily,
+      FontColor,
+      FontBackgroundColor,
+      RemoveFormat,
+      Strikethrough,
+      Subscript,
+      Code,
+      CodeBlock,
+      Alignment,
+      Superscript,
+      TodoList,
+      SourceEditing
+    ],
+    toolbar: {
+      items: [
+        'undo',
+        'redo',
+        '|',
+        'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'code',
+        '|',
+        'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
+        '|',
+        'alignment',
+        'insertTable',
+        'heading',
+        '|',
+        'link', 'uploadImage', 'blockQuote', 'codeBlock',
+        '|',
+        'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent',
+        '|',
+        // 'ckbox',
+        'removeFormat',
+        'mediaEmbed',
+        '|',
+        'sourceEditing'
       ],
-      plugins: [
-        Autoformat,
-        BlockQuote,
-        Bold,
-        CKFinder,
-        CKFinderUploadAdapter,
-        CloudServices,
-        Essentials,
-        Heading,
-        Image,
-        ImageCaption,
-        ImageResize,
-        ImageStyle,
-        ImageToolbar,
-        ImageUpload,
-        Base64UploadAdapter,
-        Indent,
-        IndentBlock,
-        Italic,
-        Link,
-        List,
-        MediaEmbed,
-        Mention,
-        Paragraph,
-        PasteFromOffice,
-        PictureEditing,
-        Table,
-        TableColumnResize,
-        TableToolbar,
-        TextTransformation,
-        Underline,
-        FontSize,
-        FontFamily,
-        FontColor,
-        FontBackgroundColor,
-        RemoveFormat,
-        Strikethrough,
-        Subscript,
-        Code,
-        CodeBlock,
-        Alignment,
-        Superscript,
-        TodoList,
-        SourceEditing
+      shouldNotGroupWhenFull: true
+    },
+    heading: {
+      options: [
+        {
+          model: 'paragraph',
+          title: 'Paragraph',
+          class: 'ck-heading_paragraph'
+        },
+        {
+          model: 'heading1',
+          view: 'h1',
+          title: 'Heading 1',
+          class: 'ck-heading_heading1'
+        },
+        {
+          model: 'heading2',
+          view: 'h2',
+          title: 'Heading 2',
+          class: 'ck-heading_heading2'
+        },
+        {
+          model: 'heading3',
+          view: 'h3',
+          title: 'Heading 3',
+          class: 'ck-heading_heading3'
+        },
+        {
+          model: 'heading4',
+          view: 'h4',
+          title: 'Heading 4',
+          class: 'ck-heading_heading4'
+        }
+      ]
+    },
+    image: {
+      resizeOptions: [
+        {
+          name: 'resizeImage:original',
+          label: 'Default image width',
+          value: null
+        },
+        {
+          name: 'resizeImage:50',
+          label: '50% page width',
+          value: '50'
+        },
+        {
+          name: 'resizeImage:75',
+          label: '75% page width',
+          value: '75'
+        }
       ],
-      toolbar: {
-        items: [
-          'undo',
-          'redo',
-          '|',
-          'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'code',
-          '|',
-          'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
-          '|',
-          'alignment',
-          'insertTable',
-          'heading',
-          '|',
-          'link', 'uploadImage', 'blockQuote', 'codeBlock',
-          '|',
-          'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent',
-          '|',
-          // 'ckbox',
-          'removeFormat',
-          'mediaEmbed',
-          '|',
-          'sourceEditing'
-        ],
-        shouldNotGroupWhenFull: true
-      },
-      heading: {
-        options: [
-          {
-            model: 'paragraph',
-            title: 'Paragraph',
-            class: 'ck-heading_paragraph'
-          },
-          {
-            model: 'heading1',
-            view: 'h1',
-            title: 'Heading 1',
-            class: 'ck-heading_heading1'
-          },
-          {
-            model: 'heading2',
-            view: 'h2',
-            title: 'Heading 2',
-            class: 'ck-heading_heading2'
-          },
-          {
-            model: 'heading3',
-            view: 'h3',
-            title: 'Heading 3',
-            class: 'ck-heading_heading3'
-          },
-          {
-            model: 'heading4',
-            view: 'h4',
-            title: 'Heading 4',
-            class: 'ck-heading_heading4'
-          }
-        ]
-      },
-      image: {
-        resizeOptions: [
-          {
-            name: 'resizeImage:original',
-            label: 'Default image width',
-            value: null
-          },
-          {
-            name: 'resizeImage:50',
-            label: '50% page width',
-            value: '50'
-          },
-          {
-            name: 'resizeImage:75',
-            label: '75% page width',
-            value: '75'
-          }
-        ],
-        toolbar: [
-          'imageTextAlternative',
-          'toggleImageCaption',
-          '|',
-          'imageStyle:inline',
-          'imageStyle:wrapText',
-          'imageStyle:breakText',
-          '|',
-          'resizeImage'
-        ]
-      },
-      menuBar: {
-        isVisible: !1
-      },
-      link: {
-        addTargetToExternalLinks: true,
-        defaultProtocol: 'https://'
-      },
-      table: {
-        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
-      }
-    })
-    const getConfig = computed<EditorConfig>(() => {
-      if (props.config) {
-        return props.config(inpConfig) as EditorConfig
-      }
-      return inpConfig as EditorConfig
-    })
-
-    const input = ref<any>()
-    const scopes = reactive(inputScope)
-    defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
-  },
-  inheritAttrs: !1,
-  props: {
-    name: {
-      type: String,
-      default: () => ''
+      toolbar: [
+        'imageTextAlternative',
+        'toggleImageCaption',
+        '|',
+        'imageStyle:inline',
+        'imageStyle:wrapText',
+        'imageStyle:breakText',
+        '|',
+        'resizeImage'
+      ]
     },
-    lang: {
-      type: String,
-      default: () => 'ar'
+    menuBar: {
+      isVisible: !1
     },
-    config: {
-      type: Props.config,
-      default: () => ''
+    link: {
+      addTargetToExternalLinks: true,
+      defaultProtocol: 'https://'
     },
-    tagName: () => 'div',
-    disabled: () => !1,
-    disableTwoWayDataBinding: () => !1,
-
-    auto: undefined,
-    col: undefined,
-    xs: undefined,
-    sm: undefined,
-    md: undefined,
-    lg: undefined,
-    xl: undefined,
-    label: undefined,
-    caption: undefined,
-    help: undefined,
-    required: undefined,
-    rules: undefined,
-    viewMode: () => !1,
-    viewModeValue: undefined,
-    fieldOptions: undefined
-  },
-  computed: {
-    isRtl () {
-      return this.props.lang === 'ar'
+    table: {
+      contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
     }
   }
+  if (props.config) {
+    return props.config(inpConfig as EditorConfig)
+  }
+  return inpConfig as EditorConfig
+})
+
+const listeners = {
+  'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
+}
+const input = ref<any>()
+const scopes = reactive(inputScope)
+defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
+</script>
+
+<script lang="ts">
+export default {
+  name: 'MCkeditor',
+  inheritAttrs: !1
 }
 </script>
 
@@ -440,13 +403,3 @@ export default {
     />
   </MCol>
 </template>
-
-<style lang="scss">
-.ck.ck-block-toolbar-button {
-  transform: translateX(-10px);
-}
-
-.ck[dir="rtl"] .ck-block-toolbar-button {
-  transform: translateX(10px) !important;
-}
-</style>

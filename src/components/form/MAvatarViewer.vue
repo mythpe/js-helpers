@@ -186,8 +186,8 @@ export default {
           </div>
           <MHelpRow
             v-if="!!help"
-            tooltip
             :text="help"
+            tooltip
           />
         </div>
         <slot name="hint">

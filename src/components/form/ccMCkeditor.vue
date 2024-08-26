@@ -61,13 +61,13 @@ import {
   TodoList,
   Underline
 } from 'ckeditor5'
+import { Ckeditor } from '@ckeditor/ckeditor5-vue'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import arTranslations from 'ckeditor5/translations/ar.js'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import enTranslations from 'ckeditor5/translations/en.js'
-import { Ckeditor } from '@ckeditor/ckeditor5-vue'
 
 type P = {
   name: Props['name'];

@@ -227,7 +227,7 @@ export default {
 </template>
 
 <style lang="sass">
-$c: calc(100% /3)
+$c: calc(100% / 3)
 
 .m--options
   .q-checkbox__inner,
@@ -247,7 +247,8 @@ $c: calc(100% /3)
 
   &__fit_width
     margin-left: 0
+
     > div
-      width: calc(100% /3)
+      width: calc(100% / 3)
       margin-left: 0
 </style>
