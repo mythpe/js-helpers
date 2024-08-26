@@ -51,17 +51,7 @@ const defaultSubmit = props.emitValues
 // }
 const scope = reactive(formScope)
 defineExpose({ ...scope })
-
-// watch(form, (v) => {
-//   console.log(v)
-// }, { once: !0, deep: !0 })
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MForm',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MForm', inheritAttrs: !1 })
 </script>
 
 <template>

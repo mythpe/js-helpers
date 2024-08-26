@@ -7,13 +7,14 @@
   -->
 
 <script lang="ts" setup>
-import { MDateProps as Props, MInputSlots } from './models'
+import { MFieldProps as Props, MInputSlots } from './models'
 import { ref } from 'vue'
 import MInput from './MInput.vue'
 
 const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const input = ref<InstanceType<typeof MInput> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
+defineOptions({ name: 'MField', inheritAttrs: !1 })
 </script>
 
 <template>

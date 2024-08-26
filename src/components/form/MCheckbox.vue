@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { useField } from 'vee-validate'
-import { defineProps, reactive, ref, toValue, useAttrs } from 'vue'
+import { defineProps, reactive, ref, toValue } from 'vue'
 import { useInputHelper } from '../../composables'
 import { MCheckboxProps as Props } from './models'
 import { QCheckbox, QField } from 'quasar'
@@ -69,8 +69,7 @@ const props = withDefaults(defineProps<P>(), {
   fieldOptions: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const attrs = useAttrs()
-const helper = useInputHelper<any>(() => props, 'checkbox', () => ({ attrs }))
+const helper = useInputHelper<any>(() => props, 'checkbox')
 const { getLabel, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
@@ -87,14 +86,7 @@ const listeners = {
 const input = ref<InstanceType<typeof QCheckbox> | null>(null)
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
-
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MCheckbox',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MCheckbox', inheritAttrs: !1 })
 </script>
 
 <template>

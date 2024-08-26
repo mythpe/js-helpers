@@ -7,22 +7,21 @@
   -->
 
 <script lang="ts" setup>
-import { MDateProps as Props, MInputSlots } from './models'
+import { MInputProps as Props, MInputSlots } from './models'
 import { ref } from 'vue'
 import MInput from './MInput.vue'
 
 const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const input = ref<InstanceType<typeof MInput> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
+defineOptions({ name: 'MEmail', inheritAttrs: !1 })
 </script>
 
 <template>
   <MInput
     ref="input"
     v-model="modelValue"
-    email
-    type="email"
-    v-bind="$attrs"
+    v-bind="{...$attrs,type:'email',email:!0}"
   >
     <template
       v-for="(_,slot) in $slots as Readonly<MInputSlots>"

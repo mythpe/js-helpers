@@ -7,7 +7,7 @@
   -->
 
 <script lang="ts" setup>
-
+defineOptions({ name: 'MInputFieldControl' })
 </script>
 
 <template>

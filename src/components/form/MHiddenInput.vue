@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MHiddenInputProps as Props } from './models.d'
-import { reactive, toValue, useAttrs } from 'vue'
+import { reactive, toValue } from 'vue'
 import { useInputHelper } from '../../composables'
 
 type P = {
@@ -27,8 +27,7 @@ const props = withDefaults(defineProps<P>(), {
   fieldOptions: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const attrs = useAttrs()
-const helper = useInputHelper<P>(() => props, 'input', () => ({ attrs }))
+const helper = useInputHelper<P>(() => props, 'input')
 const { getRules, getLabel } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
@@ -42,13 +41,7 @@ const { value } = inputScope
 
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes>({ ...scopes })
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MHiddenInput',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MHiddenInput', inheritAttrs: !1 })
 </script>
 
 <template>

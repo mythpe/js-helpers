@@ -17,6 +17,7 @@ type P = {
 withDefaults(defineProps<P>(), {
   field: () => ({} as Props['field'])
 })
+defineOptions({ name: 'MInputLabel' })
 </script>
 
 <template>
@@ -25,7 +26,6 @@ withDefaults(defineProps<P>(), {
       'row items-center m--input__top-label' : !0,
       'm--input__top-label__invalid' : !field.meta?.valid && field.meta?.dirty,
     }"
-    v-bind="$attrs"
   >
     <div class="m--input__top-label__content">
       {{ field.label }}

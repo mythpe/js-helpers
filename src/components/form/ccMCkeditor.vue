@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MCkeditorProps as Props } from './models.d'
-import { computed, reactive, ref, toValue, useAttrs } from 'vue'
+import { computed, reactive, ref, toValue } from 'vue'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
 
@@ -120,8 +120,7 @@ const props = withDefaults(defineProps<P>(), {
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const { __ } = useMyth()
-const attrs = useAttrs()
-const helper = useInputHelper<any>(() => props, 'ckeditor', () => ({ attrs }))
+const helper = useInputHelper<any>(() => props, 'ckeditor')
 const { getLabel, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   validateOnMount: !1,

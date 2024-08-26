@@ -95,8 +95,7 @@ import enTranslations from 'ckeditor5/translations/en.js'
 export default {
   setup: (props) => {
     const { __ } = useMyth()
-    const attrs = useAttrs()
-    const helper = useInputHelper<any>(() => props, 'ckeditor', () => ({ attrs }))
+    const helper = useInputHelper<any>(() => props, 'ckeditor')
     const { getLabel, getRules } = helper
     const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
       validateOnMount: !1,

@@ -129,11 +129,25 @@ const myth = useMyth()
 const { alertError, alertSuccess, confirmMessage, __ } = myth
 const fieldId = useFieldValue<string | undefined>('id')
 const modelIdProp = computed(() => props.modelId !== undefined ? props.modelId : fieldId.value)
-const fieldNameProp = computed(() => props.fieldName)
+// const value = useFieldValue<Props['modelValue']>(() => props.name)
+// const setValue = useSetFieldValue(() => props.name)
+// const setTouched = useSetFieldTouched(() => props.name)
+// const errorMessage = useFieldError(() => props.name)
+// const setErrors = useSetFieldError(() => props.name)
+// const modelValue = computed<Props['modelValue']>({
+//   get: () => value.value || [],
+//   set: (v) => setValue(v)
+// })
+// const setModelValue = (val: any) => {
+//   setValue(val)
+//   setTouched(!1)
+// }
+
 const { value: modelValue, errorMessage, setErrors, resetField } = useField<Props['modelValue']>(() => props.name, undefined, {
   syncVModel: !0,
-  controlled: !1,
   label: () => __(props.label),
+  validateOnValueUpdate: !1,
+  controlled: !1,
   ...toValue<any>(props.fieldOptions)
 })
 const uploader = ref<InstanceType<typeof QUploader>>()
@@ -227,12 +241,11 @@ const onError = (info: MUploaderXhrInfo) => {
       const response = JSON.parse(xhr.responseText)
       response?.message && alertError(response.message)
       if (response.errors) {
-        if (typeof fieldNameProp.value !== 'function' && response.errors[fieldNameProp.value]) {
-          setErrors(response.errors[fieldNameProp.value])
-          // errors.value = response.errors[fieldNameProp.value]
+        const name = typeof props.fieldName === 'function' ? props.fieldName({} as File) : props.fieldName
+        if (response.errors[name]) {
+          setErrors(response.errors[name])
         } else {
           setErrors(Object.values(response.errors) || [])
-          // errors.value = Object.values(response.errors)[0]
         }
       }
     }
@@ -246,7 +259,8 @@ const onFinishUpload = ({ files, xhr }: MUploaderXhrInfo) => {
     if (xhr.responseText) {
       const response = JSON.parse(xhr.responseText)
       if (response?.data?.length !== undefined) {
-        resetField({ value: response.data })
+        resetField({ value: response.data ?? [] })
+        // setModelValue(response.data)
         files.forEach(f => uploader.value?.removeFile(f))
       }
       if (response?.message) {
@@ -286,6 +300,7 @@ const deleteMedia = (media: MUploaderMediaItem) => {
         _message && alertSuccess(_message)
         r = Boolean(_success)
         resetField({ value: _data ?? [] })
+        // setModelValue(_data ?? [])
       }
     } catch (e: any) {
       alertError(e?._message || e?.message)
@@ -321,13 +336,7 @@ watch(() => uploader.value?.isUploading, (v) => {
     quasarLoading.value = v
   }
 })
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MUploader',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MUploader', inheritAttrs: !1 })
 </script>
 
 <template>

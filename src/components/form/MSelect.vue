@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MSelectProps as Props } from './models.d'
-import { computed, reactive, ref, toValue, useAttrs } from 'vue'
+import { computed, reactive, ref, toValue } from 'vue'
 import { useInputHelper } from '../../composables'
 import { QField, QSelect, QSelectSlots } from 'quasar'
 
@@ -98,8 +98,7 @@ const props = withDefaults(defineProps<P>(), {
   clearable: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const attrs = useAttrs()
-const helper = useInputHelper<P & Props>(() => props, 'select', () => ({ choose: !0, attrs }))
+const helper = useInputHelper<P & Props>(() => props, 'select', () => ({ choose: !0 }))
 const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
@@ -153,13 +152,7 @@ const listeners = {
 const input = ref<InstanceType<typeof QSelect | typeof QField> | null>(null)
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes & { input: typeof input, onDoneOptions: typeof onDoneOptions }>({ input, ...scopes, onDoneOptions })
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MSelect',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MSelect', inheritAttrs: !1 })
 </script>
 
 <template>
@@ -329,7 +322,3 @@ export default {
     />
   </MCol>
 </template>
-
-<style lang="scss" scoped>
-
-</style>

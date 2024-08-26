@@ -212,14 +212,7 @@ const onSend = () => {
   emit('send')
 }
 defineExpose({ start })
-
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MOtp',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MOtp', inheritAttrs: !1 })
 </script>
 
 <template>

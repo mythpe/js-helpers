@@ -11,7 +11,7 @@
 import { QField, QFile, QFileSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
-import { defineProps, reactive, ref, toValue, useAttrs } from 'vue'
+import { defineProps, reactive, ref, toValue } from 'vue'
 import { MFileProps as Props } from './models'
 
 interface P {
@@ -70,8 +70,7 @@ const props = withDefaults(defineProps<P>(), {
   fieldOptions: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const attrs = useAttrs()
-const helper = useInputHelper<P>(() => props, 'file', () => ({ choose: !0, attrs }))
+const helper = useInputHelper<P>(() => props, 'file', () => ({ choose: !0 }))
 const { hasTopLabel, getLabel, getPlaceholder, accepts, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
@@ -108,14 +107,7 @@ const methods = {
 }
 
 defineExpose({ input, ...scopes, ...methods })
-
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MFile',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MFile', inheritAttrs: !1 })
 </script>
 
 <template>

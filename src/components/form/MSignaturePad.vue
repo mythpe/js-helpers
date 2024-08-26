@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MSignaturePadProps as Props, SignaturePadWaterMark } from './models.d'
-import { computed, onUnmounted, ref, toValue, useAttrs, watch } from 'vue'
+import { computed, onUnmounted, reactive, ref, toValue, watch } from 'vue'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
 import Vue3Signature from 'vue3-signature'
@@ -78,8 +78,7 @@ const emit = defineEmits<Emits>()
 const myth = useMyth()
 
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const attrs = useAttrs()
-const helper = useInputHelper<P & { name: string; }>(() => props, 'signaturePad', () => ({ attrs }))
+const helper = useInputHelper<P & { name: string; }>(() => props, 'signaturePad')
 const { getLabel, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
@@ -139,8 +138,9 @@ const undo = () => {
 const isEmpty = () => !!padRef.value?.isEmpty()
 const addWaterMark = (opt: SignaturePadWaterMark) => padRef.value?.addWaterMark(opt)
 const fromDataURL = (url: string) => padRef.value?.fromDataURL(url)
-defineExpose({ reset, save, clear, undo, disabled: isDisabled, isEmpty, addWaterMark, fromDataURL, padRef })
-
+const scopes = reactive(inputScope)
+defineExpose({ reset, save, clear, undo, disabled: isDisabled, isEmpty, addWaterMark, fromDataURL, padRef, ...scopes })
+defineOptions({ name: 'MSignaturePad', inheritAttrs: !1 })
 const watchStopHandle = watch(() => props.url, (url) => {
   if (url) {
     fromDataURL(url)
@@ -154,17 +154,10 @@ onUnmounted(() => {
 })
 </script>
 
-<script lang="ts">
-export default {
-  name: 'MSignaturePad',
-  inheritAttrs: !1
-}
-</script>
-
 <template>
   <MCol
     :auto="auto"
-    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage,'m--input__view':viewMode}]"
+    :class="[$attrs.class,{'m--input__required':getRules?.required!==undefined,'m--input__error':!!errorMessage}]"
     :col="col"
     :lg="lg"
     :md="md"
@@ -240,7 +233,7 @@ export default {
               :water-mark="waterMark"
             />
           </slot>
-          <slot v-bind="inputScope" />
+          <slot v-bind="scopes" />
         </div>
       </div>
       <div

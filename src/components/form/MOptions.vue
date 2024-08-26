@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MOptionsOptionContext, MOptionsProps as Props } from './models.d'
-import { reactive, ref, toValue, useAttrs } from 'vue'
+import { reactive, ref, toValue } from 'vue'
 import { QField, QOptionGroup, QOptionGroupSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
@@ -73,8 +73,7 @@ const props = withDefaults(defineProps<P>(), {
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const loading = defineModel<Props['loading']>('loading', { required: !1, default: !1 })
 const options = defineModel<MOptionsOptionContext[]>('options', { required: !1, default: undefined })
-const attrs = useAttrs()
-const helper = useInputHelper<P>(() => props, 'options', () => ({ attrs }))
+const helper = useInputHelper<P>(() => props, 'options')
 const { getLabel, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
@@ -105,13 +104,7 @@ const fetchData = async () => {
   }
 }
 fetchData()
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MOptions',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MOptions', inheritAttrs: !1 })
 </script>
 
 <template>

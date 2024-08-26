@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MCkeditorProps as Props } from './models.d'
-import { computed, reactive, ref, toValue, useAttrs } from 'vue'
+import { computed, reactive, ref, toValue } from 'vue'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
 
@@ -119,8 +119,7 @@ const props = withDefaults(defineProps<P>(), {
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const { __ } = useMyth()
-const attrs = useAttrs()
-const helper = useInputHelper<any>(() => props, 'ckeditor', () => ({ attrs }))
+const helper = useInputHelper<any>(() => props, 'ckeditor')
 const { getLabel, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   validateOnMount: !1,
@@ -309,13 +308,7 @@ const listeners = {
 const input = ref<any>()
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MCkeditor',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MCheckbox', inheritAttrs: !1 })
 </script>
 
 <template>

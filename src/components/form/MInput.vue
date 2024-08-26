@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MInputProps as Props } from './models.d'
-import { reactive, ref, toValue, useAttrs } from 'vue'
+import { reactive, ref, toValue } from 'vue'
 import { QField, QInput, QInputSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 
@@ -62,8 +62,7 @@ const props = withDefaults(defineProps<P>(), {
   clearable: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const attrs = useAttrs()
-const helper = useInputHelper<P>(() => props, 'input', () => ({ attrs }))
+const helper = useInputHelper<P>(() => props, 'input')
 const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
@@ -79,13 +78,7 @@ const listeners = {
 const input = ref<InstanceType<typeof QInput | typeof QField> | null>(null)
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MInput',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MInput', inheritAttrs: !1 })
 </script>
 
 <template>

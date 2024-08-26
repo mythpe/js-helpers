@@ -7,7 +7,7 @@
   -->
 
 <script lang="ts" setup>
-import { computed, reactive, ref, toValue, useAttrs } from 'vue'
+import { computed, reactive, ref, toValue } from 'vue'
 import { MPickerProps as Props } from './models'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
@@ -74,8 +74,7 @@ const props = withDefaults(defineProps<P>(), {
 })
 
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const attrs = useAttrs()
-const helper = useInputHelper<P>(() => props, 'picker', () => ({ choose: !0, attrs }))
+const helper = useInputHelper<P>(() => props, 'picker', () => ({ choose: !0 }))
 const { hasTopLabel, getLabel, getPlaceholder, getRules, getAutocompleteAttribute } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
@@ -118,6 +117,7 @@ const saveDialog = () => {
 const dateElm = ref<InstanceType<typeof QDate> | null>(null)
 const timeElm = ref<InstanceType<typeof QTime> | null>(null)
 defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ? dateElm : timeElm })
+defineOptions({ name: 'MPicker', inheritAttrs: !1 })
 </script>
 
 <template>
@@ -284,10 +284,3 @@ defineExpose<{ input: typeof dateElm | typeof timeElm }>({ input: isDate.value ?
     />
   </MCol>
 </template>
-
-<script lang="ts">
-export default {
-  name: 'MPicker',
-  inheritAttrs: !1
-}
-</script>

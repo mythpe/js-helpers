@@ -6,19 +6,21 @@
  * Github: https://github.com/mythpe
  */
 
-import { useMyth } from '../vue3'
 import lodash from 'lodash'
 import { computed, MaybeRefOrGetter, toValue } from 'vue'
-import { MythOptionsConfig as MOC } from '../types'
-import { extend } from 'quasar'
+import { extend, useSplitAttrs } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { MythOptionsConfig as MOC } from '../types'
+import { useMyth } from '../vue3'
 
 type G = { name: string; } & Record<string, any>;
-type OptsContext = { choose?: boolean; attrs?: Record<string, any> };
+type OptsContext = { choose?: boolean; };
 export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key: keyof MOC, Opts: MaybeRefOrGetter<OptsContext> = {}) => {
+  const { messages, locale } = useI18n({ useScope: 'global' })
+  const { __, options } = useMyth()
+  const { attributes: attrs } = useSplitAttrs()
   const props = toValue<P>(Props)
   const opts = toValue<OptsContext>(Opts)
-  const { __, options } = useMyth()
   const inputOptions = computed(() => (k: keyof MOC) => options[k] || {})
   const inputProps = computed<MOC[typeof key] & P>(() => extend(!0, {}, inputOptions.value(key), props))
   const hasTopLabel = computed(() => inputProps.value.topLabel === !0)
@@ -79,11 +81,22 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
     if (!rules) {
       return {}
     }
-    const values: Record<string, any> = {}
-    const list = typeof rules === 'string' ? rules.split('|') : (Array.isArray(rules) ? rules : [rules])
+    let values: Record<string, any> = {}
+    const list: any[] = typeof rules === 'string' ? rules.split('|') : (Array.isArray(rules) ? rules : [rules])
 
-    for (const r of list) {
-      const [name, value] = r.split(':')
+    for (const rule of list) {
+      // console.log(rule)
+      if (!rule) {
+        continue
+      }
+      if (typeof rule === 'object' && !Array.isArray(rule)) {
+        values = { ...values, ...rule }
+        continue
+      }
+      if (Array.isArray(rule)) {
+        values = { ...values, ...rule }
+      }
+      const [name, value] = rule.split(':')
       if (!name) {
         continue
       }
@@ -92,15 +105,15 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
     }
     return values
   }
-  const { messages, locale } = useI18n({ useScope: 'global' })
+  const publicRules = ['required', 'email', 'numeric', 'integer', 'float', 'color']
   const validations = (messages.value as any)?.[locale.value]?.validation?.messages || {}
-  const getRules = computed<any>(() => {
+  const getRules = computed<Record<string, any>>(() => {
     if (props.viewMode) {
       return {}
     }
     const rules: any = { ...convertRules(toValue(props.rules)) }
-    const attrs = toValue(opts.attrs) || {}
-    const keys = lodash.uniq<string>(['required', 'email', 'numeric', 'integer', 'float', ...(options.inputRules ?? []), ...Object.keys(validations)])
+    // const attrs = toValue(opts.attrs) || {}
+    const keys = lodash.uniq<string>([...publicRules, ...(options.inputRules ?? []), ...Object.keys(validations)])
     for (const k of keys) {
       if (['mobile', '_default', 'default'].includes(k)) {
         continue
@@ -108,7 +121,7 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
       const cases = [k, lodash.snakeCase(k), lodash.camelCase(k), lodash.kebabCase(k)]
 
       mainFor: for (const c of cases) {
-        for (const b of [attrs, props]) {
+        for (const b of [attrs.value, props]) {
           if (c in b && (b[c] === !0 || b[c] === '')) {
             rules[lodash.snakeCase(k)] = b[c] === !0 || b[c] === '' ? !0 : b[c]
             break mainFor
@@ -117,7 +130,7 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
       }
     }
 
-    const mobile = attrs?.mobile !== undefined ? attrs.mobile : props.mobile
+    const mobile = attrs.value?.mobile !== undefined ? attrs.value.mobile : props.mobile
     if (mobile !== undefined) {
       const defLen = 10
       rules.digits = typeof mobile === 'boolean' ? defLen : (mobile || defLen)

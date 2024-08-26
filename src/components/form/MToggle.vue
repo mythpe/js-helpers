@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { useMyth } from '../../vue3'
-import { computed, reactive, ref, toValue, useAttrs } from 'vue'
+import { computed, reactive, ref, toValue } from 'vue'
 import { useField } from 'vee-validate'
 import { MToggleProps as Props } from './models'
 import { useInputHelper } from '../../composables'
@@ -82,9 +82,7 @@ const props = withDefaults(defineProps<P>(), {
   fieldOptions: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const { __ } = useMyth()
-const attrs = useAttrs()
-const helper = useInputHelper<P>(() => props, 'toggle', () => ({ choose: !0, attrs }))
+const helper = useInputHelper<P>(() => props, 'toggle', () => ({ choose: !0 }))
 const { inputProps, getLabel: toggleLabel, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
@@ -96,6 +94,8 @@ const { value, errorMessage, handleChange } = inputScope
 const listeners = {
   'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
 }
+
+const { __ } = useMyth()
 const getLabel = computed<string | undefined>(() => {
   const def = undefined
   const v = value.value
@@ -111,13 +111,7 @@ const getLabel = computed<string | undefined>(() => {
 const input = ref<InstanceType<typeof QToggle> | null>(null)
 const scopes = reactive(inputScope)
 defineExpose({ input, ...scopes })
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MToggle',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MToggle', inheritAttrs: !1 })
 </script>
 
 <template>

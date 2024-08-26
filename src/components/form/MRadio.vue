@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { useField } from 'vee-validate'
-import { defineProps, reactive, ref, toValue, useAttrs } from 'vue'
+import { defineProps, reactive, ref, toValue } from 'vue'
 import { useInputHelper } from '../../composables'
 import { MRadioProps as Props } from './models'
 import { QField, QRadio } from 'quasar'
@@ -63,8 +63,7 @@ const props = withDefaults(defineProps<P>(), {
   fieldOptions: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const attrs = useAttrs()
-const helper = useInputHelper<P>(() => props, 'radio', () => ({ attrs }))
+const helper = useInputHelper<P>(() => props, 'radio')
 const { getLabel, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
@@ -81,14 +80,7 @@ const listeners = {
 const input = ref<InstanceType<typeof QRadio> | null>(null)
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
-
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MRadio',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MRadio', inheritAttrs: !1 })
 </script>
 
 <template>

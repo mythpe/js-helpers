@@ -84,13 +84,7 @@ onMounted(() => prepare())
 
 const input = ref<InstanceType<typeof MSelect> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MAxios',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MAxios' })
 </script>
 
 <template>

@@ -7,23 +7,72 @@
   -->
 
 <script lang="ts" setup>
-import { MDateProps as Props, MInputSlots } from './models'
-import { ref } from 'vue'
+import { MInputProps as Props, MInputSlots } from './models'
+import { reactive, ref, toValue } from 'vue'
 import MInput from './MInput.vue'
+import { useField } from 'vee-validate'
+import { useInputHelper } from '../../composables'
+import { QField, QInput } from 'quasar'
 
-const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const input = ref<InstanceType<typeof MInput> | null>(null)
-defineExpose<{ input: typeof input }>({ input })
+type P = {
+  name: Props['name'];
+  label?: Props['label'];
+  required?: Props['required'];
+  rules?: Props['rules'];
+  viewMode?: Props['viewMode'];
+  topLabel?: Props['topLabel'];
+  fieldOptions?: Props['fieldOptions'];
+}
+
+const props = withDefaults(defineProps<P>(), {
+  name: () => '',
+  label: undefined,
+  required: undefined,
+  rules: undefined,
+  viewMode: () => !1,
+  topLabel: undefined,
+  fieldOptions: undefined
+})
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
+const helper = useInputHelper<P>(() => props, 'input')
+const { getLabel, getRules } = helper
+const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
+  syncVModel: !0,
+  label: getLabel,
+  ...toValue<any>(props.fieldOptions)
+})
+const { value, errorMessage, handleChange, handleBlur } = inputScope
+
+const listeners = {
+  blur: (v: any) => handleBlur(v, !0),
+  'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
+}
+const input = ref<InstanceType<typeof QInput | typeof QField> | null>(null)
+const scopes = reactive(inputScope)
+defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
+defineOptions({ name: 'MColor' })
+
 </script>
 
 <template>
   <MInput
     ref="input"
-    v-model="modelValue"
-    v-bind="$attrs"
+    :field-options="fieldOptions"
+    :label="label"
+    :model-value="value"
+    :name="name"
+    :required="required"
+    :rules="getRules"
+    :top-label="topLabel"
+    :view-mode="viewMode"
+    color
+    v-on="listeners"
   >
     <template #prepend>
-      <div :style="`width: 20px; height: 20px; background-color: ${modelValue}`" />
+      <div
+        :style="`width: 20px; height: 20px; background-color: ${value};`"
+        class="m--input__color-preview"
+      />
     </template>
     <template #append>
       <q-icon
@@ -35,7 +84,7 @@ defineExpose<{ input: typeof input }>({ input })
           transition-hide="scale"
           transition-show="scale"
         >
-          <q-color v-model="modelValue" />
+          <q-color v-model="value" />
         </q-popup-proxy>
       </q-icon>
     </template>
@@ -48,10 +97,3 @@ defineExpose<{ input: typeof input }>({ input })
     </template>
   </MInput>
 </template>
-
-<script lang="ts">
-export default {
-  name: 'MColor',
-  inheritAttrs: !1
-}
-</script>

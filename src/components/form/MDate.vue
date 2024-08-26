@@ -22,20 +22,14 @@ withDefaults(defineProps<P>(), {
 const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const input = ref<InstanceType<typeof MPicker> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MDate'
-}
+defineOptions({ name: 'MDate', inheritAttrs: !1 })
 </script>
 
 <template>
   <MPicker
     ref="input"
     v-model="modelValue"
-    :name="name"
-    type="date"
+    v-bind="{...$attrs,type:'date',name}"
   >
     <template
       v-for="(_,slot) in $slots as Readonly<MInputSlots>"

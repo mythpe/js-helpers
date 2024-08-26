@@ -7,8 +7,7 @@
   -->
 
 <script lang="ts" setup>
-
-import { computed, nextTick, onBeforeUnmount, ref, useAttrs, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 
 import MFile from './MFile.vue'
 import { MAvatarViewerProps as Props } from './models'
@@ -72,12 +71,12 @@ const props = withDefaults(defineProps<P>(), {
   formErrors: () => ({}),
   help: undefined
 })
-type Events = {
+type Emits = {
   (e: 'click', evt?: Event): void;
 }
-const emit = defineEmits<Events>()
-const attrs = useAttrs()
-const { accepts } = useInputHelper<any>(() => props, 'avatarViewer', () => ({ attrs }))
+const emit = defineEmits<Emits>()
+
+const { accepts } = useInputHelper<any>(() => props, 'avatarViewer')
 const modelValueScope = useField<Props['modelValue']>(() => props.name, undefined, {
   syncVModel: !0
 })
@@ -150,13 +149,8 @@ watch(modelValue, (v) => {
     nextTick(() => toUrl(v))
   }
 })
-</script>
 
-<script lang="ts">
-export default {
-  name: 'MAvatarViewer',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MAvatarViewer', inheritAttrs: !1 })
 </script>
 
 <template>

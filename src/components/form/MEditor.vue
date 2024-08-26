@@ -11,7 +11,7 @@ import { QEditor, QField, useQuasar } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
 import { MEditorProps as Props } from './models'
-import { reactive, ref, toValue, useAttrs } from 'vue'
+import { reactive, ref, toValue } from 'vue'
 
 const $q = useQuasar()
 const _toolbar = [
@@ -171,8 +171,7 @@ const props = withDefaults(defineProps<P>(), {
   fieldOptions: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
-const attrs = useAttrs()
-const helper = useInputHelper<any>(() => props, 'editor', () => ({ attrs }))
+const helper = useInputHelper<any>(() => props, 'editor')
 const { hasTopLabel, getLabel, getPlaceholder, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   syncVModel: !0,
@@ -188,13 +187,7 @@ const listeners = {
 const input = ref<InstanceType<typeof QEditor | typeof QField> | null>(null)
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MEditor',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MEditor', inheritAttrs: !1 })
 </script>
 
 <template>

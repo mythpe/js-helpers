@@ -268,6 +268,11 @@ $bordered-style: $bordered-size solid $primary !default;
 
 }
 
+.m--input__color-preview {
+  border: 1px solid var(--q-primary);
+  border-radius: $radius-value;
+}
+
 // ckeditor5
 .ck.ck-block-toolbar-button {
   transform: translateX(-10px)

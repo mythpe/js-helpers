@@ -27,21 +27,14 @@ const togglePassword = () => {
 }
 const input = ref<InstanceType<typeof MInput> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
-</script>
-
-<script lang="ts">
-export default {
-  name: 'MPassword',
-  inheritAttrs: !1
-}
+defineOptions({ name: 'MPassword', inheritAttrs: !1 })
 </script>
 
 <template>
   <MInput
     ref="input"
     v-model="modelValue"
-    :type="inputType"
-    v-bind="$attrs"
+    v-bind="{...$attrs,type:inputType}"
   >
     <template
       v-if="icon && !Boolean($slots.prepend)"
