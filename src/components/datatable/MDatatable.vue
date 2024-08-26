@@ -7,7 +7,7 @@
   -->
 
 <script lang="ts" setup>
-import { computed, defineEmits, nextTick, onMounted, reactive, ref, toRef, useSlots, watch } from 'vue'
+import { computed, defineEmits, nextTick, onMounted, reactive, ref, toRef, toValue, useSlots, watch } from 'vue'
 import { is as quasarHelpers, QCardSection, QTable, QTableSlots, useQuasar } from 'quasar'
 import lodash from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
@@ -177,13 +177,9 @@ const formRef = useForm<any, any>()
 const formScope = reactive(formRef)
 const { resetForm: resetDialogForm, setValues, handleSubmit } = formRef
 watch(() => props.defaultItem, (v) => {
-  resetDialogForm({
-    values: { ...v || {} }
-  }, {
-    force: !0
-  })
-}, { immediate: !0 })
-const resetForm = async (attrs?: Record<string, any>) => {
+  resetDialogForm({ values: { ...v || {} } }, { force: !0 })
+}, { immediate: !0, deep: !0 })
+const resetVeeForm = async (attrs?: Record<string, any>) => {
   const init: any = {}
   for (const k in props.defaultItem) {
     init[k] = attrs && k in attrs ? attrs[k] : props.defaultItem[k]
@@ -225,7 +221,7 @@ const exportToBlob = computed(() => {
   return !hasAction.value
 }) */
 const getRows = ref<MDtItem[]>([])
-watch(() => getRows.value, (v) => emit('update:rows', v))
+watch(() => getRows.value, (v) => emit('update:rows', v), { deep: !0 })
 const filterDialogModel = ref(!1)
 const showDialogModel = ref(!1)
 const formDialogModel = ref(!1)
@@ -654,6 +650,7 @@ const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
       dialogs.item = _data
       dialogs.index = index
       getRows.value[index as any] = _data as any
+      nextTick(() => setTimeout(() => (selected.value = [getRows.value[index]]), openDialogTimeout))
       setTimeout(() => (dialogs.show = !0), openDialogTimeout)
     })
     .catch((e: any) => {
@@ -682,14 +679,14 @@ const openUpdateDialogNoIndex = (i: MDtItem) => {
 }
 const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
   const fdt = 'u'
-  const item = toRef(i)
+  const item = { ...toValue(i) }
   if (props.updateQueryParams) {
-    await router.push({ query: { ...route.query, id: item.value.id, fdt } })
+    await router.push({ query: { ...route.query, id: item.id, fdt } })
     return
   }
   if (updateRouteProp.value) {
     if (typeof updateRouteProp.value === 'string') {
-      await router.push({ name: updateRouteProp.value, params: { id: item.value.id }, query: route.query })
+      await router.push({ name: updateRouteProp.value, params: { id: item.id }, query: route.query })
     } else {
       await router.push(updateRouteProp.value)
     }
@@ -698,21 +695,23 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
   if (loading.value) {
     return
   }
+  await nextTick()
   loading.value = !0
   isUpdateMode.value = !0
   const params: any = { fdt }
   if (getRequestWith('withUpdate')) {
     params.requestWith = getRequestWith('withUpdate')
   }
-  getMythApiServicesSchema().show(item.value.id, { params })
+  getMythApiServicesSchema().show(item.id, { params })
     .then(({ _data }) => {
       dialogs.item = _data
       dialogs.index = index
-      if (_data && (index || index === 0)) {
+      if (_data) {
         getRows.value[index] = { ..._data } as any
+        nextTick(() => setTimeout(() => (selected.value = [getRows.value[index]]), openDialogTimeout))
       }
       setTimeout(async () => {
-        await resetForm(_data)
+        await resetVeeForm(_data)
         await nextTick()
         dialogs.form = !0
       }, openDialogTimeout)
@@ -737,13 +736,12 @@ const openCreateDialog = async (dtItem?: MDtItem) => {
     }
     return
   }
-  // const item = { ...defaultItem.value, ...dtItem }
   isUpdateMode.value = !1
   dialogs.item = { ...defaultItem.value, ...dtItem } as MDtItem
   dialogs.index = undefined
   await nextTick()
   setTimeout(async () => {
-    await resetForm(dtItem)
+    await resetVeeForm(dtItem)
     await nextTick()
     dialogs.form = !0
   }, openDialogTimeout)
@@ -754,20 +752,23 @@ const closeFormDialog = async () => {
   dialogs.item = undefined
   dialogs.index = undefined
   await nextTick()
-  setTimeout(() => resetForm(), openDialogTimeout)
+  setTimeout(() => resetVeeForm(), openDialogTimeout)
 }
 /**
  * Form Dialog
  */
 
 const updateDatatableItem = (i: MDtItem, index?: MDtItemIndex) => {
-  const item = toRef(i)
-  if (item.value && index) {
-    getRows.value[index] = item.value
-  }
-  if (item.value && !index) {
-    const findIndex = getRows.value.findIndex(e => parseInt(e.id?.toString?.() ?? '') === parseInt(item.value?.id?.toString?.() ?? ''))
-    getRows.value[findIndex] = item.value
+  const item = { ...toValue(i) }
+  if (item) {
+    if (index !== undefined) {
+      getRows.value[index] = item
+    } else {
+      const findIndex = getRows.value.findIndex(e => parseInt(e.id?.toString?.() ?? '') === parseInt(item?.id?.toString?.() ?? ''))
+      if (findIndex >= 0) {
+        getRows.value[findIndex] = item
+      }
+    }
   }
 }
 const removeDtItem = (i: MDtItem | number) => {
@@ -869,6 +870,7 @@ const onDeleteItem = (i: MDtItem, index: number) => {
       if (_success) {
         if (tableOptions.pagination.rowsNumber !== undefined) {
           --tableOptions.pagination.rowsNumber
+          selected.value = []
         }
         removeDtItem(index)
       }
@@ -876,8 +878,6 @@ const onDeleteItem = (i: MDtItem, index: number) => {
       e?._message && myth.alertError(e._message)
     } finally {
       loading.value = !1
-      await nextTick()
-      selected.value = []
     }
   }).onDismiss(() => {
     tableOptions.hasAction = !1
@@ -951,31 +951,29 @@ const contextmenuItems = computed<any>(() => ([
     name: 'show',
     label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.show' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => {
-      tableOptions.selected = [item]
       openShowDialog(item, index)
     },
-    showIf: hasShowBtn.value,
-    attr: {
-      color: 'secondary'
-    }
+    showIf: hasShowBtn.value
+    // attr: {
+    //   color: 'secondary'
+    // }
   },
   {
     name: 'update',
     label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.update' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => {
-      tableOptions.selected = [item]
       openUpdateDialog(item, index)
     },
-    showIf: hasUpdateBtn.value,
-    attr: {
-      color: 'secondary'
-    }
+    showIf: hasUpdateBtn.value
+    // attr: {
+    //   color: 'secondary'
+    // }
   },
   {
     name: 'destroy',
     label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.destroy' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => {
-      tableOptions.selected = [item]
+      selected.value = [item]
       onDeleteItem(item, index)
     },
     showIf: hasDestroyBtn.value,
@@ -1027,16 +1025,13 @@ watch(loading, v => {
   }
   tableOptions.hasAction = Boolean(v)
 })
-watch(filterForm, () => refreshNoUpdate())
-watch(() => $q.lang.nativeName, () => {
-  refreshNoUpdate()
-})
-
+watch([filterForm, () => $q.lang.nativeName], () => refreshNoUpdate(), { deep: !0 })
 watch(formDialogModel, (v) => {
   if (!v) {
     dialogs.errors = {}
   }
 })
+
 const datatableItemsScope = reactive({
   openShowDialog,
   openShowDialogNoIndex,
