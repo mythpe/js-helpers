@@ -103,6 +103,10 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
       values[name] = !value ? !0
         : /,/g.test(value) ? value.split(',').map((e: any) => isNumeric(e) ? parseInt(e) : e) : (isNumeric(value) ? parseInt(value) : value)
     }
+    if (values.color && props.required) {
+      values.requiredColor = values.color
+      delete values.color
+    }
     return values
   }
   const publicRules = ['required', 'email', 'numeric', 'integer', 'float', 'color']

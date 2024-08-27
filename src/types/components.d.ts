@@ -93,6 +93,7 @@ import {
   MUploaderSlots
 } from '../components'
 import { TransitionProps } from 'vue'
+import { MFieldProps, MFieldSlots } from 'src/components'
 
 declare module '@vue/runtime-core' {
   interface GlobalComponents {
@@ -110,6 +111,7 @@ declare module '@vue/runtime-core' {
     MDate: GlobalComponentConstructor<MDateProps, MDateSlots>;
     MEditor: GlobalComponentConstructor<MEditorProps, MEditorSlots>;
     MEmail: GlobalComponentConstructor<MInputProps, MInputSlots>;
+    MField: GlobalComponentConstructor<MFieldProps, MFieldSlots>;
     MFile: GlobalComponentConstructor<MFileProps, MFileSlots>;
     MForm: GlobalComponentConstructor<MFormProps, MFormSlots>;
     MHidden: GlobalComponentConstructor<MHiddenProps, MHiddenSlots>;

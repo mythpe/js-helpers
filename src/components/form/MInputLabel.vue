@@ -24,7 +24,7 @@ defineOptions({ name: 'MInputLabel' })
   <div
     :class="{
       'row items-center m--input__top-label' : !0,
-      'm--input__top-label__invalid' : !field.meta?.valid && field.meta?.dirty,
+      'm--input__top-label__invalid' : !field.meta?.valid && field.meta?.dirty
     }"
   >
     <div class="m--input__top-label__content">

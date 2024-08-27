@@ -26,6 +26,7 @@ export const initComponents = (app: App) => {
   app.component('MDate', defineAsyncComponent(() => import('../components/form/MDate.vue')))
   app.component('MEditor', defineAsyncComponent(() => import('../components/form/MEditor.vue')))
   app.component('MEmail', defineAsyncComponent(() => import('../components/form/MEmail.vue')))
+  app.component('MField', defineAsyncComponent(() => import('../components/form/MField.vue')))
   app.component('MFile', defineAsyncComponent(() => import('../components/form/MFile.vue')))
   app.component('MForm', defineAsyncComponent(() => import('../components/form/MForm.vue')))
   app.component('MHidden', defineAsyncComponent(() => import('../components/form/MHidden.vue')))

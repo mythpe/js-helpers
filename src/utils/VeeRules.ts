@@ -26,7 +26,8 @@ export const VeeRules = {
   rgbOrRgbaColor: (v: any) => testPattern.rgbOrRgbaColor(v),
   hexOrRgbColor: (v: any) => testPattern.hexOrRgbColor(v),
   hexaOrRgbaColor: (v: any) => testPattern.hexaOrRgbaColor(v),
-  color: (v: any) => testPattern.anyColor(v)
+  color: (v: any) => !v ? !0 : testPattern.anyColor(v),
+  requiredColor: (v: any) => testPattern.anyColor(v)
 }
 
 export default {}

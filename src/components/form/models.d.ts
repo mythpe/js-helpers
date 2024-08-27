@@ -191,7 +191,7 @@ export type MPasswordProps = MInputProps & {
 
 export type MInputSlots = QInputSlots & QFieldSlots & BaseInputsSlots
 
-export type MFieldProps = Omit<MInputProps, 'viewMode'>
+export type MFieldProps = Omit<MInputProps, 'viewMode' | 'viewModeValue' | 'fieldOptions'>
 export type MFieldSlots = MInputSlots
 
 export type MHiddenInputSlots = object

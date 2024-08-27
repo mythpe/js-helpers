@@ -20,6 +20,7 @@ import MColor from './form/MColor.vue'
 import MDate from './form/MDate.vue'
 import MEditor from './form/MEditor.vue'
 import MEmail from './form/MEmail.vue'
+import MField from './form/MField.vue'
 import MFile from './form/MFile.vue'
 import MForm from './form/MForm.vue'
 import MHidden from './form/MHidden.vue'
@@ -76,6 +77,7 @@ export {
   MDate,
   MEditor,
   MEmail,
+  MField,
   MFile,
   MForm,
   MHidden,
