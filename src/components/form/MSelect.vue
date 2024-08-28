@@ -200,6 +200,8 @@ defineOptions({ name: 'MSelect', inheritAttrs: !1 })
       :hint="__(hint)"
       :label="viewMode && hasTopLabel ? undefined : (loading ? undefined : getPlaceholder)"
       :model-value="value"
+      :option-label="optionLabel"
+      :option-value="optionValue"
       :options="getOptions"
       :readonly="readonly"
       v-bind="{
@@ -251,7 +253,7 @@ defineOptions({ name: 'MSelect', inheritAttrs: !1 })
                   width="50%"
                 />
               </template>
-              <template v-else-if="!search?.length">
+              <template v-else-if="!search?.length && useInput">
                 {{ __('myth.select.typeToSearch') }}
               </template>
               <template v-else-if="search?.length > 0">

@@ -6,7 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance, AxiosRequestConfig } from 'axios'
+import { AxiosInstance } from 'axios'
 import {
   openURL,
   QBtnProps,
@@ -73,7 +73,7 @@ import {
   Vue3MConfirmMessage
 } from './m-helpers'
 import { Dates, Helpers, Str } from '../utils'
-import { MythApiServicesSchema } from './api-helpers'
+import { ConfigType, MythApiServicesSchema } from './api-helpers'
 
 export interface MythOptionsConfig {
   /**
@@ -257,13 +257,14 @@ export type InstallPluginOptions = {
   api: MythApiConfig;
   options: MythOptionsConfig;
 }
-
+type UseModelMethod = string | ((id: any, config?: ConfigType | undefined) => Promise<ApiInterface>);
+type UseModelsMethod = string | ((config?: ConfigType | undefined) => Promise<ApiInterface>);
 export type UseModelsOptionsArg = {
   lazy?: boolean;
   search?: ComputedRef<string | null | undefined> | Ref<string | null | undefined>;
   filter?: ComputedRef<Record<string, any>> | Ref<Record<string, any>>;
   isPanel?: boolean | MaybeRefOrGetter<boolean>;
-  method?: string | (() => Promise<any>);
+  method?: UseModelMethod | UseModelsMethod;
   timeout?: number;
   qInfiniteScroll?: Ref<QInfiniteScroll | null>;
   onSuccess?: (data: ApiInterface) => void;

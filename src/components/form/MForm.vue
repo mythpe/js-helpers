@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 import { InvalidSubmissionHandler, SubmissionContext, SubmissionHandler, useForm } from 'vee-validate'
 import { MFormProps as Props } from './models'
-import { reactive } from 'vue'
+import { nextTick, reactive, watch } from 'vue'
 import { useMyth } from '../../vue3'
 
 interface P {
@@ -17,20 +17,21 @@ interface P {
   opts?: Props['opts'];
   target?: Props['target'];
   emitValues?: Props['emitValues'];
+  readonly form?: Props['form'];
 }
 
 const props = withDefaults(defineProps<P>(), {
   formProps: undefined,
   opts: undefined,
   target: undefined,
-  emitValues: () => !1
+  emitValues: () => !1,
+  form: undefined
 })
-const formScope = useForm(props.opts)
+const formScope = useForm<Record<string, any>>(props.opts)
 const myth = useMyth()
-const { handleSubmit } = formScope
+const { handleSubmit, resetForm } = formScope
 type Emits = {
-  // (e: 'submit', ctx: SubmissionContext, evt?: Event): void;
-  (e: 'submit', values: Record<string, any>, ctx: SubmissionContext, s: typeof formScope): void;
+  (e: 'submit', values: Record<string, any>, ctx: SubmissionContext, scope: typeof formScope): void;
 }
 const emit = defineEmits<Emits>()
 const onSuccessSubmission: SubmissionHandler = async (values, ctx) => emit('submit', values, ctx, formScope)
@@ -41,17 +42,16 @@ const onErrorSubmission: InvalidSubmissionHandler = ({ errors }) => {
     myth.helpers.scrollToElementFromErrors({ [keys[0]]: [message] }, undefined, props.target)
   }
 }
-const defaultSubmit = props.emitValues
-  ? handleSubmit(onSuccessSubmission, onErrorSubmission)
-  : handleSubmit.withControlled(onSuccessSubmission, onErrorSubmission)
-// const submit = (e?: Event) => {
-//   e?.preventDefault()
-//   e?.stopImmediatePropagation()
-//   emit('submit', formScope, e)
-// }
+const defaultSubmit = props.emitValues ? handleSubmit(onSuccessSubmission, onErrorSubmission) : handleSubmit.withControlled(onSuccessSubmission,
+  onErrorSubmission)
 const scope = reactive(formScope)
 defineExpose({ ...scope })
 defineOptions({ name: 'MForm', inheritAttrs: !1 })
+watch(() => props.form, (v) => {
+  if (v) {
+    resetForm({ values: v, errors: {}, touched: {} })
+  }
+}, { deep: !0, immediate: !0, once: !0 })
 </script>
 
 <template>

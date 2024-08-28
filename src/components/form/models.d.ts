@@ -258,7 +258,10 @@ export type MOptionsProps = Omit<QOptionGroupProps, 'name' | 'modelValue' | 'opt
 }
 export type MOptionsSlots = QOptionGroupSlots & QFieldSlots & BaseInputsSlots
 
-export type MFileProps = Omit<QFileProps, 'rules' | 'name' | 'label' | 'hint'> & Omit<BaseInputsProps, 'modelValue' | 'autocomplete'> & {
+export type MFileProps =
+  Omit<QFileProps, 'modelValue' | 'rules' | 'name' | 'label' | 'hint'>
+  & Omit<BaseInputsProps, 'autocomplete'>
+  & {
   accept?: string | undefined;
   images?: boolean;
   svg?: boolean;
@@ -436,6 +439,7 @@ export interface MFormProps {
    * Default is: false.
    */
   emitValues?: boolean;
+  readonly form?: Record<string, any> | undefined;
 }
 
 export type MFormScope = FormContext<Record<string, any>>;

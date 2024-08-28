@@ -82,6 +82,7 @@ const { value, errorMessage, handleChange, handleBlur } = inputScope
 const listeners = {
   focus: (v: Event) => handleBlur(v, !1),
   blur: (v: Event) => handleBlur(v, !1),
+  clear: (v: Event) => handleBlur(v, !0),
   'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
 }
 const input = ref<InstanceType<typeof QFile | typeof QField> | null>(null)

@@ -9,7 +9,7 @@
 import { computed, ComputedRef, MaybeRefOrGetter, nextTick, onMounted, onUnmounted, ref, toValue, watch } from 'vue'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useMyth } from '../vue3'
-import { ApiFulfilledResponse, ApiInterface, ApiMetaInterface, ApiModel, ConfigType, ResponseDataType, UseModelsOptionsArg } from '../types'
+import { ApiFulfilledResponse, ApiInterface, ApiMetaInterface, ApiModel, ConfigType, UseModelsOptionsArg } from '../types'
 import { extend } from 'quasar'
 
 const itemsPerPage = 1
@@ -62,7 +62,6 @@ export function useModels<T extends Partial<Item> = Item> (Name: MaybeRefOrGette
     if (options?.method) {
       if (typeof options.method === 'function') {
         action = options.method
-        console.log(action)
       } else {
         action = myth.services[name][options.method]
       }
@@ -203,16 +202,16 @@ export function useModel<T extends Partial<ItemModel<T>> = ItemModel> (Name: str
     if (!fetching.value) {
       fetching.value = !0
     }
-    const optMethod = options?.method ? toValue(options.method) : null
-    let action: (() => Promise<any>)
-    if (optMethod && typeof optMethod === 'function') {
-      action = optMethod
+    let action: ((id: any, config?: ConfigType | undefined) => Promise<ApiInterface>)
+    if (options?.method) {
+      if (typeof options.method === 'function') {
+        action = options.method
+      } else {
+        action = api.services[name][options.method]
+      }
     } else {
-      const service = api.services[name]
-      const method = optMethod || (options?.isPanel ? 'show' : 'staticShow')
-      action = service[method]
+      action = api.services[name][options?.isPanel ? 'show' : 'staticShow']
     }
-
     // const service = api.services[name]
     // const method = options.method ? toValue(options.method) : (!options.isPanel ? 'staticShow' : 'show')
     // const action = service[method]

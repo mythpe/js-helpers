@@ -147,7 +147,6 @@ defineOptions({ name: 'MCheckbox', inheritAttrs: !1 })
           <q-checkbox
             ref="input"
             :disable="viewMode"
-            :label="!topLabel && help ? undefined : getLabel"
             :model-value="value"
             :val="val"
             v-bind="{
@@ -155,20 +154,25 @@ defineOptions({ name: 'MCheckbox', inheritAttrs: !1 })
               ...$attrs,
               dense: inputProps.dense,
               checkedIcon: inputProps.checkedIcon,
-              indeterminateIcon: inputProps.indeterminateIcon
+              indeterminateIcon: inputProps.indeterminateIcon,
+              label: undefined
             }"
             v-on="listeners"
           >
             <slot v-bind="scopes">
-              <template v-if="!topLabel && help">
-                <MRow>
+              <MRow v-if="!!getLabel">
+                <div>{{ getLabel }}</div>
+                <slot
+                  name="help"
+                  v-bind="scopes"
+                >
                   <MHelpRow
+                    v-if="!topLabel"
                     :text="help"
-                    tooltip
+                    :tooltip="!topLabel"
                   />
-                  <div>{{ getLabel }}</div>
-                </MRow>
-              </template>
+                </slot>
+              </MRow>
             </slot>
           </q-checkbox>
         </q-field>
@@ -178,15 +182,6 @@ defineOptions({ name: 'MCheckbox', inheritAttrs: !1 })
         v-bind="scopes"
       />
     </MRow>
-    <slot
-      name="help"
-      v-bind="scopes"
-    >
-      <MHelpRow
-        v-if="!topLabel"
-        :text="help"
-      />
-    </slot>
     <slot
       name="bottom-input"
       v-bind="scopes"
