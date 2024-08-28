@@ -12,6 +12,7 @@ import { extend, useSplitAttrs } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { MythOptionsConfig as MOC } from '../types'
 import { useMyth } from '../vue3'
+import { useFieldError, useFieldValue, useSetFieldError, useSetFieldValue } from 'vee-validate'
 
 type G = { name: string; } & Record<string, any>;
 type OptsContext = { choose?: boolean; };
@@ -152,4 +153,22 @@ export const useInputHelper = <P extends G = G> (Props: MaybeRefOrGetter<P>, key
     inputOptions,
     inputProps
   }
+}
+
+export const useValue = <T = any> (name: MaybeRefOrGetter<string>) => {
+  const [value, setValue] = [useFieldValue<T>(name), useSetFieldValue<T>(name)]
+  const field = computed<T>({
+    get: () => value.value,
+    set: (v: T) => setValue(v)
+  })
+
+  return { field, value, setValue }
+}
+export const useError = (name: MaybeRefOrGetter<string>) => {
+  const [error, setErrors] = [useFieldError(name), useSetFieldError(name)]
+  const errors = computed({
+    get: () => error.value,
+    set: v => setErrors(v)
+  })
+  return { errors, error, setErrors }
 }
