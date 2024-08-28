@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 import { InvalidSubmissionHandler, SubmissionContext, SubmissionHandler, useForm } from 'vee-validate'
 import { MFormProps as Props } from './models'
-import { nextTick, reactive, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { useMyth } from '../../vue3'
 
 interface P {
@@ -45,7 +45,7 @@ const onErrorSubmission: InvalidSubmissionHandler = ({ errors }) => {
 const defaultSubmit = props.emitValues ? handleSubmit(onSuccessSubmission, onErrorSubmission) : handleSubmit.withControlled(onSuccessSubmission,
   onErrorSubmission)
 const scope = reactive(formScope)
-defineExpose({ ...scope })
+defineExpose({ ...scope, defaultSubmit })
 defineOptions({ name: 'MForm', inheritAttrs: !1 })
 watch(() => props.form, (v) => {
   if (v) {
