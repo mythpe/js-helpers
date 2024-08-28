@@ -129,27 +129,32 @@ const myth = useMyth()
 const { alertError, alertSuccess, confirmMessage, __ } = myth
 const fieldId = useFieldValue<string | undefined>('id')
 const modelIdProp = computed(() => props.modelId !== undefined ? props.modelId : fieldId.value)
+defineModel<Props['modelValue']>({ required: !1, default: undefined })
 // const value = useFieldValue<Props['modelValue']>(() => props.name)
 // const setValue = useSetFieldValue(() => props.name)
 // const setTouched = useSetFieldTouched(() => props.name)
 // const errorMessage = useFieldError(() => props.name)
 // const setErrors = useSetFieldError(() => props.name)
+// const setFormValues = useSetFormValues()
+// const setTouched = useSetFieldTouched(() => props.name)
 // const modelValue = computed<Props['modelValue']>({
 //   get: () => value.value || [],
-//   set: (v) => setValue(v)
+//   set: (v) => {
+//     setFormValues({ [props.name]: v }, !1)
+//     model.value = v
+//     setTouched(!1)
+//   }
 // })
-// const setModelValue = (val: any) => {
-//   setValue(val)
-//   setTouched(!1)
-// }
-
 const { value: modelValue, errorMessage, setErrors, resetField } = useField<Props['modelValue']>(() => props.name, undefined, {
   syncVModel: !0,
   label: () => __(props.label),
   validateOnValueUpdate: !1,
-  controlled: !1,
   ...toValue<any>(props.fieldOptions)
 })
+const setModelValue = (value: any) => {
+  // modelValue.value = value
+  resetField({ value, touched: !1, errors: [] })
+}
 const uploader = ref<InstanceType<typeof QUploader>>()
 const { accepts } = useInputHelper<any>(() => props, 'uploader')
 const quasarLoading = computed<boolean | undefined>({
@@ -259,8 +264,7 @@ const onFinishUpload = ({ files, xhr }: MUploaderXhrInfo) => {
     if (xhr.responseText) {
       const response = JSON.parse(xhr.responseText)
       if (response?.data?.length !== undefined) {
-        resetField({ value: response.data ?? [] })
-        // setModelValue(response.data)
+        setModelValue(response.data ?? [])
         files.forEach(f => uploader.value?.removeFile(f))
       }
       if (response?.message) {
@@ -299,8 +303,7 @@ const deleteMedia = (media: MUploaderMediaItem) => {
         const { _message, _success, _data }: any = await method(media)
         _message && alertSuccess(_message)
         r = Boolean(_success)
-        resetField({ value: _data ?? [] })
-        // setModelValue(_data ?? [])
+        setModelValue(_data ?? [])
       }
     } catch (e: any) {
       alertError(e?._message || e?.message)

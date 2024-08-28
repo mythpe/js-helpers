@@ -12,10 +12,12 @@ import { MInputLabelProps as Props } from './models'
 
 type P = {
   field: Props['field'];
+  label?: Props['label'];
 }
 
 withDefaults(defineProps<P>(), {
-  field: () => ({} as Props['field'])
+  field: () => ({} as Props['field']),
+  label: undefined
 })
 defineOptions({ name: 'MInputLabel' })
 </script>
@@ -28,7 +30,7 @@ defineOptions({ name: 'MInputLabel' })
     }"
   >
     <div class="m--input__top-label__content">
-      {{ field.label }}
+      {{ label !== undefined ? __(label) : field.label }}
     </div>
     <slot />
   </div>

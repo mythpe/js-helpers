@@ -106,8 +106,9 @@ defineOptions({ name: 'MCheckbox', inheritAttrs: !1 })
     />
     <slot name="top-label">
       <MInputLabel
-        v-if="!!topLabel"
+        v-if="topLabel !== undefined"
         :field="scopes"
+        :label="typeof topLabel === 'string' ? topLabel : ''"
       >
         <MHelpRow
           :text="help"
@@ -146,7 +147,7 @@ defineOptions({ name: 'MCheckbox', inheritAttrs: !1 })
           <q-checkbox
             ref="input"
             :disable="viewMode"
-            :label="getLabel"
+            :label="!topLabel && help ? undefined : getLabel"
             :model-value="value"
             :val="val"
             v-bind="{
@@ -157,9 +158,20 @@ defineOptions({ name: 'MCheckbox', inheritAttrs: !1 })
               indeterminateIcon: inputProps.indeterminateIcon
             }"
             v-on="listeners"
-          />
+          >
+            <slot v-bind="scopes">
+              <template v-if="!topLabel && help">
+                <MRow>
+                  <MHelpRow
+                    :text="help"
+                    tooltip
+                  />
+                  <div>{{ getLabel }}</div>
+                </MRow>
+              </template>
+            </slot>
+          </q-checkbox>
         </q-field>
-        <slot v-bind="scopes" />
       </MCol>
       <slot
         name="after"

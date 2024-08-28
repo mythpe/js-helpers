@@ -41,6 +41,7 @@ export type BaseInputFieldProps = {
    * Context of field input.
    */
   field: UnwrapNestedRefs<BaseInputFieldPropContext>;
+  readonly label?: string | undefined;
 }
 
 export type InputRulesContext = string | string[] | Record<string, any> | undefined;
@@ -362,7 +363,7 @@ export type BaseCheckboxProps = Omit<BaseInputsProps, 'topLabel'> & {
   /**
    * Top of input label.
    */
-  topLabel?: string | null | undefined;
+  topLabel?: boolean | string | null | undefined;
   /**
    * Input row props.
    */

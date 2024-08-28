@@ -6,7 +6,7 @@
  * Github: https://github.com/mythpe
  */
 
-import { AxiosInstance } from 'axios'
+import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import {
   openURL,
   QBtnProps,
@@ -263,7 +263,7 @@ export type UseModelsOptionsArg = {
   search?: ComputedRef<string | null | undefined> | Ref<string | null | undefined>;
   filter?: ComputedRef<Record<string, any>> | Ref<Record<string, any>>;
   isPanel?: boolean | MaybeRefOrGetter<boolean>;
-  method?: string | MaybeRefOrGetter<string>;
+  method?: string | (() => Promise<any>);
   timeout?: number;
   qInfiniteScroll?: Ref<QInfiniteScroll | null>;
   onSuccess?: (data: ApiInterface) => void;

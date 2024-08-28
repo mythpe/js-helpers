@@ -9,7 +9,7 @@
 import { computed, ComputedRef, MaybeRefOrGetter, nextTick, onMounted, onUnmounted, ref, toValue, watch } from 'vue'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useMyth } from '../vue3'
-import { ApiFulfilledResponse, ApiInterface, ApiMetaInterface, ApiModel, UseModelsOptionsArg } from '../types'
+import { ApiFulfilledResponse, ApiInterface, ApiMetaInterface, ApiModel, ConfigType, ResponseDataType, UseModelsOptionsArg } from '../types'
 import { extend } from 'quasar'
 
 const itemsPerPage = 1
@@ -58,9 +58,18 @@ export function useModels<T extends Partial<Item> = Item> (Name: MaybeRefOrGette
     fetching.value = !0
     const def = {}
     extend(!0, def, requestConfig.value, config)
-    const service = myth.services[name]
-    const method = options?.method ? toValue(options?.method) : (options?.isPanel ? 'index' : 'staticIndex')
-    const action = service[method]
+    let action: ((config?: ConfigType | undefined) => Promise<ApiInterface>)
+    if (options?.method) {
+      if (typeof options.method === 'function') {
+        action = options.method
+        console.log(action)
+      } else {
+        action = myth.services[name][options.method]
+      }
+    } else {
+      action = myth.services[name][options?.isPanel ? 'index' : 'staticIndex']
+    }
+
     return action(def)
       .then((res: ApiInterface) => {
         const { _data, _meta } = res
@@ -98,14 +107,22 @@ export function useModels<T extends Partial<Item> = Item> (Name: MaybeRefOrGette
     if (!canLoadMore.value) {
       return new Promise(resolve => resolve({}))
     }
-    ++page.value
+    if (!page.value) {
+      page.value = 1
+    } else {
+      ++page.value
+    }
     return fetch(config)
   }
   const prevPage = (config: AxiosRequestConfig = {}) => {
     if ((meta.value.current_page || 0) < 1) {
       return new Promise(resolve => resolve({}))
     }
-    --page.value
+    if (!page.value) {
+      page.value = 1
+    } else {
+      --page.value
+    }
     return fetch(config)
   }
   const beginningFetch = (config: AxiosRequestConfig = {}) => {
@@ -186,9 +203,19 @@ export function useModel<T extends Partial<ItemModel<T>> = ItemModel> (Name: str
     if (!fetching.value) {
       fetching.value = !0
     }
-    const service = api.services[name]
-    const method = options.method ? toValue(options.method) : (!options.isPanel ? 'staticShow' : 'show')
-    const action = service[method]
+    const optMethod = options?.method ? toValue(options.method) : null
+    let action: (() => Promise<any>)
+    if (optMethod && typeof optMethod === 'function') {
+      action = optMethod
+    } else {
+      const service = api.services[name]
+      const method = optMethod || (options?.isPanel ? 'show' : 'staticShow')
+      action = service[method]
+    }
+
+    // const service = api.services[name]
+    // const method = options.method ? toValue(options.method) : (!options.isPanel ? 'staticShow' : 'show')
+    // const action = service[method]
     return action(id, config)
       .then((r: any) => {
         const { _data } = r

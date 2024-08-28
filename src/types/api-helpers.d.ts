@@ -17,7 +17,7 @@ export type ConfigType = AxiosRequestConfig<ApiInterface> & Partial<{
 }>
 export type HelpersStubSchema = {
 
-  index (config?: ConfigType): Promise<ResponseDataType>;
+  index (config?: ConfigType): Promise<ApiInterface>;
 
   staticIndex (config?: ConfigType): Promise<ApiInterface>;
 
