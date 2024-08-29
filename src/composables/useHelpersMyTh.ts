@@ -166,9 +166,9 @@ export const useValue = <T = any> (name: MaybeRefOrGetter<string>) => {
 }
 export const useError = (name: MaybeRefOrGetter<string>) => {
   const [error, setErrors] = [useFieldError(name), useSetFieldError(name)]
-  const errors = computed({
+  const errors = computed<string | string[] | undefined>({
     get: () => error.value,
-    set: v => setErrors(v)
+    set: (v: string | string[] | undefined) => setErrors(v)
   })
   return { errors, error, setErrors }
 }

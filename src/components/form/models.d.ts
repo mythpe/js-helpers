@@ -560,7 +560,7 @@ export type MUploaderMediaItem = {
   attachment_type_id_to_string: string;
   user_id: number | null;
   user_id_to_string: string;
-}
+} & Record<string, any>;
 
 export type MUploaderServiceType = string | {
   /**
@@ -640,7 +640,7 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
    */
   label?: string | null | undefined;
   /** The Attachments list */
-  modelValue?: MUploaderMediaItem[] | any[];
+  modelValue?: MUploaderMediaItem[];
   /**
    *  Hide delete media items from uploader, no delete media For API
    */
@@ -667,6 +667,11 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
   iconsSize?: string | undefined;
   displayMode?: 'list' | 'card' | undefined;
   shadow?: string | undefined;
+  /**
+   * Media Item Name Field.
+   * Default is: name.
+   */
+  mediaLabel?: string | undefined;
 }
 
 export interface MUploaderSlots extends QUploaderSlots {

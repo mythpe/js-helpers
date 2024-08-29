@@ -30,10 +30,11 @@ interface P {
   deleteMediaIcon?: Props['deleteMediaIcon'];
   downloadFileIcon?: Props['downloadFileIcon'];
   readonly item: ModelValue;
+  mediaLabel?: Props['mediaLabel'];
 }
 
 const props = withDefaults(defineProps<P>(), {
-  item: () => ({}),
+  item: () => ({} as ModelValue),
   name: () => '',
   modelId: undefined,
   iconsSize: undefined,
@@ -43,10 +44,11 @@ const props = withDefaults(defineProps<P>(), {
   service: undefined,
   displayMode: undefined,
   shadow: undefined,
-  scope: () => ({}),
+  scope: () => ({} as QUploader),
   defaultFileIcon: undefined,
   deleteMediaIcon: undefined,
-  downloadFileIcon: undefined
+  downloadFileIcon: undefined,
+  mediaLabel: () => ''
 })
 
 interface Emits {
@@ -133,7 +135,7 @@ const deleteUploaderFile = (file: File) => {
       top
     >
       <q-icon
-        v-if="item.icon"
+        v-if="!!item.icon"
         :name="item.icon"
         :size="iconsSize"
         color="primary"
@@ -152,8 +154,23 @@ const deleteUploaderFile = (file: File) => {
       />
     </q-item-section>
     <q-item-section :class="{'overflow-hidden': displayMode === 'card'}">
-      <q-item-label v-if="!!item.file_name">
-        {{ item.file_name }}
+      <q-item-label v-if="!!item[mediaLabel]">
+        {{ item[mediaLabel] }}
+        <q-popup-edit
+          v-model="props.row.carbs"
+          title="Update carbs"
+          buttons
+          persistent
+          v-slot="scope"
+        >
+          <q-input
+            type="number"
+            v-model="scope.value"
+            dense
+            autofocus
+            hint="Use buttons to close"
+          />
+        </q-popup-edit>
       </q-item-label>
       <q-item-label v-else-if="!!item.label">
         {{ __(item.label) }}

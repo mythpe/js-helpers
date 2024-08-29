@@ -60,6 +60,7 @@ interface P {
   displayMode?: Props['displayMode'];
   shadow?: Props['shadow'];
   fieldOptions?: Props['fieldOptions'];
+  mediaLabel?: Props['mediaLabel'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -105,7 +106,8 @@ const props = withDefaults(defineProps<P>(), {
   iconsSize: () => '30px',
   displayMode: () => 'card',
   shadow: () => 'shadow-5',
-  fieldOptions: undefined
+  fieldOptions: undefined,
+  mediaLabel: () => 'name'
 })
 
 interface Emits {
@@ -121,6 +123,9 @@ interface Emits {
 }
 
 const emit = defineEmits<Emits>()
+
+type Form = Record<string, any>;
+
 const myth = useMyth()
 const { alertError, alertSuccess, __ } = myth
 const fieldId = useFieldValue<string | undefined>('id')
@@ -128,10 +133,10 @@ const modelIdProp = computed(() => props.modelId !== undefined ? props.modelId :
 const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const { field } = useValue<Props['modelValue']>(() => props.name)
 watch(field, v => (modelValue.value = v), { deep: !0 })
-const { errors } = useError(() => props.name)
-const resetForm = useResetForm()
-const formValues = useFormValues()
-const { fields: attachments } = useFieldArray<Props['modelValue'] | File[]>(() => props.name)
+const { error, setErrors } = useError(() => props.name)
+const resetForm = useResetForm<Form>()
+const formValues = useFormValues<Form>()
+const { fields: attachments } = useFieldArray<MUploaderMediaItem | File>(() => props.name)
 
 // const setFormValues = useSetFormValues()
 // const setFormTouched = useSetFormTouched()
@@ -155,7 +160,7 @@ const { fields: attachments } = useFieldArray<Props['modelValue'] | File[]>(() =
 // })
 const setModelValue = async (value: Props['modelValue']) => {
   const name = props.name
-  resetForm({ values: { ...formValues.value, [name]: value }, errors: { [name]: [] }, touched: { [name]: !1 } })
+  resetForm({ values: { ...formValues.value, [name]: value }, errors: { [name]: undefined }, touched: { [name]: !1 } })
 }
 const uploader = ref<InstanceType<typeof QUploader>>()
 const uploading = defineModel<boolean>('uploading', { required: !1, default: () => !1 })
@@ -178,7 +183,7 @@ const startUpload = async (files: readonly File[]): Promise<QUploaderFactoryObje
     try {
       const common = myth.axios?.defaults?.headers.common || {}
       const headers = []
-      errors.value = []
+      setErrors([])
       for (const i in common) {
         if (common[i]) {
           headers.push({
@@ -245,9 +250,9 @@ const onError = (info: MUploaderXhrInfo) => {
       if (response.errors) {
         const name = typeof props.fieldName === 'function' ? props.fieldName({} as File) : props.fieldName
         if (response.errors[name]) {
-          errors.value = response.errors[name]
+          setErrors(response.errors[name])
         } else {
-          errors.value = Object.values(response.errors) || []
+          setErrors(Object.values(response.errors) || [])
         }
       }
     }
@@ -306,14 +311,14 @@ defineOptions({ name: 'MUploader', inheritAttrs: !1 })
   >
     <MFadeTransition>
       <div
-        v-if="!!errors"
+        v-if="!!error"
         class="row items-center q-pa-sm bg-negative text-white q-mb-xs rounded-borders"
       >
         <q-icon
           :name="errorsIcon"
           left
         />
-        {{ errors }}
+        {{ error }}
       </div>
     </MFadeTransition>
     <q-uploader
@@ -456,6 +461,7 @@ defineOptions({ name: 'MUploader', inheritAttrs: !1 })
               :hide-delete-media="hideDeleteMedia"
               :icons-size="iconsSizeProp"
               :item="file"
+              :media-label="mediaLabel"
               :model-id="modelIdProp"
               :name="name"
               :return-type="returnType"
@@ -479,6 +485,7 @@ defineOptions({ name: 'MUploader', inheritAttrs: !1 })
                 :hide-delete-media="hideDeleteMedia"
                 :icons-size="iconsSizeProp"
                 :item="f.value"
+                :media-label="mediaLabel"
                 :model-id="modelIdProp"
                 :name="name"
                 :return-type="returnType"
