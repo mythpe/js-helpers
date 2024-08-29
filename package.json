@@ -1,6 +1,6 @@
 {
   "name": "@mythpe/js-helpers",
-  "version": "4.0.84",
+  "version": "4.0.86",
   "description": "Library of plugins & shortcuts that use JavaScript, also includes the Vue3 plugin with quasar apps",
   "author": "MyTh Ahmed Faiz",
   "email": "mythpe@gmail.com",
@@ -37,11 +37,12 @@
   },
   "homepage": "https://github.com/mythpe/js-helpers#readme",
   "dependencies": {
+    "ckeditor5": "^43.0.0",
+    "ckeditor5-premium-features": "^43.0.0",
+    "@ckeditor/ckeditor5-ui": "^43.0.0",
     "@ckeditor/ckeditor5-vue": "^7.0.0",
     "@googlemaps/js-api-loader": "^1.16.6",
     "axios": "^1.7.2",
-    "ckeditor5": "^43.0.0",
-    "ckeditor5-premium-features": "^43.0.0",
     "gsap": "^3.12.5",
     "jquery": "^3.7.1",
     "lodash": "^4.17.21",
