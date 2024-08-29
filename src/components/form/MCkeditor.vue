@@ -61,7 +61,7 @@ import {
   TodoList,
   Underline
 } from 'ckeditor5'
-// import { Ckeditor } from '@ckeditor/ckeditor5-vue'
+import { Ckeditor } from '@ckeditor/ckeditor5-vue'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import arTranslations from 'ckeditor5/translations/ar.js'

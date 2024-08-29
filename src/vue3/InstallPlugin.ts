@@ -328,9 +328,15 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
         ...(typeof opts !== 'string' ? opts : {})
       }
     },
-    alertMessage: (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage => Notify.create(helpers.quasarNotifyOptions(opts)),
-    alertSuccess: (message: string) => helpers.alertMessage({ type: 'positive', message }),
-    alertError: (message: string) => helpers.alertMessage({ type: 'negative', message }),
+    alertMessage (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage {
+      return Notify.create(helpers.quasarNotifyOptions(opts))
+    },
+    alertSuccess (message: string) {
+      return this.alertMessage({ type: 'positive', message })
+    },
+    alertError (message: string) {
+      return this.alertMessage({ type: 'negative', message })
+    },
     confirmMessage (message?: string, title?: string, opts?: QDialogOptions): Vue3MConfirmMessage {
       const { t } = i18n.value?.global
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
