@@ -74,6 +74,19 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
   const { api, i18n, options } = toRefs(opts)
   // const componentsOptions = ref(pluginOptions.options ?? {})
   // const mi18 = ref(pluginOptions.i18n)
+  function quasarNotifyOptions (opts: QNotifyCreateOptions | string): QNotifyCreateOptions {
+    return {
+      badgeColor: 'primary',
+      progress: !0,
+      ...options.value.notify as any,
+      message: typeof opts === 'string' ? opts : opts.message,
+      ...(typeof opts !== 'string' ? opts : {})
+    }
+  }
+
+  function alertMessage (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage {
+    return Notify.create(helpers.quasarNotifyOptions(opts))
+  }
 
   const helpers = {
     getPageTitle (route: RouteLocationNormalizedLoaded, number?: number | string): string {
@@ -319,23 +332,13 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
     async copyText (text: string | any): Promise<void> {
       return copyToClipboard(text)
     },
-    quasarNotifyOptions (opts: QNotifyCreateOptions | string): QNotifyCreateOptions {
-      return {
-        badgeColor: 'primary',
-        progress: !0,
-        ...options.value.notify as any,
-        message: typeof opts === 'string' ? opts : opts.message,
-        ...(typeof opts !== 'string' ? opts : {})
-      }
-    },
-    alertMessage (opts: Vue3MAlertMessageOptions): Vue3MAlertMessage {
-      return Notify.create(helpers.quasarNotifyOptions(opts))
-    },
+    quasarNotifyOptions,
+    alertMessage,
     alertSuccess (message: string) {
-      return this.alertMessage({ type: 'positive', message })
+      return alertMessage({ type: 'positive', message })
     },
     alertError (message: string) {
-      return this.alertMessage({ type: 'negative', message })
+      return alertMessage({ type: 'negative', message })
     },
     confirmMessage (message?: string, title?: string, opts?: QDialogOptions): Vue3MConfirmMessage {
       const { t } = i18n.value?.global

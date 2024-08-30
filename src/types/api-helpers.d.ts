@@ -40,6 +40,8 @@ export type HelpersStubSchema = {
   uploadAttachments (id: UrlType, data: Generic, config?: AxiosRequestConfig): Promise<ApiInterface>;
 
   deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig): Promise<ApiInterface>;
+
+  updateAttachment (id: UrlType, fileId: string | number, data: Record<string, any>, config?: AxiosRequestConfig): Promise<ApiInterface>;
 };
 export type StubSchemaContext = HelpersStubSchema
   & Record<string, ((...args: any) => Promise<ApiInterface>)>

@@ -34,6 +34,7 @@ import { FieldContext, FieldOptions, FormContext, FormOptions } from 'vee-valida
 import { ComputedGetter, MaybeRefOrGetter, UnwrapNestedRefs, VNode } from 'vue'
 import { MColProps, ViewModeProps } from '../grid/models'
 import { EditorConfig } from 'ckeditor5'
+import { HelpersStubSchema } from '../../types'
 
 export type BaseInputFieldPropContext = FieldContext<any>;
 export type BaseInputFieldProps = {
@@ -560,21 +561,11 @@ export type MUploaderMediaItem = {
   attachment_type_id_to_string: string;
   user_id: number | null;
   user_id_to_string: string;
-} & Record<string, any>;
+  order_column: number;
+  [k: string]: any;
+};
 
-export type MUploaderServiceType = string | {
-  /**
-   * Get Attachments url
-   */
-  getUploadAttachmentsUrl (modelId: string | number): string;
-  /** The url to which the files will be uploaded to */
-  uploadAttachments: (modelId: string | number, files: readonly File[]) => string;
-  /**
-   * Method axios to delete files
-   * @param files
-   */
-  deleteAttachment: (media: MUploaderMediaItem, config?: AxiosRequestConfig) => Promise<any>;
-}
+export type MUploaderServiceType = Pick<HelpersStubSchema, 'getUploadAttachmentsUrl' | 'updateAttachment' | 'uploadAttachments' | 'deleteAttachment'>
 
 export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'headers' | 'url'>, MColProps, Pick<BaseInputsProps, 'fieldOptions'> {
   /**
@@ -594,15 +585,25 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
    * Comma separated list of unique file type specifiers. Maps to 'accept' attribute of native input type=file element
    */
   accept?: string;
-  /** Support for uploading images */
+  /**
+   *  Support for uploading images
+   */
   images?: boolean;
-  /** Support for uploading svg */
+  /**
+   * Support for uploading svg
+   */
   svg?: boolean;
-  /** Support for uploading videos  */
+  /**
+   * Support for uploading videos
+   */
   video?: boolean;
-  /** Support for uploading pdf  */
+  /**
+   * Support for uploading pdf
+   */
   pdf?: boolean;
-  /** Support for uploading excel  */
+  /**
+   * Support for uploading excel
+   */
   excel?: boolean;
   /**
    * Upload files immediately when added
@@ -622,9 +623,10 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
   /**
    * Field Attachment Type
    */
-  attachmentType?: string | number | symbol;
+  attachmentType?: any;
   /**
-   * return attachments after upload; default current collection name;
+   * return attachments after upload;
+   * Default current collection name;
    */
   returnType?: 'all' | 'current' | undefined;
   /**
@@ -639,22 +641,27 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
    * Label for the uploader
    */
   label?: string | null | undefined;
-  /** The Attachments list */
+  /**
+   * The Attachments list.
+   */
   modelValue?: MUploaderMediaItem[];
   /**
    *  Hide delete media items from uploader, no delete media For API
    */
   hideDeleteMedia?: boolean;
   /**
+   *  Show update button of media.
+   */
+  updateBtn?: boolean;
+  /**
    * User APi service for upload & delete
    */
-  service: MUploaderServiceType;
+  service: string | MUploaderServiceType;
   /**
    * The ID of model will use in attachments
    */
   modelId?: string | number | undefined;
   uploading?: boolean | undefined;
-  readonly useQuasarLoading?: boolean | undefined;
   defaultFileIcon?: string | undefined;
   deleteMediaIcon?: string | undefined;
   uploadFilesIcon?: string | undefined;
@@ -668,7 +675,7 @@ export interface MUploaderProps extends Omit<QUploaderProps, 'formFields' | 'hea
   displayMode?: 'list' | 'card' | undefined;
   shadow?: string | undefined;
   /**
-   * Media Item Name Field.
+   * Media Item Label Field.
    * Default is: name.
    */
   mediaLabel?: string | undefined;

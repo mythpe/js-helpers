@@ -118,17 +118,15 @@ export const Helpers = {
       getUploadAttachmentsUrl: (id: UrlType) => makeUrl(`${id}/Attachment/Upload`),
       async uploadAttachments (id: UrlType, data: Record<string, any>, config?: AxiosRequestConfig) {
         const _url = makeUrl(`${id}/Attachment/Upload`)
-        // if (typeof data === 'boolean') {
-        //   return _url
-        // }
         return axios().post(_url, data, config)
       },
       async deleteAttachment (id: UrlType, fileId: string | number, config?: AxiosRequestConfig) {
         const _url = makeUrl(`${id}/Attachment/${fileId}/Delete`)
-        // if (typeof config === 'boolean') {
-        //   return _url
-        // }
         return axios().delete(_url, config)
+      },
+      async updateAttachment (id: UrlType, fileId: string | number, data: Record<string, any>, config?: AxiosRequestConfig) {
+        const _url = makeUrl(`${id}/Attachment/${fileId}/Update`)
+        return axios().post(_url, data, config)
       }
     }
   },

@@ -43,9 +43,9 @@ interface P {
   label?: Props['label'];
   hideDeleteMedia?: Props['hideDeleteMedia'];
   hideUploadBtn?: Props['hideUploadBtn'];
+  updateBtn?: Props['updateBtn'];
   service: Props['service'];
   modelId?: Props['modelId'];
-  readonly useQuasarLoading?: Props['useQuasarLoading'];
   batch?: Props['batch'];
   defaultFileIcon?: Props['defaultFileIcon'];
   deleteMediaIcon?: Props['deleteMediaIcon'];
@@ -90,11 +90,11 @@ const props = withDefaults(defineProps<P>(), {
   label: undefined,
   hideDeleteMedia: undefined,
   hideUploadBtn: undefined,
+  updateBtn: () => !1,
   service: undefined,
   modelId: undefined,
-  useQuasarLoading: () => !1,
   defaultFileIcon: () => 'o_file_present',
-  deleteMediaIcon: () => 'o_clear',
+  deleteMediaIcon: () => 'ion-ios-trash',
   uploadFilesIcon: () => 'o_cloud_upload',
   pickFilesIcon: () => 'o_upload_file',
   removeUploadedIcon: () => 'o_done_all',
@@ -165,12 +165,6 @@ const setModelValue = async (value: Props['modelValue']) => {
 const uploader = ref<InstanceType<typeof QUploader>>()
 const uploading = defineModel<boolean>('uploading', { required: !1, default: () => !1 })
 const { accepts } = useInputHelper<any>(() => props, 'uploader')
-const attachmentTypeProp = computed(() => props.attachmentType)
-const returnTypeProp = computed(() => props.returnType)
-const collectionProp = computed(() => props.collection)
-const formFieldsProp = computed(() => props.formFields)
-const serviceProp = computed(() => props.service)
-const headersProp = computed(() => props.headers)
 const iconsSizeProp = computed(() => myth.options.uploaderOptions?.iconsSize || props.iconsSize)
 
 /* Events Callback */
@@ -192,39 +186,39 @@ const startUpload = async (files: readonly File[]): Promise<QUploaderFactoryObje
           })
         }
       }
-      if (headersProp.value) {
-        for (const f in headersProp.value) {
-          if (headersProp.value[f]) {
+      if (props.headers) {
+        for (const f in props.headers) {
+          if (props.headers[f]) {
             headers.push({
               name: f,
-              value: headersProp.value[f]
+              value: props.headers[f]
             })
           }
         }
       }
       const formFields: any = []
-      if (formFieldsProp.value) {
-        for (const f in formFieldsProp.value) {
-          if (formFieldsProp.value[f]) {
+      if (props.formFields) {
+        for (const f in props.formFields) {
+          if (props.formFields[f]) {
             formFields.push({
               name: f,
-              value: formFieldsProp.value[f]
+              value: props.formFields[f]
             })
           }
         }
       }
-      if (collectionProp.value) {
-        formFields.push({ name: 'collection', value: collectionProp.value })
+      if (props.collection) {
+        formFields.push({ name: 'collection', value: props.collection })
       }
-      if (attachmentTypeProp.value) {
-        formFields.push({ name: 'attachment_type', value: attachmentTypeProp.value })
+      if (props.attachmentType) {
+        formFields.push({ name: 'attachment_type', value: props.attachmentType })
       }
-      if (returnTypeProp.value) {
-        formFields.push({ name: 'return', value: returnTypeProp.value })
+      if (props.returnType) {
+        formFields.push({ name: 'return', value: props.returnType })
       }
-      const url: string = typeof serviceProp.value !== 'object'
-        ? myth.services[serviceProp.value].getUploadAttachmentsUrl(modelIdProp.value)
-        : serviceProp.value.uploadAttachments(modelIdProp.value, files)
+      const url: string = typeof props.service === 'string'
+        ? myth.services[props.service].getUploadAttachmentsUrl(modelIdProp.value)
+        : props.service.getUploadAttachmentsUrl(modelIdProp.value)
       resolve({
         url: `${myth.baseUrl}/${url}`,
         method: 'POST',
@@ -239,7 +233,7 @@ const startUpload = async (files: readonly File[]): Promise<QUploaderFactoryObje
 }
 const onReject = (rejectedEntries: QRejectedEntry[]) => {
   alertError(__('myth.errors.uploaderRejectedEntries', { c: rejectedEntries.length }))
-  nextTick(() => emit('rejected', rejectedEntries))
+  emit('rejected', rejectedEntries)
 }
 const onError = (info: MUploaderXhrInfo) => {
   const { xhr } = info
@@ -258,8 +252,9 @@ const onError = (info: MUploaderXhrInfo) => {
     }
   } catch (e: any) {
     e?.message && alertError(e.message)
+  } finally {
+    emit('failed', info)
   }
-  nextTick(() => emit('failed', info))
 }
 const onFinishUpload = ({ files, xhr }: MUploaderXhrInfo) => {
   try {
@@ -274,12 +269,9 @@ const onFinishUpload = ({ files, xhr }: MUploaderXhrInfo) => {
       }
     }
   } catch (e: any) {
-    // e?.message && alertError(e.message)
+    e?.message && alertError(e.message)
   } finally {
-    nextTick(() => emit('uploaded', {
-      files,
-      xhr
-    }))
+    nextTick(() => emit('uploaded', { files, xhr }))
   }
 }
 
@@ -290,9 +282,6 @@ const onDeleteUploaderFile = (file: File) => {
 const onDeleteMedia = (media: MUploaderMediaItem, result: boolean) => emit('delete-media', media, result)
 watch(() => uploader.value?.isUploading, (v) => {
   uploading.value = Boolean(v)
-  // if (useQuasarLoadingProp.value) {
-  //   quasarLoading.value = v
-  // }
 })
 defineOptions({ name: 'MUploader', inheritAttrs: !1 })
 </script>
@@ -460,13 +449,13 @@ defineOptions({ name: 'MUploader', inheritAttrs: !1 })
               :download-file-icon="downloadFileIcon"
               :hide-delete-media="hideDeleteMedia"
               :icons-size="iconsSizeProp"
-              :item="file"
               :media-label="mediaLabel"
               :model-id="modelIdProp"
+              :model-value="file"
               :name="name"
               :return-type="returnType"
               :scope="scope"
-              :service="serviceProp"
+              :service="service"
               @remove-file="onDeleteUploaderFile"
               @delete-media="onDeleteMedia"
             />
@@ -478,19 +467,20 @@ defineOptions({ name: 'MUploader', inheritAttrs: !1 })
             >
               <UploaderItem
                 :collection="collection"
+                :update-btn="updateBtn"
                 :default-file-icon="defaultFileIcon"
                 :delete-media-icon="deleteMediaIcon"
                 :display-mode="displayMode"
                 :download-file-icon="downloadFileIcon"
                 :hide-delete-media="hideDeleteMedia"
                 :icons-size="iconsSizeProp"
-                :item="f.value"
                 :media-label="mediaLabel"
                 :model-id="modelIdProp"
+                :model-value="f.value"
                 :name="name"
                 :return-type="returnType"
                 :scope="scope"
-                :service="serviceProp"
+                :service="service"
                 @values="setModelValue"
                 @remove-file="onDeleteUploaderFile"
                 @delete-media="onDeleteMedia"

@@ -176,7 +176,7 @@ export interface MythOptionsConfig {
   toggle?: Partial<MToggleProps>;
   uploader?: Partial<MUploaderProps>;
   uploaderOptions?: {
-    downloadBtnProps?: Partial<MBtnProps>;
+    downloadBtnProps?: Partial<QBtnProps>;
     removeBtnProps?: Partial<QBtnProps>;
     iconsSize?: MUploaderProps['iconsSize'];
   };
