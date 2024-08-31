@@ -109,9 +109,9 @@ const { value, errorMessage, handleChange, handleBlur } = inputScope
 const minLength = computed(() => parseInt(props.searchLength?.toString()))
 const search = defineModel<string>('search', { required: !1, default: '' })
 const getOptions = computed(() => {
-  if (props.noFilter && search.value?.length >= minLength.value && !props.axiosMode) {
+  if (!props.axiosMode && !props.noFilter && search.value?.length >= minLength.value) {
     return props.options.filter((v: any) => {
-      if (typeof v === 'string' || typeof v === 'number') {
+      if (typeof v !== 'object') {
         return v.toString().toLowerCase().indexOf(search.value) > -1
       }
       let labelKey = 'label'
@@ -132,11 +132,6 @@ const filterFn: Props['onFilter'] = (val: string, update, abortFn) => {
     return props.onFilter(val, update, abortFn)
   }
   update(() => void 0)
-  // if ((!val && search.value === val) || props.noFilter === !0) {
-  //   update(() => void 0)
-  //   return
-  // }
-  // update(() => (search.value = val))
 }
 const onDoneOptions = () => {
   const e = input.value as QSelect

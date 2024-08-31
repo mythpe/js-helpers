@@ -243,14 +243,14 @@ export const Helpers = {
     // }
     // offset = scrollTo.getBoundingClientRect().top
     const current = getVerticalScrollPosition(target)
+    // console.log(current, target)
     // const offset = scrollTo.getBoundingClientRect().top
     const duration = opt?.duration || 1000
 
     let offset = 0
+    let parent = scrollTo
     try {
-      let parent = scrollTo
       do {
-        // console.log(parent.getBoundingClientRect().top)
         offset = parent.getBoundingClientRect().top
         if (offset === 0 && !parent.parentElement) {
           offset = parent.scrollTop
@@ -261,8 +261,10 @@ export const Helpers = {
         parent = parent.parentElement as HTMLElement
       } while (parent)
     } catch (e) {
+      console.log(e)
       offset = scrollTo?.offsetTop || 0
     }
+    // console.log(offset, parent, current)
     // const position = offset
     // if (offset > current) {
     //   position = (current - offset) + current
@@ -288,6 +290,7 @@ export const Helpers = {
         if (!elm) {
           const selector = `[data-input-name='${name}']`
           const e = document.querySelector(selector) as HTMLElement
+          // console.log(e)
           await this.scrollToElement(e || `[name='${name}']`, { target })
         } else {
           await this.scrollToElement(elm, { target })
