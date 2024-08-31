@@ -365,10 +365,6 @@ export type MAxiosProps = Omit<MSelectProps, 'options' | 'axiosMode'> & {
 export type MAxiosSlots = MSelectSlots
 export type BaseCheckboxProps = Omit<BaseInputsProps, 'topLabel'> & {
   /**
-   * Top of input label.
-   */
-  topLabel?: boolean | string | null | undefined;
-  /**
    * Input row props.
    */
   rowProps?: Record<string, any>;
@@ -378,7 +374,7 @@ export type BaseCheckboxProps = Omit<BaseInputsProps, 'topLabel'> & {
   colProps?: Record<string, any>;
 }
 export type MCheckboxProps = Omit<QCheckboxProps, 'name' | 'modelValue' | 'label'> & BaseCheckboxProps
-export type MCheckboxSlots = BaseInputsSlots & {
+export type MCheckboxSlots = Omit<BaseInputsSlots, 'top-label'> & {
   /**
    * VNode before field main content.
    */
@@ -388,6 +384,9 @@ export type MCheckboxSlots = BaseInputsSlots & {
    */
   after: () => VNode[];
 }
+
+export type MRadioProps = Omit<QRadioProps, 'name' | 'modelValue' | 'label'> & BaseCheckboxProps
+export type MRadioSlots = MCheckboxSlots
 
 export type MToggleProps =
   Omit<BaseInputsProps, 'placeholder' | 'topLabel' | 'autocomplete'>
@@ -416,10 +415,7 @@ export type MToggleProps =
    */
   colProps?: Record<string, any>;
 }
-export type MToggleSlots = MCheckboxSlots
-
-export type MRadioProps = Omit<QRadioProps, 'name' | 'modelValue' | 'label'> & BaseCheckboxProps
-export type MRadioSlots = MCheckboxSlots
+export type MToggleSlots = MCheckboxSlots & Pick<BaseInputsProps, 'topLabel'>;
 
 export interface MFormProps {
   /**

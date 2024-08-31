@@ -31,7 +31,6 @@ type P = {
   rules?: Props['rules'];
   dense?: Props['dense'];
   checkedIcon?: Props['checkedIcon'];
-  topLabel?: Props['topLabel'];
   rowProps?: Props['rowProps'];
   colProps?: Props['colProps'];
   viewMode?: Props['viewMode'];
@@ -56,7 +55,6 @@ const props = withDefaults(defineProps<P>(), {
   rules: undefined,
   dense: undefined,
   checkedIcon: undefined,
-  topLabel: undefined,
   rowProps: undefined,
   colProps: undefined,
   viewMode: () => !1,
@@ -98,17 +96,6 @@ defineOptions({ name: 'MRadio', inheritAttrs: !1 })
       name="top-input"
       v-bind="scopes"
     />
-    <slot name="top-label">
-      <MInputLabel
-        v-if="!!topLabel"
-        :field="scopes"
-      >
-        <MHelpRow
-          :text="help"
-          tooltip
-        />
-      </MInputLabel>
-    </slot>
     <slot name="caption">
       <div
         v-if="!!caption"
@@ -141,7 +128,6 @@ defineOptions({ name: 'MRadio', inheritAttrs: !1 })
             <q-radio
               ref="input"
               :disable="viewMode"
-              :label="getLabel"
               :model-value="value"
               :val="val"
               v-bind="{
@@ -149,9 +135,24 @@ defineOptions({ name: 'MRadio', inheritAttrs: !1 })
                 ...$attrs,
                 dense: inputProps.dense,
                 checkedIcon: inputProps.checkedIcon,
+                label: undefined
               }"
               v-on="listeners"
-            />
+            >
+              <template #default>
+                <MRow class="items-center">
+                  <div v-if="!!getLabel">
+                    {{ getLabel }}
+                  </div>
+                  <MHelpRow
+                    v-if="!!help"
+                    :right="!!getLabel"
+                    :text="help"
+                    tooltip
+                  />
+                </MRow>
+              </template>
+            </q-radio>
           </template>
         </q-field>
         <slot v-bind="scopes" />
@@ -161,15 +162,6 @@ defineOptions({ name: 'MRadio', inheritAttrs: !1 })
         v-bind="scopes"
       />
     </MRow>
-    <slot
-      name="help"
-      v-bind="scopes"
-    >
-      <MHelpRow
-        v-if="!topLabel"
-        :text="help"
-      />
-    </slot>
     <slot
       name="bottom-input"
       v-bind="scopes"

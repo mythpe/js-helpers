@@ -34,7 +34,6 @@ type P = {
   falseValue?: Props['falseValue'];
   checkedIcon?: Props['checkedIcon'];
   indeterminateIcon?: Props['indeterminateIcon'];
-  topLabel?: Props['topLabel'];
   rowProps?: Props['rowProps'];
   colProps?: Props['colProps'];
   viewMode?: Props['viewMode'];
@@ -62,7 +61,6 @@ const props = withDefaults(defineProps<P>(), {
   falseValue: () => !1,
   checkedIcon: undefined,
   indeterminateIcon: undefined,
-  topLabel: undefined,
   rowProps: undefined,
   colProps: undefined,
   viewMode: () => !1,
@@ -104,18 +102,6 @@ defineOptions({ name: 'MCheckbox', inheritAttrs: !1 })
       name="top-input"
       v-bind="scopes"
     />
-    <slot name="top-label">
-      <MInputLabel
-        v-if="topLabel !== undefined"
-        :field="scopes"
-        :label="typeof topLabel === 'string' ? topLabel : ''"
-      >
-        <MHelpRow
-          :text="help"
-          tooltip
-        />
-      </MInputLabel>
-    </slot>
     <slot name="caption">
       <div
         v-if="!!caption"
@@ -155,27 +141,26 @@ defineOptions({ name: 'MCheckbox', inheritAttrs: !1 })
               dense: inputProps.dense,
               checkedIcon: inputProps.checkedIcon,
               indeterminateIcon: inputProps.indeterminateIcon,
-              label: undefined
+              label: undefined,
             }"
             v-on="listeners"
           >
-            <slot v-bind="scopes">
-              <MRow v-if="!!getLabel">
-                <div>{{ getLabel }}</div>
-                <slot
-                  name="help"
-                  v-bind="scopes"
-                >
-                  <MHelpRow
-                    v-if="!topLabel"
-                    :text="help"
-                    :tooltip="!topLabel"
-                  />
-                </slot>
+            <template #default>
+              <MRow class="items-center">
+                <div v-if="!!getLabel">
+                  {{ getLabel }}
+                </div>
+                <MHelpRow
+                  v-if="!!help"
+                  :right="!!getLabel"
+                  :text="help"
+                  tooltip
+                />
               </MRow>
-            </slot>
+            </template>
           </q-checkbox>
         </q-field>
+        <slot v-bind="scopes" />
       </MCol>
       <slot
         name="after"

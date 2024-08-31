@@ -23,6 +23,7 @@ const props = withDefaults(defineProps<P>(), {
   tooltip: () => !1
 })
 const { inputProps } = useInputHelper(() => props, 'helpRow')
+defineOptions({ name: 'MHelpRow', inheritAttrs: !1 })
 </script>
 
 <template>
@@ -32,6 +33,7 @@ const { inputProps } = useInputHelper(() => props, 'helpRow')
     name="ion-ios-information-circle-outline"
     right
     size="19px"
+    v-bind="{...$myth.options.helpRowIcon,...$attrs}"
   >
     <q-tooltip
       anchor="center end"
@@ -50,7 +52,7 @@ const { inputProps } = useInputHelper(() => props, 'helpRow')
   <q-item
     v-else-if="!!text && !tooltip"
     dense
-    v-bind="$myth.options.helpRow"
+    v-bind="{...$myth.options.helpRowItem,...$attrs}"
   >
     <q-item-section
       side

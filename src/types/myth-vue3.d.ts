@@ -197,6 +197,8 @@ export interface MythOptionsConfig {
   block?: Partial<MBlockProps>;
   typingString?: Partial<Omit<MTypingStringProps, 'string'>>;
   helpRow?: Partial<Omit<MHelpRowProps, 'text'>>;
+  helpRowIcon?: Partial<QIconProps>;
+  helpRowItem?: Partial<QItemProps>;
 }
 
 export type MythApiAxiosType = Partial<AxiosInstance>

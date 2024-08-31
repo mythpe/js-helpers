@@ -135,6 +135,7 @@ defineOptions({ name: 'MToggle', inheritAttrs: !1 })
         class="no-margin"
       >
         <MHelpRow
+          v-if="!!help"
           :text="help"
           tooltip
         />
@@ -175,11 +176,11 @@ defineOptions({ name: 'MToggle', inheritAttrs: !1 })
               uncheckedIcon: inputProps.uncheckedIcon,
               color: !!errorMessage ? 'negative' : inputProps.color,
               indeterminateIcon: inputProps.indeterminateIcon,
-              keepColor: inputProps.keepColor,
+              keepColor: inputProps.keepColor
             }"
             v-on="listeners"
           >
-            <slot />
+            <slot v-bind="scopes" />
           </q-toggle>
         </q-field>
       </MCol>

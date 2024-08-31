@@ -193,8 +193,7 @@ export function useModel<T extends Partial<ItemModel<T>> = ItemModel> (Name: str
   const name = toValue(Name)
   const id = toValue(Id)
   const options = toValue<UseModelsOptionsArg>(Options)
-  const config = toValue(axiosRequestConfig)
-  const fetch = () => new Promise<AxiosResponse<T> | ApiFulfilledResponse>((resolve, reject) => {
+  const fetch = (config: AxiosRequestConfig = {}) => new Promise<AxiosResponse<T> | ApiFulfilledResponse>((resolve, reject) => {
     if ((fetching.value && fetched.value) || !id) {
       resolve({} as any)
       return
@@ -202,6 +201,7 @@ export function useModel<T extends Partial<ItemModel<T>> = ItemModel> (Name: str
     if (!fetching.value) {
       fetching.value = !0
     }
+    const _config = extend<AxiosRequestConfig>(!0, {}, config, toValue(axiosRequestConfig))
     let action: ((id: any, config?: ConfigType | undefined) => Promise<ApiInterface>)
     if (options?.method) {
       if (typeof options.method === 'function') {
@@ -212,10 +212,7 @@ export function useModel<T extends Partial<ItemModel<T>> = ItemModel> (Name: str
     } else {
       action = api.services[name][options?.isPanel ? 'show' : 'staticShow']
     }
-    // const service = api.services[name]
-    // const method = options.method ? toValue(options.method) : (!options.isPanel ? 'staticShow' : 'show')
-    // const action = service[method]
-    return action(id, config)
+    return action(id, _config)
       .then((r: any) => {
         const { _data } = r
         model.value = (_data as any)
