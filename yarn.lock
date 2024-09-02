@@ -1545,7 +1545,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ckeditor/ckeditor5-ui@npm:43.0.0, @ckeditor/ckeditor5-ui@npm:^43.0.0":
+"@ckeditor/ckeditor5-ui@npm:43.0.0":
   version: 43.0.0
   resolution: "@ckeditor/ckeditor5-ui@npm:43.0.0"
   dependencies:
@@ -1874,7 +1874,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mythpe/js-helpers@workspace:."
   dependencies:
-    "@ckeditor/ckeditor5-ui": "npm:^43.0.0"
     "@ckeditor/ckeditor5-vue": "npm:^7.0.0"
     "@googlemaps/js-api-loader": "npm:^1.16.6"
     "@intlify/vite-plugin-vue-i18n": "npm:^3.3.1"
