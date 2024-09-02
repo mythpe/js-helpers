@@ -24,6 +24,7 @@ type Item = ApiModel & object
 export function useModels<T extends Partial<Item> = Item> (Name: MaybeRefOrGetter<string>, opts: MaybeRefOrGetter<UseModelsOptionsArg> = {}, axiosRequestConfig: MaybeRefOrGetter<AxiosRequestConfig> = {}) {
   const name = toValue(Name)
   const options = toValue<UseModelsOptionsArg>(opts)
+  // console.log(name, options)
   const { search, filter } = options
   const meta = ref<ApiMetaInterface>({ ...defMeta })
   const requestConfig = computed<AxiosRequestConfig>(() => extend(!0, { itemsPerPage, page: meta.value.current_page }, toValue(axiosRequestConfig), {

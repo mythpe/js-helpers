@@ -259,8 +259,8 @@ export type InstallPluginOptions = {
   api: MythApiConfig;
   options: MythOptionsConfig;
 }
-type UseModelMethod = string | ((id: any, config?: ConfigType | undefined) => Promise<ApiInterface>);
-type UseModelsMethod = string | ((config?: ConfigType | undefined) => Promise<ApiInterface>);
+export type UseModelMethod = string | ((id: any, config?: ConfigType | undefined) => Promise<ApiInterface>);
+export type UseModelsMethod = string | ((config?: ConfigType | undefined) => Promise<ApiInterface>);
 export type UseModelsOptionsArg = {
   lazy?: boolean;
   search?: ComputedRef<string | null | undefined> | Ref<string | null | undefined>;
@@ -268,7 +268,7 @@ export type UseModelsOptionsArg = {
   isPanel?: boolean | MaybeRefOrGetter<boolean>;
   method?: UseModelMethod | UseModelsMethod;
   timeout?: number;
-  qInfiniteScroll?: Ref<QInfiniteScroll | null>;
+  qInfiniteScroll?: Ref<InstanceType<typeof QInfiniteScroll> | null>;
   onSuccess?: (data: ApiInterface) => void;
   onError?: (e: ApiErrorResponse) => void;
 }
