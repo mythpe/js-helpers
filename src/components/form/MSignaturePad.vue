@@ -10,7 +10,7 @@
 
 import { useField } from 'vee-validate'
 import { MSignaturePadProps as Props, SignaturePadWaterMark } from './models.d'
-import { computed, onUnmounted, reactive, ref, toValue, watch } from 'vue'
+import { computed, reactive, ref, toValue, watch } from 'vue'
 import { useInputHelper } from '../../composables'
 import { useMyth } from '../../vue3'
 import Vue3Signature from 'vue3-signature'
@@ -28,7 +28,7 @@ type P = {
   label?: Props['label'];
   center?: Props['center'];
   labelProps?: Props['labelProps'];
-  url?: Props['url'];
+  // url?: Props['url'];
   noBtn?: Props['noBtn'];
   waterMark?: Props['waterMark'];
 
@@ -63,7 +63,7 @@ const props = withDefaults(defineProps<P>(), {
   label: undefined,
   center: () => !1,
   labelProps: undefined,
-  url: undefined,
+  // url: undefined,
   noBtn: () => !1,
   waterMark: undefined,
   fieldOptions: undefined
@@ -78,6 +78,7 @@ const emit = defineEmits<Emits>()
 const myth = useMyth()
 
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
+const url = defineModel<Props['url']>('url', { required: !1, default: undefined })
 const helper = useInputHelper<P & { name: string; }>(() => props, 'signaturePad')
 const { getLabel, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
@@ -85,28 +86,35 @@ const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
   label: getLabel,
   ...toValue<any>(props.fieldOptions)
 })
-const { errorMessage, handleChange } = inputScope
+const { errorMessage, handleChange, handleBlur } = inputScope
 
-const padRef = ref<InstanceType<typeof Vue3Signature>>()
+const padRef = ref<InstanceType<typeof Vue3Signature> | null>(null)
 const confirmed = ref(!1)
 const disabledRef = ref(!1)
 const isDisabled = computed(() => props.disabled || disabledRef.value || confirmed.value)
 const reset = () => {
   confirmed.value = !1
+  url.value = undefined
   disabledRef.value = !1
 }
 const save = (type: 'image/jpeg' | 'image/svg+xml') => {
-  if (props.required && padRef.value?.isEmpty()) {
+  const isEmpty = !!padRef.value?.isEmpty()
+  if (isEmpty && props.required) {
     myth.alertError(myth.__('validation.messages.required', { field: myth.__(props.label || myth.__('signature')) }))
     return
   }
-  // handleReset()
   confirmed.value = !0
-  const v = padRef.value?.save(type)
-  handleChange(v || null, !0)
+  if (url.value) {
+    url.value = undefined
+    padRef.value?.clear()
+  }
+  const v = isEmpty ? null : padRef.value?.save(type)
+  handleBlur(undefined, !0)
+  handleChange(v, !0)
 }
 const clear = () => {
   padRef.value?.clear()
+  handleBlur(undefined, !0)
   confirmed.value && handleChange(null, !0)
   emit('clear')
   reset()
@@ -114,44 +122,24 @@ const clear = () => {
 const undo = () => {
   padRef.value?.undo()
   emit('undo')
+  handleBlur(undefined, !0)
   confirmed.value && handleChange(null, !1)
   reset()
 }
-// const addWaterMark = () => {
-//   padRef.value.addWaterMark({
-//     text: 'mark text', // watermark text, > default ''
-//     font: '20px Arial', // mark font, > default '20px sans-serif'
-//     style: 'all', // fillText and strokeText,  'all'/'stroke'/'fill', > default 'fill
-//     fillStyle: 'red', // fillcolor, > default '#333'
-//     strokeStyle: 'blue', // strokecolor, > default '#333'
-//     x: 100, // fill positionX, > default 20
-//     y: 200, // fill positionY, > default 20
-//     sx: 100, // stroke positionX, > default 40
-//     sy: 200 // stroke positionY, > default 40
-//   })
-// }
-
-// const fromDataURL = (url: any) => {
-//   padRef.value.fromDataURL('https://avatars2.githubusercontent.com/u/17644818?s=460&v=4')
-// }
-
 const isEmpty = () => !!padRef.value?.isEmpty()
 const addWaterMark = (opt: SignaturePadWaterMark) => padRef.value?.addWaterMark(opt)
 const fromDataURL = (url: string) => padRef.value?.fromDataURL(url)
 const scopes = reactive(inputScope)
 defineExpose({ reset, save, clear, undo, disabled: isDisabled, isEmpty, addWaterMark, fromDataURL, padRef, ...scopes })
 defineOptions({ name: 'MSignaturePad', inheritAttrs: !1 })
-const watchStopHandle = watch(() => props.url, (url) => {
+watch(url, (url) => {
   if (url) {
     fromDataURL(url)
     if (!confirmed.value) {
       confirmed.value = !0
     }
   }
-})
-onUnmounted(() => {
-  watchStopHandle?.()
-})
+}, { immediate: !0 })
 </script>
 
 <template>
@@ -165,6 +153,11 @@ onUnmounted(() => {
     :sm="sm"
     :xs="xs"
   >
+    <slot
+      :confirmed="confirmed"
+      name="top-input"
+      v-bind="scopes"
+    />
     <MTransition>
       <div
         key="top"
@@ -216,13 +209,13 @@ onUnmounted(() => {
         <div>
           <slot
             name="pad"
-            v-bind="{ width, height, reset, save, clear, undo }"
+            v-bind="{...scopes,width,height,reset,save,clear,undo,confirmed}"
           >
             <Vue3Signature
+              v-if="!url"
               ref="padRef"
               :class="{'q-mx-auto': !0, 'hidden': !!$slots.pad}"
               :clear-on-resize="clearOnResize"
-              :default-url="url"
               :disabled="isDisabled"
               :h="height"
               :sig-option="{
@@ -232,8 +225,18 @@ onUnmounted(() => {
               :w="width"
               :water-mark="waterMark"
             />
+            <template v-else-if="!!url">
+              <q-img
+                :height="height"
+                :src="url"
+                :width="width"
+              />
+            </template>
           </slot>
-          <slot v-bind="scopes" />
+          <slot
+            v-bind="scopes"
+            :confirmed="confirmed"
+          />
         </div>
       </div>
       <div
@@ -281,5 +284,10 @@ onUnmounted(() => {
         </MTransition>
       </div>
     </MTransition>
+    <slot
+      :confirmed="confirmed"
+      name="bottom-input"
+      v-bind="scopes"
+    />
   </MCol>
 </template>

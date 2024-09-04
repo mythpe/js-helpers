@@ -30,7 +30,7 @@ import {
   QUploaderProps,
   QUploaderSlots
 } from 'quasar'
-import { FieldContext, FieldOptions, FormContext, FormOptions } from 'vee-validate'
+import { FieldContext, FieldOptions, FormContext, FormOptions, FormState } from 'vee-validate'
 import { ComputedGetter, MaybeRefOrGetter, UnwrapNestedRefs, VNode } from 'vue'
 import { MColProps, ViewModeProps } from '../grid/models'
 import { EditorConfig } from 'ckeditor5'
@@ -436,7 +436,26 @@ export interface MFormProps {
    * Default is: false.
    */
   emitValues?: boolean;
+  /**
+   * Watch to reset form values.
+   */
+  readonly state?: Partial<FormState<Record<string, any>>>;
+  /**
+   * Watch to reset form values.
+   */
   readonly form?: Record<string, any> | undefined;
+  /**
+   * Watch to set form values.
+   */
+  readonly values?: Record<string, any> | undefined;
+  /**
+   * Watch to set form errors.
+   */
+  readonly errors?: Record<string, string | string[]> | undefined;
+  /**
+   * Apply padding to form.
+   */
+  readonly padding?: boolean;
 }
 
 export type MFormScope = FormContext<Record<string, any>>;
@@ -869,7 +888,7 @@ export type MSignaturePadProps = Omit<MColProps, 'name'> & Pick<BaseInputsProps,
    * Default value for signature url.
    * Default is: undefined.
    */
-  url?: string;
+  url?: string | undefined;
   /**
    * Hide control buttons.
    * Default is: false.
@@ -919,6 +938,7 @@ export type MSignaturePadMethods = {
   fromDataURL: (url: string) => void;
 }
 export type MSignaturePadSlots = {
+  'top-input': () => VNode[];
   default: () => VNode[];
   pad: (scope: {
     width: MSignaturePadProps['width'];
@@ -928,6 +948,7 @@ export type MSignaturePadSlots = {
     clear: MSignaturePadMethods['clear'];
     undo: MSignaturePadMethods['undo']
   }) => VNode[];
+  'bottom-input': () => VNode[];
 }
 
 export {}

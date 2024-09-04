@@ -17,7 +17,11 @@ interface P {
   opts?: Props['opts'];
   target?: Props['target'];
   emitValues?: Props['emitValues'];
+  readonly state?: Props['state'];
   readonly form?: Props['form'];
+  readonly values?: Props['values'];
+  readonly errors?: Props['errors'];
+  readonly padding?: Props['padding'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -25,11 +29,15 @@ const props = withDefaults(defineProps<P>(), {
   opts: undefined,
   target: undefined,
   emitValues: () => !1,
-  form: undefined
+  state: undefined,
+  form: undefined,
+  values: undefined,
+  errors: () => ({}),
+  padding: undefined
 })
 const formScope = useForm<Record<string, any>>(props.opts)
 const myth = useMyth()
-const { handleSubmit, resetForm } = formScope
+const { handleSubmit, resetForm, setErrors, setValues } = formScope
 type Emits = {
   (e: 'submit', values: Record<string, any>, ctx: SubmissionContext, scope: typeof formScope): void;
 }
@@ -47,11 +55,11 @@ const defaultSubmit = props.emitValues ? handleSubmit(onSuccessSubmission, onErr
 const scope = reactive(formScope)
 defineExpose({ ...scope, defaultSubmit })
 defineOptions({ name: 'MForm', inheritAttrs: !1 })
-watch(() => props.form, (v) => {
-  if (v) {
-    resetForm({ values: v, errors: {}, touched: {} })
-  }
-}, { deep: !0, immediate: !0, once: !0 })
+const options = { deep: !0, immediate: !0 }
+watch(() => props.state, v => v && resetForm(v), options)
+watch(() => props.form, v => v && resetForm({ values: v, errors: {}, touched: {} }), options)
+watch(() => props.values, v => v && setValues(v), options)
+watch(() => props.errors, e => e && setErrors(e), options)
 </script>
 
 <template>
@@ -60,13 +68,11 @@ watch(() => props.form, (v) => {
     v-bind="$attrs"
   >
     <form
-      class="m--form"
+      :class="{'m--form': !0, 'm--container': padding}"
       v-bind="formProps"
       @submit="defaultSubmit"
     >
-      <slot
-        v-bind="scope"
-      />
+      <slot v-bind="scope" />
     </form>
   </div>
 </template>
