@@ -937,7 +937,7 @@ const logoutDatatable = () => {
 const contextmenu = ref(!1)
 const onRowContextmenu = (e: MouseEvent | Event, row: MDtItem, index: number) => {
   e.preventDefault?.()
-  // e.stopImmediatePropagation?.()
+  selected.value = [row]
   dialogs.item = row
   dialogs.index = index
   if (isGrid.value) {
