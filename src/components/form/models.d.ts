@@ -361,6 +361,10 @@ export type MAxiosProps = Omit<MSelectProps, 'options' | 'axiosMode'> & {
    *  The name of the attribute to be used as a label
    */
   attributeName?: string;
+  /**
+   * Do fetch asynchronous
+   */
+  lazy?: boolean;
 }
 export type MAxiosSlots = MSelectSlots
 export type BaseCheckboxProps = Omit<BaseInputsProps, 'topLabel'> & {

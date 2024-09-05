@@ -24,6 +24,7 @@ type P = {
   guest?: Props['guest'];
   requestWith?: Props['requestWith'];
   params?: Props['params'];
+  lazy?: Props['lazy'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -35,7 +36,8 @@ const props = withDefaults(defineProps<P>(), {
   service: undefined,
   guest: () => !1,
   requestWith: undefined,
-  params: () => ({})
+  params: () => ({}),
+  lazy: undefined
 })
 const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
 const search = defineModel<string>('search', { required: !1, default: '' })
@@ -80,7 +82,13 @@ const prepare = async () => {
 const onSearch = () => {
   prepare()
 }
-onMounted(() => prepare())
+onMounted(() => {
+  if (props.lazy) {
+    console.log(props.lazy)
+  } else {
+    prepare()
+  }
+})
 
 const input = ref<InstanceType<typeof MSelect> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
