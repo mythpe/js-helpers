@@ -61,7 +61,8 @@ import {
   TodoList,
   Underline
 } from 'ckeditor5'
-// import { Ckeditor } from '@ckeditor/ckeditor5-vue'
+import { Ckeditor } from '@ckeditor/ckeditor5-vue'
+import 'ckeditor5/ckeditor5.css'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import arTranslations from 'ckeditor5/translations/ar.js'
@@ -301,7 +302,6 @@ const getConfig = computed<EditorConfig>(() => {
   }
   return inpConfig as EditorConfig
 })
-
 const listeners = {
   'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value)
 }

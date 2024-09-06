@@ -8,7 +8,7 @@
 
 import { AxiosInstance, AxiosRequestConfig } from 'axios'
 import lodash from 'lodash'
-import { scroll } from 'quasar'
+import { openURL, scroll } from 'quasar'
 import { ConfigType, DownloadFromResponse, DownloadFromResponseCode, HelpersStubSchema, ParamsType, UrlType } from '../types'
 import { nextTick } from 'vue'
 
@@ -146,11 +146,11 @@ export const Helpers = {
    * Open unique window popup of application
    *
    * @param url
-   * @param name
-   * @param args
+   * @param reject
+   * @param windowFeatures
    */
-  openWindow (url: string | undefined | null, name = 'AppWindow', ...args: any[]) {
-    return url ? window.open(url, name, ...args) : null
+  openWindow <F extends (...args: any[]) => any>(url: string, reject?: F, windowFeatures?: object) {
+    return openURL(url, reject, windowFeatures)
   },
   /**
    * Customized helper to download blob from axios response

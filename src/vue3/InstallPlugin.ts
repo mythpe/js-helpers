@@ -251,17 +251,18 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
           }
         }
 
-        if (opts.align && item.align) {
-          opts.align = item.align
-        }
+        // if (opts.align && item.align) {
+        //   opts.align = item.align
+        // }
 
         if (name === control && controlStyle && !item.style) {
           item.style = controlStyle + item.style ? ` ${item.style}` : ''
         }
         if (name === control) {
-          opts.sortable = !1
+          // console.log(control)
+          item.sortable = !1
           if (!item.align) {
-            opts.align = 'right'
+            item.align = 'right'
           }
           opts.classes = opts.classes || ''
           if (typeof opts.classes === 'function') {
@@ -276,6 +277,7 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
         } else if (item.sortable === undefined) {
           item.sortable = !0
         }
+        // console.log(item)
         result.push(item)
       })
       return lodash.uniqBy(result, (e: MDtColumn) => e.name)
@@ -723,7 +725,7 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
     reject?: F,
     windowFeatures?: object
   ) {
-    openURL(url, reject, windowFeatures)
+    return openURL(url, reject, windowFeatures)
   }
   app.config.globalProperties.__ = function (string: string | { text: string } | any, ...args: any): string {
     return useStrTranslate({ t: this.$t, te: this.$te }, string, ...args)
