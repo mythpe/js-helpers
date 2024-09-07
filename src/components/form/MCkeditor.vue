@@ -308,7 +308,7 @@ const listeners = {
 const input = ref<any>()
 const scopes = reactive(inputScope)
 defineExpose<typeof scopes & { input: typeof input }>({ input, ...scopes })
-defineOptions({ name: 'MCheckbox', inheritAttrs: !1 })
+defineOptions({ name: 'MCkeditor', inheritAttrs: !1 })
 </script>
 
 <template>
