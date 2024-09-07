@@ -7,6 +7,7 @@
  */
 
 import moment from 'moment'
+import { date as $date, DateUnitOptions } from 'quasar'
 
 export const Dates = {
   hijriYear () {
@@ -46,6 +47,22 @@ export const Dates = {
   },
   getYear () {
     return new Date().getFullYear()
+  },
+  ofDate (type: 'start' | 'end', option: DateUnitOptions | {
+    format: string,
+    unit: DateUnitOptions
+  }, date?: Date | number | string | 'last-month' | 'last-quarter', utc?: boolean): string {
+    const $now = new Date()
+    const now = (date === 'last-month' || date === 'last-quarter')
+      ? $date.subtractFromDate(new Date(), { month: date === 'last-month' ? 1 : 3 }) : (date ?? $now)
+    const format = typeof option === 'object' ? option.format : 'YYYY/MM/DD'
+    const unit = typeof option === 'object' ? option.unit : option
+    const l = {
+      start: $date.startOfDate,
+      end: $date.endOfDate
+    }
+    const f = l[type](now, unit, utc)
+    return $date.formatDate(f, format)
   }
 }
 
