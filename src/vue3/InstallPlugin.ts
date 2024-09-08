@@ -24,6 +24,7 @@ import lodash from 'lodash'
 import { copyToClipboard, Dialog, Notify, openURL, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { initComponents } from './Component'
 import { VueI18n } from 'vue-i18n'
+import 'ckeditor5/ckeditor5.css'
 
 export const useStrTranslate = (i18n: any, string: string | { text: string; } | any, ...args: any[]) => {
   const defaultValue = ''
