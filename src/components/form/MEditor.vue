@@ -237,7 +237,7 @@ defineOptions({ name: 'MEditor', inheritAttrs: !1 })
       :fonts="fonts || _fonts"
       :label="hasTopLabel ? undefined : getLabel"
       :min-height="minHeight"
-      :model-value="value"
+      :model-value="value || ''"
       :placeholder="getPlaceholder"
       :toolbar="toolbar || _toolbar"
       v-bind="{
