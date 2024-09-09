@@ -84,7 +84,7 @@ const onSearch = () => {
 }
 onMounted(() => {
   if (props.lazy) {
-    console.log(props.lazy)
+    // console.log(props.lazy)
   } else {
     prepare()
   }
