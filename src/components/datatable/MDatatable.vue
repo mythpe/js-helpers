@@ -1190,6 +1190,7 @@ const getProp = computed(() => (k: keyof Props) => {
         <template #item="iTempProps">
           <slot
             :dt="datatableItemsScope"
+            :form="formScope"
             name="item"
             v-bind="iTempProps"
           >
@@ -1311,6 +1312,7 @@ const getProp = computed(() => (k: keyof Props) => {
             <MContainer class="no-padding">
               <slot
                 :dt="datatableItemsScope"
+                :form="formScope"
                 :index="dialogItemIndex"
                 :item="dialogItem"
                 name="top"
@@ -1322,6 +1324,7 @@ const getProp = computed(() => (k: keyof Props) => {
               >
                 <slot
                   :dt="datatableItemsScope"
+                  :form="formScope"
                   :index="dialogItemIndex"
                   :item="dialogItem"
                   name="title"
@@ -1847,6 +1850,7 @@ const getProp = computed(() => (k: keyof Props) => {
       </q-table>
       <slot
         :dt="datatableItemsScope"
+        :form="formScope"
         name="default"
       />
     </q-pull-to-refresh>
@@ -1880,6 +1884,7 @@ const getProp = computed(() => (k: keyof Props) => {
           class="scroll"
         >
           <slot
+            :form="formScope"
             :index="dialogs.index"
             :item="dialogs.item"
             name="show"
@@ -1926,12 +1931,14 @@ const getProp = computed(() => (k: keyof Props) => {
               <q-toolbar :class="{'q-pa-none': $q.screen.lt.md}">
                 <slot
                   :dt="datatableItemsScope"
+                  :form="formScope"
                   :index="dialogItemIndex"
                   :item="dialogItem"
                   name="form-title-left"
                 />
                 <slot
                   :dt="datatableItemsScope"
+                  :form="formScope"
                   :index="dialogItemIndex"
                   :item="dialogItem"
                   name="form-title"
@@ -1957,6 +1964,7 @@ const getProp = computed(() => (k: keyof Props) => {
                 </slot>
                 <slot
                   :dt="datatableItemsScope"
+                  :form="formScope"
                   :index="dialogItemIndex"
                   :item="dialogItem"
                   name="form-title-right"
