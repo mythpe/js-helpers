@@ -141,7 +141,10 @@ defineOptions({ name: 'MRadio', inheritAttrs: !1 })
             >
               <template #default>
                 <MRow class="items-center">
-                  <div v-if="!!getLabel">
+                  <div
+                    v-if="!!getLabel"
+                    class="text-color"
+                  >
                     {{ getLabel }}
                   </div>
                   <MHelpRow
