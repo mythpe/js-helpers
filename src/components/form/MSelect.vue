@@ -98,6 +98,12 @@ const props = withDefaults(defineProps<P>(), {
   clearable: undefined
 })
 defineModel<Props['modelValue']>({ required: !1, default: undefined })
+
+type Emits = {
+  (e: 'model', value: {value: any; model: object | null}): void;
+}
+const emit = defineEmits<Emits>()
+
 const helper = useInputHelper<P & Props>(() => props, 'select', () => ({ choose: !0 }))
 const { hasTopLabel, getLabel, getPlaceholder, getAutocompleteAttribute, inputProps, getRules } = helper
 const inputScope = useField<Props['modelValue']>(() => props.name, getRules, {
@@ -140,7 +146,16 @@ const onDoneOptions = () => {
 }
 const listeners = {
   blur: (v: any) => handleBlur(v, !0),
-  'update:modelValue': (v: Props['modelValue']) => handleChange(v, !!errorMessage.value),
+  'update:modelValue': (v: Props['modelValue']) => {
+    handleChange(v, !!errorMessage.value)
+    if (!props.emitValue) {
+      emit('model', { value: v, model: v })
+    } else {
+      const k = typeof props.optionValue === 'function' ? props.optionValue(v) : props.optionValue
+      const model = props.options.find(e => e[k] === v)
+      emit('model', { value: v, model: model ?? null })
+    }
+  },
   inputValue: (v: string) => (search.value = v?.toString() || ''),
   filter: filterFn
 }

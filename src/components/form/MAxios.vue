@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 
-import { MAxiosProps as Props } from './models.d'
+import { MAxiosProps as Props, MSelectModelEmit } from './models.d'
 import { onMounted, ref, toValue } from 'vue'
 import { useMyth } from '../../vue3'
 import { QSelectSlots } from 'quasar'
@@ -40,6 +40,10 @@ const props = withDefaults(defineProps<P>(), {
   lazy: undefined
 })
 const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
+type Emits = {
+  (e: 'model', value: MSelectModelEmit): void;
+}
+const emit = defineEmits<Emits>()
 const search = defineModel<string>('search', { required: !1, default: '' })
 const myth = useMyth()
 const loading = defineModel<Props['loading']>('loading', { required: !1, default: !1 })
@@ -79,8 +83,9 @@ const prepare = async () => {
       loading.value = !1
     })
 }
-const onSearch = () => {
-  prepare()
+const listeners = {
+  'update:search': prepare,
+  model: (v: MSelectModelEmit) => emit('model', v)
 }
 onMounted(() => {
   if (props.lazy) {
@@ -110,7 +115,7 @@ defineOptions({ name: 'MAxios' })
     axios-mode
     no-filter
     v-bind="$attrs"
-    @update:search="onSearch()"
+    v-on="listeners"
   >
     <template
       v-for="(_,slot) in $slots as Readonly<QSelectSlots>"

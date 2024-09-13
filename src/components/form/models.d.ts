@@ -306,7 +306,7 @@ export type MDateSlots = MPickerSlots
 
 export type MTimeProps = Omit<MPickerProps, 'type'>
 export type MTimeSlots = MPickerSlots
-
+export type MSelectModelEmit = { value: any | null; model: object | null }
 export type MSelectProps = Omit<QSelectProps, 'rules' | 'name' | 'modelValue' | 'label' | 'hint' | 'autocomplete'> & BaseInputsProps & {
   /**
    * Input search functionality. useInput prop for this feature.
@@ -365,6 +365,11 @@ export type MAxiosProps = Omit<MSelectProps, 'options' | 'axiosMode'> & {
    * Do fetch asynchronous
    */
   lazy?: boolean;
+  /**
+   * emit model as Object value.
+   * @param value
+   */
+  'on:model': (value: MSelectModelEmit) => void;
 }
 export type MAxiosSlots = MSelectSlots
 export type BaseCheckboxProps = Omit<BaseInputsProps, 'topLabel'> & {
