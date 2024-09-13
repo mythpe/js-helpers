@@ -369,7 +369,7 @@ export type MAxiosProps = Omit<MSelectProps, 'options' | 'axiosMode'> & {
    * emit model as Object value.
    * @param value
    */
-  'on:model': (value: MSelectModelEmit) => void;
+  // 'on:model': (value: MSelectModelEmit) => void;
 }
 export type MAxiosSlots = MSelectSlots
 export type BaseCheckboxProps = Omit<BaseInputsProps, 'topLabel'> & {
