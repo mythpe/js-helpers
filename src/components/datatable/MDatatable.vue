@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { computed, defineEmits, nextTick, onMounted, reactive, ref, toRef, toValue, useSlots, watch } from 'vue'
-import { is as quasarHelpers, QCardSection, QTable, QTableSlots, useQuasar } from 'quasar'
+import { is as quasarHelpers, QCardSection, QTable, useQuasar } from 'quasar'
 import lodash from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
 import {
@@ -1108,6 +1108,12 @@ const getProp = computed(() => (k: keyof Props) => {
   }
   return props[k]
 })
+const componentSlots = useSlots()
+const skipSlots = ['default', 'top', 'title']
+const getSlots = computed(() => {
+  const keys = Object.keys(componentSlots || {})
+  return keys.filter(e => !skipSlots.includes(e))
+})
 defineOptions({
   name: 'MDatatable',
   inheritAttrs: !1
@@ -1191,6 +1197,21 @@ defineOptions({
         @virtual-scroll="endReach ? onScroll : undefined"
         @row-contextmenu="onRowContextmenu"
       >
+        <template
+          v-for="slotName in getSlots"
+          :key="slotName"
+          #[slotName]="inputSlot"
+        >
+          <slot
+            :dt="datatableItemsScope"
+            :form="formScope"
+            :index="dialogItemIndex"
+            :item="dialogItem"
+            :name="slotName"
+            v-bind="inputSlot || {}"
+          />
+        </template>
+
         <template #item="iTempProps">
           <slot
             :dt="datatableItemsScope"
@@ -1322,10 +1343,7 @@ defineOptions({
                 name="top"
                 v-bind="topSlotProps"
               />
-              <MRow
-                class="items-center"
-                col
-              >
+              <MRow col>
                 <slot
                   :dt="datatableItemsScope"
                   :form="formScope"
@@ -1343,6 +1361,13 @@ defineOptions({
                     />
                   </MCol>
                 </slot>
+                <slot
+                  :dt="datatableItemsScope"
+                  :form="formScope"
+                  :index="dialogItemIndex"
+                  :item="dialogItem"
+                  name="top-search"
+                />
                 <MInput
                   v-if="!hideSearch && !dialogs.form"
                   v-model="tableOptions.search"
@@ -1432,6 +1457,13 @@ defineOptions({
                     </q-btn>
                   </template>
                 </MInput>
+                <slot
+                  :dt="datatableItemsScope"
+                  :form="formScope"
+                  :index="dialogItemIndex"
+                  :item="dialogItem"
+                  name="bottom-search"
+                />
               </MRow>
 
               <!--Buttons-->
@@ -1579,7 +1611,11 @@ defineOptions({
                           <MCol col="12">
                             <MContainer class="q-pa-md">
                               <slot
+                                :dt="datatableItemsScope"
                                 :filter="tableOptions.tempFilter"
+                                :form="formScope"
+                                :index="dialogItemIndex"
+                                :item="dialogItem"
                                 name="filter"
                               />
                             </MContainer>
@@ -1767,6 +1803,9 @@ defineOptions({
               >
                 <slot
                   :dt="datatableItemsScope"
+                  :form="formScope"
+                  :index="dialogItemIndex"
+                  :item="dialogItem"
                   name="selection"
                 />
               </MRow>
@@ -1788,6 +1827,9 @@ defineOptions({
         >
           <slot
             :dt="datatableItemsScope"
+            :form="formScope"
+            :index="dialogItemIndex"
+            :item="dialogItem"
             :name="`body-cell-${controlKey}`"
             v-bind="noBodyProps"
           >
@@ -1838,23 +1880,12 @@ defineOptions({
             </template>
           </q-td>
         </template>
-
-        <template
-          v-for="(slotVal,slotName) in $slots as Readonly<QTableSlots>"
-          :key="slotName"
-          #[slotName]="inputSlot"
-        >
-          <slot
-            v-if="inputSlot && !['default','top'].includes(slotName)"
-            :dt="datatableItemsScope"
-            :name="slotName"
-            v-bind="inputSlot || {}"
-          />
-        </template>
       </q-table>
       <slot
         :dt="datatableItemsScope"
         :form="formScope"
+        :index="dialogItemIndex"
+        :item="dialogItem"
         name="default"
       />
     </q-pull-to-refresh>
@@ -1888,9 +1919,10 @@ defineOptions({
           class="scroll"
         >
           <slot
+            :dt="datatableItemsScope"
             :form="formScope"
-            :index="dialogs.index"
-            :item="dialogs.item"
+            :index="dialogItemIndex"
+            :item="dialogItem"
             name="show"
           />
         </q-card-section>
@@ -2001,11 +2033,11 @@ defineOptions({
               </MContainer>
               <slot
                 v-else
+                :dt="datatableItemsScope"
                 :form="formScope"
-                :index="dialogs.index"
-                :item="dialogs.item"
+                :index="dialogItemIndex"
+                :item="dialogItem"
                 name="form"
-                v-bind="datatableItemsScope"
               />
             </q-card-section>
             <q-separator />
@@ -2014,11 +2046,11 @@ defineOptions({
               class="m--datatable-form-actions print-hide"
             >
               <slot
+                :dt="datatableItemsScope"
                 :form="formScope"
-                :index="dialogs.index"
-                :item="dialogs.item"
+                :index="dialogItemIndex"
+                :item="dialogItem"
                 name="form-actions"
-                v-bind="datatableItemsScope"
               >
                 <MBtn
                   :class="{'full-width': $q.screen.lt.sm}"

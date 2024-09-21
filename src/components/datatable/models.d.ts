@@ -166,21 +166,31 @@ export type GenericMDtBtn<T extends E = E> = Record<string, any> & {
   attr?: Partial<MDtBtnProps> & Partial<{ icon?: string; textColor?: string; color?: string; }>;
 }
 
-// type TopSlots = { dt: MDatatableScope; item: MDtItem, index: MDtItemIndex | undefined }
-type MFormParameter = Parameters<MFormSlots['default']>[0]
+type MDatatableFormScope = Parameters<MFormSlots['default']>[0]
 
-export interface MDatatableSlots extends Omit<QTableSlots, `body-cell-${string}`> {
+type MDatatableMainScope = {
+  dt: MDatatableScope,
+  item: MDtItem,
+  index: MDtItemIndex,
+  form: MDatatableFormScope,
+}
+
+export interface MDatatableSlots extends Omit<QTableSlots, `body-cell-${string}` | 'top'> {
   tools: ((scope: { dt: MDatatableScope, }) => VNode[]);
 
   selection: ((scope: { dt: MDatatableScope, }) => VNode[]);
 
-  filter: ((scope: { filter: MDatatableFilterForm, }) => VNode[]);
+  filter: ((scope: { filter: MDatatableFilterForm } & MDatatableMainScope) => VNode[]);
 
-  show: ((scope: { item: MDtItem, index: MDtItemIndex, }) => VNode[]);
+  show: ((scope: MDatatableMainScope) => VNode[]);
 
-  form: ((scope: MDatatableScope & { item: MDtItem, index: MDtItemIndex, form: MFormParameter, }) => VNode[]);
+  form: ((scope: MDatatableMainScope) => VNode[]);
 
-  'form-actions': ((scope: MDatatableScope & { item: MDtItem, index: MDtItemIndex, form: MFormParameter, }) => VNode[]);
+  'form-actions': ((scope: MDatatableMainScope) => VNode[]);
+
+  title: ((scope: MDatatableMainScope) => VNode[]);
+  'top-search': ((scope: MDatatableMainScope) => VNode[]);
+  'bottom-search': ((scope: MDatatableMainScope) => VNode[]);
 
   [K: `body-cell-${string}`]: ((scope: Parameters<QTableSlots['body-cell']>[0] & { dt: MDatatableScope }) => VNode[]);
 }
