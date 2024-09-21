@@ -1108,6 +1108,10 @@ const getProp = computed(() => (k: keyof Props) => {
   }
   return props[k]
 })
+defineOptions({
+  name: 'MDatatable',
+  inheritAttrs: !1
+})
 </script>
 
 <template>
@@ -1841,7 +1845,7 @@ const getProp = computed(() => (k: keyof Props) => {
           #[slotName]="inputSlot"
         >
           <slot
-            v-if="inputSlot && (slotName as any) !== 'default'"
+            v-if="inputSlot && !['default','top'].includes(slotName)"
             :dt="datatableItemsScope"
             :name="slotName"
             v-bind="inputSlot || {}"
@@ -2115,14 +2119,6 @@ const getProp = computed(() => (k: keyof Props) => {
     </q-page-sticky>
   </div>
 </template>
-
-<script lang="ts">
-
-export default {
-  name: 'MDatatable',
-  inheritAttrs: !1
-}
-</script>
 
 <style lang="sass">
 .touch
