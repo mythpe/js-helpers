@@ -285,7 +285,8 @@ const tableOptions = reactive<MDatatableOptions>({
   tempFilter: tempFilterForm,
   selected,
   hasAction,
-  fullscreen
+  fullscreen,
+  getHeaders
 })
 /** Table */
 
@@ -2181,8 +2182,6 @@ defineOptions({
     margin-bottom: 12rem
 
   &__fixed
-    // margin-bottom: 10rem
-
     .m--datatable:not(.m--datatable-grid)
       max-height: 80vh
 

@@ -94,6 +94,8 @@ export type MDatatableOptions = {
   selected: Ref<MDtItem[]>;
   // Fullscreen of datatable
   fullscreen: Ref<boolean>;
+  // Datatable headers
+  getHeaders: ComputedRef<string[] | Partial<QTableProps['columns']> | any[]>;
 }
 type MDDIP<T extends Generic = Generic | any> = Partial<MDtItem> & Record<string, any> | T;
 export type MDatatableDialogsOptions<T extends MDDIP = MDDIP> = {
@@ -206,7 +208,7 @@ export type MDatatableProps<I extends GenericFormValues = GenericFormValues> = O
   defaultItem?: Partial<MDtItem<I>>
   contextItems?: GenericMDtBtn[];
   hideAutoMessage?: boolean;
-  headers: string[] | Partial<QTableProps['columns']>[] | any[];
+  headers: string[] | Partial<QTableProps['columns']> | any[];
   serviceName?: MDtServiceNameStringProp | MDtServiceNameCallbackProp;
   requestParams?: MDtRequestParamsObjectProp | MDtRequestParamsCallbackProp;
   pdf?: boolean;
