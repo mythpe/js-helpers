@@ -131,7 +131,7 @@ export type BaseInputFormProps = {
   /**
    * vee-validate Field Options.
    */
-  readonly fieldOptions?: FieldOptions | MaybeRefOrGetter<FieldOptions>;
+  readonly fieldOptions?: Partial<FieldOptions> | MaybeRefOrGetter<Partial<FieldOptions>>;
 }
 export type BaseInputsProps = ViewModeProps & InputHelpProps & Omit<MColProps, 'name'> & BaseInputFormProps;
 
