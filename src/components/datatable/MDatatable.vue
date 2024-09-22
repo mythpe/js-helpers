@@ -286,7 +286,8 @@ const tableOptions = reactive<MDatatableOptions>({
   selected,
   hasAction,
   fullscreen,
-  getHeaders
+  getHeaders,
+  visibleHeaders
 })
 /** Table */
 

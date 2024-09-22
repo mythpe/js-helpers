@@ -94,8 +94,10 @@ export type MDatatableOptions = {
   selected: Ref<MDtItem[]>;
   // Fullscreen of datatable
   fullscreen: Ref<boolean>;
-  // Datatable headers
+  // Datatable headers.
   getHeaders: ComputedRef<string[] | Partial<QTableProps['columns']> | any[]>;
+  // Datatable visible headers.
+  visibleHeaders: Ref<any[]>;
 }
 type MDDIP<T extends Generic = Generic | any> = Partial<MDtItem> & Record<string, any> | T;
 export type MDatatableDialogsOptions<T extends MDDIP = MDDIP> = {
