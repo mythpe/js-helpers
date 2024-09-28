@@ -558,6 +558,14 @@ export type MAvatarViewerProps = QAvatarProps & MColProps & {
    * Help text after label.
    */
   help?: string;
+  /**
+   * Set input to readonly.
+   */
+  readonly?: boolean;
+  /**
+   * Loading for skeleton.
+   */
+  loading?: boolean;
 }
 
 export interface MAvatarViewerSlots extends QAvatarSlots {

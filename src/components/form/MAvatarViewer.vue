@@ -41,6 +41,8 @@ interface P {
   hintProps?: Props['hintProps'];
   formErrors?: Props['formErrors'];
   help?: Props['help'];
+  readonly?: Props['readonly'];
+  loading?: Props['loading'];
 }
 
 const props = withDefaults(defineProps<P>(), {
@@ -69,7 +71,9 @@ const props = withDefaults(defineProps<P>(), {
   caption: undefined,
   captionProps: undefined,
   formErrors: () => ({}),
-  help: undefined
+  help: undefined,
+  readonly: () => !1,
+  loading: () => !1
 })
 type Emits = {
   (e: 'click', evt?: Event): void;
@@ -126,6 +130,9 @@ const isFile = computed(() => {
 })
 const getAvatarText = computed(() => props.avatarText ? props.avatarText.slice(0, 1).toUpperCase() : undefined)
 const onClick = (e?: Event) => {
+  if (props.readonly) {
+    return
+  }
   handleReset()
   if (props.clearable && hasSrc.value) {
     onClearInput()
@@ -145,6 +152,9 @@ onBeforeUnmount(() => {
   handleRemoved(undefined, !1)
 })
 watch(modelValue, (v) => {
+  if (props.readonly) {
+    return
+  }
   if (v instanceof File) {
     nextTick(() => toUrl(v))
   }
@@ -171,7 +181,16 @@ defineOptions({ name: 'MAvatarViewer', inheritAttrs: !1 })
           key="label"
           class="row items-center"
         >
-          <div :class="`text-h6 q-px-sm rounded-borders q-mb-sm ${!!errorMessage ? 'text-negative' : ''}`">
+          <q-skeleton
+            v-if="loading"
+            class="q-mb-md"
+            height="22px"
+            width="80px"
+          />
+          <div
+            v-else
+            :class="`text-h6 q-px-sm rounded-borders q-mb-sm ${!!errorMessage ? 'text-negative' : ''}`"
+          >
             {{ __(label) }}
             <span
               v-if="!clearable"
@@ -179,14 +198,14 @@ defineOptions({ name: 'MAvatarViewer', inheritAttrs: !1 })
             >*</span>
           </div>
           <MHelpRow
-            v-if="!!help"
+            v-if="!!help && !loading"
             :text="help"
             tooltip
           />
         </div>
         <slot name="hint">
           <div
-            v-if="!!hint"
+            v-if="!!hint && !loading"
             key="hint"
             class="m--input__hint"
             v-bind="hintProps"
@@ -198,7 +217,13 @@ defineOptions({ name: 'MAvatarViewer', inheritAttrs: !1 })
           key="avatar"
           :class="`rounded-borders q-mb-sm ${!!errorMessage ? 'q-pa-xs bg-negative' : ''}`"
         >
+          <q-skeleton
+            v-if="loading"
+            :size="size"
+            type="QAvatar"
+          />
           <q-avatar
+            v-else
             :color="!!errorMessage ? 'negative' : ((!isLoaded || !hasSrc || isFile) ? 'primary' : undefined)"
             :icon="isFile ? 'o_description' : undefined"
             :rounded="rounded === undefined ? hasSrc : rounded"
@@ -228,10 +253,16 @@ defineOptions({ name: 'MAvatarViewer', inheritAttrs: !1 })
           </q-avatar>
         </div>
         <div
+          v-if="!readonly"
           key="btn"
           class="q-mb-sm"
         >
+          <q-skeleton
+            v-if="loading"
+            type="QBtn"
+          />
           <MBtn
+            v-else
             :color="!hasSrc ? 'positive' : 'secondary'"
             :disable="!isLoaded && !!url"
             :label="__( clearable && hasSrc ? 'remove' : ( !clearable && hasSrc ? 'change' : 'choose') )"
@@ -263,7 +294,7 @@ defineOptions({ name: 'MAvatarViewer', inheritAttrs: !1 })
       v-model="modelValue"
       :accept="accepts.join(',')"
       :clearable="clearable"
-      :name="name"
+      :name="name || ''"
       class="hidden"
     />
   </MCol>
