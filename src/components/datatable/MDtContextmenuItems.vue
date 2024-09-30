@@ -27,7 +27,7 @@ withDefaults(defineProps<Props>(), {
   index: undefined,
   displayMode: () => 'icon'
 })
-
+defineOptions({ name: 'MDtContextmenuItems', inheritAttrs: !1 })
 </script>
 
 <template>
@@ -42,16 +42,9 @@ withDefaults(defineProps<Props>(), {
         :label="contextmenuItem.label !== undefined ? __(contextmenuItem.label || contextmenuItem.name) : undefined"
         :list-item="displayMode === 'item'"
         :tooltip="contextmenuItem.tooltip !== undefined ? contextmenuItem.tooltip : (contextmenuItem.label === undefined ? contextmenuItem.name : undefined)"
-        v-bind="{...contextmenuItem.attr,...$attrs}"
+        v-bind="{...$attrs,...contextmenuItem.attr}"
         @click="contextmenuItem.click ? contextmenuItem.click(item,index) : undefined"
       />
     </template>
   </template>
 </template>
-
-<script lang="ts">
-export default {
-  name: 'MDtContextmenuItems',
-  inheritAttrs: !1
-}
-</script>

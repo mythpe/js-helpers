@@ -100,6 +100,9 @@ const getColor = computed<string | undefined>(() => {
 //   }
 //   return props.label
 // })
+
+defineOptions({ name: 'MDtBtn', inheritAttrs: !1 })
+console.log(props.round)
 </script>
 
 <template>
