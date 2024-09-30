@@ -102,7 +102,6 @@ const getColor = computed<string | undefined>(() => {
 // })
 
 defineOptions({ name: 'MDtBtn', inheritAttrs: !1 })
-console.log(props.round)
 </script>
 
 <template>
