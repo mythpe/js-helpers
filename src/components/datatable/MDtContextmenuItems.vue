@@ -42,7 +42,7 @@ defineOptions({ name: 'MDtContextmenuItems', inheritAttrs: !1 })
         :label="contextmenuItem.label !== undefined ? __(contextmenuItem.label || contextmenuItem.name) : undefined"
         :list-item="displayMode === 'item'"
         :tooltip="contextmenuItem.tooltip !== undefined ? contextmenuItem.tooltip : (contextmenuItem.label === undefined ? contextmenuItem.name : undefined)"
-        v-bind="{...$attrs,...contextmenuItem.attr}"
+        v-bind="contextmenuItem.attr"
         @click="contextmenuItem.click ? contextmenuItem.click(item,index) : undefined"
       />
     </template>

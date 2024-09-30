@@ -137,13 +137,16 @@ defineOptions({ name: 'MDtBtn', inheritAttrs: !1 })
   </q-item>
   <q-btn
     v-else
-    :color="getColor"
-    :dense="dense !== undefined ? dense : label === undefined"
-    :fab-mini="fabMini !== undefined ? fabMini : label === undefined"
-    :icon="getIcon"
-    :label="label !== undefined ? __(label) : label"
-    :round="round !== undefined ? round : label === undefined"
-    v-bind="{...$myth.options.dt?.btn,...$attrs}"
+    v-bind="{
+      ...$myth.options.dt?.btn,
+      ...$attrs,
+      fabMini: fabMini !== undefined ? fabMini : ( $myth.options.dt?.btn?.fabMini !== undefined ? $myth.options.dt.btn.fabMini : label === undefined),
+      round: round !== undefined ? round : ( $myth.options.dt?.btn?.round !== undefined ? $myth.options.dt.btn.round : label === undefined),
+      dense: dense !== undefined ? dense : ( $myth.options.dt?.btn?.dense !== undefined ? $myth.options.dt.btn.dense : label === undefined),
+      label: label !== undefined ? __(label) : label,
+      icon: getIcon,
+      color: getColor
+    }"
     @click="$emit('click',$event)"
   >
     <q-tooltip
