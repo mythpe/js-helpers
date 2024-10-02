@@ -1228,7 +1228,7 @@ defineOptions({
               <q-card
                 :class="iTempProps.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''"
               >
-                <template v-if="getShowSelection || iTempProps.colsMap[controlKey] !== undefined">
+                <template v-if="getShowSelection || iTempProps.colsMap[controlKey ?? 'control'] !== undefined">
                   <div class="m--datatable-card-control-header">
                     <MRow class="items-center justify-between">
                       <div class="q-px-md">
@@ -1298,22 +1298,18 @@ defineOptions({
                               </q-tooltip>
                             </q-img>
                           </template>
-                          <!--<q-btn-->
-                          <!--  :src="col.value"-->
-                          <!--  fab-mini-->
-                          <!--  flat-->
-                          <!--  icon="ion-ios-eye"-->
-                          <!--  @click="openImageDialog(col.value)"-->
-                          <!--/>-->
                         </template>
                         <template v-else-if="col.name === controlKey">
-                          <div class="row q-gutter-xs">
+                          <MRow
+                            gutter
+                            space="xs"
+                          >
                             <MDtContextmenuItems
                               :index="iTempProps.rowIndex"
                               :item="iTempProps.row"
                               :items="contextmenuItems"
                             />
-                          </div>
+                          </MRow>
                         </template>
                         <template v-else>
                           <div class="m--datatable-card-value">
@@ -1836,11 +1832,16 @@ defineOptions({
             v-bind="noBodyProps"
           >
             <q-td :props="noBodyProps">
-              <MDtContextmenuItems
-                :index="noBodyProps.rowIndex"
-                :item="noBodyProps.row"
-                :items="contextmenuItems"
-              />
+              <MRow
+                gutter
+                space="xs"
+              >
+                <MDtContextmenuItems
+                  :index="noBodyProps.rowIndex"
+                  :item="noBodyProps.row"
+                  :items="contextmenuItems"
+                />
+              </MRow>
             </q-td>
           </slot>
         </template>
@@ -2183,15 +2184,15 @@ defineOptions({
     margin-bottom: 12rem
 
   &__fixed
-    .m--datatable:not(.m--datatable-grid)
-      max-height: 80vh
-
     thead tr th
       position: sticky
       z-index: 1
 
     thead tr:first-child th
       top: 0
+
+    .m--datatable:not(.m--datatable-grid)
+      max-height: 80vh
 
     .m--datatable:not(.m--datatable-grid).q-table--dense
       &.q-table--loading thead tr:last-child th

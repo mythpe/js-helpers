@@ -21,7 +21,7 @@ import { RouteLocationNormalizedLoaded } from 'vue-router'
 import { INJECT_KEY, INJECT_KEY_MYTH } from './Const'
 import { Dates, Helpers, Str } from '../utils'
 import lodash from 'lodash'
-import { copyToClipboard, Dialog, Notify, openURL, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
+import { copyToClipboard, Dialog, extend, Notify, openURL, QDialogOptions, QNotifyCreateOptions, Screen } from 'quasar'
 import { initComponents } from './Component'
 import { VueI18n } from 'vue-i18n'
 import 'ckeditor5/ckeditor5.css'
@@ -188,11 +188,11 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
     parseHeaders (headers: MDtHeadersParameter, options: ParseHeaderOptions = {}): MDtColumn[] {
       const defaultOptions: Partial<ParseHeaderOptions> = {
         controlKey: 'control',
-        controlStyle: 'max-width: 150px',
+        // controlStyle: 'max-width: 150px',
         align: 'center'
         // sortable: !0
       }
-      const opts = { ...defaultOptions, ...options }
+      const opts = extend<ParseHeaderOptions>(!0, defaultOptions, options)
       let control: string | undefined = defaultOptions.controlKey
       let controlStyle: string | undefined = defaultOptions.controlStyle
       if (opts.controlKey) {
@@ -252,15 +252,12 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
           }
         }
 
-        // if (opts.align && item.align) {
-        //   opts.align = item.align
-        // }
-
-        if (name === control && controlStyle && !item.style) {
-          item.style = controlStyle + item.style ? ` ${item.style}` : ''
-        }
         if (name === control) {
-          // console.log(control)
+          if (controlStyle && !item.style) {
+            item.style = controlStyle + (item.style ? ` ${item.style}` : '')
+          }
+          item.headerClasses = (item.headerClasses ? item.headerClasses : '') + ' m--control-header'
+          item.headerClasses = item.headerClasses.trim()
           item.sortable = !1
           if (!item.align) {
             item.align = 'right'
@@ -269,16 +266,18 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
           if (typeof opts.classes === 'function') {
             opts.classes = opts.classes()
           }
-          opts.classes += (opts.classes ? ' ' : '') + 'm--control-cell'
+          opts.classes += ' m--control-cell'
+          opts.classes = opts.classes.trim()
         }
 
         item = { ...opts, ...item }
-        if (item.sortable === undefined && (options?.noSort ?? []).length > 0 && options?.noSort?.includes(item.name)) {
+
+        if (item.sortable === undefined && (options.noSort ?? []).length > 0 && options.noSort?.includes(item.name)) {
           item.sortable = !1
         } else if (item.sortable === undefined) {
           item.sortable = !0
         }
-        // console.log(item)
+        console.log(item)
         result.push(item)
       })
       return lodash.uniqBy(result, (e: MDtColumn) => e.name)
