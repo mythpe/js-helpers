@@ -11,7 +11,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 
 import MFile from './MFile.vue'
 import { MAvatarViewerProps as Props } from './models'
-import { useField } from 'vee-validate'
+import { useField, useFieldError } from 'vee-validate'
 import { useInputHelper } from '../../composables'
 
 interface P {
@@ -84,8 +84,8 @@ const { accepts } = useInputHelper<any>(() => props, 'avatarViewer')
 const modelValueScope = useField<Props['modelValue']>(() => props.name, undefined, {
   syncVModel: !0
 })
-const { value: modelValue, errorMessage, handleReset } = modelValueScope
-
+const { value: modelValue, handleReset } = modelValueScope
+const errorMessage = useFieldError(() => props.name)
 const removedScope = useField<Props['removed']>(() => `${props.name}_removed`, undefined, {
   syncVModel: 'removed'
 })

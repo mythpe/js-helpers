@@ -277,7 +277,6 @@ export default async function installPlugin (app: App, pluginOptions: InstallPlu
         } else if (item.sortable === undefined) {
           item.sortable = !0
         }
-        console.log(item)
         result.push(item)
       })
       return lodash.uniqBy(result, (e: MDtColumn) => e.name)
