@@ -228,8 +228,8 @@ export const Helpers = {
     await nextTick()
     const { target: t } = opt || {}
     const targetSelector = typeof t === 'string' ? document.querySelector(t) as HTMLElement : t
-    const target = getScrollTarget(targetSelector || window.document.documentElement)
-    // console.log(target)
+    const target = getScrollTarget(scrollTo, targetSelector || window.document.documentElement)
+    // console.log(targetSelector, target)
     // let offset = 0
     // try {
     //   let parent = scrollTo
