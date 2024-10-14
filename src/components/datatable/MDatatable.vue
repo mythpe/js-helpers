@@ -1303,6 +1303,7 @@ defineOptions({
                           <MRow
                             gutter
                             space="xs"
+                            class="m--dt-context_menu_items"
                           >
                             <MDtContextmenuItems
                               :index="iTempProps.rowIndex"

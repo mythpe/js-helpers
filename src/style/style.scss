@@ -281,3 +281,15 @@ $bordered-style: $bordered-size solid $primary !default;
 .ck[dir="rtl"] .ck-block-toolbar-button {
   transform: translateX(10px) !important
 }
+
+.m--control-cell.text-right {
+  .m--dt-context_menu_items {
+    justify-content: flex-end;
+  }
+}
+
+.m--control-cell.text-left {
+  .m--dt-context_menu_items {
+    justify-content: flex-start;
+  }
+}
