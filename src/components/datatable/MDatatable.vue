@@ -1301,9 +1301,9 @@ defineOptions({
                         </template>
                         <template v-else-if="col.name === controlKey">
                           <MRow
+                            class="m--dt-context_menu_items"
                             gutter
                             space="xs"
-                            class="m--dt-context_menu_items"
                           >
                             <MDtContextmenuItems
                               :index="iTempProps.rowIndex"
@@ -1834,6 +1834,7 @@ defineOptions({
           >
             <q-td :props="noBodyProps">
               <MRow
+                class="m--dt-context_menu_items"
                 gutter
                 space="xs"
               >
