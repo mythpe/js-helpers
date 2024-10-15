@@ -151,7 +151,7 @@ defineOptions({ name: 'UploaderItem' })
 
 <template>
   <q-item
-    :class="displayMode === 'card' ? `rounded-borders ${shadow || ''}` : undefined"
+    :class="displayMode === 'card' ? `rounded-borders ${shadow || 'shadow-1'}` : undefined"
     :dense="displayMode === 'card'"
     :style="displayMode === 'card' ? 'max-width: 300px; min-width: 200px;' : undefined"
   >
@@ -215,6 +215,7 @@ defineOptions({ name: 'UploaderItem' })
               hide-bottom-space
             />
           </q-popup-edit>
+          <q-tooltip>{{ __('labels.update') }}</q-tooltip>
         </q-icon>
       </q-item-label>
       <q-item-label v-else-if="!!mediaProp.label">
@@ -260,7 +261,7 @@ defineOptions({ name: 'UploaderItem' })
       </q-item-label>
       <q-item-label
         v-if="(mediaProp.id && mediaProp.url) || (!hideDeleteMedia || (hideDeleteMedia && !mediaProp.id))"
-        class="print-hide"
+        class="print-hide justify-between"
       >
         <q-btn
           v-if="mediaProp.id && mediaProp.url"
@@ -276,33 +277,11 @@ defineOptions({ name: 'UploaderItem' })
           </q-tooltip>
         </q-btn>
         <q-btn
-          v-if="(!hideDeleteMedia || (hideDeleteMedia && !mediaProp.id)) && displayMode === 'list'"
+          v-if="(!hideDeleteMedia || (hideDeleteMedia && !mediaProp.id))"
           :disable="deleting || scope.isBusy || scope.isUploading"
           :icon="deleteMediaIcon"
           dense
           flat
-          v-bind="$myth.options.uploaderOptions?.removeBtnProps"
-          @click="onClickDeleteAttachment()"
-        >
-          <q-tooltip class="m--dt-btn-tooltip">
-            {{ __(mediaProp.id ? 'myth.uploader.deleteMedia' : 'myth.uploader.removeMedia') }}
-          </q-tooltip>
-        </q-btn>
-      </q-item-label>
-    </q-item-section>
-    <q-item-section
-      v-if="(!hideDeleteMedia || (hideDeleteMedia && !mediaProp.id)) && displayMode === 'card'"
-      class="no-padding"
-      side
-      top
-    >
-      <q-item-label>
-        <q-btn
-          :disable="deleting || scope.isBusy || scope.isUploading"
-          :icon="deleteMediaIcon"
-          dense
-          flat
-          round
           v-bind="$myth.options.uploaderOptions?.removeBtnProps"
           @click="onClickDeleteAttachment()"
         >

@@ -18,6 +18,7 @@ import {
   QEditorSlots,
   QFieldSlots,
   QFileProps,
+  QFileSlots,
   QImgProps,
   QInputProps,
   QInputSlots,
@@ -271,7 +272,7 @@ export type MFileProps =
   excel?: boolean;
 }
 
-export type MFileSlots = BaseInputsSlots
+export type MFileSlots = QFileSlots & BaseInputsSlots
 
 export type MPickerProps =
   Omit<MInputProps, 'modelValue' | 'type'>
