@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 
 import { MAxiosProps as Props, MSelectModelEmit } from './models.d'
-import { onMounted, ref, toValue } from 'vue'
+import { onMounted, ref, toValue, watch } from 'vue'
 import { useMyth } from '../../vue3'
 import { QSelectSlots } from 'quasar'
 import MSelect from './MSelect.vue'
@@ -94,7 +94,7 @@ onMounted(() => {
     prepare()
   }
 })
-
+watch(() => toValue(props.params), () => prepare(), { deep: !0 })
 const input = ref<InstanceType<typeof MSelect> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
 defineOptions({ name: 'MAxios' })
