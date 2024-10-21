@@ -449,19 +449,19 @@ export interface MFormProps {
   /**
    * Watch to reset form values.
    */
-  readonly state?: Partial<FormState<Record<string, any>>>;
+  readonly state?: MaybeRefOrGetter<Partial<FormState<Record<string, any>>>>;
   /**
    * Watch to reset form values.
    */
-  readonly form?: Record<string, any> | undefined;
+  readonly form?: MaybeRefOrGetter<Record<string, any>>;
   /**
    * Watch to set form values.
    */
-  readonly values?: Record<string, any> | undefined;
+  readonly values?: MaybeRefOrGetter<Record<string, any>>;
   /**
    * Watch to set form errors.
    */
-  readonly errors?: Record<string, string | string[]> | undefined;
+  readonly errors?: MaybeRefOrGetter<Record<string, string | string[]>>;
   /**
    * Apply padding to form.
    */

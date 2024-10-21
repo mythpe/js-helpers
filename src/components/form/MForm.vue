@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 import { InvalidSubmissionHandler, SubmissionContext, SubmissionHandler, useForm } from 'vee-validate'
 import { MFormProps as Props } from './models'
-import { reactive, watch } from 'vue'
+import { computed, reactive, toValue, watch } from 'vue'
 import { useMyth } from '../../vue3'
 
 interface P {
@@ -29,15 +29,16 @@ const props = withDefaults(defineProps<P>(), {
   opts: undefined,
   target: undefined,
   emitValues: () => !1,
-  state: undefined,
-  form: undefined,
-  values: undefined,
-  errors: () => ({}),
+  state: () => () => ({}),
+  form: () => () => ({}),
+  values: () => () => ({}),
+  errors: () => () => ({}),
   padding: undefined
 })
 const formScope = useForm<Record<string, any>>(props.opts)
 const myth = useMyth()
-const { handleSubmit, resetForm, setErrors, setValues } = formScope
+const scope = reactive(formScope)
+const { handleSubmit, resetForm, setErrors, setValues } = scope
 type Emits = {
   (e: 'submit', values: Record<string, any>, ctx: SubmissionContext, scope: typeof formScope): void;
 }
@@ -52,14 +53,17 @@ const onErrorSubmission: InvalidSubmissionHandler = ({ errors }) => {
 }
 const defaultSubmit = props.emitValues ? handleSubmit(onSuccessSubmission, onErrorSubmission) : handleSubmit.withControlled(onSuccessSubmission,
   onErrorSubmission)
-const scope = reactive(formScope)
 defineExpose({ ...scope, defaultSubmit })
 defineOptions({ name: 'MForm', inheritAttrs: !1 })
 const options = { deep: !0, immediate: !0 }
-watch(() => props.state, v => v && resetForm(v), options)
-watch(() => props.form, v => v && resetForm({ values: v, errors: {}, touched: {} }), options)
-watch(() => props.values, v => v && setValues(v), options)
-watch(() => props.errors, e => e && setErrors(e), options)
+const stateComputed = computed(() => props.state ? toValue(props.state) : {})
+watch(stateComputed, v => v && resetForm(v), options)
+const formComputed = computed(() => props.form ? toValue(props.form) : {})
+watch(formComputed, values => values && resetForm({ values, errors: {}, touched: {} }), options)
+const valuesComputed = computed(() => props.values ? toValue(props.values) : {})
+watch(valuesComputed, v => v && setValues(v), options)
+const errorsComputed = computed(() => props.errors ? toValue(props.errors) : {})
+watch(errorsComputed, v => v && setErrors(v), options)
 </script>
 
 <template>
