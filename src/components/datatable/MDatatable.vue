@@ -621,20 +621,20 @@ const updateFilterOptions = (data: Record<string, any>) => {
 const openShowDialogNoIndex = async (i: MDtItem) => {
   const item = toRef(i)
   const index = getRows.value.findIndex(e => e.id === item.value.id)
-  return await openShowDialog(item.value, index)
+  return openShowDialog(item.value, index)
 }
 const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
   const fdt = 's'
   const item = toRef(i)
   if (props.showQueryParams) {
-    await router.push({ query: { ...route.query, id: item.value.id, fdt } })
+    router.push({ query: { ...route.query, id: item.value.id, fdt } })
     return
   }
   if (props.showRoute) {
     if (typeof props.showRoute === 'string') {
-      await router.push({ name: props.showRoute, params: { id: item.value.id }, query: route.query })
+      router.push({ name: props.showRoute, params: { id: item.value.id }, query: route.query })
     } else {
-      await router.push(props.showRoute)
+      router.push(props.showRoute)
     }
     return
   }
@@ -683,21 +683,21 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
   const fdt = 'u'
   const item = { ...toValue(i) }
   if (props.updateQueryParams) {
-    await router.push({ query: { ...route.query, id: item.id, fdt } })
+    router.push({ query: { ...route.query, id: item.id, fdt } })
     return
   }
   if (updateRouteProp.value) {
     if (typeof updateRouteProp.value === 'string') {
-      await router.push({ name: updateRouteProp.value, params: { id: item.id }, query: route.query })
+      router.push({ name: updateRouteProp.value, params: { id: item.id }, query: route.query })
     } else {
-      await router.push(updateRouteProp.value)
+      router.push(updateRouteProp.value)
     }
     return
   }
   if (loading.value) {
     return
   }
-  await nextTick()
+  nextTick()
   loading.value = !0
   isUpdateMode.value = !0
   const params: any = { fdt }
@@ -713,8 +713,8 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
         nextTick(() => setTimeout(() => (selected.value = [getRows.value[index]]), openDialogTimeout))
       }
       setTimeout(async () => {
-        await resetVeeForm(_data)
-        await nextTick()
+        resetVeeForm(_data)
+        nextTick()
         dialogs.form = !0
       }, openDialogTimeout)
     })
@@ -727,24 +727,24 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
 const openCreateDialog = async (dtItem?: MDtItem) => {
   const fdt = 'c'
   if (props.storeQueryParams) {
-    await router.push({ query: { ...route.query, id: undefined, fdt } })
+    router.push({ query: { ...route.query, id: undefined, fdt } })
     return
   }
   if (props.storeRoute) {
     if (typeof props.storeRoute === 'string') {
-      await router.push({ name: props.storeRoute, query: route.query })
+      router.push({ name: props.storeRoute, query: route.query })
     } else {
-      await router.push(props.storeRoute)
+      router.push(props.storeRoute)
     }
     return
   }
   isUpdateMode.value = !1
   dialogs.item = { ...defaultItem.value, ...dtItem } as MDtItem
   dialogs.index = undefined
-  await nextTick()
+  nextTick()
   setTimeout(async () => {
-    await resetVeeForm(dtItem)
-    await nextTick()
+    resetVeeForm(dtItem)
+    nextTick()
     dialogs.form = !0
   }, openDialogTimeout)
 }
@@ -753,7 +753,7 @@ const closeFormDialog = async () => {
   isUpdateMode.value = !1
   dialogs.item = undefined
   dialogs.index = undefined
-  await nextTick()
+  nextTick()
   setTimeout(() => resetVeeForm(), openDialogTimeout)
 }
 /**
@@ -829,13 +829,13 @@ const onSuccess: SubmissionHandler = async (form) => {
       } else {
         setTimeout(() => refresh(), openDialogTimeout)
       }
-      // await nextTick()
-      await closeFormDialog()
+      // nextTick()
+      closeFormDialog()
     }
   } catch (e: any) {
     const { _message, _errors } = e || {}
     dialogs.errors = _errors || {}
-    await myth.helpers.scrollToElementFromErrors(_errors, undefined, '.m--datatable__dialog-form-container')
+    myth.helpers.scrollToElementFromErrors(_errors, undefined, '.m--datatable__dialog-form-container')
     _message && myth.alertError(_message)
     if (_errors) {
       formRef.setErrors(_errors)
@@ -913,7 +913,7 @@ const deleteSelectionItem = () => {
       e?._message && myth.alertError(e._message)
     } finally {
       loading.value = !1
-      await nextTick()
+      nextTick()
       selected.value = []
     }
   }).onDismiss(() => {
