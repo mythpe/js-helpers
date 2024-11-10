@@ -692,7 +692,7 @@ const openUpdateDialogNoIndex = (i: MDtItem) => {
   const index = getRows.value.findIndex(e => e.id === item.value.id)
   return openUpdateDialog(item.value, index)
 }
-const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
+const openUpdateDialog = (i: MDtItem, index: MDtItemIndex) => {
   const fdt = 'u'
   const item = { ...toValue(i) }
   if (props.updateQueryParams) {
@@ -710,7 +710,6 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
   if (loading.value) {
     return
   }
-  nextTick()
   loading.value = !0
   isUpdateMode.value = !0
   const params: any = { fdt }
@@ -737,7 +736,7 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
     })
     .finally(() => (loading.value = !1))
 }
-const openCreateDialog = async (dtItem?: MDtItem) => {
+const openCreateDialog = (dtItem?: MDtItem) => {
   const fdt = 'c'
   if (props.storeQueryParams) {
     router.push({ query: { ...route.query, id: undefined, fdt } })
@@ -754,19 +753,16 @@ const openCreateDialog = async (dtItem?: MDtItem) => {
   isUpdateMode.value = !1
   dialogs.item = { ...defaultItem.value, ...dtItem } as MDtItem
   dialogs.index = undefined
-  nextTick()
-  setTimeout(async () => {
+  setTimeout(() => {
     resetVeeForm(dtItem)
-    nextTick()
     dialogs.form = !0
   }, openDialogTimeout)
 }
-const closeFormDialog = async () => {
+const closeFormDialog = () => {
   dialogs.form = !1
   isUpdateMode.value = !1
   dialogs.item = undefined
   dialogs.index = undefined
-  nextTick()
   setTimeout(() => resetVeeForm(), openDialogTimeout)
 }
 /**
@@ -948,14 +944,25 @@ const logoutDatatable = () => {
  * Dom
  */
 const contextmenu = ref(!1)
-const onRowContextmenu = (e: MouseEvent | Event, row: MDtItem, index: number) => {
+const onRowContextmenu = (e: MouseEvent | Event, row: MDtItem, index: number | undefined) => {
   e.preventDefault?.()
-  selected.value = [row]
-  dialogs.item = row
-  dialogs.index = index
-  if (isGrid.value) {
-    contextmenu.value = !0
-  }
+  nextTick(() => {
+    if (index === dialogs.index) {
+      selected.value = []
+      dialogs.item = undefined
+      dialogs.index = undefined
+      if (contextmenu.value) {
+        contextmenu.value = !1
+      }
+      return
+    }
+    selected.value = [row]
+    dialogs.item = row
+    dialogs.index = index
+    if (isGrid.value) {
+      contextmenu.value = !0
+    }
+  })
 }
 const contextmenuItemsProp = computed(() => props.contextItems)
 const contextmenuItems = computed<any>(() => ([
@@ -1140,9 +1147,10 @@ defineOptions({
       v-model="contextmenu"
       class="shadow-6 relative-position"
       context-menu
+      position="standard"
       touch-position
       v-bind="mythOptions.dt?.contextmenu?.menu"
-      @before-hide="resetDialogs()"
+      @hide="resetDialogs()"
     >
       <q-list
         v-if="dialogs.item"
@@ -1840,6 +1848,7 @@ defineOptions({
               <!--Control-->
               <q-btn-dropdown
                 v-if="contextmenuItems.length>3"
+                v-close-popup
                 :menu-offset="[0,10]"
                 color="primary"
                 dense
