@@ -87,10 +87,10 @@ interface Props {
   manageColumns?: MDatatableProps['manageColumns'];
   visibleColumns?: MDatatableProps['visibleColumns'];
   searchColumns?: MDatatableProps['searchColumns'];
-  noAddBtnTop?: MDatatableProps['noAddBtnTop'];
-  noAddBtnList?: MDatatableProps['noAddBtnList'];
-  noAddBtnFab?: MDatatableProps['noAddBtnFab'];
-  noFullscreen?: MDatatableProps['noFullscreen'];
+  addTopBtn?: MDatatableProps['addTopBtn'];
+  addListBtn?: MDatatableProps['addListBtn'];
+  addFabBtn?: MDatatableProps['addFabBtn'];
+  fullscreenBtn?: MDatatableProps['fullscreenBtn'];
   noBodyControl?: MDatatableProps['noBodyControl'];
   showCardControlHeader?: MDatatableProps['showCardControlHeader'];
   dense?: MDatatableProps['dense'];
@@ -145,10 +145,10 @@ const props = withDefaults(defineProps<Props>(), {
   manageColumns: undefined,
   visibleColumns: undefined,
   searchColumns: undefined,
-  noAddBtnTop: undefined,
-  noAddBtnList: undefined,
-  noAddBtnFab: undefined,
-  noFullscreen: undefined,
+  addTopBtn: undefined,
+  addListBtn: undefined,
+  addFabBtn: undefined,
+  fullscreenBtn: undefined,
   noBodyControl: undefined,
   showCardControlHeader: undefined,
   dense: undefined,
@@ -166,8 +166,8 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
-const myth = useMyth()
-const { __ } = myth
+const $myth = useMyth()
+const { __, options: mythOptions } = $myth
 const slots = useSlots()
 const router = useRouter()
 const route = useRoute()
@@ -189,10 +189,10 @@ const resetVeeForm = async (attrs?: Record<string, any>) => {
 }
 const serviceName = computed(() => props.serviceName)
 const exportToBlob = computed(() => {
-  if (props.exportUrl === undefined && myth.options.datatable?.exportUrl === undefined) {
+  if (props.exportUrl === undefined && mythOptions.datatable?.exportUrl === undefined) {
     return !0
   }
-  const t = props.exportUrl === undefined ? myth.options.datatable?.exportUrl : props.exportUrl
+  const t = props.exportUrl === undefined ? mythOptions.datatable?.exportUrl : props.exportUrl
   if (t !== undefined) {
     if (t.toString() === 'true' || t.toString() === '') {
       return !1
@@ -252,9 +252,9 @@ const resetDialogs = () => {
 
 /** --- */
 const headersProp = computed(() => props.headers)
-const getHeaders = computed<any[]>(() => myth.parseHeaders(headersProp.value, reactive({ noSort: props.imageColumns })) || [])
+const getHeaders = computed<any[]>(() => $myth.parseHeaders(headersProp.value, reactive({ noSort: props.imageColumns })) || [])
 const visibleColumnsProp = computed(() => props.visibleColumns)
-const visibleHeaders = ref(myth.parseHeaders(visibleColumnsProp.value || headersProp.value).map(e => e.name))
+const visibleHeaders = ref($myth.parseHeaders(visibleColumnsProp.value || headersProp.value).map(e => e.name))
 /** --- */
 
 const selected = ref<MDtItem[]>([])
@@ -262,7 +262,7 @@ const meta = ref<MDatatableMetaServer>({ ...initMetaServer })
 const pagination = ref<MDatatablePagination>({ ...initPaginationOptions })
 const search = ref<string | null>(null)
 const searchColumnsProp = computed(() => props.searchColumns)
-const searchColumnsRef = ref<string[]>(myth.parseHeaders(searchColumnsProp.value || headersProp.value).filter(e => e?.field !== props.controlKey).map(
+const searchColumnsRef = ref<string[]>($myth.parseHeaders(searchColumnsProp.value || headersProp.value).filter(e => e?.field !== props.controlKey).map(
   e => e.name))
 const searchPlaceholder = computed<string>(() => {
   if (searchColumnsRef.value.length > 0) {
@@ -292,12 +292,20 @@ const tableOptions = reactive<MDatatableOptions>({
 /** Table */
 
 /** --- */
-
+const addListBtnComputed = computed(() => {
+  if (props.addListBtn !== undefined) {
+    return props.addListBtn
+  }
+  if (mythOptions.datatable?.addListBtn !== undefined) {
+    return mythOptions.datatable?.addListBtn
+  }
+  return !1
+})
 const hasAddBtn = computed<boolean>(() => {
   if (props.hideAddBtn) {
     return !1
   }
-  return Boolean(slots.form) || Boolean(props.storeRoute)
+  return !!slots.form || !!props.storeRoute
 })
 const hasUpdateBtn = computed<boolean>(() => {
   if (props.hideUpdateBtn) {
@@ -312,8 +320,13 @@ const hasShowBtn = computed<boolean>(() => {
   return Boolean(slots.show) || Boolean(props.showRoute)
 })
 const hasDestroyBtn = computed<boolean>(() => !props.hideDestroyBtn)
-const hasFilterDialog = computed<boolean>(() => slots.filter !== undefined)
-const hasMenu = computed<boolean>(() => (Boolean(props.pdf) || Boolean(props.excel) || hasFilterDialog.value || hasAddBtn.value))
+const hasFilterDialog = computed<boolean>(() => !!slots.filter)
+const hasMenu = computed<boolean>(() => {
+  if (!!props.pdf || !!props.excel) {
+    return !0
+  }
+  return hasAddBtn.value && !!addListBtnComputed.value
+})
 
 const isUpdateMode = ref<boolean>(!1)
 const formMode = computed<'update' | 'store'>(() => isUpdateMode.value ? 'update' : 'store')
@@ -324,13 +337,13 @@ const hasSelectedItem = computed<boolean>(() => tableOptions.selected.length > 0
 /* Titles */
 const getShowTitle = computed(() => {
   if (serviceName.value && typeof serviceName.value !== 'function') {
-    const c = myth.str.pascalCase(myth.str.pluralize(serviceName.value.split('/').pop()))
+    const c = $myth.str.pascalCase($myth.str.pluralize(serviceName.value.split('/').pop()))
     return __('replace.show_details', { name: __(`choice.${c}`, 1) })
   }
   return __('show_details')
 })
 const getFormTitle = computed(() => {
-  const name = serviceName.value && typeof serviceName.value !== 'function' ? __(`choice.${myth.str.pascalCase(myth.str.pluralize(serviceName.value.split(
+  const name = serviceName.value && typeof serviceName.value !== 'function' ? __(`choice.${$myth.str.pascalCase($myth.str.pluralize(serviceName.value.split(
     '/').pop()))}`, 1) : ''
   return __(`replace.${formMode.value}`, { name })
 })
@@ -347,7 +360,7 @@ const getMythApiServicesSchema = (): MDtMythApiServicesSchema => {
   if (typeof serviceName.value === 'function') {
     return serviceName.value() as MDtMythApiServicesSchema
   }
-  const c = myth.services[serviceName.value]
+  const c = $myth.services[serviceName.value]
   if (!c) {
     throw Error(`No Service: ${serviceName.value}`)
   }
@@ -509,9 +522,9 @@ const fetchDatatableItems = (opts: FetchRowsArgs = {}) => {
           return e
         }
         if (e?._message) {
-          myth.alertError(e._message)
+          $myth.alertError(e._message)
         } else if (e?.message) {
-          myth.alertError(e.message)
+          $myth.alertError(e.message)
         }
       })
       .finally(() => {
@@ -546,31 +559,31 @@ const exportData = (type: MDtExportOptions) => {
     getMythApiServicesSchema().export(data, config)
       .then(async (response) => {
         const { _message } = response || {}
-        _message && (myth.alertSuccess(_message))
+        _message && ($myth.alertSuccess(_message))
         try {
-          await myth.helpers.downloadFromResponse(response)
+          await $myth.helpers.downloadFromResponse(response)
         } catch (e: any) {
           if (response.status === 200 && response.headers['content-type'] === 'application/json') {
             return response
           }
           if (e?.code) {
-            myth.alertError(__(`messages.${e.code}`))
+            $myth.alertError(__(`messages.${e.code}`))
           } else if (e?.message) {
-            myth.alertError(e.message)
+            $myth.alertError(e.message)
           }
           console.log(e)
         }
         return response
       })
       .catch((e) => {
-        myth.alertError(e?._message || e?.message || 'Error')
+        $myth.alertError(e?._message || e?.message || 'Error')
       })
       .finally(() => {
         loading.value = !1
       })
   }
   if (!tableOptions.selected.length) {
-    myth.confirmMessage(__('messages.export_all')).onOk(() => ex())
+    $myth.confirmMessage(__('messages.export_all')).onOk(() => ex())
   } else {
     ex()
   }
@@ -657,7 +670,7 @@ const openShowDialog = async (i: MDtItem, index: MDtItemIndex) => {
     })
     .catch((e: any) => {
       const message = e?._message || e?.message
-      message && myth.alertError(message)
+      message && $myth.alertError(message)
     })
     .finally(() => (loading.value = !1))
 }
@@ -720,7 +733,7 @@ const openUpdateDialog = async (i: MDtItem, index: MDtItemIndex) => {
     })
     .catch((e) => {
       const message = e?._message || e?.message
-      message && myth.alertError(message)
+      message && $myth.alertError(message)
     })
     .finally(() => (loading.value = !1))
 }
@@ -822,7 +835,7 @@ const onSuccess: SubmissionHandler = async (form) => {
   const method = async () => isUpdateMode.value ? await api.update(dialogs.item?.id || '', form, _conf) : await api.store(form, _conf)
   try {
     const { _data, _message, _success }: any = await method()
-    _message && myth.alertSuccess(_message)
+    _message && $myth.alertSuccess(_message)
     if (_success) {
       if (isUpdateMode.value) {
         _data && updateDatatableItem(_data, dialogs.index)
@@ -835,8 +848,8 @@ const onSuccess: SubmissionHandler = async (form) => {
   } catch (e: any) {
     const { _message, _errors } = e || {}
     dialogs.errors = _errors || {}
-    myth.helpers.scrollToElementFromErrors(_errors, undefined, '.m--datatable__dialog-form-container')
-    _message && myth.alertError(_message)
+    $myth.helpers.scrollToElementFromErrors(_errors, undefined, '.m--datatable__dialog-form-container')
+    _message && $myth.alertError(_message)
     if (_errors) {
       formRef.setErrors(_errors)
     }
@@ -847,10 +860,8 @@ const onSuccess: SubmissionHandler = async (form) => {
 const onInvalidSubmit: InvalidSubmissionHandler = ({ errors }) => {
   const keys: (keyof typeof errors)[] = Object.keys(errors)
   if (keys.length) {
-    const message = errors[keys[0]] as string || myth.__('messages.the_given_data_was_invalid')
-    myth.helpers.scrollToElementFromErrors({ [keys[0]]: [message] }, undefined, '.m--datatable__dialog-form-container')
-    // console.log(formDialogCartSection.value?.$el)
-    // myth.alertError(message)
+    const message = errors[keys[0]] as string || $myth.__('messages.the_given_data_was_invalid')
+    $myth.helpers.scrollToElementFromErrors({ [keys[0]]: [message] }, undefined, '.m--datatable__dialog-form-container')
   }
 }
 const defaultSubmitItem = handleSubmit.withControlled(onSuccess, onInvalidSubmit)
@@ -862,12 +873,12 @@ const onDeleteItem = (i: MDtItem, index: number) => {
     return
   }
   tableOptions.hasAction = !0
-  myth.confirmMessage(__('messages.confirm_delete')).onOk(async () => {
+  $myth.confirmMessage(__('messages.confirm_delete')).onOk(async () => {
     loading.value = !0
     try {
       const { _message, _success } = await getMythApiServicesSchema().destroy(item.value.id)
       if (!hideAutoMessage.value && _success && _message) {
-        _message && myth.alertSuccess(_message)
+        _message && $myth.alertSuccess(_message)
       }
       if (_success) {
         if (tableOptions.pagination.rowsNumber !== undefined) {
@@ -877,7 +888,7 @@ const onDeleteItem = (i: MDtItem, index: number) => {
         removeDtItem(index)
       }
     } catch (e: any) {
-      e?._message && myth.alertError(e._message)
+      e?._message && $myth.alertError(e._message)
     } finally {
       loading.value = !1
     }
@@ -899,18 +910,18 @@ const deleteSelectionItem = () => {
     return
   }
   tableOptions.hasAction = !0
-  myth.confirmMessage(__('messages.confirm_delete')).onOk(async () => {
+  $myth.confirmMessage(__('messages.confirm_delete')).onOk(async () => {
     loading.value = !0
     try {
       const { _message, _success } = await getMythApiServicesSchema().destroyAll(tableOptions.selected.map((e: MDtItem) => e.id))
       if (!hideAutoMessage.value && _success && _message) {
-        _message && myth.alertSuccess(_message)
+        _message && $myth.alertSuccess(_message)
       }
       if (_success) {
         refresh()
       }
     } catch (e: any) {
-      e?._message && myth.alertError(e._message)
+      e?._message && $myth.alertError(e._message)
     } finally {
       loading.value = !1
       nextTick()
@@ -921,7 +932,7 @@ const deleteSelectionItem = () => {
   })
 }
 const logoutDatatable = () => {
-  // const { logout, removeStorage } = myth.store.state.
+  // const { logout, removeStorage } = $myth.store.state.
   // removeStorage()
   // logout(window.push_token)
   // const name = this.$routes.auth.login
@@ -951,7 +962,7 @@ const contextmenuItems = computed<any>(() => ([
   ...(contextmenuItemsProp.value || []).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
   {
     name: 'show',
-    label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.show' : undefined,
+    label: mythOptions?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.show' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => {
       openShowDialog(item, index)
     },
@@ -959,7 +970,7 @@ const contextmenuItems = computed<any>(() => ([
   },
   {
     name: 'update',
-    label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.update' : undefined,
+    label: mythOptions?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.update' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => {
       openUpdateDialog(item, index)
     },
@@ -967,7 +978,7 @@ const contextmenuItems = computed<any>(() => ([
   },
   {
     name: 'destroy',
-    label: myth?.options?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.destroy' : undefined,
+    label: mythOptions?.dt?.contextmenu?.btnStyle?.showLabel ? 'labels.destroy' : undefined,
     click: (item: MDtItem, index: MDtItemIndex) => {
       selected.value = [item]
       onDeleteItem(item, index)
@@ -1011,7 +1022,7 @@ const closeImageDialog = () => {
 onMounted(() => refresh())
 
 watch(loading, v => {
-  if (myth.options?.dt?.useQuasarLoading) {
+  if (mythOptions?.dt?.useQuasarLoading) {
     if (v) {
       $q.loading.show()
     } else {
@@ -1098,8 +1109,8 @@ const getProp = computed(() => (k: keyof Props) => {
   if (props[k] !== undefined) {
     return props[k]
   }
-  if (myth.options.datatable?.[k] !== undefined) {
-    return myth.options.datatable?.[k]
+  if (mythOptions.datatable?.[k] !== undefined) {
+    return mythOptions.datatable?.[k]
   }
   return props[k]
 })
@@ -1119,9 +1130,9 @@ defineOptions({
   <div
     :class="{
       'm--datatable-component': !0,
-      'm--datatable-component__fixed': fixed === undefined ? ( $myth.options.datatable?.fixed === undefined ? undefined : $myth.options.datatable?.fixed) : fixed,
+      'm--datatable-component__fixed': fixed === undefined ? ( mythOptions.datatable?.fixed === undefined ? undefined : mythOptions.datatable?.fixed) : fixed,
       'm--datatable-component__too_small': $q.screen.height < 900,
-      'm--datatable-component__fab': hasAddBtn && (noAddBtnFab ? !1 : $myth.options.dt?.addBtn?.noFab !== !0)
+      'm--datatable-component__fab': hasAddBtn && (addFabBtn === undefined ? !!mythOptions.datatable?.addFabBtn : addFabBtn)
     }"
   >
     <!-- Context Menu -->
@@ -1130,14 +1141,14 @@ defineOptions({
       class="shadow-6 relative-position"
       context-menu
       touch-position
-      v-bind="$myth.options.dt?.contextmenu?.menu"
+      v-bind="mythOptions.dt?.contextmenu?.menu"
       @before-hide="resetDialogs()"
     >
       <q-list
         v-if="dialogs.item"
         :separator="!$myth.tools.isSmall"
         style="min-width: 280px;"
-        v-bind="$myth.options.dt?.contextmenu?.list"
+        v-bind="mythOptions.dt?.contextmenu?.list"
       >
         <template
           v-for="(contextmenuItem,i) in contextmenuItems"
@@ -1146,7 +1157,7 @@ defineOptions({
           <MDtBtn
             v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(dialogs.item,dialogs.index) : contextmenuItem.showIf"
             :[contextmenuItem.name]="!0"
-            :dense="dense === undefined ? $myth.options.datatable?.dense : dense"
+            :dense="dense === undefined ? mythOptions.datatable?.dense : dense"
             :label="contextmenuItem.contextLabel !== undefined ? (contextmenuItem.contextLabel === null ? undefined : __(contextmenuItem.contextLabel)) : __(contextmenuItem.label || contextmenuItem.name) "
             list-item
             v-bind="contextmenuItem.attr"
@@ -1182,11 +1193,11 @@ defineOptions({
         v-bind="{
           virtualScroll: !0,
           wrapCells:!0,
-          ...$myth.options.datatable,
+          ...mythOptions.datatable,
           ...$attrs,
-          bordered: bordered === undefined ? $myth.options.datatable?.bordered : bordered,
-          dense: dense === undefined ? $myth.options.datatable?.dense : dense,
-          flat: flat === undefined ? $myth.options.datatable?.flat : flat,
+          bordered: bordered === undefined ? mythOptions.datatable?.bordered : bordered,
+          dense: dense === undefined ? mythOptions.datatable?.dense : dense,
+          flat: flat === undefined ? mythOptions.datatable?.flat : flat,
         }"
         @request="fetchDatatableItems"
         @virtual-scroll="endReach ? onScroll : undefined"
@@ -1248,7 +1259,7 @@ defineOptions({
                     :key="col.name"
                   >
                     <MRow
-                      v-if="col.name !== controlKey || (col.name === controlKey && ( showCardControlHeader === undefined ? $myth.options.datatable?.showCardControlHeader : showCardControlHeader ))"
+                      v-if="col.name !== controlKey || (col.name === controlKey && ( showCardControlHeader === undefined ? mythOptions.datatable?.showCardControlHeader : showCardControlHeader ))"
                       class="justify-between"
                     >
                       <MCol
@@ -1365,13 +1376,13 @@ defineOptions({
                   v-if="!hideSearch && !dialogs.form"
                   v-model="tableOptions.search"
                   :debounce="searchDebounce"
-                  :dense="dense === undefined ? ($myth.options.datatable?.dense !== undefined ? $myth.options.datatable?.dense : !0) : dense"
+                  :dense="dense === undefined ? (mythOptions.datatable?.dense !== undefined ? mythOptions.datatable?.dense : !0) : dense"
                   :placeholder="searchPlaceholder"
                   autocomplete="none"
                   col="12"
                   name="search"
                   outlined
-                  v-bind="$myth.options.dt?.searchInput?.props"
+                  v-bind="mythOptions.dt?.searchInput?.props"
                 >
                   <template #prepend>
                     <q-icon
@@ -1396,16 +1407,16 @@ defineOptions({
                   <template #after>
                     <q-btn
                       :aria-label="__('menu')"
-                      :icon="$myth.options.dt?.searchInput?.optionsIcon || 'ion-ios-options'"
+                      :icon="mythOptions.dt?.searchInput?.optionsIcon || 'ion-ios-options'"
                       dense
                       flat
                       round
-                      v-bind="$myth.options.dt?.searchInput?.menuBtn"
+                      v-bind="mythOptions.dt?.searchInput?.menuBtn"
                     >
                       <MModalMenu
                         :offset="[10,10]"
                         no-close-btn
-                        v-bind="$myth.options.dt?.searchInput?.menuProps as any"
+                        v-bind="mythOptions.dt?.searchInput?.menuProps as any"
                       >
                         <q-toolbar>
                           <q-toolbar-title>
@@ -1458,7 +1469,6 @@ defineOptions({
                   name="bottom-search"
                 />
               </MRow>
-
               <!--Buttons-->
               <MRow class="row q-gutter-x-sm q-gutter-xs-y-sm items-center justify-between">
                 <!--More Menu-->
@@ -1468,22 +1478,22 @@ defineOptions({
                   :disable="tableOptions.loading"
                   icon="ion-ios-options"
                   tooltip="myth.datatable.hints.more"
-                  v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.more}"
+                  v-bind="{...defaultTopBtnProps,...mythOptions.dt?.buttons?.more}"
                 >
                   <MModalMenu
                     :offset="[10,10]"
-                    v-bind="$myth.options.dt?.buttons?.moreMenu as any"
+                    v-bind="mythOptions.dt?.buttons?.moreMenu as any"
                   >
                     <q-list
                       style="min-width: 250px"
-                      v-bind="$myth.options.dt?.buttons?.moreList"
+                      v-bind="mythOptions.dt?.buttons?.moreList"
                     >
                       <!-- Add Btn -->
                       <q-item
-                        v-if="hasAddBtn && (noAddBtnList ? !1 : $myth.options.dt?.addBtn?.noList !== !0)"
+                        v-if="hasAddBtn && !!addListBtnComputed"
                         v-close-popup
                         clickable
-                        v-bind="$myth.options.dt?.buttons?.moreItem"
+                        v-bind="mythOptions.dt?.buttons?.moreItem"
                         @click="openCreateDialog()"
                       >
                         <q-item-section thumbnail>
@@ -1502,7 +1512,7 @@ defineOptions({
                         v-if="pdf"
                         v-close-popup
                         clickable
-                        v-bind="$myth.options.dt?.buttons?.moreItem"
+                        v-bind="mythOptions.dt?.buttons?.moreItem"
                         @click="exportData('pdf')"
                       >
                         <q-item-section thumbnail>
@@ -1529,7 +1539,7 @@ defineOptions({
                         v-if="excel"
                         v-close-popup
                         clickable
-                        v-bind="$myth.options.dt?.buttons?.moreItem"
+                        v-bind="mythOptions.dt?.buttons?.moreItem"
                         @click="exportData('excel')"
                       >
                         <q-item-section thumbnail>
@@ -1553,10 +1563,10 @@ defineOptions({
                         </q-item-section>
                       </q-item>
                       <q-item
-                        v-if="!noFullscreen"
+                        v-if="fullscreenBtn === undefined ? ( !!mythOptions.datatable?.fullscreenBtn) : fullscreenBtn"
                         v-close-popup
                         clickable
-                        v-bind="$myth.options.dt?.buttons?.moreItem"
+                        v-bind="mythOptions.dt?.buttons?.moreItem"
                         @click="tableOptions.fullscreen = !tableOptions.fullscreen"
                       >
                         <q-item-section thumbnail>
@@ -1572,21 +1582,19 @@ defineOptions({
                     </q-list>
                   </MModalMenu>
                 </MDtBtn>
-
                 <!-- Filter dialog -->
                 <MDtBtn
                   v-if="hasFilterDialog"
                   key="filter-selection-btn"
                   icon="o_filter_alt"
                   tooltip="myth.datatable.hints.filter"
-                  v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.filter}"
+                  v-bind="{...defaultTopBtnProps,...mythOptions.dt?.buttons?.filter}"
                   @click="openFilterDialog()"
                 >
                   <MModalMenu
                     no-close-btn
                     persistent
-                    position="top"
-                    v-bind="$myth.options.dt?.filterDialogProps"
+                    v-bind="mythOptions.dt?.filterDialogProps"
                   >
                     <q-card
                       :style="$q.screen.gt.sm?`width: ${Math.ceil($q.screen.width/2)}px` : undefined"
@@ -1623,7 +1631,7 @@ defineOptions({
                                 :label="__('myth.datatable.filter.cancel')"
                                 color="negative"
                                 flat
-                                v-bind="$myth.options.dt?.dialogButtonsProps"
+                                v-bind="mythOptions.dt?.dialogButtonsProps"
                                 @click="closeFilterDialog"
                               />
                               <MBtn
@@ -1631,7 +1639,7 @@ defineOptions({
                                 :label="__('myth.datatable.filter.save')"
                                 color="positive"
                                 flat
-                                v-bind="$myth.options.dt?.dialogButtonsProps"
+                                v-bind="mythOptions.dt?.dialogButtonsProps"
                                 @click="saveFilterDialog"
                               />
                             </MRow>
@@ -1648,17 +1656,17 @@ defineOptions({
                   :disable="tableOptions.loading"
                   icon="ion-ios-refresh"
                   tooltip="myth.datatable.hints.refresh"
-                  v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.refresh}"
+                  v-bind="{...defaultTopBtnProps,...mythOptions.dt?.buttons?.refresh}"
                   @click="refreshNoUpdate()"
                 />
                 <!--Fullscreen-->
                 <MDtBtn
-                  v-if="!noFullscreen"
+                  v-if="fullscreenBtn === undefined ? ( !!mythOptions.datatable?.fullscreenBtn) : fullscreenBtn"
                   key="fullscreen-selection-btn"
                   :disable="tableOptions.loading"
                   :icon="tableOptions.fullscreen ? 'ion-ios-contract' : 'ion-ios-desktop'"
-                  :tooltip="`myth.datatable.${tableOptions.fullscreen ? 'exitFullscreen' : 'fullscreen'}`"
-                  v-bind="{...defaultTopBtnProps,...$myth.options.dt?.buttons?.fullscreen}"
+                  :tooltip="`$myth.datatable.${tableOptions.fullscreen ? 'exitFullscreen' : 'fullscreen'}`"
+                  v-bind="{...defaultTopBtnProps,...mythOptions.dt?.buttons?.fullscreen}"
                   @click="tableOptions.fullscreen = !tableOptions.fullscreen"
                 />
 
@@ -1669,7 +1677,7 @@ defineOptions({
                     :disable="tableOptions.loading"
                     icon="ion-ios-create"
                     update
-                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
+                    v-bind="{...defaultTopBtnProps,...mythOptions.dt?.topSelection?.btn}"
                     @click="openUpdateDialogNoIndex(tableOptions.selected[0])"
                   />
                   <MDtBtn
@@ -1678,7 +1686,7 @@ defineOptions({
                     :disable="tableOptions.loading"
                     icon="ion-ios-eye"
                     show
-                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
+                    v-bind="{...defaultTopBtnProps,...mythOptions.dt?.topSelection?.btn}"
                     @click="openShowDialogNoIndex(tableOptions.selected[0])"
                   />
                   <MDtBtn
@@ -1688,7 +1696,7 @@ defineOptions({
                     color="negative"
                     destroy
                     icon="ion-ios-trash"
-                    v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn}"
+                    v-bind="{...defaultTopBtnProps,...mythOptions.dt?.topSelection?.btn}"
                     @click="deleteSelectionItem()"
                   />
                   <template
@@ -1698,7 +1706,7 @@ defineOptions({
                     <MDtBtn
                       v-if="(typeof contextBtn.showIf === 'function' ? contextBtn.showIf(tableOptions.selected[0],0) : contextBtn.showIf) && ( (contextBtn.click && isSingleSelectedItem) || (contextBtn.multiClick && !isSingleSelectedItem) )"
                       :tooltip="__(contextBtn.tooltip || contextBtn.name)"
-                      v-bind="{...defaultTopBtnProps,...$myth.options.dt?.topSelection?.btn,...contextBtn,...contextBtn.attr}"
+                      v-bind="{...defaultTopBtnProps,...mythOptions.dt?.topSelection?.btn,...contextBtn,...contextBtn.attr}"
                       @click="contextBtn.click ? contextBtn.click(tableOptions.selected[0],0) : (contextBtn.multiClick ? contextBtn.multiClick(tableOptions.selected) : undefined)"
                     />
                   </template>
@@ -1706,7 +1714,9 @@ defineOptions({
 
                 <q-space />
                 <!-- Add Btn -->
-                <template v-if="hasAddBtn && (noAddBtnTop ? !1 : $myth.options.dt?.addBtn?.noTop !== !0)">
+                <template
+                  v-if="hasAddBtn && (addTopBtn===undefined?(mythOptions.datatable?.addTopBtn===undefined?!0:mythOptions.datatable?.addTopBtn):addTopBtn)"
+                >
                   <MBtn
                     :label="getFormTitle"
                     icon="ion-ios-add"
@@ -1834,7 +1844,7 @@ defineOptions({
                 color="primary"
                 dense
                 outline
-                v-bind="$myth.options.dt?.controlDropdown"
+                v-bind="mythOptions.dt?.controlDropdown"
               >
                 <q-list>
                   <MDtContextmenuItems
@@ -1923,7 +1933,7 @@ defineOptions({
     <!-- Show Dialog -->
     <MDialog
       v-model="dialogs.show"
-      v-bind="$myth.options.dt?.showDialogProps"
+      v-bind="mythOptions.dt?.showDialogProps"
     >
       <q-card class="m--dialog-card">
         <q-card-section ref="showTitleRef">
@@ -1965,7 +1975,7 @@ defineOptions({
           <MBtn
             :label="__('myth.titles.close')"
             color="negative"
-            v-bind="$myth.options.dt?.dialogButtonsProps"
+            v-bind="mythOptions.dt?.dialogButtonsProps"
             @click="closeShowDialog"
           />
         </q-card-actions>
@@ -1975,7 +1985,7 @@ defineOptions({
     <!-- Form Dialog -->
     <MDialog
       v-model="dialogs.form"
-      v-bind="$myth.options.dt?.formDialogProps"
+      v-bind="mythOptions.dt?.formDialogProps"
     >
       <div
         class="m--form__container full-height no-wrap"
@@ -2089,7 +2099,7 @@ defineOptions({
                   color="positive"
                   no-caps
                   type="submit"
-                  v-bind="$myth.options.dt?.dialogButtonsProps"
+                  v-bind="mythOptions.dt?.dialogButtonsProps"
                 />
               </slot>
               <MBtn
@@ -2098,7 +2108,7 @@ defineOptions({
                 :label="__('myth.titles.close')"
                 color="negative"
                 no-caps
-                v-bind="$myth.options.dt?.dialogButtonsProps"
+                v-bind="mythOptions.dt?.dialogButtonsProps"
                 @click="closeFormDialog"
               />
             </q-card-actions>
@@ -2158,16 +2168,16 @@ defineOptions({
 
     <!-- Add Btn -->
     <q-page-sticky
-      v-if="hasAddBtn && (noAddBtnFab ? !1 : $myth.options.dt?.addBtn?.noFab !== !0)"
-      :offset="$myth.options.dt?.fabBtn?.offset|| [25,25]"
-      :position="$myth.options.dt?.fabBtn?.position || 'bottom-right'"
-      v-bind="$myth.options.dt?.fabBtn?.pageStickyProps"
+      v-if="hasAddBtn && (addFabBtn === undefined ? !!mythOptions.datatable?.addFabBtn : addFabBtn)"
+      :offset="mythOptions.dt?.fabBtn?.offset|| [25,25]"
+      :position="mythOptions.dt?.fabBtn?.position || 'bottom-right'"
+      v-bind="mythOptions.dt?.fabBtn?.pageStickyProps"
     >
       <q-btn
         color="primary"
         fab
         icon="ion-ios-add"
-        v-bind="$myth.options.dt?.fabBtn?.buttonProps"
+        v-bind="mythOptions.dt?.fabBtn?.buttonProps"
         @click="openCreateDialog()"
       >
         <MTooltip

@@ -124,11 +124,6 @@ export interface MythOptionsConfig {
       position?: QPageStickyProps['position'];
       buttonProps?: Partial<QBtnProps>;
     },
-    addBtn?: {
-      noTop?: boolean;
-      noList?: boolean;
-      noFab?: boolean;
-    },
     contextmenu?: {
       menu?: Partial<MModalMenuProps>;
       list?: Partial<QListProps>;

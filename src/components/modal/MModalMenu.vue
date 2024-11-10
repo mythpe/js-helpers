@@ -5,29 +5,49 @@
   - Website: https://www.4myth.com
   - Github: https://github.com/mythpe
   -->
+<script
+  lang="ts"
+  setup
+>
+
+import { MModalMenuProps } from './models'
+import { useMyth } from '../../vue3'
+
+interface Props {
+  noCloseBtn?: MModalMenuProps['noCloseBtn'];
+  position?: MModalMenuProps['position'];
+}
+const $myth = useMyth()
+const { options, tools } = $myth
+withDefaults(defineProps<Props>(), {
+  noCloseBtn: () => !1,
+  position: () => 'bottom'
+})
+defineOptions({ name: 'MModalMenu', inheritAttrs: !1 })
+</script>
 
 <template>
   <q-popup-proxy
-    :breakpoint="$myth.tools.popupBreakpoint as any"
+    :breakpoint="tools.popupBreakpoint as any"
     :position="position"
-    :transition-hide="position === 'top' ? $myth.tools.transitions.slideUpFade.hide : $myth.tools.transitions.slideDownFade.hide"
-    :transition-show="position === 'top' ? $myth.tools.transitions.slideUpFade.show : $myth.tools.transitions.slideDownFade.show"
+    :transition-hide="position === 'top' ? tools.transitions.slideUpFade.hide : tools.transitions.slideDownFade.hide"
+    :transition-show="position === 'top' ? tools.transitions.slideUpFade.show : tools.transitions.slideDownFade.show"
     allow-focus-outside
     class="m--modal_menu shadow-24"
     maximized
     no-backdrop-dismiss
     no-shake
-    v-bind="{...$myth.options.modalMenu,...$attrs}"
+    v-bind="{...options.modalMenu,...$attrs}"
   >
-    <q-card v-bind="$myth.options.modalMenuOptions?.card">
+    <q-card v-bind="options.modalMenuOptions?.card">
       <slot />
-      <template v-if="!closeBtnProps">
+      <template v-if="!noCloseBtn">
         <q-separator class="lt-md" />
         <q-item
           v-close-popup
           class="lt-md"
           clickable
-          v-bind="$myth.options.modalMenuOptions?.closeBtn"
+          v-bind="options.modalMenuOptions?.closeBtn"
         >
           <q-item-section>
             <q-item-label header>
@@ -39,37 +59,3 @@
     </q-card>
   </q-popup-proxy>
 </template>
-
-<script
-  lang="ts"
-  setup
->
-
-import { MModalMenuProps } from './models'
-import { computed } from 'vue'
-
-interface Props {
-  noCloseBtn?: MModalMenuProps['noCloseBtn'];
-  position?: MModalMenuProps['position'];
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  noCloseBtn: () => !1,
-  position: () => 'bottom'
-})
-const closeBtnProps = computed(() => props.noCloseBtn !== undefined && props.noCloseBtn !== !1 && props.noCloseBtn !== null)
-</script>
-
-<script lang="ts">
-
-export default {
-  name: 'MModalMenu',
-  inheritAttrs: !1
-}
-</script>
-
-<style>
-.m--modal_menu {
-
-}
-</style>

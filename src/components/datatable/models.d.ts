@@ -247,19 +247,19 @@ export type MDatatableProps<I extends GenericFormValues = GenericFormValues> = O
   /**
    * Show Add btn top of table,
    */
-  noAddBtnTop?: boolean;
+  addTopBtn?: boolean;
   /**
    * Show Add btn inside more list
    */
-  noAddBtnList?: boolean;
+  addListBtn?: boolean;
   /**
    * Show Fab Add btn
    */
-  noAddBtnFab?: boolean;
+  addFabBtn?: boolean;
   /**
    * make datatable fullscreen mode
    */
-  noFullscreen?: boolean;
+  fullscreenBtn?: boolean;
   /**
    * Auto actions body headers 'control'
    */
