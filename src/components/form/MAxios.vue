@@ -97,7 +97,7 @@ onMounted(() => {
 watch(() => toValue(props.params), () => prepare(), { deep: !0 })
 const input = ref<InstanceType<typeof MSelect> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
-defineOptions({ name: 'MAxios' })
+defineOptions({ name: 'MAxios', inheritAttrs: !1 })
 </script>
 
 <template>
