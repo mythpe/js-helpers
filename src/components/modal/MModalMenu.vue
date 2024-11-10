@@ -17,6 +17,7 @@ interface Props {
   noCloseBtn?: MModalMenuProps['noCloseBtn'];
   position?: MModalMenuProps['position'];
 }
+
 const $myth = useMyth()
 const { options, tools } = $myth
 withDefaults(defineProps<Props>(), {
@@ -30,8 +31,6 @@ defineOptions({ name: 'MModalMenu', inheritAttrs: !1 })
   <q-popup-proxy
     :breakpoint="tools.popupBreakpoint as any"
     :position="position"
-    :transition-hide="position === 'top' ? tools.transitions.slideUpFade.hide:(position==='bottom'?tools.transitions.slideDownFade.show:undefined)"
-    :transition-show="position === 'top' ? tools.transitions.slideUpFade.show:(position==='bottom'?tools.transitions.slideDownFade.hide:undefined)"
     allow-focus-outside
     class="m--modal_menu shadow-24"
     maximized

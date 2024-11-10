@@ -258,6 +258,12 @@ const visibleHeaders = ref($myth.parseHeaders(visibleColumnsProp.value || header
 /** --- */
 
 const selected = ref<MDtItem[]>([])
+const onUpdateSelectedItems = () => {
+  if (contextmenu.value) {
+    contextmenu.value = !1
+  }
+}
+
 const meta = ref<MDatatableMetaServer>({ ...initMetaServer })
 const pagination = ref<MDatatablePagination>({ ...initPaginationOptions })
 const search = ref<string | null>(null)
@@ -1185,6 +1191,7 @@ defineOptions({
         v-model:fullscreen="tableOptions.fullscreen"
         v-model:pagination="pagination"
         v-model:selected="selected"
+        @update:selected="onUpdateSelectedItems"
         :class="`m--datatable ` + ($q.screen.lt.md ? 'm--datatable-grid' : '')"
         :columns="getHeaders"
         :filter="tableOptions.search"
@@ -1489,6 +1496,7 @@ defineOptions({
                   v-bind="{...defaultTopBtnProps,...mythOptions.dt?.buttons?.more}"
                 >
                   <MModalMenu
+                    position="top"
                     :offset="[10,10]"
                     v-bind="mythOptions.dt?.buttons?.moreMenu as any"
                   >
