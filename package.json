@@ -1,6 +1,6 @@
 {
   "name": "@mythpe/js-helpers",
-  "version": "4.1.43",
+  "version": "4.1.44",
   "description": "Library of plugins & shortcuts that use JavaScript, also includes the Vue3 plugin with quasar apps",
   "author": "MyTh Ahmed Faiz",
   "email": "mythpe@gmail.com",
@@ -42,7 +42,6 @@
     "axios": "^1.7.7",
     "ckeditor5": "^43.2.0",
     "gsap": "^3.12.5",
-    "jquery": "^3.7.1",
     "lodash": "^4.17.21",
     "lodash-inflection": "^1.5.0",
     "moment": "^2.30.1",
@@ -62,7 +61,6 @@
     "@intlify/vite-plugin-vue-i18n": "^7.0.0",
     "@quasar/app-vite": "^1.10.0",
     "@types/google.maps": "^3.54.3",
-    "@types/jquery": "^3.5.30",
     "@types/lodash": "^4.14.195",
     "@types/node": "^22.7.5",
     "@types/sizzle": "^2.3.8",

@@ -9,6 +9,7 @@
 import { AxiosInstance } from 'axios'
 import {
   openURL,
+  QBtnDropdownProps,
   QBtnProps,
   QCardProps,
   QDialogOptions,
@@ -97,7 +98,23 @@ export interface MythOptionsConfig {
     cancelProps?: Partial<QBtnProps>;
   };
   datatable?: Partial<MDatatableProps>;
+  /**
+   * Styles for DataTable.
+   */
   dt?: {
+    /**
+     * Style of the DataTable.
+     */
+    dense?: boolean;
+    /**
+     * Quasar loading with datatable loading props.
+     */
+    useQuasarLoading?: boolean;
+    /**
+     * MModalMenu props.
+     * Inside table top slot.
+     * defaults: no-close-btn & persistent & position="top"
+     */
     filterDialogProps?: Partial<QDialogProps> & Partial<QMenuProps> & Partial<QPopupProxyProps>;
     showDialogProps?: Partial<QDialogProps>;
     formDialogProps?: Partial<QDialogProps>;
@@ -141,7 +158,6 @@ export interface MythOptionsConfig {
       menuBtn?: Partial<QBtnProps>;
     };
     dialogButtonsProps?: Partial<MBtnProps>;
-    noQuasarLoading?: boolean;
     listItem?: {
       item?: Partial<QItemProps>;
       avatarSection?: Partial<QItemSectionProps>;
@@ -150,6 +166,48 @@ export interface MythOptionsConfig {
       labelItem?: Partial<QItemLabelProps>;
     };
     btn?: Partial<MDtBtnProps>;
+    /**
+     * Dropdown of control column in table.
+     * q-btn-dropdown
+     */
+    controlDropdown?: Partial<QBtnDropdownProps>;
+    MDtBtn?: {
+      /**
+       * List mode Props.
+       */
+      item?: {
+        /**
+         * Item Props.
+         */
+        props?: Partial<QItemProps>;
+        /**
+         * q-item-section.
+         * Props of avatar section.
+         */
+        avatarProps?: Partial<QItemSectionProps>;
+        /**
+         * q-icon.
+         * Props of icon inside avatar section.
+         */
+        iconProps?: Partial<QIconProps>;
+        /**
+         * q-item-section.
+         * Props of label section.
+         */
+        labelSectionProps?: Partial<QItemSectionProps>;
+        /**
+         * q-item-label.
+         * Props of label inside label section.
+         */
+        itemLabelProps?: Partial<QItemLabelProps>;
+      };
+      /**
+       * MDtBtn btn mode Props.
+       */
+      btn?: {
+        props?: Partial<QBtnProps>;
+      };
+    }
   };
   button?: Partial<QBtnProps>;
   loadingButtons?: {

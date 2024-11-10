@@ -44,18 +44,16 @@ const props = withDefaults(defineProps<Props>(), {
 type Events = {
   (e: 'click', evt: Event): void;
 }
-defineEmits<Events>()
+const emit = defineEmits<Events>()
 
-const hasTooltip = computed(() => Boolean(props.tooltip) || Boolean(props.show) || Boolean(props.update) || Boolean(props.destroy))
+const hasTooltip = computed(() => !!props.tooltip || !!props.show || !!props.update || !!props.destroy)
 
-const myth = useMyth()
-const { __ } = useMyth()
+const { __, options } = useMyth()
 // const { t, te } = useI18n({ useScope: 'global' })
 
 const getTooltip = computed(() => {
   if (props.tooltip !== undefined) {
-    return __(props.tooltip)
-    // return te(props.tooltip) ? t(props.tooltip) : props.tooltip
+    return props.tooltip ? __(props.tooltip) : props.tooltip
   } else if (props.show) {
     return __('labels.show')
   } else if (props.update) {
@@ -80,11 +78,11 @@ const getColor = computed<string | undefined>(() => {
     return props.color
   }
   if (props.show) {
-    return myth?.options?.dt?.contextmenu?.btnStyle?.showColor
+    return options?.dt?.contextmenu?.btnStyle?.showColor
   } else if (props.update) {
-    return myth?.options?.dt?.contextmenu?.btnStyle?.updateColor
+    return options?.dt?.contextmenu?.btnStyle?.updateColor
   } else if (props.destroy) {
-    return myth?.options?.dt?.contextmenu?.btnStyle?.destroyColor
+    return options?.dt?.contextmenu?.btnStyle?.destroyColor
   }
   return props.color
 })
@@ -109,26 +107,21 @@ defineOptions({ name: 'MDtBtn', inheritAttrs: !1 })
     v-if="listItem"
     v-close-popup
     clickable
-    v-bind="{...$myth.options.dt?.listItem?.item,...$attrs}"
-    @click="$emit('click',$event)"
+    v-bind="{...options.dt?.MDtBtn?.item?.props,...$attrs}"
+    @click="emit('click',$event)"
   >
     <q-item-section
-      avatar
       side
-      v-bind="$myth.options.dt?.listItem?.avatarSection"
+      v-bind="options.dt?.MDtBtn?.item?.avatarProps"
     >
       <q-icon
         :color="getColor"
         :name="getIcon"
-        v-bind="$myth.options.dt?.listItem?.icon"
+        v-bind="options.dt?.MDtBtn?.item?.iconProps"
       />
     </q-item-section>
-    <q-item-section
-      v-bind="$myth.options.dt?.listItem?.labelSection"
-    >
-      <q-item-label
-        v-bind="$myth.options.dt?.listItem?.labelItem"
-      >
+    <q-item-section v-bind="options.dt?.MDtBtn?.item?.labelSectionProps">
+      <q-item-label v-bind="options.dt?.MDtBtn?.item?.itemLabelProps">
         <slot>
           {{ label ? __(label) : label }}
         </slot>
@@ -138,16 +131,16 @@ defineOptions({ name: 'MDtBtn', inheritAttrs: !1 })
   <q-btn
     v-else
     v-bind="{
-      ...$myth.options.dt?.btn,
+      ...options.dt?.MDtBtn?.btn?.props,
       ...$attrs,
-      fabMini: fabMini !== undefined ? fabMini : ( $myth.options.dt?.btn?.fabMini !== undefined ? $myth.options.dt.btn.fabMini : label === undefined),
-      round: round !== undefined ? round : ( $myth.options.dt?.btn?.round !== undefined ? $myth.options.dt.btn.round : label === undefined),
-      dense: dense !== undefined ? dense : ( $myth.options.dt?.btn?.dense !== undefined ? $myth.options.dt.btn.dense : label === undefined),
+      fabMini: fabMini !== undefined ? fabMini : ( options.dt?.btn?.fabMini !== undefined ? options.dt.btn.fabMini : label === undefined),
+      round: round !== undefined ? round : ( options.dt?.btn?.round !== undefined ? options.dt.btn.round : label === undefined),
+      dense: dense !== undefined ? dense : ( options.dt?.btn?.dense !== undefined ? options.dt.btn.dense : label === undefined),
       label: label !== undefined ? __(label) : label,
       icon: getIcon,
       color: getColor
     }"
-    @click="$emit('click',$event)"
+    @click="emit('click',$event)"
   >
     <q-tooltip
       v-if="hasTooltip"

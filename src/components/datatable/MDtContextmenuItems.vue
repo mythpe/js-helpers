@@ -12,7 +12,7 @@
 >
 
 import { MDatatableDialogsOptions, MDatatableProps } from './models'
-import { UnwrapRef } from 'vue'
+import { computed, UnwrapRef } from 'vue'
 
 interface Props {
   items: MDatatableProps['contextItems'],
@@ -21,29 +21,31 @@ interface Props {
   displayMode?: 'icon' | 'item'
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   items: () => ([]),
   item: undefined,
   index: undefined,
   displayMode: () => 'icon'
 })
+const itemMode = computed(() => props.displayMode === 'item')
 defineOptions({ name: 'MDtContextmenuItems', inheritAttrs: !1 })
 </script>
 
 <template>
   <template v-if="item !== undefined && index !== undefined">
     <template
-      v-for="(contextmenuItem,i) in items"
+      v-for="(m,i) in items"
       :key="`MDtContextmenuItems-i${i}`"
     >
       <MDtBtn
-        v-if="typeof contextmenuItem.showIf === 'function' ? contextmenuItem.showIf(item,index) : contextmenuItem.showIf"
-        :[contextmenuItem.name]="!0"
-        :label="contextmenuItem.label !== undefined ? __(contextmenuItem.label || contextmenuItem.name) : undefined"
-        :list-item="displayMode === 'item'"
-        :tooltip="contextmenuItem.tooltip !== undefined ? contextmenuItem.tooltip : (contextmenuItem.label === undefined ? contextmenuItem.name : undefined)"
-        v-bind="contextmenuItem.attr"
-        @click="contextmenuItem.click ? contextmenuItem.click(item,index) : undefined"
+        v-if="typeof m.showIf === 'function' ? m.showIf(item,index) : m.showIf"
+        :[m.name]="!0"
+        :label="itemMode && m.label === undefined ? __(m.tooltip || m.attr?.label || m.attr?.tooltip ||m.name) : (m.label !== undefined ? __(m.label || m.name) :
+          undefined)"
+        :list-item="itemMode"
+        :tooltip="m.tooltip !== undefined ? m.tooltip : (m.label === undefined ? m.name : undefined)"
+        v-bind="m.attr"
+        @click="m.click ? m.click(item,index) : undefined"
       />
     </template>
   </template>

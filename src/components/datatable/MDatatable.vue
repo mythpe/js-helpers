@@ -956,9 +956,6 @@ const contextmenuItems = computed<any>(() => ([
       openShowDialog(item, index)
     },
     showIf: hasShowBtn.value
-    // attr: {
-    //   color: 'secondary'
-    // }
   },
   {
     name: 'update',
@@ -967,9 +964,6 @@ const contextmenuItems = computed<any>(() => ([
       openUpdateDialog(item, index)
     },
     showIf: hasUpdateBtn.value
-    // attr: {
-    //   color: 'secondary'
-    // }
   },
   {
     name: 'destroy',
@@ -989,7 +983,7 @@ const rowsPerPageOptions = computed(() => props.rowsPerPageOptions)
 const getRowsPerPageOptions = computed<any[]>(() => endReach.value ? [0] : (rowsPerPageOptions.value || [0]))
 
 /**
- * Image Dialog
+ * Image Dialog Start.
  */
 const imageDialog = reactive<MDatatableScope['imageDialog']>({
   value: !1,
@@ -1011,21 +1005,20 @@ const closeImageDialog = () => {
   })
 }
 /**
- * Image Dialog
+ * Image Dialog End.
  */
 
-onMounted(() => {
-  refresh()
-})
+onMounted(() => refresh())
+
 watch(loading, v => {
-  if (!myth.options?.dt?.noQuasarLoading) {
+  if (myth.options?.dt?.useQuasarLoading) {
     if (v) {
       $q.loading.show()
     } else {
       $q.loading.hide()
     }
   }
-  tableOptions.hasAction = Boolean(v)
+  tableOptions.hasAction = !!v
 })
 watch([filterForm, () => $q.lang.nativeName], () => refreshNoUpdate(), { deep: !0 })
 watch(formDialogModel, (v) => {
@@ -1305,6 +1298,7 @@ defineOptions({
                             gutter
                             space="xs"
                           >
+                            <!--Grid-->
                             <MDtContextmenuItems
                               :index="iTempProps.rowIndex"
                               :item="iTempProps.row"
@@ -1833,11 +1827,42 @@ defineOptions({
             v-bind="noBodyProps"
           >
             <q-td :props="noBodyProps">
+              <!--Control-->
+              <q-btn-dropdown
+                v-if="contextmenuItems.length>3"
+                :menu-offset="[0,10]"
+                color="primary"
+                dense
+                outline
+                v-bind="$myth.options.dt?.controlDropdown"
+              >
+                <q-list>
+                  <MDtContextmenuItems
+                    :index="noBodyProps.rowIndex"
+                    :item="noBodyProps.row"
+                    :items="contextmenuItems"
+                    display-mode="item"
+                  />
+                  <!--<q-item-->
+                  <!--  v-for="contextmenuItem in contextmenuItems"-->
+                  <!--  :key="`dt-r${contextmenuItem.name}`"-->
+                  <!--  v-close-popup-->
+                  <!--  clickable-->
+                  <!--&gt;-->
+                  <!--  <pre>{{ contextmenuItem }}</pre>-->
+                  <!--  <q-item-section>-->
+                  <!--    <q-item-label>{{ contextmenuItem.label }}</q-item-label>-->
+                  <!--  </q-item-section>-->
+                  <!--</q-item>-->
+                </q-list>
+              </q-btn-dropdown>
               <MRow
+                v-else
                 class="m--dt-context_menu_items"
                 gutter
                 space="xs"
               >
+                <!--Control-->
                 <MDtContextmenuItems
                   :index="noBodyProps.rowIndex"
                   :item="noBodyProps.row"
