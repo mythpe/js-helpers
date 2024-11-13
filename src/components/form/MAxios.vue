@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 
 import { MAxiosProps as Props, MSelectModelEmit } from './models.d'
-import { onMounted, ref, toValue, watch } from 'vue'
+import { computed, onMounted, ref, toValue, watch } from 'vue'
 import { useMyth } from '../../vue3'
 import { QSelectSlots } from 'quasar'
 import MSelect from './MSelect.vue'
@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<P>(), {
   viewMode: () => !1,
   viewModeValue: undefined,
   service: undefined,
-  guest: () => !1,
+  guest: undefined,
   requestWith: undefined,
   params: () => () => ({}),
   lazy: () => !1
@@ -50,11 +50,17 @@ const setFieldValue = useSetFieldValue(() => props.name)
 const myth = useMyth()
 const loading = defineModel<Props['loading']>('loading', { required: !1, default: !1 })
 const items = defineModel<Props['items']>('items', { required: !1, default: [] })
+const isGuest = computed(() => {
+  const v = toValue(props.guest)
+  return v !== undefined && v !== null && v !== !1
+})
 const prepare = async (fromWatch = !1) => {
   if (!props.service || loading.value) {
     return
   }
-  const method = typeof props.service === 'string' ? (props.guest ? myth.services[props.service].staticIndex : myth.services[props.service].index) : props.service
+  const method = typeof props.service === 'string'
+    ? (isGuest.value ? myth.services[props.service].staticIndex : myth.services[props.service].index)
+    : props.service
   if (!method) {
     throw Error(`No service: ${props.service}`)
   }

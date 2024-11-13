@@ -345,7 +345,7 @@ export type MAxiosProps = Omit<MSelectProps, 'options' | 'axiosMode'> & {
   /**
    * Send request as guest request. If false, send request as authenticated user. Default is true.
    */
-  guest?: MaybeRefOrGetter<boolean>;
+  guest?: boolean | MaybeRefOrGetter<boolean>;
   /**
    * Request params.
    */
