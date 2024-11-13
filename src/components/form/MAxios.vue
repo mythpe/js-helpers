@@ -13,6 +13,7 @@ import { onMounted, ref, toValue, watch } from 'vue'
 import { useMyth } from '../../vue3'
 import { QSelectSlots } from 'quasar'
 import MSelect from './MSelect.vue'
+import { useSetFieldValue } from 'vee-validate'
 
 type P = {
   name: Props['name'];
@@ -36,8 +37,8 @@ const props = withDefaults(defineProps<P>(), {
   service: undefined,
   guest: () => !1,
   requestWith: undefined,
-  params: () => ({}),
-  lazy: undefined
+  params: () => () => ({}),
+  lazy: () => !1
 })
 const modelValue = defineModel<Props['modelValue']>({ required: !1, default: undefined })
 type Emits = {
@@ -45,10 +46,11 @@ type Emits = {
 }
 const emit = defineEmits<Emits>()
 const search = defineModel<string>('search', { required: !1, default: '' })
+const setFieldValue = useSetFieldValue(() => props.name)
 const myth = useMyth()
 const loading = defineModel<Props['loading']>('loading', { required: !1, default: !1 })
 const items = defineModel<Props['items']>('items', { required: !1, default: [] })
-const prepare = async () => {
+const prepare = async (fromWatch = !1) => {
   if (!props.service || loading.value) {
     return
   }
@@ -56,31 +58,33 @@ const prepare = async () => {
   if (!method) {
     throw Error(`No service: ${props.service}`)
   }
-  // console.log(method)
   const params: any = {
-    requestWith: toValue(props.requestWith),
+    requestWith: undefined,
     search: search.value,
     itemsPerPage: -1,
     page: 1,
     staticRequest: 1,
     ...(toValue(props.params) || {})
   }
+  if (props.requestWith) {
+    params.requestWith = toValue(props.requestWith)
+  }
   loading.value = !0
   items.value = []
   method({ params })
     .then(({ _data }: any) => {
       items.value = _data || []
-      // if (!mounted.value) {
-      //   mounted.value = !0
-      //   cached.value = _data || []
-      // }
     })
     .catch((e: any) => {
-      console.log(e)
       myth.alertError(e?.message || 'An error occurred')
     })
     .finally(() => {
       loading.value = !1
+      if (fromWatch) {
+        if (modelValue.value !== null && modelValue.value !== undefined) {
+          setFieldValue(undefined)
+        }
+      }
     })
 }
 const listeners = {
@@ -88,13 +92,11 @@ const listeners = {
   model: (v: MSelectModelEmit) => emit('model', v)
 }
 onMounted(() => {
-  if (props.lazy) {
-    // console.log(props.lazy)
-  } else {
+  if (!props.lazy) {
     prepare()
   }
 })
-watch(() => toValue(props.params), () => prepare(), { deep: !0 })
+watch(props.params, () => prepare(!0), { deep: !0 })
 const input = ref<InstanceType<typeof MSelect> | null>(null)
 defineExpose<{ input: typeof input }>({ input })
 defineOptions({ name: 'MAxios', inheritAttrs: !1 })

@@ -32,10 +32,11 @@ import {
   QUploaderSlots
 } from 'quasar'
 import { FieldContext, FieldOptions, FormContext, FormOptions, FormState } from 'vee-validate'
-import { MaybeRefOrGetter, UnwrapNestedRefs, VNode, ComputedRef, Ref, ShallowRef, WritableComputedRef } from 'vue'
+import { MaybeRefOrGetter, UnwrapNestedRefs, VNode } from 'vue'
 import { MColProps, ViewModeProps } from '../grid/models'
 import { EditorConfig } from 'ckeditor5'
 import { HelpersStubSchema } from '../../types'
+import { ComputedRef, Ref, ShallowRef, WritableComputedRef } from '@vue/reactivity'
 
 export type BaseInputFieldPropContext = FieldContext<any>;
 export type BaseInputFieldProps = {
