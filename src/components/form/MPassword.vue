@@ -7,7 +7,7 @@
   -->
 
 <script lang="ts" setup>
-import { defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import { MInputSlots, MPasswordProps as Props } from './models'
 import MInput from './MInput.vue'
 

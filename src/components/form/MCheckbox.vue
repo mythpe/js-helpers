@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { useField } from 'vee-validate'
-import { defineProps, reactive, ref, toValue } from 'vue'
+import { reactive, ref, toValue } from 'vue'
 import { useInputHelper } from '../../composables'
 import { MCheckboxProps as Props } from './models'
 import { QCheckbox, QField } from 'quasar'

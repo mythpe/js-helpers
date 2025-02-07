@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 import { QList, QUploader } from 'quasar'
 import { QRejectedEntry } from 'quasar/dist/types/api'
-import { computed, defineProps, nextTick, ref, watch, withDefaults } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useError, useInputHelper, useValue } from '../../composables'
 import { useMyth } from '../../vue3'
 import { MUploaderMediaItem, MUploaderProps as Props, MUploaderXhrInfo } from './models'

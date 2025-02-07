@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 
-import { computed, defineProps, nextTick, ref, withDefaults } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { MUploaderMediaItem, MUploaderProps as Props, MUploaderServiceType } from '../form/models'
 import { useMyth } from '../../vue3'
 import { QUploader, useQuasar } from 'quasar'

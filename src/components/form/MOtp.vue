@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 
-import { computed, defineProps, nextTick, onBeforeUnmount, onBeforeUpdate, ref, watch, watchEffect } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onBeforeUpdate, ref, watch, watchEffect } from 'vue'
 import { date } from 'quasar'
 import { MOtpProps as Props } from './models'
 import { isNaN } from 'lodash'

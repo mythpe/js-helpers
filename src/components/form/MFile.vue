@@ -11,7 +11,7 @@
 import { QField, QFile, QFileSlots } from 'quasar'
 import { useInputHelper } from '../../composables'
 import { useField } from 'vee-validate'
-import { defineProps, reactive, ref, toValue } from 'vue'
+import { reactive, ref, toValue } from 'vue'
 import { MFileProps as Props } from './models'
 
 interface P {

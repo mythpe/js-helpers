@@ -7,7 +7,7 @@
   -->
 
 <script lang="ts" setup>
-import { computed, defineEmits, nextTick, onMounted, reactive, ref, toRef, toValue, useSlots, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, toRef, toValue, useSlots, watch } from 'vue'
 import { is as quasarHelpers, QCardSection, QTable, useQuasar } from 'quasar'
 import lodash from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
@@ -337,7 +337,7 @@ const hasMenu = computed<boolean>(() => {
 const isUpdateMode = ref<boolean>(!1)
 const formMode = computed<'update' | 'store'>(() => isUpdateMode.value ? 'update' : 'store')
 const isSingleSelectedItem = computed<boolean>(() => tableOptions.selected.length === 1)
-const firstSelectedItem = computed<MDtItem>(() => tableOptions.selected[0])
+const firstSelectedItem = computed<any>(() => tableOptions.selected[0])
 const hasSelectedItem = computed<boolean>(() => tableOptions.selected.length > 0)
 
 /* Titles */
