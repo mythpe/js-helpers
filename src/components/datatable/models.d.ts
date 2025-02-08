@@ -16,7 +16,7 @@ import { RouteLocationRaw } from 'vue-router'
 export type MDtItem<T extends object = Record<keyof T, any>> = T & {
   id: string | number;
   [K: keyof T]: any;
-}
+} & any
 
 export type MDtItemIndex = number;
 export type MDtExportOptions = 'pdf' | 'excel';
