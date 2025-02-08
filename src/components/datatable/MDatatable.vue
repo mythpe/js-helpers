@@ -828,7 +828,7 @@ const onSuccess: SubmissionHandler = async (form) => {
 
   for (const i in ignoreKeys) {
     for (const k in form) {
-      if (k.slice(-ignoreKeys[i].length) === ignoreKeys[i]) {
+      if (k.slice(-ignoreKeys[i]?.length) === ignoreKeys[i]) {
         delete form[k]
       }
     }
