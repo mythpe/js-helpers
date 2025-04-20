@@ -722,7 +722,7 @@ const openUpdateDialog = (i: MDtItem, index: MDtItemIndex) => {
   if (getRequestWith('withUpdate')) {
     params.requestWith = getRequestWith('withUpdate')
   }
-  getMythApiServicesSchema().show(item.id, { params })
+  getMythApiServicesSchema().show?.(item.id, { params })
     .then(({ _data }) => {
       dialogs.item = _data
       dialogs.index = index

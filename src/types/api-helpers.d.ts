@@ -8,7 +8,7 @@
 
 import { AxiosRequestConfig } from 'axios'
 import { ApiServiceParams } from '../components'
-import { ApiInterface, Generic, ResponseDataType } from '../types/m-helpers'
+import { ApiInterface, Generic } from '../types/m-helpers'
 
 export type UrlType = string | number | any;
 export type ParamsType = Record<string, any> | FormData | object
