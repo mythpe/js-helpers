@@ -1855,8 +1855,7 @@ defineOptions({
             <q-td :props="noBodyProps">
               <!--Control-->
               <q-btn-dropdown
-                v-if="contextmenuItems.length>3"
-                v-close-popup
+                v-if="contextmenuItems.length>3 && false"
                 :menu-offset="[0,10]"
                 color="primary"
                 dense
